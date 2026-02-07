@@ -121,7 +121,6 @@ public partial class SettingDialogViewModel(
     private void DeleteOldLogFiles()
 #pragma warning restore CA1822
     {
-        if (!Directory.Exists(LogFolder)) return;
         foreach (var file in Directory.GetFiles(LogFolder))
             try
             {
