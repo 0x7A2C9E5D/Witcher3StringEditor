@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -33,10 +34,10 @@ public partial class SettingDialogViewModel(
     public IAppSettings AppSettings { get; } = appSettings;
 
 #if DEBUG
-    private static string LogFolder => Path.Combine(
+    private readonly string logFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Witcher3StringEditor_Debug", "Logs");
 #else
-    private static string LogFolder => Path.Combine(
+    private readonly string logFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Witcher3StringEditor", "Logs");
 #endif
 
@@ -109,7 +110,7 @@ public partial class SettingDialogViewModel(
     [RelayCommand]
     private void OpenLogFolder()
     {
-        explorerService.Open(LogFolder); // Open the log folder.
+        explorerService.Open(logFolder); // Open the log folder.
         Log.Information("Opened log folder."); // Log that the log folder has been opened.
     }
 
@@ -117,11 +118,9 @@ public partial class SettingDialogViewModel(
     ///     Deletes old log files
     /// </summary>
     [RelayCommand]
-#pragma warning disable CA1822
     private void DeleteOldLogFiles()
-#pragma warning restore CA1822
     {
-        foreach (var file in Directory.GetFiles(LogFolder)) // Loop through all log files in the log folder.
+        foreach (var file in Directory.GetFiles(logFolder)) // Loop through all log files in the log folder.
             try
             {
                 File.Delete(file); // Delete the log file.
@@ -130,6 +129,7 @@ public partial class SettingDialogViewModel(
             {
                 // Ignore
             }
+
         Log.Information("Old log files have been deleted."); // Log that the old log files have been deleted.
     }
 }
