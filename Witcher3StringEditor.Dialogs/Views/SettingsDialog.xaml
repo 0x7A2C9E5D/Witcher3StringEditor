@@ -20,6 +20,7 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     WindowChrome.IsHitTestVisibleInChrome="True"
     WindowStartupLocation="CenterOwner"
+    Closed="SettingsDialog_OnClosed"
     mc:Ignorable="d">
     <!-- 
         Window resources containing data providers, styles and converters
@@ -210,17 +211,17 @@
                 </ui:SettingsCard>
                 <ui:SettingsCard Header="日志操作" Description="浏览日志、清除过期日志、采集日志">
                     <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KnowledgeArticle}"/>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KnowledgeArticle}" />
                     </ui:SettingsCard.HeaderIcon>
                     <iwk:SimpleStackPanel Orientation="Horizontal" Spacing="15">
                         <Button Command="{Binding OpenLogFolderCommand}">
-                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Folder}"/>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Folder}" />
                         </Button>
                         <Button Command="{Binding DeleteOldLogFilesCommand}">
-                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}"/>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
                         </Button>
                         <Button Command="{Binding PackLogFilesCommand}">
-                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.ZipFolder}"/>
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.ZipFolder}" />
                         </Button>
                     </iwk:SimpleStackPanel>
                 </ui:SettingsCard>

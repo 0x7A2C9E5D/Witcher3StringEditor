@@ -3,12 +3,14 @@ using System.IO;
 using System.IO.Compression;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Serilog;
 using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Messaging;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -124,7 +126,8 @@ public partial class SettingDialogViewModel(
         var files = Directory.GetFiles(logFolder);
         if (files.Length == 1)
         {
-            Log.Information("There is only one log file.");
+            Log.Information("There is only one log file."); // Log that there is only one log file.
+            WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.LogsNoNeedToClean); // Send a message to the main window.
             return;
         }
 
@@ -139,6 +142,7 @@ public partial class SettingDialogViewModel(
             }
 
         Log.Information("Old log files have been deleted."); // Log that the old log files have been deleted.
+        WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.LogsCleaned); // Send a message to the main window.
     }
 
     /// <summary>
