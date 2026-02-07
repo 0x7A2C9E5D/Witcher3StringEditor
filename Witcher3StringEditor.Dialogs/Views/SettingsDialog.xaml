@@ -209,11 +209,12 @@
                         ItemsSource="{Binding Translators}"
                         SelectedItem="{Binding AppSettings.Translator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
-                <ui:SettingsCard Header="{x:Static l:LangKeys.LogManagement}" Description="{x:Static l:LangKeys.LogManagementDescription}">
+                <ui:SettingsCard Header="{I18N {x:Static l:LangKeys.LogManagement}}"
+                                 Description="{I18N {x:Static l:LangKeys.LogManagementDescription}}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KnowledgeArticle}" />
                     </ui:SettingsCard.HeaderIcon>
-                    <iwk:SimpleStackPanel Orientation="Horizontal" Spacing="15">
+                    <iwk:SimpleStackPanel Orientation="Horizontal" Spacing="5">
                         <Button Command="{Binding OpenLogFolderCommand}">
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Folder}" />
                         </Button>
