@@ -523,4 +523,10 @@
   <data name="LogCleanupCaption" xml:space="preserve">
     <value>Protokollbereinigung</value>
   </data>
+  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <value>Protokolldateien erfasst</value>
+  </data>
+  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <value>Die Protokolldateien wurden erfasst. Die Dateien wurden auf Ihrem Desktop erstellt.</value>
+  </data>
 </root>

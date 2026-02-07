@@ -523,4 +523,10 @@
   <data name="LogCleanupCaption" xml:space="preserve">
     <value>Log Cleanup</value>
   </data>
+  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <value>Log Files Collected</value>
+  </data>
+  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <value>Log files have been collected. The files have been created on your desktop.</value>
+  </data>
 </root>

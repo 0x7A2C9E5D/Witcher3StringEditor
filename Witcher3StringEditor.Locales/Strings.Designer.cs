@@ -547,6 +547,24 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log Files Collected.
+        /// </summary>
+        public static string LogFilesCollectedCaption {
+            get {
+                return ResourceManager.GetString("LogFilesCollectedCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log files have been collected. The files have been created on your desktop..
+        /// </summary>
+        public static string LogFilesCollectedMessage {
+            get {
+                return ResourceManager.GetString("LogFilesCollectedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log Level.
         /// </summary>
         public static string LogLevel {

@@ -130,4 +130,9 @@ public static class MessageTokens
     ///     Token for messages indicating that logs have been cleaned
     /// </summary>
     public const string LogsCleaned = "LogsCleaned";
+    
+    /// <summary>
+    ///     Token for messages indicating that logs have been collected
+    /// </summary>
+    public const string LogsCollected = "LogsCollected";
 }

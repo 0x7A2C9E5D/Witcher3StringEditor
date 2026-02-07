@@ -523,4 +523,10 @@
   <data name="LogCleanupCaption" xml:space="preserve">
     <value>Naplótisztítás</value>
   </data>
+  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <value>Naplófájlok begyűjtve</value>
+  </data>
+  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <value>A naplófájlok begyűjtve lettek. A fájlok elkészültek az asztalon.</value>
+  </data>
 </root>

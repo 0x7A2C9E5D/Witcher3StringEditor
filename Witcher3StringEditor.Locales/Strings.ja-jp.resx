@@ -523,4 +523,10 @@
   <data name="LogCleanupCaption" xml:space="preserve">
     <value>ログクリーンアップ</value>
   </data>
+  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <value>ログファイルを収集しました</value>
+  </data>
+  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <value>ログファイルは収集されました。ファイルはデスクトップに作成されています。</value>
+  </data>
 </root>

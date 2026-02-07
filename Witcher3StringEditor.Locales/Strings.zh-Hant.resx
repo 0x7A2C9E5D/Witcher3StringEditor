@@ -523,4 +523,10 @@
   <data name="LogCleanupCaption" xml:space="preserve">
     <value>記錄檔清理</value>
   </data>
+  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <value>記錄檔已採集</value>
+  </data>
+  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <value>記錄檔已採集。檔案已在目前使用者的桌面建立。</value>
+  </data>
 </root>

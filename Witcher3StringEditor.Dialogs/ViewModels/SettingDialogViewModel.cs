@@ -149,14 +149,14 @@ public partial class SettingDialogViewModel(
     ///     Packs log files into a zip file
     /// </summary>
     [RelayCommand]
-    private void PackLogFiles()
+    private void CollectLogs()
     {
-        if (Directory.GetFiles(logFolder).Length == 0) return; // If there are no log files, return.
         var tempFolder = Directory.CreateTempSubdirectory().FullName; // Create a temporary folder.
         Directory.GetFiles(logFolder).ForEach(x =>
             File.Copy(x, Path.Combine(tempFolder, Path.GetFileName(x)))); // Copy all log files to the temporary folder.
         ZipFile.CreateFromDirectory(tempFolder, Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip")); // Create a zip file from the temporary folder.
+        WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.LogsCollected);
     }
 }

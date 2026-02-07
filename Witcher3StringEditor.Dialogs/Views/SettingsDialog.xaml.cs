@@ -29,16 +29,23 @@ public partial class SettingsDialog
     private void RegisterMessageHandler()
     {
         WeakReferenceMessenger.Default.Register<SettingsDialog, string, string>(this, MessageTokens.LogsNoNeedToClean,
-            static (_, m) =>
+            static (_, _) =>
             {
                 MessageBox.Show(Strings.LogsNoNeedToCleanMessage, Strings.LogCleanupCaption,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
             });
         WeakReferenceMessenger.Default.Register<SettingsDialog, string, string>(this, MessageTokens.LogsCleaned,
-            static (_, m) =>
+            static (_, _) =>
             {
                 MessageBox.Show(Strings.LogsCleanedMessage, Strings.LogCleanupCaption,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            });
+        WeakReferenceMessenger.Default.Register<SettingsDialog, string, string>(this, MessageTokens.LogsCollected,
+            static (_, _) =>
+            {
+                MessageBox.Show(Strings.LogFilesCollectedMessage, Strings.LogFilesCollectedCaption,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
             });

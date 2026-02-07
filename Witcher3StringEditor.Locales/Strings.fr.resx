@@ -523,4 +523,10 @@
   <data name="LogCleanupCaption" xml:space="preserve">
     <value>Nettoyage des journaux</value>
   </data>
+  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <value>Fichiers journaux collectés</value>
+  </data>
+  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <value>Les fichiers journaux ont été collectés. Les fichiers ont été créés sur votre bureau.</value>
+  </data>
 </root>
