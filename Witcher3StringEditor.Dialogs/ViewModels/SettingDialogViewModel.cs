@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Serilog;
+using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Locales;
 
@@ -137,8 +138,10 @@ public partial class SettingDialogViewModel(
     private void PackLogFiles()
     {
         if (Directory.GetFiles(logFolder).Length == 0) return;
+        var tempFolder = Directory.CreateTempSubdirectory().FullName;
+        Directory.GetFiles(logFolder).ForEach(x => File.Copy(x, Path.Combine(tempFolder, Path.GetFileName(x))));
         var zipFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip");
-        ZipFile.CreateFromDirectory(logFolder, zipFile);
+        ZipFile.CreateFromDirectory(tempFolder, zipFile);
     }
 }
