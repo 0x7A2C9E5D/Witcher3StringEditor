@@ -209,7 +209,7 @@
                         ItemsSource="{Binding Translators}"
                         SelectedItem="{Binding AppSettings.Translator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
-                <ui:SettingsCard Header="日志操作" Description="浏览日志、清除过期日志、采集日志">
+                <ui:SettingsCard Header="{x:Static l:LangKeys.LogManagement}" Description="{x:Static l:LangKeys.LogManagementDescription}">
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.KnowledgeArticle}" />
                     </ui:SettingsCard.HeaderIcon>

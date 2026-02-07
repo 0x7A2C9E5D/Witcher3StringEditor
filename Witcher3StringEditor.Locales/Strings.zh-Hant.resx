@@ -529,4 +529,10 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>記錄檔已採集。檔案已在目前使用者的桌面建立。</value>
   </data>
+  <data name="LogManagementDescription" xml:space="preserve">
+    <value>記錄管理</value>
+  </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>瀏覽記錄資料夾、清理過期記錄、採集記錄</value>
+  </data>
 </root>

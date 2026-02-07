@@ -529,4 +529,10 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>Log files have been collected. The files have been created on your desktop.</value>
   </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>Browse log folder, clean up expired logs, collect logs</value>
+  </data>
+  <data name="LogManagementDescription" xml:space="preserve">
+    <value>Log Management</value>
+  </data>
 </root>

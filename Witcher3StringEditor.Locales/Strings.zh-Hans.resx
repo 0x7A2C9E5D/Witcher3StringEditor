@@ -529,4 +529,10 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>日志文件已采集。文件已在当前用户桌面创建。</value>
   </data>
+  <data name="LogManagementDescription" xml:space="preserve">
+    <value>日志管理</value>
+  </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>浏览日志文件夹、清理过期日志、采集日志</value>
+  </data>
 </root>
