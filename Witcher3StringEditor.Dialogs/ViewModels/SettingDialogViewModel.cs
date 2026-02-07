@@ -144,8 +144,8 @@ public partial class SettingDialogViewModel(
         var tempFolder = Directory.CreateTempSubdirectory().FullName; // Create a temporary folder.
         Directory.GetFiles(logFolder).ForEach(x =>
             File.Copy(x, Path.Combine(tempFolder, Path.GetFileName(x)))); // Copy all log files to the temporary folder.
-        var zipFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-            $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip");
-        ZipFile.CreateFromDirectory(tempFolder, zipFile); // Create a zip file from the temporary folder.
+        ZipFile.CreateFromDirectory(tempFolder, Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip")); // Create a zip file from the temporary folder.
     }
 }
