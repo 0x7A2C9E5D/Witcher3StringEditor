@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -21,6 +22,7 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public partial class SettingDialogViewModel(
     IAppSettings appSettings,
     IDialogService dialogService,
+    IExplorerService explorerService,
     IEnumerable<string> translators,
     IEnumerable<CultureInfo> supportedCultures)
     : ObservableObject, IModalDialogViewModel
@@ -29,6 +31,14 @@ public partial class SettingDialogViewModel(
     ///     Gets the application settings service
     /// </summary>
     public IAppSettings AppSettings { get; } = appSettings;
+
+#if DEBUG
+    private static string LogFolder => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Witcher3StringEditor_Debug", "Logs");
+#else
+    private static string LogFolder => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Witcher3StringEditor", "Logs");
+#endif
 
     /// <summary>
     ///     Gets the collection of available translators
@@ -91,5 +101,34 @@ public partial class SettingDialogViewModel(
             AppSettings.GameExePath = storageFile.LocalPath; // Set the path to the file.
             Log.Information("Game path set to {Path}.", storageFile.LocalPath); // Log the path.
         }
+    }
+
+    /// <summary>
+    ///     Opens the log folder
+    /// </summary>
+    [RelayCommand]
+    private void OpenLogFolder()
+    {
+        explorerService.Open(LogFolder);
+        Log.Information("Opened log folder.");
+    }
+
+    /// <summary>
+    ///     Deletes old log files
+    /// </summary>
+    [RelayCommand]
+    private void DeleteOldLogFiles()
+    {
+        if (!Directory.Exists(LogFolder)) return;
+        foreach (var file in Directory.GetFiles(LogFolder))
+            try
+            {
+                File.Delete(file);
+            }
+            catch (Exception)
+            {
+                // Ignore
+            }
+        Log.Information("Old log files have been deleted.");
     }
 }
