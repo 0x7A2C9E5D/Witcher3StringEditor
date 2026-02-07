@@ -121,7 +121,14 @@ public partial class SettingDialogViewModel(
     [RelayCommand]
     private void DeleteOldLogFiles()
     {
-        foreach (var file in Directory.GetFiles(logFolder)) // Loop through all log files in the log folder.
+        var files = Directory.GetFiles(logFolder);
+        if (files.Length == 1)
+        {
+            Log.Information("There is only one log file.");
+            return;
+        }
+
+        foreach (var file in files) // Loop through all log files in the log folder.
             try
             {
                 File.Delete(file); // Delete the log file.
