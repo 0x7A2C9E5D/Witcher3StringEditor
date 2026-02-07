@@ -117,7 +117,9 @@ public partial class SettingDialogViewModel(
     ///     Deletes old log files
     /// </summary>
     [RelayCommand]
+#pragma warning disable CA1822
     private void DeleteOldLogFiles()
+#pragma warning restore CA1822
     {
         if (!Directory.Exists(LogFolder)) return;
         foreach (var file in Directory.GetFiles(LogFolder))
