@@ -529,10 +529,10 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>A naplófájlok begyűjtve lettek. A fájlok elkészültek az asztalon.</value>
   </data>
-  <data name="LogManagementDescription" xml:space="preserve">
+  <data name="LogManagement" xml:space="preserve">
     <value>Naplókezelés</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
+  <data name="LogManagementDescription" xml:space="preserve">
     <value>Tallózás a napló mappában, lejárt naplók tisztítása, naplók gyűjtése</value>
   </data>
 </root>

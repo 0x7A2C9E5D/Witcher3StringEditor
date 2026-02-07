@@ -574,7 +574,7 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Browse log folder, clean up expired logs, collect logs.
+        ///   Looks up a localized string similar to Log Management.
         /// </summary>
         public static string LogManagement {
             get {
@@ -583,7 +583,7 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Log Management.
+        ///   Looks up a localized string similar to Browse log folder, clean up expired logs, collect logs.
         /// </summary>
         public static string LogManagementDescription {
             get {

@@ -529,10 +529,10 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>ログファイルは収集されました。ファイルはデスクトップに作成されています。</value>
   </data>
-  <data name="LogManagementDescription" xml:space="preserve">
+  <data name="LogManagement" xml:space="preserve">
     <value>ログ管理</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
+  <data name="LogManagementDescription" xml:space="preserve">
     <value>ログフォルダー参照、有効期限切れログのクリーンアップ、ログ収集</value>
   </data>
 </root>

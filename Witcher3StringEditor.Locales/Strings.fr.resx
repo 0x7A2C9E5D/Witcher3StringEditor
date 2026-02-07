@@ -529,10 +529,10 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>Les fichiers journaux ont été collectés. Les fichiers ont été créés sur votre bureau.</value>
   </data>
-  <data name="LogManagementDescription" xml:space="preserve">
+  <data name="LogManagement" xml:space="preserve">
     <value>Gestion des journaux</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
+  <data name="LogManagementDescription" xml:space="preserve">
     <value>Parcourir le dossier des journaux, nettoyer les journaux expirés, collecter les journaux</value>
   </data>
 </root>
