@@ -219,7 +219,7 @@
                         <Button Command="{Binding DeleteOldLogFilesCommand}">
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}"/>
                         </Button>
-                        <Button>
+                        <Button Command="{Binding PackLogFilesCommand}">
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.ZipFolder}"/>
                         </Button>
                     </iwk:SimpleStackPanel>
