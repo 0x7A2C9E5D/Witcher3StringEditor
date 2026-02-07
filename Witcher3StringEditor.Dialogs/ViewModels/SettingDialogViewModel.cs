@@ -109,8 +109,8 @@ public partial class SettingDialogViewModel(
     [RelayCommand]
     private void OpenLogFolder()
     {
-        explorerService.Open(LogFolder);
-        Log.Information("Opened log folder.");
+        explorerService.Open(LogFolder); // Open the log folder.
+        Log.Information("Opened log folder."); // Log that the log folder has been opened.
     }
 
     /// <summary>
@@ -121,15 +121,15 @@ public partial class SettingDialogViewModel(
     private void DeleteOldLogFiles()
 #pragma warning restore CA1822
     {
-        foreach (var file in Directory.GetFiles(LogFolder))
+        foreach (var file in Directory.GetFiles(LogFolder)) // Loop through all log files in the log folder.
             try
             {
-                File.Delete(file);
+                File.Delete(file); // Delete the log file.
             }
             catch (Exception)
             {
                 // Ignore
             }
-        Log.Information("Old log files have been deleted.");
+        Log.Information("Old log files have been deleted."); // Log that the old log files have been deleted.
     }
 }
