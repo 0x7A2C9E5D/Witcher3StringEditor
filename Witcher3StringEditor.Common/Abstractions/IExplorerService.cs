@@ -1,10 +1,10 @@
-﻿namespace Witcher3StringEditor.Services;
+﻿namespace Witcher3StringEditor.Common.Abstractions;
 
 /// <summary>
 ///     Defines a contract for opening paths in Windows Explorer
 ///     Provides a method to open file system paths using the system's default file explorer
 /// </summary>
-internal interface IExplorerService
+public interface IExplorerService
 {
     /// <summary>
     ///     Opens the specified path in Windows Explorer
