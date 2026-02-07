@@ -132,4 +132,13 @@ public partial class SettingDialogViewModel(
 
         Log.Information("Old log files have been deleted."); // Log that the old log files have been deleted.
     }
+
+    [RelayCommand]
+    private void PackLogFiles()
+    {
+        if (Directory.GetFiles(logFolder).Length == 0) return;
+        var zipFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip");
+        ZipFile.CreateFromDirectory(logFolder, zipFile);
+    }
 }
