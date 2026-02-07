@@ -120,4 +120,14 @@ public static class MessageTokens
     ///     Token for messages indicating that an invalid path has been provided
     /// </summary>
     public const string PathInvalid = "PathInvalid";
+    
+    /// <summary>
+    ///     Token for messages indicating that logs do not need to be cleaned
+    /// </summary>
+    public const string LogsNoNeedToClean = "LogsNoNeedToClean";
+    
+    /// <summary>
+    ///     Token for messages indicating that logs have been cleaned
+    /// </summary>
+    public const string LogsCleaned = "LogsCleaned";
 }
