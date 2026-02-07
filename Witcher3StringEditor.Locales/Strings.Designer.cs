@@ -529,6 +529,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log Cleanup.
+        /// </summary>
+        public static string LogCleanupCaption {
+            get {
+                return ResourceManager.GetString("LogCleanupCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log.
         /// </summary>
         public static string LogDialogTitle {
@@ -552,6 +561,24 @@ namespace Witcher3StringEditor.Locales {
         public static string LogMessage {
             get {
                 return ResourceManager.GetString("LogMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log files have been cleaned up..
+        /// </summary>
+        public static string LogsCleanedMessage {
+            get {
+                return ResourceManager.GetString("LogsCleanedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No log file cleanup needed..
+        /// </summary>
+        public static string LogsNoNeedToCleanMessage {
+            get {
+                return ResourceManager.GetString("LogsNoNeedToCleanMessage", resourceCulture);
             }
         }
         

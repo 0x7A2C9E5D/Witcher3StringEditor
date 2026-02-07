@@ -514,4 +514,13 @@
   <data name="PackageVersion" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <value>Keine Bereinigung von Protokolldateien nötig.</value>
+  </data>
+  <data name="LogsCleanedMessage" xml:space="preserve">
+    <value>Protokolldateien wurden bereinigt.</value>
+  </data>
+  <data name="LogCleanupCaption" xml:space="preserve">
+    <value>Protokollbereinigung</value>
+  </data>
 </root>

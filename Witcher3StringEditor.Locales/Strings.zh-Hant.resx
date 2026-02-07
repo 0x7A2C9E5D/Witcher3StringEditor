@@ -514,4 +514,13 @@
   <data name="PackageVersion" xml:space="preserve">
     <value>版本</value>
   </data>
+  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <value>記錄檔無需清理。</value>
+  </data>
+  <data name="LogsCleanedMessage" xml:space="preserve">
+    <value>記錄檔已清理。</value>
+  </data>
+  <data name="LogCleanupCaption" xml:space="preserve">
+    <value>記錄檔清理</value>
+  </data>
 </root>

@@ -514,4 +514,13 @@
   <data name="PackageVersion" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <value>Pas de nettoyage de journaux requis.</value>
+  </data>
+  <data name="LogsCleanedMessage" xml:space="preserve">
+    <value>Les fichiers journaux ont été nettoyés.</value>
+  </data>
+  <data name="LogCleanupCaption" xml:space="preserve">
+    <value>Nettoyage des journaux</value>
+  </data>
 </root>

@@ -514,4 +514,13 @@
   <data name="PackageVersion" xml:space="preserve">
     <value>バージョン</value>
   </data>
+  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <value>ログファイルのクリーンアップは不要です。</value>
+  </data>
+  <data name="LogsCleanedMessage" xml:space="preserve">
+    <value>ログファイルはクリーンアップされました。</value>
+  </data>
+  <data name="LogCleanupCaption" xml:space="preserve">
+    <value>ログクリーンアップ</value>
+  </data>
 </root>

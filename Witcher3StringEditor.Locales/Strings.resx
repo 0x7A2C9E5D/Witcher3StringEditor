@@ -514,4 +514,13 @@
   <data name="PackageVersion" xml:space="preserve">
     <value>Version</value>
   </data>
+  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <value>No log file cleanup needed.</value>
+  </data>
+  <data name="LogsCleanedMessage" xml:space="preserve">
+    <value>Log files have been cleaned up.</value>
+  </data>
+  <data name="LogCleanupCaption" xml:space="preserve">
+    <value>Log Cleanup</value>
+  </data>
 </root>
