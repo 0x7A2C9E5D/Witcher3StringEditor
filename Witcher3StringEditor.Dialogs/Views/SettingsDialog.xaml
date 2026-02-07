@@ -209,6 +209,7 @@
                         ItemsSource="{Binding Translators}"
                         SelectedItem="{Binding AppSettings.Translator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
+                <!-- Log management settings card -->
                 <ui:SettingsCard Header="{I18N {x:Static l:LangKeys.LogManagement}}"
                                  Description="{I18N {x:Static l:LangKeys.LogManagementDescription}}">
                     <ui:SettingsCard.HeaderIcon>
