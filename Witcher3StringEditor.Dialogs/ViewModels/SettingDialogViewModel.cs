@@ -121,7 +121,7 @@ public partial class SettingDialogViewModel(
     ///     Deletes old log files
     /// </summary>
     [RelayCommand]
-    private void DeleteOldLogFiles()
+    private void DeleteOldLogs()
     {
         var files = Directory.GetFiles(logFolder);
         if (files.Length == 1)

@@ -219,7 +219,7 @@
                         <Button Command="{Binding OpenLogFolderCommand}">
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Folder}" />
                         </Button>
-                        <Button Command="{Binding DeleteOldLogFilesCommand}">
+                        <Button Command="{Binding DeleteOldLogsCommand}">
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
                         </Button>
                         <Button Command="{Binding CollectLogsCommand}">
