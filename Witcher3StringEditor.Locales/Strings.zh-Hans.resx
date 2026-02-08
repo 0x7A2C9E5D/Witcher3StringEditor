@@ -458,7 +458,7 @@
     <value>翻译进行中</value>
   </data>
   <data name="Translating" xml:space="preserve">
-    <value>穿梭于语言的奇妙旅程中...</value>
+    <value>翻译中...</value>
   </data>
   <data name="TranslationModeSwitchCaption" xml:space="preserve">
     <value>切换翻译模式确认</value>

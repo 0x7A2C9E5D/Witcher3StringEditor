@@ -458,7 +458,7 @@
     <value>Übersetzung ist unterwegs</value>
   </data>
   <data name="Translating" xml:space="preserve">
-    <value>Übersetzung wird durchgewirbelt...</value>
+    <value>Wird übersetzt...</value>
   </data>
   <data name="TranslationModeSwitchCaption" xml:space="preserve">
     <value>Übersetzungsmodus ändern</value>

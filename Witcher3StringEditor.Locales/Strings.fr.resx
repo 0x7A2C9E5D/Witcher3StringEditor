@@ -458,7 +458,7 @@
     <value>La traduction est en cours</value>
   </data>
   <data name="Translating" xml:space="preserve">
-    <value>En Route Vers La Traduction Magique...</value>
+    <value>Traduction en cours...</value>
   </data>
   <data name="TranslationModeSwitchCaption" xml:space="preserve">
     <value>Changement de Mode de Traduction Confirmation</value>

@@ -458,7 +458,7 @@
     <value>Fordítás folyamatban van</value>
   </data>
   <data name="Translating" xml:space="preserve">
-    <value>A fordítás szavakban virágzik...</value>
+    <value>Fordítás folyamatban...</value>
   </data>
   <data name="TranslationModeSwitchCaption" xml:space="preserve">
     <value>Fordítási Mód Váltásának Megerősítése</value>
