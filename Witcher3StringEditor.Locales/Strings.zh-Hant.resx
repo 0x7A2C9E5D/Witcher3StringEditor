@@ -515,24 +515,24 @@
     <value>版本</value>
   </data>
   <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
-    <value>記錄檔無需清理。</value>
+    <value>日誌檔無需清理。</value>
   </data>
   <data name="LogsCleanedMessage" xml:space="preserve">
-    <value>記錄檔已清理。</value>
+    <value>日誌檔已清理。</value>
   </data>
   <data name="LogCleanupCaption" xml:space="preserve">
-    <value>記錄檔清理</value>
+    <value>日誌檔清理</value>
   </data>
   <data name="LogFilesCollectedCaption" xml:space="preserve">
-    <value>記錄檔已採集</value>
+    <value>日誌檔已採集</value>
   </data>
   <data name="LogFilesCollectedMessage" xml:space="preserve">
-    <value>記錄檔已採集。檔案已在目前使用者的桌面建立。</value>
+    <value>日誌檔已採集。檔案已在目前使用者的桌面建立。</value>
   </data>
   <data name="LogManagement" xml:space="preserve">
-    <value>記錄管理</value>
+    <value>日誌管理</value>
   </data>
   <data name="LogManagementDescription" xml:space="preserve">
-    <value>瀏覽記錄資料夾、清理過期記錄、採集記錄</value>
+    <value>瀏覽日誌資料夾、清理過期日誌、採集日誌</value>
   </data>
 </root>

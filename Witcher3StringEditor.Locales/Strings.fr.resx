@@ -323,10 +323,10 @@
     <value>Journal</value>
   </data>
   <data name="LogTime" xml:space="preserve">
-    <value>Temps d'enregistrement</value>
+    <value>Heure du journal</value>
   </data>
   <data name="LogLevel" xml:space="preserve">
-    <value>Niveau d'enregistrement</value>
+    <value>Niveau du journal</value>
   </data>
   <data name="LogMessage" xml:space="preserve">
     <value>Message du journal</value>

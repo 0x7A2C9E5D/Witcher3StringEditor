@@ -145,7 +145,7 @@
     <value>Sicherung</value>
   </data>
   <data name="LogBtnLabel" xml:space="preserve">
-    <value>Log</value>
+    <value>Protokoll</value>
   </data>
   <data name="SettingsBtnLabel" xml:space="preserve">
     <value>Einstellungen</value>
@@ -320,16 +320,16 @@
     <value>Schließen</value>
   </data>
   <data name="LogDialogTitle" xml:space="preserve">
-    <value>Log</value>
+    <value>Protokoll</value>
   </data>
   <data name="LogTime" xml:space="preserve">
-    <value>Zeitstempel</value>
+    <value>Protokollzeit</value>
   </data>
   <data name="LogLevel" xml:space="preserve">
-    <value>Typ</value>
+    <value>Protokollstufe</value>
   </data>
   <data name="LogMessage" xml:space="preserve">
-    <value>Detail</value>
+    <value>Protokollnachricht</value>
   </data>
   <data name="SettingsDialogTitle" xml:space="preserve">
     <value>Einstellungen</value>
