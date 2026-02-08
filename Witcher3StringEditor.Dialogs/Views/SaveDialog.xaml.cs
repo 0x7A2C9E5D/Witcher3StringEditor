@@ -45,7 +45,7 @@ public partial class SaveDialog
     /// </summary>
     /// <param name="sender">The object that triggered the event</param>
     /// <param name="e">The event arguments</param>
-    private void Window_Closed(object sender, EventArgs e)
+    private void SaveDialog_OnClosed(object sender, EventArgs e)
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
