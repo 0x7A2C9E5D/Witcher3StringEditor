@@ -127,11 +127,16 @@ public partial class SettingDialogViewModel(
         if (files.Length == 1)
         {
             Log.Information("There is only one log file."); // Log that there is only one log file.
-            WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.LogsNoNeedToClean); // Send a message to the main window.
+            WeakReferenceMessenger.Default.Send(string.Empty,
+                MessageTokens.LogsNoNeedToClean); // Send a message to the main window.
             return;
         }
 
-        foreach (var file in files) // Loop through all log files in the log folder.
+        var filesToDelete =
+            files.OrderByDescending(File.GetLastWriteTime)
+                .Skip(1); // Get all log files in the log folder, ordered by last write time, and skip the first one.
+        
+        foreach (var file in filesToDelete) // Loop through all log files in the log folder.
             try
             {
                 File.Delete(file); // Delete the log file.
@@ -143,7 +148,8 @@ public partial class SettingDialogViewModel(
             }
 
         Log.Information("Old log files have been deleted."); // Log that the old log files have been deleted.
-        WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.LogsCleaned); // Send a message to the main window.
+        WeakReferenceMessenger.Default.Send(string.Empty,
+            MessageTokens.LogsCleaned); // Send a message to the main window.
     }
 
     /// <summary>
@@ -158,7 +164,8 @@ public partial class SettingDialogViewModel(
         ZipFile.CreateFromDirectory(tempFolder, Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip")); // Create a zip file from the temporary folder.
-        WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.LogsCollected); // Send a message to the main window.
+        WeakReferenceMessenger.Default.Send(string.Empty,
+            MessageTokens.LogsCollected); // Send a message to the main window.
         Log.Information("Logs have been collected."); // Log that the logs have been collected.
     }
 }
