@@ -136,7 +136,7 @@ public partial class SettingDialogViewModel(
             files.OrderByDescending(File.GetLastWriteTime)
                 .Skip(1); // Get all log files in the log folder, ordered by last write time, and skip the first one.
 
-        var deletedFilesCount = 0;
+        var deletedFilesCount = 0; // Initialize the deleted files count.
         foreach (var file in filesToDelete) // Loop through all log files in the log folder.
             try
             {
