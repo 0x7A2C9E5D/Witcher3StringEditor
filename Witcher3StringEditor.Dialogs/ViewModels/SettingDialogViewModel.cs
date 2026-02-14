@@ -172,6 +172,7 @@ public partial class SettingDialogViewModel(
             $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip"); // Get the destination archive file name.
         ZipFile.CreateFromDirectory(tempFolder,
             archiveFileName); // Create a zip file from the temporary folder.
+        Directory.Delete(tempFolder, true); // Delete the temporary folder.
         WeakReferenceMessenger.Default.Send(string.Empty,
             MessageTokens.LogsCollected); // Send a message to the main window.
         Log.Information("Created zip file: {Path}.", archiveFileName); // Log the creation.
