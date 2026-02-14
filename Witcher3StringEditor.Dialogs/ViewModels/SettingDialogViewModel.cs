@@ -155,7 +155,7 @@ public partial class SettingDialogViewModel(
     }
 
     /// <summary>
-    ///     Packs log files into a zip file
+    ///     Collects the logs
     /// </summary>
     [RelayCommand]
     private void CollectLogs()
