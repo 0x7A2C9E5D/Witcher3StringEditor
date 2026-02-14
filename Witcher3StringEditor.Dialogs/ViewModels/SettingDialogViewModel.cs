@@ -135,10 +135,11 @@ public partial class SettingDialogViewModel(
             try
             {
                 File.Delete(file); // Delete the log file.
+                Log.Information("Deleted log file: {Path}.", file); // Log the deletion.
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Ignore
+                Log.Error(ex, "Failed to delete log file: {Path}.", file); // Log the error.
             }
 
         Log.Information("Old log files have been deleted."); // Log that the old log files have been deleted.
@@ -157,6 +158,7 @@ public partial class SettingDialogViewModel(
         ZipFile.CreateFromDirectory(tempFolder, Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip")); // Create a zip file from the temporary folder.
-        WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.LogsCollected);
+        WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.LogsCollected); // Send a message to the main window.
+        Log.Information("Logs have been collected."); // Log that the logs have been collected.
     }
 }
