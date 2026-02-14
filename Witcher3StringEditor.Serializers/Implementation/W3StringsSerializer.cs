@@ -31,10 +31,10 @@ public class W3StringsSerializer(
     /// </returns>
     public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
     {
+        var tempFilePath = CreateTemporaryCopy(filePath); // Create temporary copy of W3Strings file
+
         try
         {
-            var tempFilePath = CreateTemporaryCopy(filePath); // Create temporary copy of W3Strings file
-
             // Execute the external W3Strings decoder tool with the file to decode
             using var process = await ExecuteExternalProcess(appSettings.W3StringsPath,
                 Parser.Default.FormatCommandLine(new W3StringsOptions
@@ -49,6 +49,13 @@ public class W3StringsSerializer(
             Log.Error(ex, "An error occurred while deserializing W3Strings file: {Path}.",
                 filePath); // Log any errors that occur during deserialization
             return []; // Return an empty list in case of errors
+        }
+        finally
+        {
+            var tempDirectory = Path.GetDirectoryName(tempFilePath)!; // Get the directory of the temporary file
+            Directory.Delete(tempDirectory, true); // Delete the temporary directory
+            Log.Information("Temporary directory deleted: {Directory}",
+                tempDirectory); // Delete the temporary directory
         }
     }
 
@@ -67,17 +74,20 @@ public class W3StringsSerializer(
     /// </returns>
     public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
     {
+        var tempDirectory =
+            Directory.CreateTempSubdirectory().FullName; // Create a temporary directory for intermediate files
+
         try
         {
             var saveLang =
                 Enum.GetName(context.TargetLanguage)!
                     .ToLowerInvariant(); // Get the lowercase name of the target language for file naming
-            var tempDirectory =
-                Directory.CreateTempSubdirectory().FullName; // Create a temporary directory for intermediate files
+
+            // Create a temporary context with the temp directory as output
             var tempContext = context with
             {
                 OutputDirectory = tempDirectory
-            }; // Create a temporary context with the temp directory as output
+            };
 
             // Define paths for temporary CSV and W3Strings files
             var tempCsvPath = Path.Combine(tempDirectory, $"{saveLang}.csv");
@@ -98,6 +108,12 @@ public class W3StringsSerializer(
             Log.Error(ex,
                 "An error occurred while serializing W3Strings."); // Log any errors that occur during serialization
             return false; // Return false to indicate serialization failure
+        }
+        finally
+        {
+            Directory.Delete(tempDirectory, true); // Delete the temporary directory
+            Log.Information("Temporary directory deleted: {Directory}",
+                tempDirectory); // Delete the temporary directory
         }
     }
 
