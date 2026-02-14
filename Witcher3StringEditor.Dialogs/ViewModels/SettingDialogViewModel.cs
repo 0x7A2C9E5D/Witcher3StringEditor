@@ -135,11 +135,13 @@ public partial class SettingDialogViewModel(
         var filesToDelete =
             files.OrderByDescending(File.GetLastWriteTime)
                 .Skip(1); // Get all log files in the log folder, ordered by last write time, and skip the first one.
-        
+
+        var deletedFilesCount = 0;
         foreach (var file in filesToDelete) // Loop through all log files in the log folder.
             try
             {
                 File.Delete(file); // Delete the log file.
+                deletedFilesCount++; // Increment the deleted files count.
                 Log.Information("Deleted log file: {Path}.", file); // Log the deletion.
             }
             catch (Exception ex)
@@ -147,7 +149,7 @@ public partial class SettingDialogViewModel(
                 Log.Error(ex, "Failed to delete log file: {Path}.", file); // Log the error.
             }
 
-        Log.Information("Old log files have been deleted."); // Log that the old log files have been deleted.
+        Log.Information("Deleted {Count} log files.", deletedFilesCount); // Log the number of deleted log files.
         WeakReferenceMessenger.Default.Send(string.Empty,
             MessageTokens.LogsCleaned); // Send a message to the main window.
     }
