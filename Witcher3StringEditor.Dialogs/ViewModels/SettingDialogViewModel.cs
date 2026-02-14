@@ -127,6 +127,7 @@ public partial class SettingDialogViewModel(
         if (files.Length == 1) // If there is only one log file, do nothing.
         {
             Log.Information("There is only one log file."); // Log that there is only one log file.
+            Log.Information("No need to clean."); // Log that there is no need to clean.
             WeakReferenceMessenger.Default.Send(string.Empty,
                 MessageTokens.LogsNoNeedToClean); // Send a message to the main window.
             return;
