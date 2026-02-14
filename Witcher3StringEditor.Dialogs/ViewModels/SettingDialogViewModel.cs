@@ -123,8 +123,8 @@ public partial class SettingDialogViewModel(
     [RelayCommand]
     private void DeleteOldLogs()
     {
-        var files = Directory.GetFiles(logFolder);
-        if (files.Length == 1)
+        var files = Directory.GetFiles(logFolder); // Get all log files in the log folder.
+        if (files.Length == 1) // If there is only one log file, do nothing.
         {
             Log.Information("There is only one log file."); // Log that there is only one log file.
             WeakReferenceMessenger.Default.Send(string.Empty,
