@@ -156,7 +156,7 @@ public partial class SettingDialogViewModel(
     }
 
     /// <summary>
-    ///     Collects the logs
+    ///     Collects the log files
     /// </summary>
     [RelayCommand]
     private void CollectLogs()
