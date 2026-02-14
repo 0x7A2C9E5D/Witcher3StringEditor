@@ -161,13 +161,19 @@ public partial class SettingDialogViewModel(
     private void CollectLogs()
     {
         var tempFolder = Directory.CreateTempSubdirectory().FullName; // Create a temporary folder.
-        Directory.GetFiles(logFolder).ForEach(x =>
-            File.Copy(x, Path.Combine(tempFolder, Path.GetFileName(x)))); // Copy all log files to the temporary folder.
-        ZipFile.CreateFromDirectory(tempFolder, Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-            $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip")); // Create a zip file from the temporary folder.
+        Directory.GetFiles(logFolder).ForEach(sourceFileName =>
+        {
+            var destFileName =
+                Path.Combine(tempFolder, Path.GetFileName(sourceFileName)); // Get the destination file name.
+            File.Copy(sourceFileName, destFileName); // Copy the log file.
+            Log.Information("Copied log file: {Path}.", sourceFileName); // Log the copy.
+        });
+        var archiveFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip"); // Get the destination archive file name.
+        ZipFile.CreateFromDirectory(tempFolder,
+            archiveFileName); // Create a zip file from the temporary folder.
         WeakReferenceMessenger.Default.Send(string.Empty,
             MessageTokens.LogsCollected); // Send a message to the main window.
-        Log.Information("Logs have been collected."); // Log that the logs have been collected.
+        Log.Information("Created zip file: {Path}.", archiveFileName); // Log the creation.
     }
 }
