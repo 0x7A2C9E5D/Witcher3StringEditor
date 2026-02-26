@@ -23,11 +23,11 @@
         <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
         <PackageReference Include="Serilog" Version="4.3.1" />
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.19.0.132793">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.20.0.135146">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="32.2.5" />
+        <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="32.2.7" />
         <PackageReference Include="System.Linq.AsyncEnumerable" Version="10.0.3" />
     </ItemGroup>
 
