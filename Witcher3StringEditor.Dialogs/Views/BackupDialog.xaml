@@ -121,20 +121,14 @@
                     Width="200"
                     HeaderText="{I18N {x:Static l:LangKeys.Hash}}"
                     MappingName="Hash"
-                    MinimumWidth="200"
+                    MinimumWidth="250"
                     TextAlignment="Center"
                     TextWrapping="Wrap" />
                 <!-- Original path column -->
                 <sf:GridTextColumn
                     HeaderText="{I18N {x:Static l:LangKeys.OriginPath}}"
                     MappingName="OrginPath"
-                    MinimumWidth="150"
-                    TextWrapping="Wrap" />
-                <!-- Backup path column -->
-                <sf:GridTextColumn
-                    HeaderText="{I18N {x:Static l:LangKeys.BackupPath}}"
-                    MappingName="BackupPath"
-                    MinimumWidth="150"
+                    MinimumWidth="300"
                     TextWrapping="Wrap" />
                 <!-- Backup time column -->
                 <sf:GridDateTimeColumn
