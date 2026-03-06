@@ -3,13 +3,39 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Witcher3StringEditor.Dialogs.Views"
         xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+        xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
+        xmlns:sf="http://schemas.syncfusion.com/wpf"
+        d:DataContext="{d:DesignInstance Type=vm:DictionaryDialogViewModel}"
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:WindowHelper.SystemBackdropType="Mica"
         mc:Ignorable="d"
-        Title="DictionaryDialog" Height="450" Width="800">
+        Title="DictionaryDialog" Height="800" Width="1200">
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Button Grid.Row="0" Grid.Column="1" Margin="0,16,16,16">
+            <StackPanel Orientation="Horizontal">
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Import}"/>
+                <TextBlock Margin="16,0,0,0" Text="导入XLF文件"/>
+            </StackPanel>
+        </Button>
+        <sf:SfDataGrid Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" AllowResizingColumns="True" Margin="16,0,16,16"
+                       AutoGenerateColumns="False">
+            <sf:SfDataGrid.Columns>
+                <sf:GridTextColumn HeaderText="名称" />
+                <sf:GridTextColumn HeaderText="源语言" />
+                <sf:GridTextColumn HeaderText="目标语言" />
+                <sf:GridTextColumn HeaderText="词条数量" />
+                <sf:GridTextColumn HeaderText="描述" />
+                <sf:GridTextColumn HeaderText="删除" />
+            </sf:SfDataGrid.Columns>
+        </sf:SfDataGrid>
     </Grid>
 </Window>
