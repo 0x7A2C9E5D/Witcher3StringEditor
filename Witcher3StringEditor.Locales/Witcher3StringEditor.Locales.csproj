@@ -52,6 +52,9 @@
         <EmbeddedResource Update="Strings.ja-jp.resx">
             <DependentUpon>Strings.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Strings.de.resx">
+          <DependentUpon>Strings.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>

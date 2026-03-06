@@ -535,4 +535,7 @@
   <data name="LogManagementDescription" xml:space="preserve">
     <value>Parcourir le dossier des journaux, nettoyer les journaux expirés, collecter les journaux</value>
   </data>
+  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <value>Changer le mode de traduction</value>
+  </data>
 </root>

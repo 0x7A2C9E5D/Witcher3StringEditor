@@ -535,4 +535,7 @@
   <data name="LogManagementDescription" xml:space="preserve">
     <value>浏览日志文件夹、清理过期日志、采集日志</value>
   </data>
+  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <value>切换翻译模式</value>
+  </data>
 </root>

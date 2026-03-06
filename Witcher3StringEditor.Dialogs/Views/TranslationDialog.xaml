@@ -8,6 +8,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
     xmlns:t="clr-namespace:Witcher3StringEditor.Dialogs.TemplateSelectors"
+    xmlns:l="clr-namespace:Witcher3StringEditor.Locales;assembly=Witcher3StringEditor.Locales"
     Title="{Binding Title}"
     Width="800"
     Height="800"
@@ -85,7 +86,10 @@
                 Margin="0,0,0,16"
                 HorizontalAlignment="Right"
                 Command="{Binding SwitchCommand}">
-                <ui:FontIcon Glyph="&#xE8AB;" />
+                <StackPanel Orientation="Horizontal">
+                    <ui:FontIcon Glyph="&#xE8AB;" />
+                    <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.SwitchTranslationModeBtnContent}}" />
+                </StackPanel>
             </Button>
             <!-- Content control that displays the appropriate translation view based on the current view model -->
             <ContentControl
