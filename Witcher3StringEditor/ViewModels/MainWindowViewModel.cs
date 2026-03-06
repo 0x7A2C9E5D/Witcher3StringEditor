@@ -48,7 +48,8 @@ internal partial class MainWindowViewModel : ObservableObject
     /// <summary>
     ///     Gets the filtered collection of W3String items
     /// </summary>
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     private ObservableCollection<W3StringItemModel>? filteredW3StringItems;
 
     /// <summary>
@@ -60,7 +61,8 @@ internal partial class MainWindowViewModel : ObservableObject
     ///     Gets or sets the output folder path
     ///     Notifies OpenWorkingFolderCommand when this property changes
     /// </summary>
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(OpenWorkingFolderCommand))]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(OpenWorkingFolderCommand))]
     private string outputFolder = string.Empty;
 
     /// <summary>
@@ -640,5 +642,11 @@ internal partial class MainWindowViewModel : ObservableObject
             new TranslationDialogViewModel(appSettings, translator, itemsToUse,
                 selectedIndex)); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable
+    }
+
+    [RelayCommand]
+    private async Task ShowDictionaryDialog()
+    {
+        await dialogService.ShowDialogAsync(this, new DictionaryDialogViewModel()); // Show the dictionary dialog
     }
 }

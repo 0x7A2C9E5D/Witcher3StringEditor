@@ -184,6 +184,14 @@
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
                 </ui:AppBarButton.Icon>
             </ui:AppBarButton>
+            <!-- Dictionary button -->
+            <ui:AppBarButton
+                Command="{Binding ShowDictionaryDialogCommand}"
+                Label="词典">
+                <ui:AppBarButton.Icon>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Dictionary}" />
+                </ui:AppBarButton.Icon>
+            </ui:AppBarButton>
             <!-- Save button -->
             <ui:AppBarButton Command="{Binding ShowSaveDialogCommand}"
                              Label="{I18N {x:Static l:LangKeys.SaveBtnLabel}}">
