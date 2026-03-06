@@ -535,4 +535,7 @@
   <data name="LogManagementDescription" xml:space="preserve">
     <value>Tallózás a napló mappában, lejárt naplók tisztítása, naplók gyűjtése</value>
   </data>
+  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <value>Fordítási mód váltása</value>
+  </data>
 </root>

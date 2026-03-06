@@ -535,4 +535,7 @@
   <data name="LogManagementDescription" xml:space="preserve">
     <value>瀏覽日誌資料夾、清理過期日誌、採集日誌</value>
   </data>
+  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <value>切換翻譯模式</value>
+  </data>
 </root>

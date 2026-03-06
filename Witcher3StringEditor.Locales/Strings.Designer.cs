@@ -1078,6 +1078,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Switch Translation Mode.
+        /// </summary>
+        public static string SwitchTranslationModeBtnContent {
+            get {
+                return ResourceManager.GetString("SwitchTranslationModeBtnContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Target Filetype.
         /// </summary>
         public static string TargetFiletype {
@@ -1186,7 +1195,7 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Twirling through Translation....
+        ///   Looks up a localized string similar to Translating....
         /// </summary>
         public static string Translating {
             get {

@@ -535,4 +535,7 @@
   <data name="LogManagementDescription" xml:space="preserve">
     <value>ログフォルダー参照、有効期限切れログのクリーンアップ、ログ収集</value>
   </data>
+  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <value>翻訳モードを切り替える</value>
+  </data>
 </root>

@@ -535,4 +535,7 @@
   <data name="LogManagement" xml:space="preserve">
     <value>Log Management</value>
   </data>
+  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <value>Switch Translation Mode</value>
+  </data>
 </root>

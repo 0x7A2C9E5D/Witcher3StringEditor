@@ -535,4 +535,7 @@
   <data name="LogManagementDescription" xml:space="preserve">
     <value>Protokollordner durchsuchen, abgelaufene Protokolle bereinigen, Protokolle erfassen</value>
   </data>
+  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <value>Übersetzungsmodus wechseln</value>
+  </data>
 </root>
