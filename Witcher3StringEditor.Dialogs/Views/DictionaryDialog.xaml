@@ -23,7 +23,7 @@
         <Button Grid.Row="0" Grid.Column="1" Margin="0,16,16,16">
             <StackPanel Orientation="Horizontal">
                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Import}"/>
-                <TextBlock Margin="16,0,0,0" Text="导入XLF文件"/>
+                <TextBlock Margin="5,0,0,0" Text="导入字典文件"/>
             </StackPanel>
         </Button>
         <sf:SfDataGrid Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" AllowResizingColumns="True" Margin="16,0,16,16"
