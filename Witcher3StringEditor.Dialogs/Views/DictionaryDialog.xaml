@@ -26,15 +26,12 @@
                 <TextBlock Margin="5,0,0,0" Text="导入字典文件" />
             </StackPanel>
         </Button>
-        <sf:SfDataGrid Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" AllowResizingColumns="True" Margin="16,0,16,16"
+        <sf:SfDataGrid ItemsSource="{Binding Dictionaries}" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
+                       AllowResizingColumns="True" Margin="16,0,16,16"
                        AutoGenerateColumns="False">
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn HeaderText="名称" />
-                <sf:GridTextColumn HeaderText="源语言" />
-                <sf:GridTextColumn HeaderText="目标语言" />
-                <sf:GridTextColumn HeaderText="词条数量" />
-                <sf:GridTextColumn HeaderText="描述" />
-                <sf:GridTextColumn HeaderText="删除" />
+                <sf:GridTextColumn MappingName="SourceLanguage" HeaderText="源语言" />
+                <sf:GridTextColumn MappingName="TargetLanguage" HeaderText="目标语言" />
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
     </Grid>

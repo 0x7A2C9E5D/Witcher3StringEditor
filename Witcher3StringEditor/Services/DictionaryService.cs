@@ -22,7 +22,8 @@ public class DictionaryService : IDictionaryService
     {
         dictionaryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
             , IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Dictionaries");
-        if (!Directory.Exists(dictionaryPath)) Directory.CreateDirectory(dictionaryPath);
+        if (!Directory.Exists(dictionaryPath)) 
+            Directory.CreateDirectory(dictionaryPath);
         LoadDictionariesFromDirectory(dictionaryPath);
     }
 
@@ -53,6 +54,10 @@ public class DictionaryService : IDictionaryService
     {
         var files = Directory.GetFiles(path)
             .Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf"));
-        files.ForEach(file => xliffReader.ReadInfo(file));
+        files.ForEach(file =>
+        {
+            var info = xliffReader.ReadInfo(file);
+            if (info != null) Dictionaries.Add(info);
+        });
     }
 }
