@@ -18,7 +18,9 @@ public class DictionaryService : IDictionaryService
         fileWatcher.Filters.Add("*.xlf");
         fileWatcher.Filters.Add("*.xliff");
         fileWatcher.EnableRaisingEvents = true;
-        fileWatcher.Changed += FileWatcher_Changed;
+        fileWatcher.Created += FileWatcher_Created;
+        fileWatcher.Deleted += FileWatcher_Deleted;
+        fileWatcher.Renamed += FileWatcher_Renamed;
     }
 
     public ObservableCollection<XliffInfo> Dictionaries { get; } = [];
@@ -28,33 +30,21 @@ public class DictionaryService : IDictionaryService
         return xliffReader.ReadDocument(xliffInfo);
     }
 
-    private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
+    private void FileWatcher_Renamed(object sender, RenamedEventArgs e)
     {
-        switch (e.ChangeType)
-        {
-            case WatcherChangeTypes.Created:
-                HandleFileCreated(e);
-                break;
-            case WatcherChangeTypes.Deleted:
-                HandleFileDeleted(e);
-                break;
-            case WatcherChangeTypes.Changed:
-            case WatcherChangeTypes.Renamed:
-            case WatcherChangeTypes.All:
-            default:
-                break;
-        }
+        var xliffInfo = Dictionaries.FirstOrDefault(x => x.FilePath == e.OldFullPath);
+        if (xliffInfo != null) xliffInfo.FilePath = e.FullPath;
     }
 
-    private void HandleFileDeleted(FileSystemEventArgs e)
-    {
-        var xliffInfo = Dictionaries.FirstOrDefault(x => x.FilePath == e.FullPath);
-        if (xliffInfo != null) Dictionaries.Remove(xliffInfo);
-    }
-
-    private void HandleFileCreated(FileSystemEventArgs e)
+    private void FileWatcher_Deleted(object sender, FileSystemEventArgs e)
     {
         var xliffInfo = xliffReader.ReadInfo(e.FullPath);
         if (xliffInfo != null) Dictionaries.Add(xliffInfo);
+    }
+
+    private void FileWatcher_Created(object sender, FileSystemEventArgs e)
+    {
+        var xliffInfo = Dictionaries.FirstOrDefault(x => x.FilePath == e.FullPath);
+        if (xliffInfo != null) Dictionaries.Remove(xliffInfo);
     }
 }

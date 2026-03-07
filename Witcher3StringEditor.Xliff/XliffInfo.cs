@@ -5,7 +5,7 @@ namespace Witcher3StringEditor.Xliff;
 [PublicAPI]
 public class XliffInfo
 {
-    public required string FilePath { get; init; }
+    public required string FilePath { get; set; }
     
     public required Version Version { get; init; }
 
