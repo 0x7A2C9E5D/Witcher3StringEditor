@@ -42,4 +42,10 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
             dictionaryService.AddDictionaryFromFile(storageFile.LocalPath);
         }
     }
+
+    [RelayCommand]
+    private void RemoveDictionary(XliffInfo xliffInfo)
+    {
+        dictionaryService.RemoveDictionary(xliffInfo);
+    }
 }
