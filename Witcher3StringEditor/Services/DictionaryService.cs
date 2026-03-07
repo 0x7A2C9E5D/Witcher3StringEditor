@@ -13,9 +13,9 @@ public class DictionaryService : IDictionaryService
 
     public DictionaryService()
     {
-        var path = string.Empty;
-        LoadDictionariesFromDirectory(path);
-        fileWatcher.Path = path;
+        var dictionaryPath = string.Empty;
+        LoadDictionariesFromDirectory(dictionaryPath);
+        fileWatcher.Path = dictionaryPath;
         fileWatcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.FileName |
                                    NotifyFilters.Size;
         fileWatcher.Filters.Add("*.xlf");
