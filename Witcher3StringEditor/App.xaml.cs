@@ -283,6 +283,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IDialogManager, DialogManager>()
             .AddSingleton<IDialogService, DialogService>()
             .AddSingleton<ILogAccessService, LogAccessService>()
+            .AddSingleton<IDictionaryService,DictionaryService>()
             .AddScoped<IExplorerService, ExplorerService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
