@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
+using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Xliff;
 
@@ -12,7 +13,9 @@ public class DictionaryService : IDictionaryService
 
     public DictionaryService()
     {
-        fileWatcher.Path = string.Empty;
+        var path = string.Empty;
+        LoadDictionariesFromDirectory(path);
+        fileWatcher.Path = path;
         fileWatcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.FileName |
                                    NotifyFilters.Size;
         fileWatcher.Filters.Add("*.xlf");
@@ -28,6 +31,13 @@ public class DictionaryService : IDictionaryService
     public XliffDocument LoadDictionary(XliffInfo xliffInfo)
     {
         return xliffReader.ReadDocument(xliffInfo);
+    }
+
+    private void LoadDictionariesFromDirectory(string path)
+    {
+        var files = Directory.GetFiles(path)
+            .Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf"));
+        files.ForEach(file => xliffReader.ReadInfo(file));
     }
 
     private void FileWatcher_Renamed(object sender, RenamedEventArgs e)
