@@ -16,6 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -27,9 +28,10 @@
                 <TextBlock Margin="5,0,0,0" Text="导入字典文件" />
             </StackPanel>
         </Button>
-        <sf:SfDataGrid NavigationMode="Row" RowHeight="35" ShowRowHeader="True" ItemsSource="{Binding Dictionaries}"
+        <sf:SfDataGrid NavigationMode="Row" RowHeight="35" ShowRowHeader="True"
+                       ItemsSource="{Binding PagedSource, ElementName=SfDataPager}"
                        Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
-                       AllowResizingColumns="True" Margin="16,0,16,16"
+                       AllowResizingColumns="True" Margin="16,0"
                        AutoGenerateColumns="False">
             <sf:SfDataGrid.Resources>
                 <ResourceDictionary>
@@ -55,7 +57,7 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
-                    <c:FilePathToFileNameConverter x:Key="FilePathToFileNameConverter"/>
+                    <c:FilePathToFileNameConverter x:Key="FilePathToFileNameConverter" />
                 </ResourceDictionary>
             </sf:SfDataGrid.Resources>
             <sf:SfDataGrid.Columns>
@@ -81,5 +83,7 @@
                 </sf:GridTemplateColumn>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
+        <sf:SfDataPager Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,4" x:Name="SfDataPager"
+                        Source="{Binding Dictionaries}" />
     </Grid>
 </Window>
