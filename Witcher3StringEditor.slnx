@@ -5,5 +5,6 @@
     <Project Path="Witcher3StringEditor.Messaging/Witcher3StringEditor.Messaging.csproj" Id="e78d7acb-00a1-44e5-a022-d773065ea126" />
     <Project Path="Witcher3StringEditor.NexusIntegration/Witcher3StringEditor.NexusIntegration.csproj" Id="ed0b7250-22a7-49fe-88bc-c824e4a1edb1" />
     <Project Path="Witcher3StringEditor.Serializers/Witcher3StringEditor.Serializers.csproj" />
+    <Project Path="Witcher3StringEditor.Xliff/Witcher3StringEditor.Xliff.csproj" />
     <Project Path="Witcher3StringEditor/Witcher3StringEditor.csproj" />
 </Solution>
