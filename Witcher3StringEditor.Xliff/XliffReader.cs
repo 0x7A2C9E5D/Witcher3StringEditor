@@ -45,18 +45,26 @@ public class XliffReader : IXliffReader
         };
     }
 
-    private Dictionary<string, string>? ReadTranslations()
+    private Dictionary<string, string> ReadTranslations()
     {
-        if (xliffInfo == null) return null;
-        xElement ??= XElement.Load(xliffInfo.FilePath);
+        var translationUnits = GetTranslationUnits();
+        return ParseTranslationUnitsToDictionary(translationUnits);
+    }
+
+    private IEnumerable<XElement> GetTranslationUnits()
+    {
+        if (xliffInfo == null) return [];
+        xElement ??= XElement.Load(xliffInfo!.FilePath);
         using var xmlReader = xElement.CreateReader();
         var nsManager = new XmlNamespaceManager(xmlReader.NameTable);
         var ns = string.Format(XliffNamespace, xliffInfo.Version);
         nsManager.AddNamespace("xliff", ns);
-
         var xpath = xliffInfo.Version.Major == 1 ? "//xliff:trans-unit" : "//xliff:segment";
-        var translationUnits = xElement.XPathSelectElements(xpath, nsManager);
+        return xElement.XPathSelectElements(xpath, nsManager);
+    }
 
+    private static Dictionary<string, string> ParseTranslationUnitsToDictionary(IEnumerable<XElement> translationUnits)
+    {
         return translationUnits
             .Select(ParseTranslationUnit)
             .Where(pair => pair != null)
