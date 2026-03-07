@@ -26,16 +26,43 @@
                 <TextBlock Margin="5,0,0,0" Text="导入字典文件" />
             </StackPanel>
         </Button>
-        <sf:SfDataGrid ItemsSource="{Binding Dictionaries}" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
+        <sf:SfDataGrid NavigationMode="Row" RowHeight="35" ShowRowHeader="True" ItemsSource="{Binding Dictionaries}"
+                       Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
                        AllowResizingColumns="True" Margin="16,0,16,16"
                        AutoGenerateColumns="False">
+            <sf:SfDataGrid.Resources>
+                <ResourceDictionary>
+                    <!-- Custom style for row header cells to display row numbers -->
+                    <Style TargetType="sf:GridRowHeaderCell">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="sf:GridRowHeaderCell">
+                                    <Border
+                                        x:Name="PART_RowHeaderCellBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        <Grid>
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding RowIndex, RelativeSource={RelativeSource TemplatedParent}}"
+                                                TextAlignment="Center" />
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </sf:SfDataGrid.Resources>
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn MappingName="SourceLanguage" HeaderText="源语言" />
-                <sf:GridTextColumn MappingName="TargetLanguage" HeaderText="目标语言" />
+                <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage" HeaderText="源语言" />
+                <sf:GridTextColumn TextAlignment="Center" MappingName="TargetLanguage" HeaderText="目标语言" />
                 <sf:GridTemplateColumn HeaderText="删除" MappingName="Delete">
                     <sf:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button CommandParameter="{Binding}"
+                            <Button HorizontalAlignment="Center" CommandParameter="{Binding}"
                                     Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RemoveDictionaryCommand}">
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
                             </Button>
