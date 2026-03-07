@@ -11,7 +11,7 @@ namespace Witcher3StringEditor.Dialogs.Converters
         {
             if (value is not string filePath) 
                 return DependencyProperty.UnsetValue;
-            return Path.GetFileName(filePath);
+            return Path.GetFileNameWithoutExtension(filePath);
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

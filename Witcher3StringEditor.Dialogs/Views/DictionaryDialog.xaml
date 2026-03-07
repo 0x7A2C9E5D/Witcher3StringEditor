@@ -68,6 +68,7 @@
                 </sf:GridTextColumn>
                 <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage" HeaderText="源语言" />
                 <sf:GridTextColumn TextAlignment="Center" MappingName="TargetLanguage" HeaderText="目标语言" />
+                <sf:GridTextColumn TextAlignment="Center" MappingName="Count" HeaderText="术语条数" />
                 <sf:GridTemplateColumn HeaderText="删除" MappingName="Delete">
                     <sf:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
