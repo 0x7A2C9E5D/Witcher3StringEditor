@@ -13,7 +13,7 @@ public class DictionaryDialogViewModel : ObservableObject, IModalDialogViewModel
     public DictionaryDialogViewModel(IDictionaryService dictionaryService)
     {
         this.dictionaryService = dictionaryService;
-        Dictionaries.CollectionChanged += (s, e) => OnPropertyChanged(nameof(Dictionaries));
+        Dictionaries.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Dictionaries));
     }
 
     public ObservableCollection<XliffInfo> Dictionaries => dictionaryService.Dictionaries;
