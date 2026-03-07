@@ -1,9 +1,11 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using JetBrains.Annotations;
 
 namespace Witcher3StringEditor.Xliff;
 
+[PublicAPI]
 public class XliffReader : IXliffReader
 {
     private const string XliffNamespace = "urn:oasis:names:tc:xliff:document:{0}";
@@ -43,16 +45,32 @@ public class XliffReader : IXliffReader
         };
     }
 
-    private IReadOnlyDictionary<string, string>? ReadTranslations()
+    private Dictionary<string, string>? ReadTranslations()
     {
         if (xliffInfo == null || xElement == null) return null;
         using var xmlReader = xElement.CreateReader();
         var nsManager = new XmlNamespaceManager(xmlReader.NameTable);
         var ns = string.Format(XliffNamespace, xliffInfo.Version);
         nsManager.AddNamespace("xliff", ns);
-        return xElement
-            .XPathSelectElements(xliffInfo.Version.Major == 1 ? "//xliff:trans-unit" : "//xliff:segment", nsManager)
-            .Select(segment => segment.DescendantNodes().Where(x => x.NodeType == XmlNodeType.Element).Cast<XElement>()
-                .Select(x => x.Value).ToList()).ToDictionary(textNodes => textNodes[0], textNodes => textNodes[1]);
+
+        var xpath = xliffInfo.Version.Major == 1 ? "//xliff:trans-unit" : "//xliff:segment";
+        var translationUnits = xElement.XPathSelectElements(xpath, nsManager);
+
+        return translationUnits
+            .Select(ParseTranslationUnit)
+            .Where(pair => pair != null)
+            .ToDictionary(pair => pair!.Value.Key, pair => pair!.Value.Value);
+    }
+
+    private static KeyValuePair<string, string>? ParseTranslationUnit(XElement unitElement)
+    {
+        var textNodes = unitElement
+            .DescendantNodes()
+            .Where(node => node.NodeType == XmlNodeType.Element)
+            .Cast<XElement>()
+            .Select(element => element.Value)
+            .ToList();
+        if (textNodes.Count < 2) return null;
+        return new KeyValuePair<string, string>(textNodes[0], textNodes[1]);
     }
 }
