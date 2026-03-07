@@ -65,6 +65,7 @@
         <ProjectReference Include="..\Witcher3StringEditor.Messaging\Witcher3StringEditor.Messaging.csproj" />
         <ProjectReference Include="..\Witcher3StringEditor.NexusIntegration\Witcher3StringEditor.NexusIntegration.csproj" />
         <ProjectReference Include="..\Witcher3StringEditor.Serializers\Witcher3StringEditor.Serializers.csproj" />
+        <ProjectReference Include="..\Witcher3StringEditor.Xliff\Witcher3StringEditor.Xliff.csproj" />
     </ItemGroup>
 
 </Project>
