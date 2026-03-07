@@ -47,7 +47,8 @@ public class XliffReader : IXliffReader
 
     private Dictionary<string, string>? ReadTranslations()
     {
-        if (xliffInfo == null || xElement == null) return null;
+        if (xliffInfo == null) return null;
+        xElement ??= XElement.Load(xliffInfo.FilePath);
         using var xmlReader = xElement.CreateReader();
         var nsManager = new XmlNamespaceManager(xmlReader.NameTable);
         var ns = string.Format(XliffNamespace, xliffInfo.Version);
