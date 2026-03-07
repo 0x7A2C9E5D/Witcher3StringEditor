@@ -22,7 +22,7 @@ public class DictionaryService : IDictionaryService
     {
         dictionaryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
             , IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Dictionaries");
-        if (!Directory.Exists(dictionaryPath)) 
+        if (!Directory.Exists(dictionaryPath))
             Directory.CreateDirectory(dictionaryPath);
         LoadDictionariesFromDirectory(dictionaryPath);
     }
@@ -38,9 +38,11 @@ public class DictionaryService : IDictionaryService
     {
         var xliffInfo = xliffReader.ReadInfo(path);
         if (xliffInfo == null) return;
-        Dictionaries.Add(xliffInfo);
         var destFileName = Path.Combine(dictionaryPath, Path.GetFileName(xliffInfo.FilePath));
-        File.Copy(xliffInfo.FilePath, destFileName, true);
+        if (Dictionaries.Any(x => x.FilePath.Equals(destFileName))) return;
+        File.Copy(xliffInfo.FilePath, destFileName);
+        xliffInfo.FilePath = destFileName;
+        Dictionaries.Add(xliffInfo);
     }
 
     public void RemoveDictionary(XliffInfo xliffInfo)
