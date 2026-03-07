@@ -8,12 +8,20 @@ namespace Witcher3StringEditor.Services;
 
 public class DictionaryService : IDictionaryService
 {
+#if DEBUG
+    private static bool IsDebug => true;
+#else
+    private static bool IsDebug => false;
+#endif
+
     private readonly FileSystemWatcher fileWatcher = new();
     private readonly XliffReader xliffReader = new();
 
     public DictionaryService()
     {
-        var dictionaryPath = string.Empty;
+        var dictionaryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+            , IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Dictionaries");
+        if (!Directory.Exists(dictionaryPath)) Directory.CreateDirectory(dictionaryPath);
         LoadDictionariesFromDirectory(dictionaryPath);
         fileWatcher.Path = dictionaryPath;
         fileWatcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite | NotifyFilters.FileName |
