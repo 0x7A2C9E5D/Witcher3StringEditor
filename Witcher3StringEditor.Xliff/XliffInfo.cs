@@ -3,7 +3,7 @@
 namespace Witcher3StringEditor.Xliff;
 
 [PublicAPI]
-public class XliffInfo
+public record XliffInfo
 {
     public required string FilePath { get; set; }
     
@@ -12,4 +12,6 @@ public class XliffInfo
     public required string SourceLanguage { get; init; }
 
     public required string TargetLanguage { get; init; }
+    
+    public int Count { get; set; }
 }

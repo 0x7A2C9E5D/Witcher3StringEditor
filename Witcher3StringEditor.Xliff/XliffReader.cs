@@ -21,15 +21,17 @@ public class XliffReader : IXliffReader
         var trgLang = xElement.Attribute(version.Major == 1 ? "target-language" : "trgLang")?.Value;
         if (string.IsNullOrWhiteSpace(srcLang) || string.IsNullOrWhiteSpace(trgLang))
             throw new InvalidDataException("Invalid XLIFF language.");
-        return new XliffInfo
+        xliffInfo = new XliffInfo
         {
             FilePath = path,
             Version = version,
             SourceLanguage = srcLang,
             TargetLanguage = trgLang
         };
+        var translationUnits = GetTranslationUnits();
+        return xliffInfo with { Count = translationUnits.Count() };
     }
-
+    
     public XliffDocument? ReadDocument(string path)
     {
         xliffInfo = ReadInfo(path);
