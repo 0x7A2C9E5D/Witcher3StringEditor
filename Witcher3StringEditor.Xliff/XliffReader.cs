@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Globalization;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using JetBrains.Annotations;
@@ -13,21 +14,26 @@ public class XliffReader : IXliffReader
     private XliffInfo? xliffInfo; // XliffInfo instance
 
     /// <summary>
-    ///   Reads XliffInfo from XLIFF file
+    ///     Reads XliffInfo from XLIFF file
     /// </summary>
     /// <param name="path"></param>
     /// <returns>
-    ///   XliffInfo
+    ///     XliffInfo
     /// </returns>
     /// <exception cref="InvalidDataException"></exception>
     public XliffInfo? ReadInfo(string path)
     {
         xElement = XElement.Load(path); // Load XLIFF file
-        if (!Version.TryParse(xElement.Attribute("version")?.Value, out var version)) return null; // Parse XLIFF version
+        if (!Version.TryParse(xElement.Attribute("version")?.Value, out var version))
+            return null; // Parse XLIFF version
         if (version.Major > 2) throw new InvalidDataException("Invalid XLIFF version."); // Check XLIFF version
         var srcLang = xElement.Attribute(version.Major == 1 ? "source-language" : "srcLang")?.Value;
         var trgLang = xElement.Attribute(version.Major == 1 ? "target-language" : "trgLang")?.Value;
         if (string.IsNullOrWhiteSpace(srcLang) || string.IsNullOrWhiteSpace(trgLang)) // Check XLIFF language
+            throw new InvalidDataException("Invalid XLIFF language."); // Throw exception if XLIFF language is invalid
+        var culture = CultureInfo.GetCultureInfo(srcLang); // Get culture info
+        var enCulture = new CultureInfo("en"); // Create English culture
+        if (!Equals(culture, enCulture) || !Equals(culture.Parent, enCulture))
             throw new InvalidDataException("Invalid XLIFF language."); // Throw exception if XLIFF language is invalid
         xliffInfo = new XliffInfo // Create XliffInfo instance
         {
@@ -39,13 +45,13 @@ public class XliffReader : IXliffReader
         var translationUnits = GetTranslationUnits(); // Get translation units
         return xliffInfo with { Count = translationUnits.Count() }; // Return XliffInfo instance with count
     }
-    
+
     /// <summary>
-    ///   Reads XliffDocument from XLIFF file
+    ///     Reads XliffDocument from XLIFF file
     /// </summary>
     /// <param name="path"></param>
     /// <returns>
-    ///   XliffDocument
+    ///     XliffDocument
     /// </returns>
     public XliffDocument? ReadDocument(string path)
     {
@@ -54,10 +60,10 @@ public class XliffReader : IXliffReader
     }
 
     /// <summary>
-    ///   Reads XliffDocument from XliffInfo
+    ///     Reads XliffDocument from XliffInfo
     /// </summary>
     /// <returns>
-    ///   XliffDocument
+    ///     XliffDocument
     /// </returns>
     public XliffDocument ReadDocument(XliffInfo info)
     {
@@ -69,10 +75,10 @@ public class XliffReader : IXliffReader
     }
 
     /// <summary>
-    ///   Reads translations from XLIFF file
+    ///     Reads translations from XLIFF file
     /// </summary>
     /// <returns>
-    ///   Dictionary
+    ///     Dictionary
     /// </returns>
     private Dictionary<string, string> ReadTranslations()
     {
@@ -81,10 +87,10 @@ public class XliffReader : IXliffReader
     }
 
     /// <summary>
-    ///   Gets translation units from XLIFF file
+    ///     Gets translation units from XLIFF file
     /// </summary>
     /// <returns>
-    ///   IEnumerable
+    ///     IEnumerable
     /// </returns>
     private IEnumerable<XElement> GetTranslationUnits()
     {
@@ -99,10 +105,10 @@ public class XliffReader : IXliffReader
     }
 
     /// <summary>
-    ///   Parses translation units to dictionary
+    ///     Parses translation units to dictionary
     /// </summary>
     /// <returns>
-    ///   Dictionary
+    ///     Dictionary
     /// </returns>
     private static Dictionary<string, string> ParseTranslationUnitsToDictionary(IEnumerable<XElement> translationUnits)
     {
@@ -113,10 +119,10 @@ public class XliffReader : IXliffReader
     }
 
     /// <summary>
-    ///   Parses translation unit to key-value pair
+    ///     Parses translation unit to key-value pair
     /// </summary>
     /// <returns>
-    ///   Key-value pair
+    ///     Key-value pair
     /// </returns>
     private static KeyValuePair<string, string>? ParseTranslationUnit(XElement unitElement)
     {
