@@ -140,4 +140,9 @@ public static class MessageTokens
     ///     Token for messages indicating that the translator has changed
     /// </summary>
     public const string TranslatorChanged = "TranslatorChanged";
+    
+    /// <summary>
+    ///     Token for messages indicating that an import dictionary failed
+    /// </summary>
+    public const string ImportDictionaryFailed = "ImportDictionaryFailed";
 }

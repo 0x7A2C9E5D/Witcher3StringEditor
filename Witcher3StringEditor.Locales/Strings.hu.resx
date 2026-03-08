@@ -562,4 +562,10 @@
   <data name="TermCount" xml:space="preserve">
     <value>Kifejezések száma</value>
   </data>
+  <data name="ImportDictionaryFailedMessage" xml:space="preserve">
+    <value>Az importálás sikertelen: A fájlnak érvényes Xliff fájlnak kell lennie, a forrásnyelvnek angolnak, a célnyelvnek pedig nem lehet üres.</value>
+  </data>
+  <data name="ImportDictionaryFailedCaption" xml:space="preserve">
+    <value>A szótár importálása sikertelen</value>
+  </data>
 </root>

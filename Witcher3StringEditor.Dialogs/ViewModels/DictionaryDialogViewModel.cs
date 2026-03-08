@@ -2,10 +2,14 @@
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using Serilog;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Xliff;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
@@ -45,9 +49,18 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
             ]
         });
 
-        if (storageFile is not null &&
-            Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
-            dictionaryService.AddDictionaryFromFile(storageFile.LocalPath);
+        try
+        {
+            if (storageFile is not null &&
+                Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
+                dictionaryService.AddDictionaryFromFile(storageFile.LocalPath);
+        }
+        catch (Exception e)
+        {
+            _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), MessageTokens.ImportDictionaryFailed);
+            Log.Warning(e, "Invalid dictionary file: {Path}", storageFile?.LocalPath);
+            Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
+        }
     }
 
     /// <summary>

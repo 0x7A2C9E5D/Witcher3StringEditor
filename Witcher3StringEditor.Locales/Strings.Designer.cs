@@ -529,6 +529,24 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import dictionary failed.
+        /// </summary>
+        public static string ImportDictionaryFailedCaption {
+            get {
+                return ResourceManager.GetString("ImportDictionaryFailedCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import failed: The file must be a valid Xliff file, the source language must be English, and the target language cannot be empty..
+        /// </summary>
+        public static string ImportDictionaryFailedMessage {
+            get {
+                return ResourceManager.GetString("ImportDictionaryFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Off.
         /// </summary>
         public static string IsOff {

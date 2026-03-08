@@ -9,10 +9,11 @@
         xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
         xmlns:l="clr-namespace:Witcher3StringEditor.Locales;assembly=Witcher3StringEditor.Locales"
         d:DataContext="{d:DesignInstance Type=vm:DictionaryDialogViewModel}"
+        Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}" 
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:WindowHelper.SystemBackdropType="Mica"
-        mc:Ignorable="d"
-        Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}" Height="800" Width="1200">
+        Closed="DictionaryDialog_OnClosed"
+        mc:Ignorable="d" Width="1200" Height="800" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -62,15 +63,19 @@
                 </ResourceDictionary>
             </sf:SfDataGrid.Resources>
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn TextAlignment="Center" MappingName="FilePath" HeaderText="{I18N {x:Static l:LangKeys.FileName}}">
+                <sf:GridTextColumn TextAlignment="Center" MappingName="FilePath"
+                                   HeaderText="{I18N {x:Static l:LangKeys.FileName}}">
                     <sf:GridTextColumn.ValueBinding>
                         <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                        <Binding Path="FilePath" Converter="{StaticResource PathToDisplayNameConverter}"/>
+                        <Binding Path="FilePath" Converter="{StaticResource PathToDisplayNameConverter}" />
                     </sf:GridTextColumn.ValueBinding>
                 </sf:GridTextColumn>
-                <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage" HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}" />
-                <sf:GridTextColumn TextAlignment="Center" MappingName="TargetLanguage" HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}" />
-                <sf:GridTextColumn TextAlignment="Center" MappingName="Count" HeaderText="{I18N {x:Static l:LangKeys.TermCount}}" />
+                <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage"
+                                   HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}" />
+                <sf:GridTextColumn TextAlignment="Center" MappingName="TargetLanguage"
+                                   HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}" />
+                <sf:GridTextColumn TextAlignment="Center" MappingName="Count"
+                                   HeaderText="{I18N {x:Static l:LangKeys.TermCount}}" />
                 <sf:GridTemplateColumn HeaderText="{I18N {x:Static l:LangKeys.Delete}}" MappingName="Delete">
                     <sf:GridTemplateColumn.CellTemplate>
                         <DataTemplate>

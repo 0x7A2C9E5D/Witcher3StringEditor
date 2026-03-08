@@ -562,4 +562,10 @@
   <data name="TermCount" xml:space="preserve">
     <value>Term Count</value>
   </data>
+  <data name="ImportDictionaryFailedMessage" xml:space="preserve">
+    <value>Import failed: The file must be a valid Xliff file, the source language must be English, and the target language cannot be empty.</value>
+  </data>
+  <data name="ImportDictionaryFailedCaption" xml:space="preserve">
+    <value>Import dictionary failed</value>
+  </data>
 </root>

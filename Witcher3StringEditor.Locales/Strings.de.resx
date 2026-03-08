@@ -562,4 +562,10 @@
   <data name="TermCount" xml:space="preserve">
     <value>Begriffanzahl</value>
   </data>
+  <data name="ImportDictionaryFailedMessage" xml:space="preserve">
+    <value>Import fehlgeschlagen: Die Datei muss eine gültige Xliff-Datei sein, die Quellsprache muss Englisch sein und die Zielsprache darf nicht leer sein.</value>
+  </data>
+  <data name="ImportDictionaryFailedCaption" xml:space="preserve">
+    <value>Import des Wörterbuchs fehlgeschlagen</value>
+  </data>
 </root>
