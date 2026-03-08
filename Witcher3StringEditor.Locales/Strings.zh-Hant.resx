@@ -529,16 +529,34 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>日誌檔已採集。檔案已在目前使用者的桌面建立。</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
-    <value>日誌管理</value>
-  </data>
   <data name="LogManagementDescription" xml:space="preserve">
     <value>瀏覽日誌資料夾、清理過期日誌、採集日誌</value>
+  </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>日誌管理</value>
   </data>
   <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>切換翻譯模式</value>
   </data>
   <data name="NoDictionary" xml:space="preserve">
     <value>不使用詞典</value>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>詞典</value>
+  </data>
+  <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>詞典管理</value>
+  </data>
+  <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>詞典管理</value>
+  </data>
+  <data name="ImportDictionary" xml:space="preserve">
+    <value>匯入詞典</value>
+  </data>
+  <data name="SourceLanguage" xml:space="preserve">
+    <value>來源語言</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>刪除</value>
   </data>
 </root>

@@ -193,7 +193,7 @@
             <ui:AppBarButton
                 Command="{Binding ShowDictionaryDialogCommand}"
                 Visibility="{Binding IsSupportDictionary,Converter={StaticResource BoolToVisibilityConverter}}"
-                Label="词典">
+                Label="{I18N {x:Static l:LangKeys.DictionaryBtnLabel}}">
                 <ui:AppBarButton.Icon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Dictionary}" />
                 </ui:AppBarButton.Icon>

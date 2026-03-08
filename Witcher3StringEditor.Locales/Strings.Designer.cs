@@ -251,6 +251,15 @@ namespace Witcher3StringEditor.Locales {
         /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
         public static string DeleteBtnContent {
             get {
                 return ResourceManager.GetString("DeleteBtnContent", resourceCulture);
@@ -281,6 +290,33 @@ namespace Witcher3StringEditor.Locales {
         public static string DeleteDialogTitle {
             get {
                 return ResourceManager.GetString("DeleteDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary.
+        /// </summary>
+        public static string Dictionary {
+            get {
+                return ResourceManager.GetString("Dictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary Management.
+        /// </summary>
+        public static string DictionaryBtnLabel {
+            get {
+                return ResourceManager.GetString("DictionaryBtnLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary Management.
+        /// </summary>
+        public static string DictionaryDialogTitle {
+            get {
+                return ResourceManager.GetString("DictionaryDialogTitle", resourceCulture);
             }
         }
         
@@ -480,6 +516,15 @@ namespace Witcher3StringEditor.Locales {
         public static string IgnoreIDSpaceCheck {
             get {
                 return ResourceManager.GetString("IgnoreIDSpaceCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Dict.
+        /// </summary>
+        public static string ImportDictionary {
+            get {
+                return ResourceManager.GetString("ImportDictionary", resourceCulture);
             }
         }
         
@@ -1047,6 +1092,15 @@ namespace Witcher3StringEditor.Locales {
         public static string SettingsDialogTitle {
             get {
                 return ResourceManager.GetString("SettingsDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source Language.
+        /// </summary>
+        public static string SourceLanguage {
+            get {
+                return ResourceManager.GetString("SourceLanguage", resourceCulture);
             }
         }
         

@@ -529,16 +529,34 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>Die Protokolldateien wurden erfasst. Die Dateien wurden auf Ihrem Desktop erstellt.</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
-    <value>Protokollverwaltung</value>
-  </data>
   <data name="LogManagementDescription" xml:space="preserve">
     <value>Protokollordner durchsuchen, abgelaufene Protokolle bereinigen, Protokolle erfassen</value>
+  </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>Protokollverwaltung</value>
   </data>
   <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>Übersetzungsmodus wechseln</value>
   </data>
   <data name="NoDictionary" xml:space="preserve">
     <value>Kein Wörterbuch verwenden</value>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Wörterbuch</value>
+  </data>
+  <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>Wörterbuch-Verwaltung</value>
+  </data>
+  <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>Wörterbuch-Verwaltung</value>
+  </data>
+  <data name="ImportDictionary" xml:space="preserve">
+    <value>Dict importieren</value>
+  </data>
+  <data name="SourceLanguage" xml:space="preserve">
+    <value>Quellsprache</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
   </data>
 </root>

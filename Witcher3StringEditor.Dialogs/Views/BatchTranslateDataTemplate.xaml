@@ -43,7 +43,7 @@
                 <ComboBox
                     Visibility="{Binding IsSupportDictionary,Converter={StaticResource BoolToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"
-                    ui:ControlHelper.Header="词典"
+                    ui:ControlHelper.Header="{I18N {x:Static l:LangKeys.Dictionary}}"
                     ItemsSource="{Binding Dictionaries}"
                     SelectedValue="{Binding SelectedDictionary}" >
                     <ComboBox.ItemTemplate>

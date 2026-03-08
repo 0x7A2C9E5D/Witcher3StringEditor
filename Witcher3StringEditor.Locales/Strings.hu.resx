@@ -529,16 +529,34 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>A naplófájlok begyűjtve lettek. A fájlok elkészültek az asztalon.</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
-    <value>Naplókezelés</value>
-  </data>
   <data name="LogManagementDescription" xml:space="preserve">
     <value>Tallózás a napló mappában, lejárt naplók tisztítása, naplók gyűjtése</value>
+  </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>Naplókezelés</value>
   </data>
   <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>Fordítási mód váltása</value>
   </data>
   <data name="NoDictionary" xml:space="preserve">
     <value>Ne használjon szótárt</value>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Szótár</value>
+  </data>
+  <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>Szótárkezelés</value>
+  </data>
+  <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>Szótárkezelés</value>
+  </data>
+  <data name="ImportDictionary" xml:space="preserve">
+    <value>Szótár importálása</value>
+  </data>
+  <data name="SourceLanguage" xml:space="preserve">
+    <value>Forrásnyelv</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Törlés</value>
   </data>
 </root>

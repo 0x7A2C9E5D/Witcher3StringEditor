@@ -541,4 +541,22 @@
   <data name="NoDictionary" xml:space="preserve">
     <value>No Dictionary</value>
   </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Dictionary</value>
+  </data>
+  <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>Dictionary Management</value>
+  </data>
+  <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>Dictionary Management</value>
+  </data>
+  <data name="ImportDictionary" xml:space="preserve">
+    <value>Import Dict</value>
+  </data>
+  <data name="SourceLanguage" xml:space="preserve">
+    <value>Source Language</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

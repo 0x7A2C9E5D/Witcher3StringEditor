@@ -508,11 +508,11 @@
   <data name="PathInvalidIndicatorText" xml:space="preserve">
     <value>（无效）</value>
   </data>
-  <data name="PackageVersion" xml:space="preserve">
-    <value>版本</value>
-  </data>
   <data name="PackageName" xml:space="preserve">
     <value>依赖项</value>
+  </data>
+  <data name="PackageVersion" xml:space="preserve">
+    <value>版本</value>
   </data>
   <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
     <value>日志文件无需清理。</value>
@@ -529,16 +529,34 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>日志文件已采集。文件已在当前用户桌面创建。</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
-    <value>日志管理</value>
-  </data>
   <data name="LogManagementDescription" xml:space="preserve">
     <value>浏览日志文件夹、清理过期日志、采集日志</value>
+  </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>日志管理</value>
   </data>
   <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>切换翻译模式</value>
   </data>
   <data name="NoDictionary" xml:space="preserve">
     <value>不使用词典</value>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>词典</value>
+  </data>
+  <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>词典管理</value>
+  </data>
+  <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>词典管理</value>
+  </data>
+  <data name="ImportDictionary" xml:space="preserve">
+    <value>导入词典</value>
+  </data>
+  <data name="SourceLanguage" xml:space="preserve">
+    <value>源语言</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>删除</value>
   </data>
 </root>

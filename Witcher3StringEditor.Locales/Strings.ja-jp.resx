@@ -529,16 +529,34 @@
   <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>ログファイルは収集されました。ファイルはデスクトップに作成されています。</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
-    <value>ログ管理</value>
-  </data>
   <data name="LogManagementDescription" xml:space="preserve">
     <value>ログフォルダー参照、有効期限切れログのクリーンアップ、ログ収集</value>
+  </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>ログ管理</value>
   </data>
   <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>翻訳モードを切り替える</value>
   </data>
   <data name="NoDictionary" xml:space="preserve">
     <value>辞書を使用しない</value>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>辞書</value>
+  </data>
+  <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>辞書管理</value>
+  </data>
+  <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>辞書管理</value>
+  </data>
+  <data name="ImportDictionary" xml:space="preserve">
+    <value>辞書をインポート</value>
+  </data>
+  <data name="SourceLanguage" xml:space="preserve">
+    <value>ソース言語</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>削除</value>
   </data>
 </root>
