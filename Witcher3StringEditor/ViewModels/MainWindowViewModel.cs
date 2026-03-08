@@ -100,6 +100,8 @@ internal partial class MainWindowViewModel : ObservableObject
         settingsManagerService =
             serviceProvider.GetRequiredService<ISettingsManagerService>(); // Get settings manager service
         PageSize = appSettings.PageSize; // Set page size
+        IsSupportDictionary =
+            appSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
         RegisterMessengerHandlers(); // Register all message handlers
     }
 
@@ -197,6 +199,27 @@ internal partial class MainWindowViewModel : ObservableObject
         RegisterFileMessageHandlers(); // Register file message handlers
         RegisterSettingsMessageHandlers(); // Register settings message handlers
         RegisterSearchMessageHandlers(); // Register search message handlers
+        RegisterDictionarySupportMessageHandler(); // Register dictionary support message handler
+    }
+
+    /// <summary>
+    ///     Registers a message handler to listen for translator changes and update dictionary support status
+    /// </summary>
+    [ObservableProperty] private bool isSupportDictionary;
+
+    /// <summary>
+    ///     Registers a handler to monitor changes to the translator setting and updates dictionary support accordingly.
+    /// </summary>
+    private void RegisterDictionarySupportMessageHandler()
+    {
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, ValueChangedMessage<string>, string>(this,
+            MessageTokens.TranslatorChanged, (_, m) =>
+            {
+                if (m.Value == "MicrosoftTranslator")
+                    IsSupportDictionary = true;
+                else
+                    IsSupportDictionary = false;
+            });
     }
 
     /// <summary>

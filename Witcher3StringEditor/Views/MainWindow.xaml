@@ -22,6 +22,11 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
     <!-- Bind window loaded, closed, and closing events to corresponding commands -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -187,6 +192,7 @@
             <!-- Dictionary button -->
             <ui:AppBarButton
                 Command="{Binding ShowDictionaryDialogCommand}"
+                Visibility="{Binding IsSupportDictionary,Converter={StaticResource BoolToVisibilityConverter}}"
                 Label="词典">
                 <ui:AppBarButton.Icon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Dictionary}" />

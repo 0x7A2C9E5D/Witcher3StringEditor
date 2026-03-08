@@ -173,6 +173,7 @@ internal class SettingsManagerService : ISettingsManagerService
     private static void ApplyTranslatorChange(IAppSettings appSettings)
     {
         Log.Information("Translator changed to {Translator}", appSettings.Translator);
+        _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<string>(appSettings.Translator), MessageTokens.TranslatorChanged); // Send message
     }
 
     /// <summary>
