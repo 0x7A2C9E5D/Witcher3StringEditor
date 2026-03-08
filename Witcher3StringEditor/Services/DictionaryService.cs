@@ -48,7 +48,9 @@ public class DictionaryService : IDictionaryService
         var doc = xliffReader.ReadDocument(xliffInfo); // Read document
         if (doc.Translations is { Count: > 0 }) // If translations exists
         {
-            terms = doc.Translations.ToDictionary(); // Convert to dictionary
+            terms = doc.Translations
+                .SkipWhile(x => string.IsNullOrWhiteSpace(x.Key) || string.IsNullOrWhiteSpace(x.Value))
+                .ToDictionary(); // Create dictionary
             matcher.Build(doc.Translations.ToDictionary(kvp => kvp.Key, _ => 0)); // Build term cache
         }
         else
