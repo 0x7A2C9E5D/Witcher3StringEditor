@@ -224,7 +224,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     {
         try
         {
-            var itemText = DictionaryService != null && SelectedDictionary != null
+            var itemText = DictionaryService != null && SelectedDictionary != null &&
+                           SelectedDictionary.FilePath != string.Empty
                 ? DictionaryService.ApplyDynamicDictionary(item.Text)
                 : item.Text;
             var translation =
