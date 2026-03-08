@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using NReco.Text;
+using Serilog;
 using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Xliff;
@@ -61,14 +62,21 @@ public class DictionaryService : IDictionaryService
     /// </summary>
     public void AddDictionaryFromFile(string path)
     {
-        var xliffInfo = xliffReader.ReadInfo(path); // Read info
-        if (xliffInfo == null) return; // No info
-        var destFileName =
-            Path.Combine(dictionaryPath, Path.GetFileName(xliffInfo.FilePath)); // Get destination file name
-        if (Dictionaries.Any(x => x.FilePath.Equals(destFileName))) return; // Already exists
-        File.Copy(xliffInfo.FilePath, destFileName); // Copy file
-        xliffInfo.FilePath = destFileName; // Set file path
-        Dictionaries.Add(xliffInfo); // Add to collection
+        try
+        {
+            var xliffInfo = xliffReader.ReadInfo(path); // Read info
+            if (xliffInfo == null) return; // No info
+            var destFileName =
+                Path.Combine(dictionaryPath, Path.GetFileName(xliffInfo.FilePath)); // Get destination file name
+            if (Dictionaries.Any(x => x.FilePath.Equals(destFileName))) return; // Already exists
+            File.Copy(xliffInfo.FilePath, destFileName); // Copy file
+            xliffInfo.FilePath = destFileName; // Set file path
+            Dictionaries.Add(xliffInfo); // Add to collection
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Error loading dictionary: {Path}", path);
+        }
     }
 
     /// <summary>
@@ -107,12 +115,19 @@ public class DictionaryService : IDictionaryService
     /// <param name="path"></param>
     private void LoadDictionariesFromDirectory(string path)
     {
-        var files = Directory.GetFiles(path)
-            .Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf")); // Get all xliff files
-        files.ForEach(file =>
+        try
         {
-            var info = xliffReader.ReadInfo(file); // Read info
-            if (info != null) Dictionaries.Add(info); // Add to dictionary
-        });
+            var files = Directory.GetFiles(path)
+                .Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf")); // Get all xliff files
+            files.ForEach(file =>
+            {
+                var info = xliffReader.ReadInfo(file); // Read info
+                if (info != null) Dictionaries.Add(info); // Add to dictionary
+            });
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Error loading dictionaries from directory: {Path}", path);
+        }
     }
 }
