@@ -52,6 +52,8 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     [ObservableProperty] private IEnumerable<XliffInfo>? dictionaries;
     
     [ObservableProperty] private XliffInfo? selectedDictionary;
+
+    [ObservableProperty] private bool isSupportDictionary;
     
     /// <summary>
     ///     Initializes a new instance of the TranslationViewModelBase class
@@ -69,10 +71,9 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         FormLanguage = Language.GetLanguage("en");
         ToLanguage = GetPreferredLanguage(appSettings);            
         DictionaryService = dictionaryService;
-        if (dictionaryService != null)
-        {
-            Dictionaries = dictionaryService.Dictionaries;
-        }
+        if (dictionaryService == null) return;
+        Dictionaries = dictionaryService.Dictionaries;
+        IsSupportDictionary = true;
     }
 
     /// <summary>
