@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Globalization;
+using JetBrains.Annotations;
 
 namespace Witcher3StringEditor.Xliff;
 
@@ -21,15 +22,15 @@ public record XliffInfo
     /// <summary>
     ///     Source language
     /// </summary>  
-    public required string SourceLanguage { get; init; }
+    public required CultureInfo SourceLanguage { get; init; }
 
     /// <summary>
     ///     Target language
     /// </summary>
-    public required string TargetLanguage { get; init; }
+    public required CultureInfo TargetLanguage { get; init; }
     
     /// <summary>
     ///     Count of translation units
     /// </summary>
-    public int Count { get; set; }
+    public int TermCount { get; set; }
 }

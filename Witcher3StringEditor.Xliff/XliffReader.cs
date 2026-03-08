@@ -39,11 +39,11 @@ public class XliffReader : IXliffReader
         {
             FilePath = path, // Set file path
             Version = version, // Set XLIFF version
-            SourceLanguage = srcLang, // Set source language
-            TargetLanguage = trgLang // Set target language
+            SourceLanguage = new CultureInfo(srcLang), // Set source language
+            TargetLanguage = new CultureInfo(trgLang) // Set target language
         };
         var translationUnits = GetTranslationUnits(); // Get translation units
-        return xliffInfo with { Count = translationUnits.Count() }; // Return XliffInfo instance with count
+        return xliffInfo with { TermCount = translationUnits.Count() }; // Return XliffInfo instance with count
     }
 
     /// <summary>
