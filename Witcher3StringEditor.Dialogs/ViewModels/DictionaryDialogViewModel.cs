@@ -19,10 +19,7 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     {
         this.dialogService = dialogService;
         this.dictionaryService = dictionaryService;
-        dictionaryService.Dictionaries.CollectionChanged += (_, e) =>
-        {
-            OnPropertyChanged(nameof(Dictionaries));
-        };
+        dictionaryService.Dictionaries.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Dictionaries));
     }
 
     public ObservableCollection<XliffInfo> Dictionaries => dictionaryService.Dictionaries;

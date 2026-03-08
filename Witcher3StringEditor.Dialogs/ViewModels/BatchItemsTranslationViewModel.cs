@@ -65,9 +65,11 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="startIndex">Initial start index for translation</param>
+    /// <param name="dictionaryService">Dictionary service</param>
     public BatchItemsTranslationViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex) : base(appSettings, translator,
-        w3StringItems)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex,
+        IDictionaryService? dictionaryService = null) : base(appSettings, translator,
+        w3StringItems, dictionaryService)
     {
         StartIndex = startIndex; // Set start index
         EndIndex = MaxValue = W3StringItems.Count; // Set end index and maximum value

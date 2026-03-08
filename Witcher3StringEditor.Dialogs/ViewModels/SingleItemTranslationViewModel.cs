@@ -52,9 +52,11 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="index">Initial index of the item to translate</param>
+    /// <param name="dictionaryService">Dictionary service</param>
     public SingleItemTranslationViewModel(IAppSettings appSettings, ITranslator translator,
         IReadOnlyList<ITrackableW3StringItem> w3StringItems,
-        int index) : base(appSettings, translator, w3StringItems)
+        int index, IDictionaryService? dictionaryService = null) : base(appSettings, translator, w3StringItems,
+        dictionaryService)
     {
         CurrentItemIndex = index;
         Log.Information("Initializing SingleItemTranslationViewModel."); // Log initialization

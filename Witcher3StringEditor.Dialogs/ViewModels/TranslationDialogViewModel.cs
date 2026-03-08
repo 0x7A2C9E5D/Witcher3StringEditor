@@ -45,6 +45,8 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// </summary>
     [ObservableProperty] private TranslationViewModelBase currentViewModel;
 
+    private IDictionaryService? dictionaryService;
+
     /// <summary>
     ///     Gets or sets the title of the dialog window
     /// </summary>
@@ -57,14 +59,17 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="index">Starting index for translation</param>
+    /// <param name="dictionaryService">Dictionary service</param>
     public TranslationDialogViewModel(IAppSettings appSettings, ITranslator translator,
         IReadOnlyList<ITrackableW3StringItem> w3StringItems,
-        int index)
+        int index, IDictionaryService? dictionaryService = null)
     {
         this.index = index;
         this.translator = translator;
         this.appSettings = appSettings;
         this.w3StringItems = w3StringItems;
+        if (dictionaryService != null)
+            this.dictionaryService = dictionaryService;
         Log.Information("Total items to translate: {Count}.", this.w3StringItems.Count); // Log the number of items
         Log.Information("Starting index: {Index}.", index); // Log the starting index
         CurrentViewModel =

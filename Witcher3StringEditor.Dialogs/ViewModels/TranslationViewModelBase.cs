@@ -16,6 +16,8 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 /// </summary>
 public abstract partial class TranslationViewModelBase : ObservableObject, IAsyncDisposable
 {
+    private readonly IDictionaryService? dictionaryService;
+
     /// <summary>
     ///     The translation service used for translating text
     /// </summary>
@@ -52,14 +54,17 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="appSettings">Application settings service</param>
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
+    /// <param name="dictionaryService">Dictionary service</param>
     protected TranslationViewModelBase(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDictionaryService? dictionaryService = null)
     {
         W3StringItems = w3StringItems;
         Translator = translator;
         Languages = GetSupportedLanguages(translator);
         FormLanguage = Language.GetLanguage("en");
         ToLanguage = GetPreferredLanguage(appSettings);
+        if (dictionaryService != null)
+            this.dictionaryService = dictionaryService;
     }
 
     /// <summary>
