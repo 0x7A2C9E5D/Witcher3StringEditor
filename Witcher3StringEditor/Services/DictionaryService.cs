@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Xliff;
@@ -17,7 +19,6 @@ public class DictionaryService : IDictionaryService
     private readonly XliffReader xliffReader = new();
     private readonly string dictionaryPath;
 
-
     public DictionaryService()
     {
         dictionaryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
@@ -29,9 +30,57 @@ public class DictionaryService : IDictionaryService
 
     public ObservableCollection<XliffInfo> Dictionaries { get; } = [];
 
-    public XliffDocument LoadDictionary(XliffInfo xliffInfo)
+    private Dictionary<string, string> terms = new();
+
+    /// <summary>
+    ///     Cached compiled regex
+    /// </summary>
+    private Regex? regex;
+
+    public void LoadDictionary(XliffInfo xliffInfo)
     {
-        return xliffReader.ReadDocument(xliffInfo);
+        var doc = xliffReader.ReadDocument(xliffInfo);
+
+        if (doc.Translations != null && doc.Translations.Count > 0)
+        {
+            terms = new Dictionary<string, string>(doc.Translations);
+            regex = CreateCompiledRegex(terms);
+        }
+        else
+        {
+            terms.Clear();
+            regex = null;
+        }
+    }
+
+    private static Regex CreateCompiledRegex(Dictionary<string, string> terms)
+    {
+        var sorted = terms.Keys.OrderByDescending(k => k.Length).ToList();
+        var pattern = sorted.Count > 0 ? @"\b(" + string.Join("|", sorted.Select(Regex.Escape)) + @")\b" : string.Empty;
+
+        return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    }
+
+    public string ApplyDynamicDictionary(string text)
+    {
+        if (string.IsNullOrEmpty(text) || terms.Count == 0 || regex == null)
+            return text;
+
+        return regex.Replace(text, match =>
+        {
+            var key = terms.Keys.FirstOrDefault(k =>
+                string.Equals(k, match.Value, StringComparison.OrdinalIgnoreCase));
+
+            if (key == null) return match.Value;
+
+            // Use XElement to create properly escaped XML
+            var element = new XElement("mstrans:dictionary",
+                new XAttribute("translation", terms[key]),
+                match.Value
+            );
+
+            return element.ToString(SaveOptions.DisableFormatting);
+        });
     }
 
     public void AddDictionaryFromFile(string path)
