@@ -25,6 +25,8 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// </summary>
     private readonly IAppSettings appSettings;
 
+    private readonly IDictionaryService? dictionaryService;
+
     /// <summary>
     ///     The starting index for translation
     /// </summary>
@@ -44,8 +46,6 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     ///     Gets or sets the current translation view model (either single or batch)
     /// </summary>
     [ObservableProperty] private TranslationViewModelBase currentViewModel;
-
-    private readonly IDictionaryService? dictionaryService;
 
     /// <summary>
     ///     Gets or sets the title of the dialog window

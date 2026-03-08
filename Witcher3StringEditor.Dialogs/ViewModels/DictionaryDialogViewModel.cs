@@ -15,6 +15,11 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     private readonly IDialogService dialogService;
     private readonly IDictionaryService dictionaryService;
 
+    /// <summary>
+    ///     Initializes a new instance of the DictionaryDialogViewModel class.
+    /// </summary>
+    /// <param name="dictionaryService"></param>
+    /// <param name="dialogService"></param>
     public DictionaryDialogViewModel(IDictionaryService dictionaryService, IDialogService dialogService)
     {
         this.dialogService = dialogService;
@@ -26,6 +31,9 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
 
     public bool? DialogResult => true;
 
+    /// <summary>
+    ///     Adds a dictionary from a file.
+    /// </summary>
     [RelayCommand]
     private async Task AddDictionaryFromFile()
     {
@@ -36,11 +44,16 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
                 new FileFilter(Strings.FileFormatSupported, [".xliff", ".xlf"])
             ]
         });
+
         if (storageFile is not null &&
             Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
             dictionaryService.AddDictionaryFromFile(storageFile.LocalPath);
     }
 
+    /// <summary>
+    ///     Removes the specified dictionary.
+    /// </summary>
+    /// <param name="xliffInfo"></param>
     [RelayCommand]
     private void RemoveDictionary(XliffInfo xliffInfo)
     {

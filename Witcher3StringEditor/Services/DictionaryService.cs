@@ -10,29 +10,33 @@ namespace Witcher3StringEditor.Services;
 public class DictionaryService : IDictionaryService
 {
 #if DEBUG
-    private static bool IsDebug => true;
+    private static bool IsDebug => true; // Debug
 #else
-    private static bool IsDebug => false;
+    private static bool IsDebug => false; // Release
 #endif
 
-    private readonly XliffReader xliffReader = new();
-    private readonly string dictionaryPath;
+    private readonly AhoCorasickDoubleArrayTrie<int> matcher; // Aho-Corasick
+    private readonly XliffReader xliffReader = new(); // Xliff reader
+    private Dictionary<string, string> terms; // Terms
+    private readonly string dictionaryPath; // Dictionary path
 
-    private readonly AhoCorasickDoubleArrayTrie<int> matcher;
-
-    private Dictionary<string, string> terms;
-
+    /// <summary>
+    ///     Dictionary service
+    /// </summary>
     public DictionaryService()
     {
-        terms = new Dictionary<string, string>();
-        matcher = new AhoCorasickDoubleArrayTrie<int>();
+        terms = new Dictionary<string, string>(); // Terms
+        matcher = new AhoCorasickDoubleArrayTrie<int>(); // Aho-Corasick
         dictionaryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-            , IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Dictionaries");
-        if (!Directory.Exists(dictionaryPath))
-            Directory.CreateDirectory(dictionaryPath);
-        LoadDictionariesFromDirectory(dictionaryPath);
+            , IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Dictionaries"); // Dictionary path
+        if (!Directory.Exists(dictionaryPath)) // If directory does not exist
+            Directory.CreateDirectory(dictionaryPath); // Create directory
+        LoadDictionariesFromDirectory(dictionaryPath); // Load dictionaries from directory
     }
 
+    /// <summary>
+    ///     Dictionary files
+    /// </summary>
     public ObservableCollection<XliffInfo> Dictionaries { get; } = [];
 
     /// <summary>
@@ -40,35 +44,44 @@ public class DictionaryService : IDictionaryService
     /// </summary>
     public void LoadDictionary(XliffInfo xliffInfo)
     {
-        var doc = xliffReader.ReadDocument(xliffInfo);
-        if (doc.Translations is { Count: > 0 })
+        var doc = xliffReader.ReadDocument(xliffInfo); // Read document
+        if (doc.Translations is { Count: > 0 }) // If translations exists
         {
-            terms = doc.Translations.ToDictionary();
-            matcher.Build(doc.Translations.ToDictionary(kvp => kvp.Key, _ => 0));
+            terms = doc.Translations.ToDictionary(); // Convert to dictionary
+            matcher.Build(doc.Translations.ToDictionary(kvp => kvp.Key, _ => 0)); // Build term cache
         }
         else
         {
-            terms.Clear();
+            terms.Clear(); // Clear
         }
     }
 
+    /// <summary>
+    ///     Adds a dictionary file to the collection
+    /// </summary>
     public void AddDictionaryFromFile(string path)
     {
-        var xliffInfo = xliffReader.ReadInfo(path);
-        if (xliffInfo == null) return;
-        var destFileName = Path.Combine(dictionaryPath, Path.GetFileName(xliffInfo.FilePath));
-        if (Dictionaries.Any(x => x.FilePath.Equals(destFileName))) return;
-        File.Copy(xliffInfo.FilePath, destFileName);
-        xliffInfo.FilePath = destFileName;
-        Dictionaries.Add(xliffInfo);
+        var xliffInfo = xliffReader.ReadInfo(path); // Read info
+        if (xliffInfo == null) return; // No info
+        var destFileName =
+            Path.Combine(dictionaryPath, Path.GetFileName(xliffInfo.FilePath)); // Get destination file name
+        if (Dictionaries.Any(x => x.FilePath.Equals(destFileName))) return; // Already exists
+        File.Copy(xliffInfo.FilePath, destFileName); // Copy file
+        xliffInfo.FilePath = destFileName; // Set file path
+        Dictionaries.Add(xliffInfo); // Add to collection
     }
 
+    /// <summary>
+    ///     Removes a dictionary file and removes it from the collection
+    /// </summary>
     public void RemoveDictionary(XliffInfo xliffInfo)
     {
-        if (!Dictionaries.Contains(xliffInfo)) return;
-        Dictionaries.Remove(xliffInfo);
-        File.Delete(xliffInfo.FilePath);
+        if (!Dictionaries.Contains(xliffInfo)) return; // Not found
+        Dictionaries.Remove(xliffInfo); // Remove from collection
+        File.Delete(xliffInfo.FilePath); // Delete the file
     }
+
+    private const string Tag = @"'<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>'"; // Tag
 
     /// <summary>
     ///     Applies dynamic dictionary to text, wrapping matched terms with Microsoft Translator tags
@@ -76,27 +89,30 @@ public class DictionaryService : IDictionaryService
     /// </summary>
     public string ApplyDynamicDictionary(string text)
     {
-        if (string.IsNullOrEmpty(text) || terms.Count == 0)
-            return text;
-
+        if (string.IsNullOrEmpty(text) || terms.Count == 0) return text; // No text or no terms
         var result = text;
         matcher.ParseText(text, hit =>
         {
-            var phrase = text.Substring(hit.Begin, hit.Length);
-            if (terms.TryGetValue(phrase, out var translation))
-                result = $"<mstrans:dictionary translation=\"{translation}\">{phrase}</mstrans:dictionary>";
+            var phrase = text.Substring(hit.Begin, hit.Length); // Get phrase
+            if (terms.TryGetValue(phrase, out var translation)) // If translation exists
+                result = string.Format(Tag, translation, phrase); // Replace phrase with tag
         });
 
         return result;
     }
-    
+
+    /// <summary>
+    ///     Loads all dictionaries from directory
+    /// </summary>
+    /// <param name="path"></param>
     private void LoadDictionariesFromDirectory(string path)
     {
-        var files = Directory.GetFiles(path).Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf"));
+        var files = Directory.GetFiles(path)
+            .Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf")); // Get all xliff files
         files.ForEach(file =>
         {
-            var info = xliffReader.ReadInfo(file);
-            if (info != null) Dictionaries.Add(info);
+            var info = xliffReader.ReadInfo(file); // Read info
+            if (info != null) Dictionaries.Add(info); // Add to dictionary
         });
     }
 }
