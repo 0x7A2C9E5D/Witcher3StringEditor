@@ -16,7 +16,9 @@ public class XliffReader : IXliffReader
     ///   Reads XliffInfo from XLIFF file
     /// </summary>
     /// <param name="path"></param>
-    /// <returns></returns>
+    /// <returns>
+    ///   XliffInfo
+    /// </returns>
     /// <exception cref="InvalidDataException"></exception>
     public XliffInfo? ReadInfo(string path)
     {
@@ -42,7 +44,9 @@ public class XliffReader : IXliffReader
     ///   Reads XliffDocument from XLIFF file
     /// </summary>
     /// <param name="path"></param>
-    /// <returns></returns>
+    /// <returns>
+    ///   XliffDocument
+    /// </returns>
     public XliffDocument? ReadDocument(string path)
     {
         xliffInfo = ReadInfo(path); // Read XliffInfo
@@ -52,6 +56,9 @@ public class XliffReader : IXliffReader
     /// <summary>
     ///   Reads XliffDocument from XliffInfo
     /// </summary>
+    /// <returns>
+    ///   XliffDocument
+    /// </returns>
     public XliffDocument ReadDocument(XliffInfo info)
     {
         return new XliffDocument // Create XliffDocument instance
@@ -64,6 +71,9 @@ public class XliffReader : IXliffReader
     /// <summary>
     ///   Reads translations from XLIFF file
     /// </summary>
+    /// <returns>
+    ///   Dictionary
+    /// </returns>
     private Dictionary<string, string> ReadTranslations()
     {
         var translationUnits = GetTranslationUnits(); // Get translation units
@@ -73,6 +83,9 @@ public class XliffReader : IXliffReader
     /// <summary>
     ///   Gets translation units from XLIFF file
     /// </summary>
+    /// <returns>
+    ///   IEnumerable
+    /// </returns>
     private IEnumerable<XElement> GetTranslationUnits()
     {
         if (xliffInfo == null) return []; // Check XliffInfo
@@ -88,6 +101,9 @@ public class XliffReader : IXliffReader
     /// <summary>
     ///   Parses translation units to dictionary
     /// </summary>
+    /// <returns>
+    ///   Dictionary
+    /// </returns>
     private static Dictionary<string, string> ParseTranslationUnitsToDictionary(IEnumerable<XElement> translationUnits)
     {
         return translationUnits // Parse translation units
@@ -99,6 +115,9 @@ public class XliffReader : IXliffReader
     /// <summary>
     ///   Parses translation unit to key-value pair
     /// </summary>
+    /// <returns>
+    ///   Key-value pair
+    /// </returns>
     private static KeyValuePair<string, string>? ParseTranslationUnit(XElement unitElement)
     {
         var textNodes = unitElement // Get text nodes
