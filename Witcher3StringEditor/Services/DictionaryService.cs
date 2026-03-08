@@ -41,7 +41,7 @@ public class DictionaryService : IDictionaryService
     public void LoadDictionary(XliffInfo xliffInfo)
     {
         var doc = xliffReader.ReadDocument(xliffInfo);
-        if (doc.Translations is { Count: <= 0 })
+        if (doc.Translations is { Count: > 0 })
         {
             terms = doc.Translations.ToDictionary();
             matcher.Build(doc.Translations.ToDictionary(kvp => kvp.Key, _ => 0));
