@@ -1168,6 +1168,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Term Count.
+        /// </summary>
+        public static string TermCount {
+            get {
+                return ResourceManager.GetString("TermCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Text Language.
         /// </summary>
         public static string TextLanguage {

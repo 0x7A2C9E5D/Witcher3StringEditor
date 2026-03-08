@@ -559,4 +559,7 @@
   <data name="Delete" xml:space="preserve">
     <value>刪除</value>
   </data>
+  <data name="TermCount" xml:space="preserve">
+    <value>詞條數量</value>
+  </data>
 </root>

@@ -559,4 +559,7 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="TermCount" xml:space="preserve">
+    <value>Term Count</value>
+  </data>
 </root>

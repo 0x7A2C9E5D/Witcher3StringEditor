@@ -559,4 +559,7 @@
   <data name="Delete" xml:space="preserve">
     <value>Törlés</value>
   </data>
+  <data name="TermCount" xml:space="preserve">
+    <value>Kifejezések száma</value>
+  </data>
 </root>

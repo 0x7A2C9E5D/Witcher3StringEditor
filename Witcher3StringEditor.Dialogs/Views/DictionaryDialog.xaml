@@ -70,7 +70,7 @@
                 </sf:GridTextColumn>
                 <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage" HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}" />
                 <sf:GridTextColumn TextAlignment="Center" MappingName="TargetLanguage" HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}" />
-                <sf:GridTextColumn TextAlignment="Center" MappingName="Count" HeaderText="术语条数" />
+                <sf:GridTextColumn TextAlignment="Center" MappingName="Count" HeaderText="{I18N {x:Static l:LangKeys.TermCount}}" />
                 <sf:GridTemplateColumn HeaderText="{I18N {x:Static l:LangKeys.Delete}}" MappingName="Delete">
                     <sf:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
