@@ -5,6 +5,7 @@
     xmlns:l="clr-namespace:Witcher3StringEditor.Locales;assembly=Witcher3StringEditor.Locales"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:sf="http://schemas.syncfusion.com/wpf"
+    xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels">
     <!-- 
         Data template for batch translation view
@@ -12,6 +13,7 @@
         Binds to BatchItemsTranslationViewModel for data and command binding
     -->
     <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    <c:FilePathToFileNameConverter x:Key="FilePathToFileNameConverter"/>
     <DataTemplate x:Key="BatchTranslateDataTemplate" DataType="{x:Type vm:BatchItemsTranslationViewModel}">
         <Grid>
             <Grid.RowDefinitions>
@@ -42,9 +44,14 @@
                     Visibility="{Binding IsSupportDictionary,Converter={StaticResource BoolToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"
                     ui:ControlHelper.Header="词典"
-                    DisplayMemberPath="FilePath"
                     ItemsSource="{Binding Dictionaries}"
-                    SelectedValue="{Binding SelectedDictionary}" />
+                    SelectedValue="{Binding SelectedDictionary}" >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding FilePath,Converter={StaticResource FilePathToFileNameConverter}}"></TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <!-- Start index input control -->
                 <ui:NumberBox
                     x:Name="StartIndexInput"
