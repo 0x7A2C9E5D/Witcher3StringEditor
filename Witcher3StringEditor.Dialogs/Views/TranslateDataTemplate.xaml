@@ -95,26 +95,42 @@
                 <Button
                     MinWidth="100"
                     HorizontalAlignment="Right"
-                    Command="{Binding PreviousCommand}"
-                    Content="{I18N {x:Static l:LangKeys.PreviousBtnContent}}" />
+                    Command="{Binding PreviousCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Previous}" />
+                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.PreviousBtnContent}}" />
+                    </StackPanel>
+                </Button>
                 <!-- Translate button -->
                 <Button
                     MinWidth="100"
                     HorizontalAlignment="Right"
-                    Command="{Binding TranslateCommand}"
-                    Content="{I18N {x:Static l:LangKeys.TranslateBtnContent}}" />
+                    Command="{Binding TranslateCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
+                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.TranslateBtnContent}}" />
+                    </StackPanel>
+                </Button>
                 <!-- Save translation button -->
                 <Button
                     MinWidth="100"
                     HorizontalAlignment="Left"
-                    Command="{Binding SaveCommand}"
-                    Content="{I18N {x:Static l:LangKeys.SaveBtnContent}}" />
+                    Command="{Binding SaveCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Save}" />
+                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.SaveBtnContent}}" />
+                    </StackPanel>
+                </Button>
                 <!-- Next item button -->
                 <Button
                     MinWidth="100"
                     HorizontalAlignment="Left"
-                    Command="{Binding NextCommand}"
-                    Content="{I18N {x:Static l:LangKeys.NextBtnContent}}" />
+                    Command="{Binding NextCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Next}" />
+                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.NextBtnContent}}" />
+                    </StackPanel>
+                </Button>
             </iwk:SimpleStackPanel>
         </Grid>
     </DataTemplate>

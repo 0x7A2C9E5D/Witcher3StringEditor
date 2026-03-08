@@ -114,8 +114,7 @@
                 <!-- Start translation button -->
                 <Button
                     MinWidth="100"
-                    Command="{Binding StartCommand}"
-                    Content="{I18N {x:Static l:LangKeys.TranslateBtnContent}}">
+                    Command="{Binding StartCommand}">
                     <Button.Style>
                         <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
                         <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
@@ -137,12 +136,22 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
+                            <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.TranslateBtnContent}}" />
+                        </StackPanel>
+                    </Button.Content>
                 </Button>
                 <!-- Cancel translation button -->
                 <Button
                     MinWidth="100"
-                    Command="{Binding CancelCommand}"
-                    Content="{I18N {x:Static l:LangKeys.CancelBtnContent}}" />
+                    Command="{Binding CancelCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Cancel}" />
+                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.CancelBtnContent}}" />
+                    </StackPanel>
+                </Button>
             </iwk:SimpleStackPanel>
         </Grid>
     </DataTemplate>
