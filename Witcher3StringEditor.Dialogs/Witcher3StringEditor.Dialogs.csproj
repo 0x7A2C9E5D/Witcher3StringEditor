@@ -22,7 +22,7 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="FluentResults" Version="4.0.0" />
         <PackageReference Include="GTranslate" Version="2.3.1" />
-        <PackageReference Include="HanumanInstitute.MvvmDialogs.Wpf" Version="2.2.0" />
+        <PackageReference Include="HanumanInstitute.MvvmDialogs.Wpf" Version="2.1.0" />
         <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1" />
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
         <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.3" />
