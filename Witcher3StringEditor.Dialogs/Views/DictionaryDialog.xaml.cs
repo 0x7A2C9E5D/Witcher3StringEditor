@@ -8,16 +8,19 @@ using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 namespace Witcher3StringEditor.Dialogs.Views;
 
 /// <summary>
-///     DictionaryDialog.xaml 的交互逻辑
+///     Interaction logic for DictionaryDialog.xaml
 /// </summary>
 public partial class DictionaryDialog
 {
     public DictionaryDialog()
     {
-        InitializeComponent();
-        RegisterMessageHandlers();
+        InitializeComponent(); // InitializeComponent
+        RegisterMessageHandlers(); // Register message handlers
     }
 
+    /// <summary>
+    ///     Registers message handlers for the DictionaryDialog
+    /// </summary>
     private void RegisterMessageHandlers()
     {
         WeakReferenceMessenger.Default.Register<DictionaryDialog, AsyncRequestMessage<bool>, string>(this,
@@ -30,6 +33,11 @@ public partial class DictionaryDialog
             });
     }
 
+    /// <summary>
+    ///     Unregisters message handlers when the DictionaryDialog is closed
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void DictionaryDialog_OnClosed(object? sender, EventArgs e)
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
