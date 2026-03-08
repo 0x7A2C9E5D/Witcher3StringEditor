@@ -45,7 +45,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// </summary>
     [ObservableProperty] private TranslationViewModelBase currentViewModel;
 
-    private IDictionaryService? dictionaryService;
+    private readonly IDictionaryService? dictionaryService;
 
     /// <summary>
     ///     Gets or sets the title of the dialog window
@@ -68,13 +68,12 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
         this.translator = translator;
         this.appSettings = appSettings;
         this.w3StringItems = w3StringItems;
-        if (dictionaryService != null)
-            this.dictionaryService = dictionaryService;
+        this.dictionaryService = dictionaryService;
         Log.Information("Total items to translate: {Count}.", this.w3StringItems.Count); // Log the number of items
         Log.Information("Starting index: {Index}.", index); // Log the starting index
         CurrentViewModel =
             new SingleItemTranslationViewModel(appSettings, translator, this.w3StringItems,
-                index); // Initialize the current view model
+                index, dictionaryService); // Initialize the current view model
     }
 
     /// <summary>
@@ -100,9 +99,10 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
                 await DisposeCurrentViewModelAsync(); // Dispose current view model
                 var formLange = CurrentViewModel.FormLanguage; // Save current source language
                 CurrentViewModel = CurrentViewModel is BatchItemsTranslationViewModel // Switch view model type
-                    ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems, index)
+                    ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems, index,
+                        dictionaryService)
                     : new BatchItemsTranslationViewModel(appSettings, translator,
-                        w3StringItems, index + 1);
+                        w3StringItems, index + 1, dictionaryService);
                 CurrentViewModel.FormLanguage = formLange; // Restore source language
                 Title = CurrentViewModel is BatchItemsTranslationViewModel // Update dialog title
                     ? Strings.BatchTranslateDialogTitle

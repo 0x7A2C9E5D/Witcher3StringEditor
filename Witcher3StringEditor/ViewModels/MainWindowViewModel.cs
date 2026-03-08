@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using cmdwtf;
 using CommandLine;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
@@ -48,8 +49,7 @@ internal partial class MainWindowViewModel : ObservableObject
     /// <summary>
     ///     Gets the filtered collection of W3String items
     /// </summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     private ObservableCollection<W3StringItemModel>? filteredW3StringItems;
 
     /// <summary>
@@ -61,8 +61,7 @@ internal partial class MainWindowViewModel : ObservableObject
     ///     Gets or sets the output folder path
     ///     Notifies OpenWorkingFolderCommand when this property changes
     /// </summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(OpenWorkingFolderCommand))]
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(OpenWorkingFolderCommand))]
     private string outputFolder = string.Empty;
 
     /// <summary>
@@ -638,9 +637,10 @@ internal partial class MainWindowViewModel : ObservableObject
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
         var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
             .First(x => x.Name == appSettings.Translator);
-        await dialogService.ShowDialogAsync(this,
-            new TranslationDialogViewModel(appSettings, translator, itemsToUse,
-                selectedIndex)); // Show translation dialog
+        var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse,
+            selectedIndex,
+            translator.Name == "MicrosoftTranslator" ? Ioc.Default.GetRequiredService<IDictionaryService>() : null);
+        await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable
     }
 
