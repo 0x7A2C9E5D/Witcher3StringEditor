@@ -57,14 +57,14 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
-                    <c:FilePathToFileNameConverter x:Key="FilePathToFileNameConverter" />
+                    <c:PathToDisplayNameConverter x:Key="PathToDisplayNameConverter" />
                 </ResourceDictionary>
             </sf:SfDataGrid.Resources>
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn TextAlignment="Center" MappingName="FilePath" HeaderText="文件名">
                     <sf:GridTextColumn.ValueBinding>
                         <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                        <Binding Path="FilePath" Converter="{StaticResource FilePathToFileNameConverter}"/>
+                        <Binding Path="FilePath" Converter="{StaticResource PathToDisplayNameConverter}"/>
                     </sf:GridTextColumn.ValueBinding>
                 </sf:GridTextColumn>
                 <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage" HeaderText="源语言" />

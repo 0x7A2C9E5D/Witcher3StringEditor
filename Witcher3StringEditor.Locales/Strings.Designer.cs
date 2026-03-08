@@ -664,6 +664,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Dictionary.
+        /// </summary>
+        public static string NoDictionary {
+            get {
+                return ResourceManager.GetString("NoDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         public static string Open {

@@ -538,4 +538,7 @@
   <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>切换翻译模式</value>
   </data>
+  <data name="NoDictionary" xml:space="preserve">
+    <value>不使用词典</value>
+  </data>
 </root>

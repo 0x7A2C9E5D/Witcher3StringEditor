@@ -538,4 +538,7 @@
   <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>Switch Translation Mode</value>
   </data>
+  <data name="NoDictionary" xml:space="preserve">
+    <value>No Dictionary</value>
+  </data>
 </root>

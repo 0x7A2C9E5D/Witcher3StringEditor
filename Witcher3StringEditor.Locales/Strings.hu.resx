@@ -538,4 +538,7 @@
   <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>Fordítási mód váltása</value>
   </data>
+  <data name="NoDictionary" xml:space="preserve">
+    <value>Ne használjon szótárt</value>
+  </data>
 </root>
