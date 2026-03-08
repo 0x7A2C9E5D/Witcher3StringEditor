@@ -70,9 +70,10 @@
                         <Binding Path="FilePath" Converter="{StaticResource PathToDisplayNameConverter}" />
                     </sf:GridTextColumn.ValueBinding>
                 </sf:GridTextColumn>
-                <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage"
-                                   HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}" />
-                <sf:GridTextColumn TextAlignment="Center" MappingName="TargetLanguage"
+                <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage.NativeName"
+                                   HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}" >
+                </sf:GridTextColumn>
+                <sf:GridTextColumn TextAlignment="Center" MappingName="TargetLanguage.NativeName"
                                    HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}" />
                 <sf:GridTextColumn TextAlignment="Center" MappingName="TermCount"
                                    HeaderText="{I18N {x:Static l:LangKeys.TermCount}}" />
