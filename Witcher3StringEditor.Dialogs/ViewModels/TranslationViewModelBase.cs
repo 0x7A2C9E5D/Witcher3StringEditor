@@ -6,6 +6,7 @@ using GTranslate.Translators;
 using Serilog;
 using Witcher3StringEditor.Common;
 using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Xliff;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -48,6 +49,10 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     [ObservableProperty] private ILanguage toLanguage;
 
+    [ObservableProperty] private IEnumerable<XliffInfo>? dictionaries;
+    
+    [ObservableProperty] private XliffInfo? selectedDictionary;
+    
     /// <summary>
     ///     Initializes a new instance of the TranslationViewModelBase class
     /// </summary>
@@ -62,9 +67,12 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         Translator = translator;
         Languages = GetSupportedLanguages(translator);
         FormLanguage = Language.GetLanguage("en");
-        ToLanguage = GetPreferredLanguage(appSettings);
+        ToLanguage = GetPreferredLanguage(appSettings);            
+        DictionaryService = dictionaryService;
         if (dictionaryService != null)
-            DictionaryService = dictionaryService;
+        {
+            Dictionaries = dictionaryService.Dictionaries;
+        }
     }
 
     /// <summary>

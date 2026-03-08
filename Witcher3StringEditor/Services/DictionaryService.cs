@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Xliff;
@@ -18,6 +17,17 @@ public class DictionaryService : IDictionaryService
 
     private readonly XliffReader xliffReader = new();
     private readonly string dictionaryPath;
+    
+    /// <summary>
+    /// Compiled terms from loaded dictionary
+    /// </summary>
+    private Dictionary<string, string> terms = new();
+    
+    /// <summary>
+    /// Cached compiled regex
+    /// </summary>
+    private Regex? regex;
+
 
     public DictionaryService()
     {
@@ -30,18 +40,14 @@ public class DictionaryService : IDictionaryService
 
     public ObservableCollection<XliffInfo> Dictionaries { get; } = [];
 
-    private Dictionary<string, string> terms = new();
-
     /// <summary>
-    ///     Cached compiled regex
+    /// Loads a dictionary file and builds term cache with compiled regex
     /// </summary>
-    private Regex? regex;
-
     public void LoadDictionary(XliffInfo xliffInfo)
     {
         var doc = xliffReader.ReadDocument(xliffInfo);
-
-        if (doc.Translations is { Count: > 0 })
+        
+        if (doc.Translations != null && doc.Translations.Count > 0)
         {
             terms = new Dictionary<string, string>(doc.Translations);
             regex = CreateCompiledRegex(terms);
@@ -51,35 +57,6 @@ public class DictionaryService : IDictionaryService
             terms.Clear();
             regex = null;
         }
-    }
-
-    private static Regex CreateCompiledRegex(Dictionary<string, string> terms)
-    {
-        var sorted = terms.Keys.OrderByDescending(k => k.Length).ToList();
-        var pattern = sorted.Count > 0 ? @"\b(" + string.Join("|", sorted.Select(Regex.Escape)) + @")\b" : string.Empty;
-        return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    }
-
-    public string ApplyDynamicDictionary(string text)
-    {
-        if (string.IsNullOrEmpty(text) || terms.Count == 0 || regex == null)
-            return text;
-
-        return regex.Replace(text, match =>
-        {
-            var key = terms.Keys.FirstOrDefault(k =>
-                string.Equals(k, match.Value, StringComparison.OrdinalIgnoreCase));
-
-            if (key == null) return match.Value;
-
-            // Use XElement to create properly escaped XML
-            var element = new XElement("mstrans:dictionary",
-                new XAttribute("translation", terms[key]),
-                match.Value
-            );
-
-            return element.ToString(SaveOptions.DisableFormatting);
-        });
     }
 
     public void AddDictionaryFromFile(string path)
@@ -100,14 +77,56 @@ public class DictionaryService : IDictionaryService
         File.Delete(xliffInfo.FilePath);
     }
 
+    /// <summary>
+    /// Applies dynamic dictionary to text, wrapping matched terms with Microsoft Translator tags
+    /// Format: &lt;mstrans:dictionary translation="translation"&gt;phrase&lt;/mstrans:dictionary&gt;
+    /// </summary>
+    public string ApplyDynamicDictionary(string text)
+    {
+        if (string.IsNullOrEmpty(text) || terms.Count == 0 || regex == null)
+            return text;
+
+        return regex.Replace(text, match =>
+        {
+            var key = terms.Keys.FirstOrDefault(k => 
+                string.Equals(k, match.Value, StringComparison.OrdinalIgnoreCase));
+            
+            if (key == null) return match.Value;
+            
+            // Direct string formatting to produce exact output format
+            var translation = EscapeXml(terms[key]);
+            var phrase = EscapeXml(match.Value);
+            return $"<mstrans:dictionary translation=\"{translation}\">{phrase}</mstrans:dictionary>";
+        });
+    }
+
+    private static Regex CreateCompiledRegex(Dictionary<string, string> terms)
+    {
+        var sorted = terms.Keys.OrderByDescending(k => k.Length).ToList();
+        var pattern = sorted.Count > 0 ? @"\b(" + string.Join("|", sorted.Select(Regex.Escape)) + @")\b" : string.Empty;
+        
+        return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    }
+
     private void LoadDictionariesFromDirectory(string path)
     {
-        var files = Directory.GetFiles(path)
-            .Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf"));
+        var files = Directory.GetFiles(path).Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf"));
         files.ForEach(file =>
         {
             var info = xliffReader.ReadInfo(file);
             if (info != null) Dictionaries.Add(info);
         });
+    }
+
+    /// <summary>
+    /// Escapes XML special characters in attribute values and text content
+    /// </summary>
+    private static string EscapeXml(string text)
+    {
+        return text.Replace("&", "&amp;")
+                   .Replace("<", "&lt;")
+                   .Replace(">", "&gt;")
+                   .Replace("\"", "&quot;")
+                   .Replace("'", "&apos;");
     }
 }

@@ -36,6 +36,12 @@
                     DisplayMemberPath="NativeName"
                     ItemsSource="{Binding Languages}"
                     SelectedValue="{Binding ToLanguage}" />
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    ui:ControlHelper.Header="词典"
+                    DisplayMemberPath="FilePath"
+                    ItemsSource="{Binding Dictionaries}"
+                    SelectedValue="{Binding SelectedDictionary}" />
                 <!-- Start index input control -->
                 <ui:NumberBox
                     x:Name="StartIndexInput"
