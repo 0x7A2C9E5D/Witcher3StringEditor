@@ -33,7 +33,7 @@ public class XliffReader : IXliffReader
             throw new InvalidDataException("Invalid XLIFF language."); // Throw exception if XLIFF language is invalid
         var culture = CultureInfo.GetCultureInfo(srcLang); // Get culture info
         var enCulture = new CultureInfo("en"); // Create English culture
-        if (!Equals(culture, enCulture) || !Equals(culture.Parent, enCulture))
+        if (!Equals(culture, enCulture) && !Equals(culture.Parent, enCulture))
             throw new InvalidDataException("Invalid XLIFF language."); // Throw exception if XLIFF language is invalid
         xliffInfo = new XliffInfo // Create XliffInfo instance
         {

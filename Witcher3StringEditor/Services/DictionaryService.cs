@@ -64,21 +64,14 @@ public class DictionaryService : IDictionaryService
     /// </summary>
     public void AddDictionaryFromFile(string path)
     {
-        try
-        {
-            var xliffInfo = xliffReader.ReadInfo(path); // Read info
-            if (xliffInfo == null) return; // No info
-            var destFileName =
-                Path.Combine(dictionaryPath, Path.GetFileName(xliffInfo.FilePath)); // Get destination file name
-            if (Dictionaries.Any(x => x.FilePath.Equals(destFileName))) return; // Already exists
-            File.Copy(xliffInfo.FilePath, destFileName); // Copy file
-            xliffInfo.FilePath = destFileName; // Set file path
-            Dictionaries.Add(xliffInfo); // Add to collection
-        }
-        catch (Exception e)
-        {
-            Log.Error(e, "Error loading dictionary: {Path}", path);
-        }
+        var xliffInfo = xliffReader.ReadInfo(path); // Read info
+        if (xliffInfo == null) return; // No info
+        var destFileName =
+            Path.Combine(dictionaryPath, Path.GetFileName(xliffInfo.FilePath)); // Get destination file name
+        if (Dictionaries.Any(x => x.FilePath.Equals(destFileName))) return; // Already exists
+        File.Copy(xliffInfo.FilePath, destFileName); // Copy file
+        xliffInfo.FilePath = destFileName; // Set file path
+        Dictionaries.Add(xliffInfo); // Add to collection
     }
 
     /// <summary>
