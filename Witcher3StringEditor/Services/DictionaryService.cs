@@ -41,7 +41,7 @@ public class DictionaryService : IDictionaryService
     {
         var doc = xliffReader.ReadDocument(xliffInfo);
 
-        if (doc.Translations != null && doc.Translations.Count > 0)
+        if (doc.Translations is { Count: > 0 })
         {
             terms = new Dictionary<string, string>(doc.Translations);
             regex = CreateCompiledRegex(terms);
@@ -57,7 +57,6 @@ public class DictionaryService : IDictionaryService
     {
         var sorted = terms.Keys.OrderByDescending(k => k.Length).ToList();
         var pattern = sorted.Count > 0 ? @"\b(" + string.Join("|", sorted.Select(Regex.Escape)) + @")\b" : string.Empty;
-
         return new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
     }
 
