@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
 using GTranslate.Translators;
 using Serilog;
+using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Xliff;
@@ -34,27 +35,27 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     private protected CancellationTokenSource? CancellationTokenSource;
 
+    [ObservableProperty] private IEnumerable<XliffInfo>? dictionaries;
+
     /// <summary>
     ///     Gets or sets the source language for translation
     /// </summary>
     [ObservableProperty] private ILanguage formLanguage;
+
+    [ObservableProperty] private bool isSupportDictionary;
 
     /// <summary>
     ///     Gets or sets the collection of supported languages for the current translator
     /// </summary>
     [ObservableProperty] private IEnumerable<ILanguage> languages;
 
+    [ObservableProperty] private XliffInfo? selectedDictionary;
+
     /// <summary>
     ///     Gets or sets the target language for translation
     /// </summary>
     [ObservableProperty] private ILanguage toLanguage;
 
-    [ObservableProperty] private IEnumerable<XliffInfo>? dictionaries;
-    
-    [ObservableProperty] private XliffInfo? selectedDictionary;
-
-    [ObservableProperty] private bool isSupportDictionary;
-    
     /// <summary>
     ///     Initializes a new instance of the TranslationViewModelBase class
     /// </summary>
@@ -69,11 +70,23 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         Translator = translator;
         Languages = GetSupportedLanguages(translator);
         FormLanguage = Language.GetLanguage("en");
-        ToLanguage = GetPreferredLanguage(appSettings);            
+        ToLanguage = GetPreferredLanguage(appSettings);
         DictionaryService = dictionaryService;
         if (dictionaryService == null) return;
-        Dictionaries = dictionaryService.Dictionaries;
+        Dictionaries =
+        [
+            new XliffInfo
+            {
+                FilePath = string.Empty,
+                Version = new Version(1, 0),
+                SourceLanguage = "en",
+                TargetLanguage = "en",
+                Count = 0
+            }
+        ];
+        dictionaryService.Dictionaries.ForEach(x => Dictionaries = Dictionaries.Append(x));
         IsSupportDictionary = true;
+        SelectedDictionary = Dictionaries.First();
     }
 
     /// <summary>
