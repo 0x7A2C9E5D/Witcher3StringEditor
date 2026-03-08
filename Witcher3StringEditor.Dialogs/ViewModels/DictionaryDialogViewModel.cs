@@ -19,7 +19,10 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     {
         this.dialogService = dialogService;
         this.dictionaryService = dictionaryService;
-        dictionaryService.Dictionaries.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Dictionaries));
+        dictionaryService.Dictionaries.CollectionChanged += (_, e) =>
+        {
+            OnPropertyChanged(nameof(Dictionaries));
+        };
     }
 
     public ObservableCollection<XliffInfo> Dictionaries => dictionaryService.Dictionaries;
@@ -38,9 +41,7 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
         });
         if (storageFile is not null &&
             Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
-        {
             dictionaryService.AddDictionaryFromFile(storageFile.LocalPath);
-        }
     }
 
     [RelayCommand]
