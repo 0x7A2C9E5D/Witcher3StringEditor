@@ -73,9 +73,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         Languages = GetSupportedLanguages(translator);
         FormLanguage = Language.GetLanguage("en");
         ToLanguage = GetPreferredLanguage(appSettings);
-        IsDictionarySupported = CanUseDictionary();
-        if (IsDictionarySupported)
-            Dictionaries = LoadDictionariesByTargetLanguage(ToLanguage);
+        UpdateDictionaryAvailability();
     }
 
     /// <summary>
@@ -193,7 +191,18 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="value">The new source language value</param>
     partial void OnFormLanguageChanged(ILanguage value)
     {
+        UpdateDictionaryAvailability();
         Log.Information("The source language has been changed to: {Name}.", value.Name);
+    }
+
+    /// <summary>
+    ///     Updates the availability of the dictionary service
+    /// </summary>
+    private void UpdateDictionaryAvailability()
+    {
+        IsDictionarySupported = CanUseDictionary();
+        if (IsDictionarySupported) 
+            Dictionaries = LoadDictionariesByTargetLanguage(ToLanguage);
     }
 
     /// <summary>
@@ -203,6 +212,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="value">The new target language value</param>
     partial void OnToLanguageChanged(ILanguage value)
     {
+        UpdateDictionaryAvailability();
         Log.Information("The target language has been changed to: {Name}.", value.Name);
     }
 }
