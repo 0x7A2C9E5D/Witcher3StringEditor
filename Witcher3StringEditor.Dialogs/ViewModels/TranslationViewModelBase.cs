@@ -88,7 +88,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     ///     Uses CultureMatcher to find the most appropriate dictionaries.
     /// </summary>
     /// <returns>Ordered list of matching dictionaries</returns>
-    private IList<XliffInfo> LoadDictionariesByTargetLanguage(ILanguage language)
+    private List<XliffInfo> LoadDictionariesByTargetLanguage(ILanguage language)
     {
         if (DictionaryService == null) return []; // No dictionary service
 
