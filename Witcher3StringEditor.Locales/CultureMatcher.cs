@@ -6,10 +6,15 @@ public static class CultureMatcher
 {
     public static IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IList<CultureInfo> availableCultures)
     {
-        var targetName = targetCulture.Name;
+        var bestMatches = availableCultures
+            .Where(x => x.Name == targetCulture.Name).ToArray();
+        if (bestMatches.Length != 0) return bestMatches;
         var targetParentName = targetCulture.Parent.Name;
-        
-        return availableCultures.Where(x =>
-            x.Name == targetName || x.Name == targetParentName || x.Parent.Name == targetParentName);
+        bestMatches = availableCultures
+            .Where(x => x.Name == targetParentName).ToArray();
+        if (bestMatches.Length != 0) return bestMatches;
+        bestMatches = availableCultures
+            .Where(x => x.Parent.Name == targetParentName).ToArray();
+        return bestMatches.Length != 0 ? bestMatches : [];
     }
 }
