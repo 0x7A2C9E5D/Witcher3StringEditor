@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
 using GTranslate.Translators;
 using Serilog;
-using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Locales;
@@ -44,7 +43,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     [ObservableProperty] private ILanguage formLanguage;
 
-    [ObservableProperty] private bool isSupportDictionary;
+    [ObservableProperty] private bool isDictionarySupported;
 
     /// <summary>
     ///     Gets or sets the collection of supported languages for the current translator
@@ -74,22 +73,9 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         Languages = GetSupportedLanguages(translator);
         FormLanguage = Language.GetLanguage("en");
         ToLanguage = GetPreferredLanguage(appSettings);
-        IsSupportDictionary = translator.Name == "MicrosoftTranslator";
-        if (!IsSupportDictionary || DictionaryService == null) return;
-        var flCulture = CultureInfo.GetCultureInfo(FormLanguage.ISO6391);
-        var enCultureName = CultureInfo.GetCultureInfo("en").Name;
-        if (flCulture.Name != enCultureName && flCulture.Parent.Name != enCultureName) return;
-        var availableDictionaries = DictionaryService.Dictionaries
-            .Select(x => x.TargetLanguage).ToArray();
-        var bestMatches = CultureMatcher
-            .Matches(CultureInfo.GetCultureInfo(ToLanguage.ISO6391), availableDictionaries);
-        Dictionaries = [];
-        bestMatches.ForEach(c =>
-        {
-            var foundDictionaries = DictionaryService.Dictionaries
-                .Where(x => x.TargetLanguage.Name == c.Name);
-            foundDictionaries.ForEach(d => Dictionaries.Add(d));
-        });
+        IsDictionarySupported = CanUseDictionary();
+        if (IsDictionarySupported)
+            Dictionaries = LoadDictionariesByTargetLanguage(ToLanguage);
     }
 
     /// <summary>
@@ -98,6 +84,69 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     /// <returns>A ValueTask representing the asynchronous dispose operation</returns>
     public abstract ValueTask DisposeAsync();
+
+    /// <summary>
+    ///     Loads dictionaries ordered by best match priority for the target language.
+    ///     Uses CultureMatcher to find the most appropriate dictionaries.
+    /// </summary>
+    /// <returns>Ordered list of matching dictionaries</returns>
+    private IList<XliffInfo> LoadDictionariesByTargetLanguage(ILanguage language)
+    {
+        if (DictionaryService == null) return []; // No dictionary service
+
+        var availableLanguages = DictionaryService.Dictionaries
+            .Select(x => x.TargetLanguage)
+            .ToArray(); // Get all available languages
+
+        var bestMatches = CultureMatcher.Matches(
+            CultureInfo.GetCultureInfo(language.ISO6391),
+            availableLanguages); // Find the best matches
+
+        return bestMatches
+            .SelectMany(match => DictionaryService.Dictionaries
+                .Where(x => x.TargetLanguage.Name == match.Name))
+            .ToList(); // Select matching dictionaries
+    }
+
+    /// <summary>
+    ///     Checks if the current language is supported by the dictionary service
+    /// </summary>
+    /// <returns>
+    ///     <code>true</code> if the language is supported, <code>false</code> otherwise.
+    /// </returns>
+    private bool CanUseDictionary()
+    {
+        if (DictionaryService == null) return false;
+        if (DictionaryService.Dictionaries.Count == 0) return false;
+        if (Translator.Name != "MicrosoftTranslator") return false;
+        return !IsEnglishCulture(FormLanguage) && IsEnglishCulture(FormLanguage);
+    }
+
+    /// <summary>
+    ///     Checks if a given language is English
+    /// </summary>
+    /// <param name="language"></param>
+    /// <returns>
+    ///     <code>true</code> if the language is English, <code>false</code> otherwise.
+    /// </returns>
+    private static bool IsEnglishCulture(ILanguage language)
+    {
+        var culture = CultureInfo.GetCultureInfo(language.ISO6391);
+        return IsEnglishCulture(culture);
+    }
+
+    /// <summary>
+    ///     Checks if a given culture is English
+    /// </summary>
+    /// <param name="culture"></param>
+    /// <returns>
+    ///     <code>true</code> if the culture is English, <code>false</code> otherwise.
+    /// </returns>
+    private static bool IsEnglishCulture(CultureInfo culture)
+    {
+        var enCultureName = CultureInfo.GetCultureInfo("en").Name;
+        return culture.Name == enCultureName || culture.Parent.Name == enCultureName;
+    }
 
     /// <summary>
     ///     Gets a value indicating whether a translation operation is currently in progress
