@@ -1,11 +1,14 @@
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
 using GTranslate.Translators;
 using Serilog;
+using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common;
 using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Xliff;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
@@ -34,7 +37,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     private protected CancellationTokenSource? CancellationTokenSource;
 
-    [ObservableProperty] private IEnumerable<XliffInfo>? dictionaries;
+    [ObservableProperty] private IList<XliffInfo>? dictionaries;
 
     /// <summary>
     ///     Gets or sets the source language for translation
@@ -65,12 +68,28 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     protected TranslationViewModelBase(IAppSettings appSettings, ITranslator translator,
         IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDictionaryService? dictionaryService = null)
     {
-        W3StringItems = w3StringItems;
         Translator = translator;
+        DictionaryService = dictionaryService;
+        W3StringItems = w3StringItems;
         Languages = GetSupportedLanguages(translator);
         FormLanguage = Language.GetLanguage("en");
         ToLanguage = GetPreferredLanguage(appSettings);
-        DictionaryService = dictionaryService;
+        IsSupportDictionary = translator.Name == "MicrosoftTranslator";
+        if (!IsSupportDictionary || DictionaryService == null) return;
+        var flCulture = CultureInfo.GetCultureInfo(FormLanguage.ISO6391);
+        var enCultureName = CultureInfo.GetCultureInfo("en").Name;
+        if (flCulture.Name != enCultureName && flCulture.Parent.Name != enCultureName) return;
+        var availableDictionaries = DictionaryService.Dictionaries
+            .Select(x => x.TargetLanguage).ToArray();
+        var bestMatches = CultureMatcher
+            .Matches(CultureInfo.GetCultureInfo(ToLanguage.ISO6391), availableDictionaries);
+        Dictionaries = [];
+        bestMatches.ForEach(c =>
+        {
+            var foundDictionaries = DictionaryService.Dictionaries
+                .Where(x => x.TargetLanguage.Name == c.Name);
+            foundDictionaries.ForEach(d => Dictionaries.Add(d));
+        });
     }
 
     /// <summary>
