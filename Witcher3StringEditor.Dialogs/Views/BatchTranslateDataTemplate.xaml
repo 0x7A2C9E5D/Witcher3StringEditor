@@ -12,6 +12,7 @@
         This template is used to display the UI for batch translation operations
         Binds to BatchItemsTranslationViewModel for data and command binding
     -->
+    <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     <c:PathToDisplayNameConverter x:Key="FilePathToFileNameConverter"/>
     <DataTemplate x:Key="BatchTranslateDataTemplate" DataType="{x:Type vm:BatchItemsTranslationViewModel}">
         <Grid>
@@ -40,7 +41,7 @@
                     ItemsSource="{Binding Languages}"
                     SelectedValue="{Binding ToLanguage}" />
                 <ComboBox
-                    IsEnabled="{Binding IsDictionarySupported}"
+                    Visibility="{Binding IsSupportDictionary,Converter={StaticResource BoolToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"
                     ui:ControlHelper.Header="{I18N {x:Static l:LangKeys.Dictionary}}"
                     ItemsSource="{Binding Dictionaries}"
