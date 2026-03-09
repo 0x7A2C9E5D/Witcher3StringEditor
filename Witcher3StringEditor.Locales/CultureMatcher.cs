@@ -2,8 +2,19 @@
 
 namespace Witcher3StringEditor.Locales;
 
+/// <summary>
+///     Provides culture matching functionality for the application
+/// </summary>
 public static class CultureMatcher
 {
+    /// <summary>
+    ///     Matches a target culture with available cultures
+    /// </summary>
+    /// <param name="targetCulture"></param>
+    /// <param name="availableCultures"></param>
+    /// <returns>
+    ///     An array of matching cultures
+    /// </returns>
     public static IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IList<CultureInfo> availableCultures)
     {
         var bestMatches = availableCultures
