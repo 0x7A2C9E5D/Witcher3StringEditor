@@ -88,9 +88,9 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     ///     Uses CultureMatcher to find the most appropriate dictionaries.
     /// </summary>
     /// <returns>Ordered list of matching dictionaries</returns>
-    private List<XliffInfo> LoadDictionariesByTargetLanguage(ILanguage language)
+    private List<XliffInfo> LoadDictionariesByTargetLanguage(ILanguage? language)
     {
-        if (DictionaryService == null) return []; // No dictionary service
+        if (DictionaryService == null || language == null) return []; // No dictionary service
 
         var availableLanguages = DictionaryService.Dictionaries
             .Select(x => x.TargetLanguage)
@@ -116,8 +116,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     {
         if (DictionaryService == null) return false;
         if (DictionaryService.Dictionaries.Count == 0) return false;
-        if (Translator.Name != "MicrosoftTranslator") return false;
-        return !IsEnglishCulture(FormLanguage) && IsEnglishCulture(FormLanguage);
+        return Translator.Name == "MicrosoftTranslator" && IsEnglishCulture(FormLanguage);
     }
 
     /// <summary>
@@ -201,7 +200,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private void UpdateDictionaryAvailability()
     {
         IsDictionarySupported = CanUseDictionary();
-        if (IsDictionarySupported) 
+        if (IsDictionarySupported)
             Dictionaries = LoadDictionariesByTargetLanguage(ToLanguage);
     }
 
