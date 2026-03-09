@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Globalization;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
@@ -56,8 +55,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     [ObservableProperty] private ILanguage toLanguage;
 
-    private readonly XliffInfo? noneDictionary;
-    
     /// <summary>
     ///     Initializes a new instance of the TranslationViewModelBase class
     /// </summary>
@@ -74,16 +71,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         FormLanguage = Language.GetLanguage("en");
         ToLanguage = GetPreferredLanguage(appSettings);
         DictionaryService = dictionaryService;
-        if (dictionaryService == null) return;
-        IsSupportDictionary = FormLanguage.ISO6391.StartsWith("en");
-        noneDictionary = new XliffInfo
-        {
-            FilePath = string.Empty,
-            Version = new Version(1, 0),
-            SourceLanguage = CultureInfo.InvariantCulture,
-            TargetLanguage = CultureInfo.InvariantCulture,
-            TermCount = 0
-        };
     }
 
     /// <summary>
