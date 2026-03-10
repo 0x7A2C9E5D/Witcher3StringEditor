@@ -203,6 +203,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         if (!IsDictionarySupported) return;
         Dictionaries = LoadDictionariesByTargetLanguage(ToLanguage);
         Dictionaries.Insert(0, DictionaryService!.NoneDictionary);
+        SelectedDictionary = DictionaryService.NoneDictionary;
     }
 
     /// <summary>
