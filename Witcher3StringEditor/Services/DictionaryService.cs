@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using NReco.Text;
 using Serilog;
@@ -20,6 +21,18 @@ public class DictionaryService : IDictionaryService
     private readonly XliffReader xliffReader = new(); // Xliff reader
     private Dictionary<string, string> terms; // Terms
     private readonly string dictionaryPath; // Dictionary path
+
+    /// <summary>
+    ///     None dictionary
+    /// </summary>
+    public static XliffInfo NoneDictionary { get; } = new()
+    {
+        FilePath = string.Empty,
+        Version = new Version(1, 0),
+        SourceLanguage = CultureInfo.InvariantCulture,
+        TargetLanguage = CultureInfo.InvariantCulture,
+        TermCount = 0
+    };
 
     /// <summary>
     ///     Dictionary service

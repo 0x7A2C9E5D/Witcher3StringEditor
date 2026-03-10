@@ -11,6 +11,11 @@ public interface IDictionaryService
     public ObservableCollection<XliffInfo> Dictionaries { get; }
 
     /// <summary>
+    ///     None dictionary
+    /// </summary>
+    public static XliffInfo NoneDictionary { get; }
+
+    /// <summary>
     ///     Loads a dictionary file and builds term cache with compiled regex
     /// </summary>
     public void LoadDictionary(XliffInfo xliffInfo);
