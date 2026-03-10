@@ -41,7 +41,6 @@
                     ItemsSource="{Binding Languages}"
                     SelectedValue="{Binding ToLanguage}" />
                 <ComboBox
-                    Visibility="{Binding IsDictionarySupported,Converter={StaticResource BoolToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"
                     ui:ControlHelper.Header="{I18N {x:Static l:LangKeys.Dictionary}}"
                     ItemsSource="{Binding Dictionaries}"

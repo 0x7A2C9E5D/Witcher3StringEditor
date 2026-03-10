@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
@@ -36,8 +37,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     private protected CancellationTokenSource? CancellationTokenSource;
 
-    [ObservableProperty] private IList<XliffInfo>? dictionaries;
-
     /// <summary>
     ///     Gets or sets the source language for translation
     /// </summary>
@@ -75,6 +74,8 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         ToLanguage = GetPreferredLanguage(appSettings);
         UpdateDictionaryAvailability();
     }
+
+    public ObservableCollection<XliffInfo> Dictionaries { get; } = [];
 
     /// <summary>
     ///     Disposes of the view model resources asynchronously
@@ -200,10 +201,13 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private void UpdateDictionaryAvailability()
     {
         IsDictionarySupported = CanUseDictionary();
+        if (Dictionaries.Count >= 1) Dictionaries.Clear();
+        Dictionaries.Add(DictionaryService!.NoneDictionary);
+        SelectedDictionary = DictionaryService!.NoneDictionary;
         if (!IsDictionarySupported) return;
-        Dictionaries = LoadDictionariesByTargetLanguage(ToLanguage);
-        Dictionaries.Insert(0, DictionaryService!.NoneDictionary);
-        SelectedDictionary = DictionaryService.NoneDictionary;
+        var matchingDictionaries = LoadDictionariesByTargetLanguage(ToLanguage);
+        if (matchingDictionaries.Count > 0)
+            matchingDictionaries.ForEach(x => Dictionaries.Add(x));
     }
 
     /// <summary>
