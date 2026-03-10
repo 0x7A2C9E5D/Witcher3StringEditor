@@ -13,7 +13,7 @@ public interface IDictionaryService
     /// <summary>
     ///     None dictionary
     /// </summary>
-    public static XliffInfo NoneDictionary { get; }
+    public XliffInfo NoneDictionary { get; }
 
     /// <summary>
     ///     Loads a dictionary file and builds term cache with compiled regex

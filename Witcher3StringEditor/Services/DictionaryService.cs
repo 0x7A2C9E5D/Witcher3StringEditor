@@ -25,7 +25,7 @@ public class DictionaryService : IDictionaryService
     /// <summary>
     ///     None dictionary
     /// </summary>
-    public static XliffInfo NoneDictionary { get; } = new()
+    public XliffInfo NoneDictionary { get; } = new()
     {
         FilePath = string.Empty,
         Version = new Version(1, 0),
