@@ -200,7 +200,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
-        isDictionaryAvailable = SelectedDictionary != null && SelectedDictionary != DictionaryService!.NoneDictionary;
+        isDictionaryAvailable = IsDictionarySupported && SelectedDictionary != DictionaryService!.NoneDictionary;
         if (isDictionaryAvailable) DictionaryService!.LoadDictionary(SelectedDictionary!);
         foreach (var item in items) // Process each item in the collection
             if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
@@ -227,7 +227,9 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         try
         {
             var textToTranslate =
-                isDictionaryAvailable ? DictionaryService!.ApplyDynamicDictionary(item.Text) : item.Text; // Apply dynamic dictionary
+                isDictionaryAvailable
+                    ? DictionaryService!.ApplyDynamicDictionary(item.Text)
+                    : item.Text; // Apply dynamic dictionary
             var translation =
                 await TranslateItem(Translator, textToTranslate, toLanguage, fromLanguage); // Perform translation
             if (translation.IsSuccess) // Check if translation succeeded
