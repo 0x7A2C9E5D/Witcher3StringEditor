@@ -115,8 +115,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </returns>
     private bool CanUseDictionary()
     {
-        if (DictionaryService == null) return false;
-        if (DictionaryService.Dictionaries.Count == 0) return false;
         return Translator.Name == "MicrosoftTranslator" && IsEnglishCulture(FormLanguage);
     }
 
@@ -201,6 +199,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private void UpdateDictionaryAvailability()
     {
         IsDictionarySupported = CanUseDictionary();
+        if (DictionaryService == null) return;
         if (Dictionaries.Count >= 1) Dictionaries.Clear();
         Dictionaries.Add(DictionaryService!.NoneDictionary);
         SelectedDictionary = DictionaryService!.NoneDictionary;
