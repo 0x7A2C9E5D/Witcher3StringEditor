@@ -20,6 +20,9 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 /// </summary>
 public abstract partial class TranslationViewModelBase : ObservableObject, IAsyncDisposable
 {
+    /// <summary>
+    ///     The dictionary service used for managing dictionaries
+    /// </summary>
     private protected readonly IDictionaryService? DictionaryService;
 
     /// <summary>
@@ -42,6 +45,9 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     [ObservableProperty] private ILanguage formLanguage;
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether the dictionary service is supported
+    /// </summary>
     [ObservableProperty] private bool isDictionarySupported;
 
     /// <summary>
@@ -49,6 +55,9 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     [ObservableProperty] private IEnumerable<ILanguage> languages;
 
+    /// <summary>
+    ///     Gets or sets the selected dictionary for translation
+    /// </summary>
     [ObservableProperty] private XliffInfo? selectedDictionary;
 
     /// <summary>
@@ -75,6 +84,9 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         UpdateDictionaryAvailability();
     }
 
+    /// <summary>
+    ///     Updates the availability of the dictionary service
+    /// </summary>
     public ObservableCollection<XliffInfo> Dictionaries { get; } = [];
 
     /// <summary>
