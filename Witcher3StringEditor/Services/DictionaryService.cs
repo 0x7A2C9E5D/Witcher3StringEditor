@@ -57,13 +57,13 @@ public class DictionaryService : IDictionaryService
     /// </summary>
     public void LoadDictionary(XliffInfo xliffInfo)
     {
-        var doc = xliffReader.ReadDocument(xliffInfo); // Read document
-        if (doc.Translations is { Count: > 0 }) // If translations exists
+        var xliffDocument = xliffReader.ReadDocument(xliffInfo); // Read document
+        if (xliffDocument.Translations is { Count: > 0 }) // If translations exists
         {
-            terms = doc.Translations
+            terms = xliffDocument.Translations
                 .Where(x => !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value))
                 .ToDictionary(); // Create dictionary
-            matcher.Build(doc.Translations.ToDictionary(kvp => kvp.Key, _ => 0)); // Build term cache
+            matcher.Build(xliffDocument.Translations.ToDictionary(kvp => kvp.Key, _ => 0)); // Build term cache
         }
         else
         {
@@ -96,7 +96,8 @@ public class DictionaryService : IDictionaryService
         File.Delete(xliffInfo.FilePath); // Delete the file
     }
 
-    private const string Tag = @"'<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>'"; // Tag
+    private const string DynamicDictionaryTemplate =
+        @"'<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>'"; // Tag
 
     /// <summary>
     ///     Applies dynamic dictionary to text, wrapping matched terms with Microsoft Translator tags
@@ -105,15 +106,17 @@ public class DictionaryService : IDictionaryService
     public string ApplyDynamicDictionary(string text)
     {
         if (string.IsNullOrEmpty(text) || terms.Count == 0) return text; // No text or no terms
-        var result = text;
+
+        var processedText = text;
         matcher.ParseText(text, hit =>
         {
             var phrase = text.Substring(hit.Begin, hit.Length); // Get phrase
             if (terms.TryGetValue(phrase, out var translation)) // If translation exists
-                result = string.Format(Tag, translation, phrase); // Replace phrase with tag
+                processedText =
+                    string.Format(DynamicDictionaryTemplate, translation, phrase); // Replace phrase with tag
         });
 
-        return result;
+        return processedText;
     }
 
     /// <summary>
@@ -124,12 +127,12 @@ public class DictionaryService : IDictionaryService
     {
         try
         {
-            var files = Directory.GetFiles(path)
-                .Where(x => x.EndsWith(".xliff") || x.EndsWith(".xlf")); // Get all xliff files
-            files.ForEach(file =>
+            var dictionaryFiles = Directory.GetFiles(path)
+                .Where(f => f.EndsWith(".xliff") || f.EndsWith(".xlf")); // Get all xliff files
+            dictionaryFiles.ForEach(dictionaryFile =>
             {
-                var info = xliffReader.ReadInfo(file); // Read info
-                if (info != null) Dictionaries.Add(info); // Add to dictionary
+                var xliffInfo = xliffReader.ReadInfo(dictionaryFile); // Read info
+                if (xliffInfo != null) Dictionaries.Add(xliffInfo); // Add to dictionary
             });
         }
         catch (Exception e)
