@@ -38,6 +38,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private bool isBusy;
 
+    private bool isDictionaryAvailable;
+
     /// <summary>
     ///     Gets or sets the maximum value for indices (typically the total item count)
     /// </summary>
@@ -198,8 +200,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
-        if (DictionaryService != null && SelectedDictionary != null)
-            DictionaryService.LoadDictionary(SelectedDictionary);
+        isDictionaryAvailable = SelectedDictionary != null && SelectedDictionary != DictionaryService!.NoneDictionary;
+        if (isDictionaryAvailable) DictionaryService!.LoadDictionary(SelectedDictionary!);
         foreach (var item in items) // Process each item in the collection
             if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
             {
@@ -224,12 +226,10 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     {
         try
         {
-            var itemText = DictionaryService != null && SelectedDictionary != null &&
-                           SelectedDictionary.FilePath != string.Empty
-                ? DictionaryService.ApplyDynamicDictionary(item.Text)
-                : item.Text;
+            var textToTranslate =
+                isDictionaryAvailable ? DictionaryService!.ApplyDynamicDictionary(item.Text) : item.Text; // Apply dynamic dictionary
             var translation =
-                await TranslateItem(Translator, itemText, toLanguage, fromLanguage); // Perform translation
+                await TranslateItem(Translator, textToTranslate, toLanguage, fromLanguage); // Perform translation
             if (translation.IsSuccess) // Check if translation succeeded
             {
                 item.Text = translation.Value; // Update with translated text

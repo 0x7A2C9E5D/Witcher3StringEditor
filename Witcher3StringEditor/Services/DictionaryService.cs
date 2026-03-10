@@ -19,7 +19,7 @@ public class DictionaryService : IDictionaryService
 
     private readonly AhoCorasickDoubleArrayTrie<int> matcher; // Aho-Corasick
     private readonly XliffReader xliffReader = new(); // Xliff reader
-    private Dictionary<string, string> terms; // Terms
+    private Dictionary<string, string> terms = []; // Terms
     private readonly string dictionaryPath; // Dictionary path
 
     /// <summary>
@@ -39,7 +39,6 @@ public class DictionaryService : IDictionaryService
     /// </summary>
     public DictionaryService()
     {
-        terms = new Dictionary<string, string>(); // Terms
         matcher = new AhoCorasickDoubleArrayTrie<int>(); // Aho-Corasick
         dictionaryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
             , IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Dictionaries"); // Dictionary path
