@@ -286,7 +286,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IDialogManager, DialogManager>()
             .AddSingleton<IDialogService, DialogService>()
             .AddSingleton<ILogAccessService, LogAccessService>()
-            .AddSingleton<IDictionaryService,DictionaryService>()
+            .AddSingleton<IDictionaryMangerService,DictionaryMangerService>()
             .AddSingleton<IDictionaryProvider,XliffDictionaryProvider>()
             .AddSingleton<IDynamicDictionaryService, DynamicDictionaryService>()
             .AddScoped<IExplorerService, ExplorerService>()

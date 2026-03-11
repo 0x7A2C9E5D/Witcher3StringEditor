@@ -2,7 +2,7 @@
 
 namespace Witcher3StringEditor.Dictionary;
 
-public interface IDictionaryService
+public interface IDictionaryMangerService
 {
     DictionaryInfo? CurrentDictionary { get; set; }
 

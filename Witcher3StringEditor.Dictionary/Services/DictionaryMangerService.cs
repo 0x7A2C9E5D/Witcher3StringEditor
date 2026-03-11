@@ -5,7 +5,7 @@ using Witcher3StringEditor.Locales;
 
 namespace Witcher3StringEditor.Dictionary.Services;
 
-public class DictionaryService : IDictionaryService
+public class DictionaryMangerService : IDictionaryMangerService
 {
 #if DEBUG
     private static bool IsDebug => true; // Debug
@@ -28,7 +28,7 @@ public class DictionaryService : IDictionaryService
     /// </summary>
     /// <param name="matcher"></param>
     /// <param name="provider"></param>
-    public DictionaryService(ICultureMatcher matcher, IDictionaryProvider provider)
+    public DictionaryMangerService(ICultureMatcher matcher, IDictionaryProvider provider)
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider

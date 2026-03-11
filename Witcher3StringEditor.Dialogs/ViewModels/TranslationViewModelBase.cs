@@ -23,7 +23,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <summary>
     ///     The dictionary service used for managing dictionaries
     /// </summary>
-    private protected readonly IDictionaryService? DictionaryService;
+    private protected readonly IDictionaryMangerService? DictionaryService;
 
     private protected DictionaryInfo NoneDictionary { get; } = new(
         string.Empty,
@@ -80,7 +80,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="dictionaryService">Dictionary service</param>
     protected TranslationViewModelBase(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDictionaryService? dictionaryService = null)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDictionaryMangerService? dictionaryService = null)
     {
         Translator = translator;
         DictionaryService = dictionaryService;

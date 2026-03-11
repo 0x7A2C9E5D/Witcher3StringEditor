@@ -16,17 +16,17 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogViewModel
 {
     private readonly IDialogService dialogService;
-    private readonly IDictionaryService dictionaryService;
+    private readonly IDictionaryMangerService dictionaryMangerService;
 
     /// <summary>
     ///     Initializes a new instance of the DictionaryDialogViewModel class.
     /// </summary>
-    /// <param name="dictionaryService"></param>
+    /// <param name="dictionaryMangerService"></param>
     /// <param name="dialogService"></param>
-    public DictionaryDialogViewModel(IDictionaryService dictionaryService, IDialogService dialogService)
+    public DictionaryDialogViewModel(IDictionaryMangerService dictionaryMangerService, IDialogService dialogService)
     {
         this.dialogService = dialogService;
-        this.dictionaryService = dictionaryService;
+        this.dictionaryMangerService = dictionaryMangerService;
     }
 
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
@@ -51,7 +51,7 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
         {
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
-                dictionaryService.Import(storageFile.LocalPath);
+                dictionaryMangerService.Import(storageFile.LocalPath);
         }
         catch (Exception e)
         {
@@ -68,7 +68,7 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     [RelayCommand]
     private void RemoveDictionary(DictionaryInfo dictionary)
     {
-        dictionaryService.Remove(dictionary);
+        dictionaryMangerService.Remove(dictionary);
         Dictionaries.Remove(dictionary);
     }
 }
