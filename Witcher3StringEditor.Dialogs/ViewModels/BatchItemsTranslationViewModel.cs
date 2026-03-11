@@ -200,7 +200,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         CancellationToken cancellationToken)
     {
         BindDictionaryIfNeeded(); // Bind dictionary if needed
-        
+
         foreach (var item in items) // Process each item in the collection
             if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
             {
@@ -219,10 +219,19 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// </summary>
     private void BindDictionaryIfNeeded()
     {
-        if (!IsDictionarySupported || SelectedDictionary == null || SelectedDictionary == NoneDictionary) return;
+        if (IsDictionaryUsable()) return;
         var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
         if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
-            dynamicDictionaryService.Bind(SelectedDictionary);
+            dynamicDictionaryService.Bind(SelectedDictionary!);
+    }
+
+    /// <summary>
+    ///     Determines whether the selected dictionary is usable
+    /// </summary>
+    /// <returns></returns>
+    private bool IsDictionaryUsable()
+    {
+        return SelectedDictionary != NoneDictionary;
     }
 
     /// <summary>
@@ -236,8 +245,11 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     {
         try
         {
+            var textToTranslated = IsDictionaryUsable()
+                ? DictionaryService!.DynamicDictionaryService.Replace(item.Text)
+                : item.Text; // Replace with dictionary if needed
             var translation =
-                await TranslateItem(Translator, item.Text, toLanguage, fromLanguage); // Perform translation
+                await TranslateItem(Translator, textToTranslated, toLanguage, fromLanguage); // Perform translation
             if (translation.IsSuccess) // Check if translation succeeded
             {
                 item.Text = translation.Value; // Update with translated text
