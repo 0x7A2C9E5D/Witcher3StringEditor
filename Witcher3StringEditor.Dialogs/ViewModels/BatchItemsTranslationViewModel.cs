@@ -215,11 +215,11 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     }
 
     /// <summary>
-    ///     Binds the selected dictionary if supported and necessary
+    ///     Binds the selected dictionary to the dynamic dictionary service if supported and needed
     /// </summary>
     private void BindDictionaryIfNeeded()
     {
-        if (!IsDictionarySupported || (SelectedDictionary == null && SelectedDictionary != NoneDictionary)) return;
+        if (!IsDictionarySupported || SelectedDictionary == null || SelectedDictionary == NoneDictionary) return;
         var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
         if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
             dynamicDictionaryService.Bind(SelectedDictionary);
