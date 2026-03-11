@@ -184,7 +184,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     ///     Logs the change in source language
     /// </summary>
     /// <param name="value">The new source language value</param>
-    // ReSharper disable once UnusedMember.Local
     partial void OnFormLanguageChanged(ILanguage value)
     {
         UpdateDictionaryAvailability();
@@ -206,7 +205,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         if (!IsDictionarySupported) return;
         var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391);
         var matchingDictionaries = DictionaryService.DictionaryMangerService.Find(targetLanguage).ToArray();
-        if (matchingDictionaries.Any())
+        if (matchingDictionaries.Length != 0)
             matchingDictionaries.ForEach(x => Dictionaries.Add(x));
     }
 

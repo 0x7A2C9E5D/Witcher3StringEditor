@@ -68,7 +68,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="startIndex">Initial start index for translation</param>
     /// <param name="dictionaryService">Dictionary service</param>
     public BatchItemsTranslationViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex, IDictionaryService? dictionaryService = null) : base(appSettings, translator,
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex,
+        IDictionaryService? dictionaryService = null) : base(appSettings, translator,
         w3StringItems, dictionaryService)
     {
         StartIndex = startIndex; // Set start index
@@ -198,6 +199,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
+        if (IsDictionarySupported && (SelectedDictionary != null || SelectedDictionary == NoneDictionary))
+            DictionaryService!.DynamicDictionaryService.Bind(SelectedDictionary!);
         foreach (var item in items) // Process each item in the collection
             if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
             {
