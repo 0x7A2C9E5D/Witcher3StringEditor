@@ -291,6 +291,7 @@ public sealed partial class App : IDisposable
             .AddScoped<IExplorerService, ExplorerService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
+            .AddTransient<ICultureMatcher, CultureMatcher>()
             .AddTransient<ISettingsManagerService, SettingsManagerService>()
             .AddTransient<ITranslator, MicrosoftTranslator>()
             .AddTransient<ITranslator, GoogleTranslator>()
