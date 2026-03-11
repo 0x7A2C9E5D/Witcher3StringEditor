@@ -5,6 +5,7 @@ using GTranslate;
 using GTranslate.Translators;
 using Serilog;
 using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -38,8 +39,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private bool isBusy;
 
-    private bool isDictionaryAvailable;
-
     /// <summary>
     ///     Gets or sets the maximum value for indices (typically the total item count)
     /// </summary>
@@ -69,8 +68,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="startIndex">Initial start index for translation</param>
     /// <param name="dictionaryService">Dictionary service</param>
     public BatchItemsTranslationViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex,
-        IDictionaryService? dictionaryService = null) : base(appSettings, translator,
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex, IDictionaryService? dictionaryService = null) : base(appSettings, translator,
         w3StringItems, dictionaryService)
     {
         StartIndex = startIndex; // Set start index
@@ -200,8 +198,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
-        isDictionaryAvailable = IsDictionarySupported && SelectedDictionary != DictionaryService!.NoneDictionary;
-        if (isDictionaryAvailable) DictionaryService!.LoadDictionary(SelectedDictionary!);
         foreach (var item in items) // Process each item in the collection
             if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
             {
@@ -226,12 +222,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     {
         try
         {
-            var textToTranslate =
-                isDictionaryAvailable
-                    ? DictionaryService!.ApplyDynamicDictionary(item.Text)
-                    : item.Text; // Apply dynamic dictionary
             var translation =
-                await TranslateItem(Translator, textToTranslate, toLanguage, fromLanguage); // Perform translation
+                await TranslateItem(Translator, item.Text, toLanguage, fromLanguage); // Perform translation
             if (translation.IsSuccess) // Check if translation succeeded
             {
                 item.Text = translation.Value; // Update with translated text

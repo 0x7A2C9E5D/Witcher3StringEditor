@@ -25,7 +25,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     private protected readonly IDictionaryService? DictionaryService;
 
-    private readonly DictionaryInfo noneDictionary = new(
+    private protected DictionaryInfo NoneDictionary { get; } = new(
         string.Empty,
         new Version(0, 0),
         CultureInfo.GetCultureInfo("en"),
@@ -198,8 +198,8 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         IsDictionarySupported = CanUseDictionary();
         if (DictionaryService == null) return;
         if (Dictionaries.Count >= 1) Dictionaries.Clear();
-        Dictionaries.Add(noneDictionary);
-        SelectedDictionary = noneDictionary;
+        Dictionaries.Add(NoneDictionary);
+        SelectedDictionary = NoneDictionary;
         if (!IsDictionarySupported) return;
         var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391);
         var matchingDictionaries = DictionaryService.Find(targetLanguage).ToArray();
