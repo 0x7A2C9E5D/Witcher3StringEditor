@@ -660,12 +660,17 @@ internal partial class MainWindowViewModel : ObservableObject
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
         var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
             .First(x => x.Name == appSettings.Translator);
+        var isUseDictionary = appSettings.Translator == "MicrosoftTranslator";
+        var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
         var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse,
-            selectedIndex);
+            selectedIndex,dictionaryService);
         await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable
     }
 
+    /// <summary>
+    ///     Shows the dictionary dialog
+    /// </summary>
     [RelayCommand]
     private async Task ShowDictionaryDialog()
     {

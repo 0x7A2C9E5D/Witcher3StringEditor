@@ -23,7 +23,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <summary>
     ///     The dictionary service used for managing dictionaries
     /// </summary>
-    private protected readonly IDictionaryMangerService? DictionaryService;
+    private protected readonly IDictionaryService? DictionaryService;
 
     private protected DictionaryInfo NoneDictionary { get; } = new(
         string.Empty,
@@ -80,7 +80,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="dictionaryService">Dictionary service</param>
     protected TranslationViewModelBase(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDictionaryMangerService? dictionaryService = null)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDictionaryService? dictionaryService = null)
     {
         Translator = translator;
         DictionaryService = dictionaryService;
@@ -202,7 +202,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         SelectedDictionary = NoneDictionary;
         if (!IsDictionarySupported) return;
         var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391);
-        var matchingDictionaries = DictionaryService.Find(targetLanguage).ToArray();
+        var matchingDictionaries = DictionaryService.DictionaryMangerService.Find(targetLanguage).ToArray();
         if (matchingDictionaries.Any())
             matchingDictionaries.ForEach(x => Dictionaries.Add(x));
     }
