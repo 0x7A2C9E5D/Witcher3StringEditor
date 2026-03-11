@@ -568,4 +568,7 @@
   <data name="ImportDictionaryFailedCaption" xml:space="preserve">
     <value>Import dictionary failed</value>
   </data>
+  <data name="FileFormatXliffFile" xml:space="preserve">
+    <value>XLIFF Files</value>
+  </data>
 </root>

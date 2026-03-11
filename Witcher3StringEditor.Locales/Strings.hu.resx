@@ -568,4 +568,7 @@
   <data name="ImportDictionaryFailedCaption" xml:space="preserve">
     <value>A szótár importálása sikertelen</value>
   </data>
+  <data name="FileFormatXliffFile" xml:space="preserve">
+    <value>XLIFF fájlok</value>
+  </data>
 </root>

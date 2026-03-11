@@ -411,6 +411,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to XLIFF Files.
+        /// </summary>
+        public static string FileFormatXliffFile {
+            get {
+                return ResourceManager.GetString("FileFormatXliffFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FileName.
         /// </summary>
         public static string FileName {

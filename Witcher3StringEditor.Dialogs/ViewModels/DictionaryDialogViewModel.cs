@@ -46,7 +46,7 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
         {
             Filters =
             [
-                new FileFilter(Strings.FileFormatSupported, [".xliff", ".xlf"])
+                new FileFilter(Strings.FileFormatXliffFile, [".xliff", ".xlf"])
             ]
         });
 
