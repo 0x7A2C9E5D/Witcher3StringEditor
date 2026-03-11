@@ -288,7 +288,6 @@ public sealed partial class App : IDisposable
             .AddSingleton<ILogAccessService, LogAccessService>()
             .AddSingleton<IDictionaryMangerService,DictionaryMangerService>()
             .AddSingleton<IDictionaryProvider,XliffDictionaryProvider>()
-            .AddSingleton<IDynamicDictionaryService, DynamicDictionaryService>()
             .AddScoped<IExplorerService, ExplorerService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
@@ -296,6 +295,8 @@ public sealed partial class App : IDisposable
             .AddTransient<ITranslator, MicrosoftTranslator>()
             .AddTransient<ITranslator, GoogleTranslator>()
             .AddTransient<ITranslator, YandexTranslator>()
+            .AddTransient<IDynamicDictionaryService, DynamicDictionaryService>()
+            .AddTransient<IDictionaryService,DictionaryService>()
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());
     }
