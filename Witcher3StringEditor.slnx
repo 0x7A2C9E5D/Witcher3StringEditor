@@ -1,6 +1,7 @@
 <Solution>
     <Project Path="Witcher3StringEditor.Common/Witcher3StringEditor.Common.csproj" />
     <Project Path="Witcher3StringEditor.Dialogs/Witcher3StringEditor.Dialogs.csproj" />
+    <Project Path="Witcher3StringEditor.Dictionary/Witcher3StringEditor.Dictionary.csproj" Id="31d1621c-ab13-48f7-a311-982001e8994b" />
     <Project Path="Witcher3StringEditor.Locales/Witcher3StringEditor.Locales.csproj" />
     <Project Path="Witcher3StringEditor.Messaging/Witcher3StringEditor.Messaging.csproj" Id="e78d7acb-00a1-44e5-a022-d773065ea126" />
     <Project Path="Witcher3StringEditor.NexusIntegration/Witcher3StringEditor.NexusIntegration.csproj" Id="ed0b7250-22a7-49fe-88bc-c824e4a1edb1" />

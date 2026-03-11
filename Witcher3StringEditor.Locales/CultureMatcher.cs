@@ -1,11 +1,13 @@
 ﻿using System.Globalization;
+using JetBrains.Annotations;
 
 namespace Witcher3StringEditor.Locales;
 
 /// <summary>
 ///     Provides culture matching functionality for the application
 /// </summary>
-public static class CultureMatcher
+[PublicAPI]
+public class CultureMatcher : ICultureMatcher
 {
     /// <summary>
     ///     Matches a target culture with available cultures
@@ -15,13 +17,13 @@ public static class CultureMatcher
     /// <returns>
     ///     An array of matching cultures
     /// </returns>
-    public static IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IList<CultureInfo> availableCultures)
+    public IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IList<CultureInfo> availableCultures)
     {
         var bestMatches = availableCultures
             .Where(x => x.Name == targetCulture.Name).ToArray();
         if (bestMatches.Length != 0) return bestMatches;
         var targetParentName = targetCulture.Parent.Name;
-        bestMatches = availableCultures
+        bestMatches = availableCultures 
             .Where(x => x.Name == targetParentName).ToArray();
         if (bestMatches.Length != 0) return bestMatches;
         bestMatches = availableCultures
