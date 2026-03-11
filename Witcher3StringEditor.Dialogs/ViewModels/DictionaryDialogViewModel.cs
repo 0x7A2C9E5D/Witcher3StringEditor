@@ -54,7 +54,11 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
         {
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
-                dictionaryMangerService.Import(storageFile.LocalPath);
+            {
+                var dictionaryInfo = dictionaryMangerService.Import(storageFile.LocalPath);
+                if (dictionaryInfo == null) return;
+                Dictionaries.Add(dictionaryInfo);
+            }
         }
         catch (Exception e)
         {

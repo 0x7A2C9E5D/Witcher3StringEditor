@@ -6,7 +6,7 @@ public interface IDictionaryMangerService
 {
     DictionaryInfo? CurrentDictionary { get; set; }
 
-    bool Import(string filePath);
+    DictionaryInfo? Import(string filePath);
 
     void Remove(DictionaryInfo dictionary);
 

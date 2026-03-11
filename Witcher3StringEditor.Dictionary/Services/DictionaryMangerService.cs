@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net;
 using MoreLinq;
 using Serilog;
 using Witcher3StringEditor.Locales;
@@ -64,24 +65,17 @@ public class DictionaryMangerService : IDictionaryMangerService
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public bool Import(string filePath)
+    public DictionaryInfo? Import(string filePath)
     {
-        try
-        {
-            if (dictionaries.Any(x => x.Path.Equals(filePath))) return false; // Already exists
+            var fileName = Path.GetFileName(filePath);
+            if (dictionaries.Any(x => Path.GetFileName(x.Path) == fileName)) return null;
             var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
             var destFileName = Path.Combine(dictionaryPath, Path.GetFileName(filePath)); // Get destination file name
             File.Copy(filePath, destFileName, true); // Copy file
             var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
             dictionaries.Add(newDictionaryInfo); // Add to collection
 
-            return true;
-        }
-        catch (Exception e)
-        {
-            Log.Error(e, "Failed to import dictionary: {Path}", filePath);
-            return false;
-        }
+            return dictionaryInfo;
     }
 
     /// <summary>
