@@ -45,7 +45,7 @@
                     Visibility="{Binding IsDictionarySupported, Converter={StaticResource BoolToVisibilityConverter}}"
                     ui:ControlHelper.Header="{I18N {x:Static l:LangKeys.Dictionary}}"
                     ItemsSource="{Binding Dictionaries}"
-                    SelectedValue="{Binding SelectedDictionary}" >
+                    SelectedItem="{Binding SelectedDictionary}" >
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path,Converter={StaticResource FilePathToFileNameConverter}}"/>

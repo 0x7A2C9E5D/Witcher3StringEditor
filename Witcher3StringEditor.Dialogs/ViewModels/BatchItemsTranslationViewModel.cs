@@ -219,7 +219,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// </summary>
     private void BindDictionaryIfNeeded()
     {
-        if (IsDictionaryUsable()) return;
+        if (!IsDictionaryUsable()) return;
         var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
         if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
             dynamicDictionaryService.Bind(SelectedDictionary!);
