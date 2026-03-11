@@ -19,6 +19,9 @@ using Syncfusion.Licensing;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dialogs.Views;
+using Witcher3StringEditor.Dictionary;
+using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Dictionary.Services;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers;
@@ -284,6 +287,8 @@ public sealed partial class App : IDisposable
             .AddSingleton<IDialogService, DialogService>()
             .AddSingleton<ILogAccessService, LogAccessService>()
             .AddSingleton<IDictionaryService,DictionaryService>()
+            .AddSingleton<IDictionaryProvider,XliffDictionaryProvider>()
+            .AddSingleton<IDynamicDictionaryService, DynamicDictionaryService>()
             .AddScoped<IExplorerService, ExplorerService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()

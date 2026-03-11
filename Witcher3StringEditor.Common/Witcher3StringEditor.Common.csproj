@@ -35,8 +35,4 @@
         <None Remove="Constants\**" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Witcher3StringEditor.Xliff\Witcher3StringEditor.Xliff.csproj" />
-    </ItemGroup>
-
 </Project>

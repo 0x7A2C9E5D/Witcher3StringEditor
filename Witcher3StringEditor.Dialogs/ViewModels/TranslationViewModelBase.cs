@@ -5,11 +5,11 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
 using GTranslate.Translators;
+using MoreLinq;
 using Serilog;
 using Witcher3StringEditor.Common;
 using Witcher3StringEditor.Common.Abstractions;
-using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Xliff;
+using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -24,6 +24,13 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     ///     The dictionary service used for managing dictionaries
     /// </summary>
     private protected readonly IDictionaryService? DictionaryService;
+
+    private readonly DictionaryInfo noneDictionary = new(
+        string.Empty,
+        new Version(0, 0),
+        CultureInfo.GetCultureInfo("en"),
+        CultureInfo.GetCultureInfo("en"),
+        0);
 
     /// <summary>
     ///     The translation service used for translating text
@@ -58,7 +65,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <summary>
     ///     Gets or sets the selected dictionary for translation
     /// </summary>
-    [ObservableProperty] private XliffInfo? selectedDictionary;
+    [ObservableProperty] private DictionaryInfo? selectedDictionary;
 
     /// <summary>
     ///     Gets or sets the target language for translation
@@ -87,7 +94,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <summary>
     ///     Updates the availability of the dictionary service
     /// </summary>
-    public ObservableCollection<XliffInfo> Dictionaries { get; } = [];
+    public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 
     /// <summary>
     ///     Disposes of the view model resources asynchronously
@@ -96,28 +103,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <returns>A ValueTask representing the asynchronous dispose operation</returns>
     public abstract ValueTask DisposeAsync();
 
-    /// <summary>
-    ///     Loads dictionaries ordered by best match priority for the target language.
-    ///     Uses CultureMatcher to find the most appropriate dictionaries.
-    /// </summary>
-    /// <returns>Ordered list of matching dictionaries</returns>
-    private List<XliffInfo> LoadDictionariesByTargetLanguage(ILanguage? language)
-    {
-        if (DictionaryService == null || language == null) return []; // No dictionary service
-
-        var availableLanguages = DictionaryService.Dictionaries
-            .Select(x => x.TargetLanguage)
-            .ToArray(); // Get all available languages
-
-        var bestMatches = CultureMatcher.Matches(
-            CultureInfo.GetCultureInfo(language.ISO6391),
-            availableLanguages); // Find the best matches
-
-        return bestMatches
-            .SelectMany(match => DictionaryService.Dictionaries
-                .Where(x => x.TargetLanguage.Name == match.Name))
-            .ToList(); // Select matching dictionaries
-    }
 
     /// <summary>
     ///     Checks if the current language is supported by the dictionary service
@@ -213,11 +198,12 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         IsDictionarySupported = CanUseDictionary();
         if (DictionaryService == null) return;
         if (Dictionaries.Count >= 1) Dictionaries.Clear();
-        Dictionaries.Add(DictionaryService!.NoneDictionary);
-        SelectedDictionary = DictionaryService!.NoneDictionary;
+        Dictionaries.Add(noneDictionary);
+        SelectedDictionary = noneDictionary;
         if (!IsDictionarySupported) return;
-        var matchingDictionaries = LoadDictionariesByTargetLanguage(ToLanguage);
-        if (matchingDictionaries.Count > 0)
+        var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391);
+        var matchingDictionaries = DictionaryService.Find(targetLanguage).ToArray();
+        if (matchingDictionaries.Any())
             matchingDictionaries.ForEach(x => Dictionaries.Add(x));
     }
 

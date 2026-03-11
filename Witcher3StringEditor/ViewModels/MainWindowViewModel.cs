@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using cmdwtf;
 using CommandLine;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
@@ -19,6 +18,7 @@ using Serilog;
 using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
+using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
@@ -661,8 +661,7 @@ internal partial class MainWindowViewModel : ObservableObject
         var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
             .First(x => x.Name == appSettings.Translator);
         var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse,
-            selectedIndex,
-            translator.Name == "MicrosoftTranslator" ? Ioc.Default.GetRequiredService<IDictionaryService>() : null);
+            selectedIndex);
         await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable
     }

@@ -7,10 +7,9 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Serilog;
-using Witcher3StringEditor.Common.Abstractions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
-using Witcher3StringEditor.Xliff;
+using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -28,10 +27,9 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     {
         this.dialogService = dialogService;
         this.dictionaryService = dictionaryService;
-        dictionaryService.Dictionaries.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Dictionaries));
     }
 
-    public ObservableCollection<XliffInfo> Dictionaries => dictionaryService.Dictionaries;
+    public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 
     public bool? DialogResult => true;
 
@@ -39,7 +37,7 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     ///     Adds a dictionary from a file.
     /// </summary>
     [RelayCommand]
-    private async Task AddDictionaryFromFile()
+    private async Task ImportDictionary()
     {
         using var storageFile = await dialogService.ShowOpenFileDialogAsync(this, new OpenFileDialogSettings
         {
@@ -53,7 +51,7 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
         {
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
-                dictionaryService.AddDictionaryFromFile(storageFile.LocalPath);
+                dictionaryService.Import(storageFile.LocalPath);
         }
         catch (Exception e)
         {
@@ -66,10 +64,11 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     /// <summary>
     ///     Removes the specified dictionary.
     /// </summary>
-    /// <param name="xliffInfo"></param>
+    /// <param name="dictionary"></param>
     [RelayCommand]
-    private void RemoveDictionary(XliffInfo xliffInfo)
+    private void RemoveDictionary(DictionaryInfo dictionary)
     {
-        dictionaryService.RemoveDictionary(xliffInfo);
+        dictionaryService.Remove(dictionary);
+        Dictionaries.Remove(dictionary);
     }
 }

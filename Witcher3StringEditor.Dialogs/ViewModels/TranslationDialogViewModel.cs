@@ -25,8 +25,6 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// </summary>
     private readonly IAppSettings appSettings;
 
-    private readonly IDictionaryService? dictionaryService;
-
     /// <summary>
     ///     The starting index for translation
     /// </summary>
@@ -59,21 +57,18 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="index">Starting index for translation</param>
-    /// <param name="dictionaryService">Dictionary service</param>
     public TranslationDialogViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems,
-        int index, IDictionaryService? dictionaryService = null)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int index)
     {
         this.index = index;
         this.translator = translator;
         this.appSettings = appSettings;
         this.w3StringItems = w3StringItems;
-        this.dictionaryService = dictionaryService;
         Log.Information("Total items to translate: {Count}.", this.w3StringItems.Count); // Log the number of items
         Log.Information("Starting index: {Index}.", index); // Log the starting index
         CurrentViewModel =
             new SingleItemTranslationViewModel(appSettings, translator, this.w3StringItems,
-                index, dictionaryService); // Initialize the current view model
+                index); // Initialize the current view model
     }
 
     /// <summary>
@@ -99,10 +94,9 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
                 await DisposeCurrentViewModelAsync(); // Dispose current view model
                 var formLange = CurrentViewModel.FormLanguage; // Save current source language
                 CurrentViewModel = CurrentViewModel is BatchItemsTranslationViewModel // Switch view model type
-                    ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems, index,
-                        dictionaryService)
+                    ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems, index)
                     : new BatchItemsTranslationViewModel(appSettings, translator,
-                        w3StringItems, index + 1, dictionaryService);
+                        w3StringItems, index + 1);
                 CurrentViewModel.FormLanguage = formLange; // Restore source language
                 Title = CurrentViewModel is BatchItemsTranslationViewModel // Update dialog title
                     ? Strings.BatchTranslateDialogTitle
