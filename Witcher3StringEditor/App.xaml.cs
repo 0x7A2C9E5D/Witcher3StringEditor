@@ -321,7 +321,7 @@ public sealed partial class App : IDisposable
         viewLocator.Register<TranslationDialogViewModel, TranslationDialog>();
         viewLocator.Register<RecentDialogViewModel, RecentDialog>();
         viewLocator.Register<AboutDialogViewModel, AboutDialog>();
-        viewLocator.Register<DictionaryDialogViewModel, DictionaryDialog>();
+        viewLocator.Register<DictionaryManagerDialogViewModel, DictionaryManagerDialog>();
         return viewLocator;
     }
 

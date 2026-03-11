@@ -10,9 +10,9 @@ namespace Witcher3StringEditor.Dialogs.Views;
 /// <summary>
 ///     Interaction logic for DictionaryDialog.xaml
 /// </summary>
-public partial class DictionaryDialog
+public partial class DictionaryManagerDialog
 {
-    public DictionaryDialog()
+    public DictionaryManagerDialog()
     {
         InitializeComponent(); // InitializeComponent
         RegisterMessageHandlers(); // Register message handlers
@@ -23,7 +23,7 @@ public partial class DictionaryDialog
     /// </summary>
     private void RegisterMessageHandlers()
     {
-        WeakReferenceMessenger.Default.Register<DictionaryDialog, AsyncRequestMessage<bool>, string>(this,
+        WeakReferenceMessenger.Default.Register<DictionaryManagerDialog, AsyncRequestMessage<bool>, string>(this,
             MessageTokens.ImportDictionaryFailed,
             (_, _) =>
             {

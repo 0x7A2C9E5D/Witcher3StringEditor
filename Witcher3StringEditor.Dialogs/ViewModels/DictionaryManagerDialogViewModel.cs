@@ -14,7 +14,7 @@ using Witcher3StringEditor.Messaging;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
-public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogViewModel
+public partial class DictionaryManagerDialogViewModel : ObservableObject, IModalDialogViewModel
 {
     private readonly IDialogService dialogService;
     private readonly IDictionaryMangerService dictionaryMangerService;
@@ -24,7 +24,7 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     /// </summary>
     /// <param name="dictionaryMangerService"></param>
     /// <param name="dialogService"></param>
-    public DictionaryDialogViewModel(IDictionaryMangerService dictionaryMangerService, IDialogService dialogService)
+    public DictionaryManagerDialogViewModel(IDictionaryMangerService dictionaryMangerService, IDialogService dialogService)
     {
         this.dialogService = dialogService;
         this.dictionaryMangerService = dictionaryMangerService;
