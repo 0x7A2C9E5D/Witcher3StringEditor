@@ -48,7 +48,7 @@
                     SelectedValue="{Binding SelectedDictionary}" >
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding FilePath,Converter={StaticResource FilePathToFileNameConverter}}"></TextBlock>
+                            <TextBlock Text="{Binding Path,Converter={StaticResource FilePathToFileNameConverter}}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>

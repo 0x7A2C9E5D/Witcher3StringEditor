@@ -195,6 +195,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     private void UpdateDictionaryAvailability()
     {
+        if(ToLanguage == null) return;
         IsDictionarySupported = CanUseDictionary();
         if (DictionaryService == null) return;
         if (Dictionaries.Count >= 1) Dictionaries.Clear();
