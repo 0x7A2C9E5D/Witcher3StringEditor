@@ -9,7 +9,7 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     private readonly AhoCorasickDoubleArrayTrie<int> matcher = new();
 
     private const string DynamicDictionaryTemplate =
-        @"'<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>'";
+        @"<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>";
 
     public bool IsReady { get; private set; }
     
