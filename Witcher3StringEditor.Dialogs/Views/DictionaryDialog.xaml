@@ -24,7 +24,7 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Button Grid.Row="0" Grid.Column="1" Margin="0,16,16,16" Command="{Binding AddDictionaryFromFileCommand}">
+        <Button Grid.Row="0" Grid.Column="1" Margin="0,16,16,16" Command="{Binding ImportDictionaryCommand}">
             <StackPanel Orientation="Horizontal">
                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Import}" />
                 <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.ImportDictionary}}" />
@@ -67,7 +67,7 @@
                                    HeaderText="{I18N {x:Static l:LangKeys.FileName}}">
                     <sf:GridTextColumn.ValueBinding>
                         <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                        <Binding Path="FilePath" Converter="{StaticResource PathToDisplayNameConverter}" />
+                        <Binding Path="Path" Converter="{StaticResource PathToDisplayNameConverter}" />
                     </sf:GridTextColumn.ValueBinding>
                 </sf:GridTextColumn>
                 <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage.NativeName"

@@ -7,9 +7,10 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Serilog;
+using Syncfusion.Data.Extensions;
+using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
-using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -27,6 +28,8 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
     {
         this.dialogService = dialogService;
         this.dictionaryMangerService = dictionaryMangerService;
+        var found = this.dictionaryMangerService.Find(null);
+        found.ForEach(x => Dictionaries.Add(x));
     }
 
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
@@ -55,7 +58,8 @@ public partial class DictionaryDialogViewModel : ObservableObject, IModalDialogV
         }
         catch (Exception e)
         {
-            _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), MessageTokens.ImportDictionaryFailed);
+            _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                MessageTokens.ImportDictionaryFailed);
             Log.Warning(e, "Invalid dictionary file: {Path}", storageFile?.LocalPath);
             Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
         }
