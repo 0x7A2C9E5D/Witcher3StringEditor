@@ -199,8 +199,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
-        if (IsDictionarySupported && (SelectedDictionary != null || SelectedDictionary == NoneDictionary))
-            DictionaryService!.DynamicDictionaryService.Bind(SelectedDictionary!);
+        BindDictionaryIfNeeded(); // Bind dictionary if needed
+        
         foreach (var item in items) // Process each item in the collection
             if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
             {
@@ -212,6 +212,17 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
                 Log.Information("The batch translation has been cancelled."); // Log cancellation
                 break; // Exit the loop if canceled
             }
+    }
+
+    /// <summary>
+    ///     Binds the selected dictionary if supported and necessary
+    /// </summary>
+    private void BindDictionaryIfNeeded()
+    {
+        if (!IsDictionarySupported || (SelectedDictionary == null && SelectedDictionary != NoneDictionary)) return;
+        var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
+        if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
+            dynamicDictionaryService.Bind(SelectedDictionary);
     }
 
     /// <summary>
