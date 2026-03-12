@@ -214,24 +214,17 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             }
     }
 
+    private bool isReady; // Flag to indicate whether the dynamic dictionary service is ready
+    
     /// <summary>
     ///     Binds the selected dictionary to the dynamic dictionary service if supported and needed
     /// </summary>
     private void BindDictionaryIfNeeded()
     {
-        if (!IsDictionaryUsable()) return;
+        if (SelectedDictionary != NoneDictionary) return;
         var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
         if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
-            dynamicDictionaryService.Bind(SelectedDictionary!);
-    }
-
-    /// <summary>
-    ///     Determines whether the selected dictionary is usable
-    /// </summary>
-    /// <returns></returns>
-    private bool IsDictionaryUsable()
-    {
-        return SelectedDictionary != NoneDictionary;
+           isReady = dynamicDictionaryService.Bind(SelectedDictionary!);
     }
 
     /// <summary>
@@ -245,7 +238,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     {
         try
         {
-            var textToTranslated = IsDictionaryUsable()
+            var textToTranslated = isReady
                 ? DictionaryService!.DynamicDictionaryService.Replace(item.Text)
                 : item.Text; // Replace with dictionary if needed
             var translation =
