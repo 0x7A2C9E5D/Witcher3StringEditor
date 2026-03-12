@@ -214,7 +214,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             }
     }
 
-    private bool isReady; // Flag to indicate whether the dynamic dictionary service is ready
+    private bool isDictionaryReady; // Flag to indicate whether the dynamic dictionary service is ready
     
     /// <summary>
     ///     Binds the selected dictionary to the dynamic dictionary service if supported and needed
@@ -224,7 +224,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         if (SelectedDictionary != NoneDictionary) return;
         var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
         if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
-           isReady = dynamicDictionaryService.Bind(SelectedDictionary!);
+           isDictionaryReady = dynamicDictionaryService.Bind(SelectedDictionary!);
     }
 
     /// <summary>
@@ -238,7 +238,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     {
         try
         {
-            var textToTranslated = isReady
+            var textToTranslated = isDictionaryReady
                 ? DictionaryService!.DynamicDictionaryService.Replace(item.Text)
                 : item.Text; // Replace with dictionary if needed
             var translation =
