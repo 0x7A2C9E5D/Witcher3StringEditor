@@ -22,6 +22,8 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
             CurrentDictionary = dictionary;
             entries = provider.GetEntries(dictionary)
                 .Where(x => !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value))
+                .GroupBy(pair => pair.Key)
+                .Select(g=>g.First())
                 .ToDictionary();
             matcher.Build(entries.ToDictionary(kvp => kvp.Key, _ => 0)); // Build term cache
             IsReady = true;
