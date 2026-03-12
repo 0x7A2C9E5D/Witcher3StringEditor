@@ -1,6 +1,5 @@
-﻿using System.Globalization;
-using System.Text;
-using CommunityToolkit.Diagnostics;
+﻿using CommunityToolkit.Diagnostics;
+using Cysharp.Text;
 using Serilog;
 using Witcher3StringEditor.Common;
 using Witcher3StringEditor.Common.Abstractions;
@@ -28,7 +27,8 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
         try
         {
             return await File.ReadLinesAsync(filePath) // Read lines from file
-                .Where(line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith(';')) // Filter out empty lines and comments
+                .Where(line =>
+                    !string.IsNullOrWhiteSpace(line) && !line.StartsWith(';')) // Filter out empty lines and comments
                 .Select(line => new { line, parts = line.Split('|') }) // Split each line into parts
                 .Where(x => x.parts.Length == 4) // Filter out lines with incorrect number of parts
                 .Select(IW3StringItem (x) => new W3StringStringItem
@@ -37,7 +37,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
                     KeyHex = x.parts[1].Trim(), // Extract key hex
                     KeyName = x.parts[2].Trim(), // Extract key name
                     Text = x.parts[3].Trim() // Extract text
-                })  // Convert each line to a W3StringStringItem
+                }) // Convert each line to a W3StringStringItem
                 .ToListAsync();
         }
         catch (Exception ex)
@@ -91,7 +91,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
             Guard.IsTrue(backupService.Backup(filePath)); // Create backup
         await File.WriteAllTextAsync(filePath, content); // Write file
     }
-    
+
     /// <summary>
     ///     Builds the CSV content from a collection of The Witcher 3 string items
     /// </summary>
@@ -100,11 +100,11 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
     /// <returns>The complete CSV content as a string</returns>
     private static string BuildCsvContent(IReadOnlyCollection<IW3StringItem> w3StringItems, string lang)
     {
-        var stringBuilder = new StringBuilder(); // Efficient CSV content builder
-        stringBuilder.AppendLine(CultureInfo.InvariantCulture, $";meta[language={lang}]"); // Language metadata header
+        using var stringBuilder = ZString.CreateStringBuilder(); // Efficient CSV content builder
+        stringBuilder.AppendLine($";meta[language={lang}]"); // Language metadata header
         stringBuilder.AppendLine("; id      |key(hex)|key(str)| text"); // CSV column headers
         foreach (var w3StringItem in w3StringItems) // Process each string item
-            stringBuilder.AppendLine(CultureInfo.InvariantCulture,
+            stringBuilder.AppendLine(
                 $"{w3StringItem.StrId}|{w3StringItem.KeyHex}|{w3StringItem.KeyName}|{w3StringItem.Text}"); // CSV row format: StrId|KeyHex|KeyName|Text
         return stringBuilder.ToString(); // Return complete CSV content
     }
