@@ -42,14 +42,14 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     public string Replace(string text)
     {
         if (string.IsNullOrEmpty(text) || entries.Count == 0) return text; // No text or no terms
-
         var processedText = text;
         matcher.ParseText(text, hit =>
         {
             var phrase = text.Substring(hit.Begin, hit.Length); // Get phrase
-            if (entries.TryGetValue(phrase, out var translation)) // If translation exists
-                processedText =
-                    string.Format(DynamicDictionaryTemplate, translation, phrase); // Replace phrase with tag
+            if (!entries.TryGetValue(phrase, out var translation)) return; // If translation exists
+            var tag = string.Format(DynamicDictionaryTemplate, translation, phrase); // Replace phrase with tag
+            processedText = processedText.Remove(hit.Begin, hit.Length);
+            processedText = processedText.Insert(hit.Begin, tag);
         });
 
         return processedText;
