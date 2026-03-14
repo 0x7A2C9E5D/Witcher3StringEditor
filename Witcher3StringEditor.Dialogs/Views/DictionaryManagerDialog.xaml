@@ -34,6 +34,11 @@
                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Document}" />
                 <TextBlock Margin="5,0,0,0"
                            Text="{Binding Path, Converter={StaticResource PathToDisplayNameConverter}}" />
+                <Button
+                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RemoveDictionaryCommand}"
+                    CommandParameter="{Binding}">
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
+                </Button>
             </StackPanel>
         </DataTemplate>
         <t:DictionaryTreeTemplateSelector x:Key="DictionaryTreeTemplateSelector"
@@ -73,7 +78,8 @@
                 </ui:AutoSuggestBox.QueryIcon>
             </ui:AutoSuggestBox>
         </Grid>
-        <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,36,16,0">
+        <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,36,16,0"
+                Command="{Binding ImportDictionaryCommand}">
             <StackPanel Orientation="Horizontal">
                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Import}" />
                 <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.ImportDictionary}}" />
@@ -86,10 +92,11 @@
                 <b:TreeViewSelectedItemBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
         </TreeView>
-        <sf:SfDataGrid ItemsSource="{Binding DictionaryTerms}" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0" ColumnSizer="Star">
+        <sf:SfDataGrid ItemsSource="{Binding DictionaryTerms}" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False"
+                       Margin="16,16,16,0" ColumnSizer="Star">
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn HeaderText="原文" MappingName="Key"/>
-                <sf:GridTextColumn HeaderText="译文" MappingName="Value"/>
+                <sf:GridTextColumn HeaderText="原文" MappingName="Key" />
+                <sf:GridTextColumn HeaderText="译文" MappingName="Value" />
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
         <sf:SfDataPager Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center" />
