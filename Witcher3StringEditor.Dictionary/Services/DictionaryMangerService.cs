@@ -70,10 +70,15 @@ public class DictionaryMangerService : IDictionaryMangerService
     public async Task<DictionaryInfo?> Import(string filePath)
     {
         var fileName = Path.GetFileName(filePath);
-        if (dictionaries.Any(x => Path.GetFileName(x.Path) == fileName) &&
-            !await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.DictionaryOverwriteConfirm))
-            return null;
+        if (dictionaries.Any(x => Path.GetFileName(x.Path) == fileName))
+        {
+            if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                    MessageTokens.DictionaryOverwriteConfirm))
+                dictionaries.RemoveAll(x => x.Path == filePath);
+            else
+                return null;
+        }
+
         var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
         var destFileName = Path.Combine(dictionaryPath, Path.GetFileName(filePath)); // Get destination file name
         File.Copy(filePath, destFileName, true); // Copy file
