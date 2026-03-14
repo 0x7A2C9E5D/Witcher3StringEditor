@@ -20,6 +20,8 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     private readonly IDialogService dialogService;
     private readonly IDictionaryMangerService dictionaryMangerService;
 
+    [ObservableProperty] private string selectedDictionary = string.Empty;
+
     /// <summary>
     ///     Initializes a new instance of the DictionaryDialogViewModel class.
     /// </summary>
@@ -33,21 +35,18 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         var found = this.dictionaryMangerService.Find(null);
         found.GroupBy(x => x.TargetLanguage).ForEach(g =>
         {
-            var group = new DictionaryGroup
-            {
-                TargetLanguage = g.Key,
-                DictionaryNames = g.Select(x => x.Path).ToList()
-            };
+            var group = new DictionaryGroup(g.Key, g.Select(x => x).ToList());
             DictionaryGroups.Add(group);
         });
     }
 
     public ObservableCollection<DictionaryGroup> DictionaryGroups { get; } = [];
 
-    public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
-
+    /// <summary>
+    ///     Dialog result.
+    /// </summary>
     public bool? DialogResult => true;
-
+    
     /// <summary>
     ///     Adds a dictionary from a file.
     /// </summary>
@@ -69,7 +68,17 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             {
                 var dictionaryInfo = dictionaryMangerService.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return;
-                Dictionaries.Add(dictionaryInfo);
+                var found = DictionaryGroups.Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
+                    .ToList();
+                if (found.Count != 0)
+                {
+                    found[0].Dictionaries.Add(dictionaryInfo);
+                }
+                else
+                {
+                    var group = new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]);
+                    DictionaryGroups.Add(group);
+                }
             }
         }
         catch (Exception e)
@@ -89,6 +98,12 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     private void RemoveDictionary(DictionaryInfo dictionary)
     {
         dictionaryMangerService.Remove(dictionary);
-        Dictionaries.Remove(dictionary);
+        var found = DictionaryGroups
+            .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
+        if (found is null) return;
+        if (found.Dictionaries.Count == 1)
+            DictionaryGroups.Remove(found);
+        else
+            found.Dictionaries.Remove(dictionary);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using Witcher3StringEditor.Dialogs.Models;
+using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.TemplateSelectors
 {
@@ -32,7 +33,7 @@ namespace Witcher3StringEditor.Dialogs.TemplateSelectors
             return item switch
             {
                 DictionaryGroup => DictionaryGroupTemplate,
-                string => DictionaryItemTemplate,
+                DictionaryInfo => DictionaryItemTemplate,
                 _ => null
             };        
         }

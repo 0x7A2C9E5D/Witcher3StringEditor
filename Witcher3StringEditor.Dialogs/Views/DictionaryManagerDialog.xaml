@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
         xmlns:sf="http://schemas.syncfusion.com/wpf"
         xmlns:l="clr-namespace:Witcher3StringEditor.Locales;assembly=Witcher3StringEditor.Locales"
@@ -11,6 +12,7 @@
         xmlns:s="clr-namespace:System;assembly=mscorlib"
         xmlns:t="clr-namespace:Witcher3StringEditor.Dialogs.TemplateSelectors"
         xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
+        xmlns:b="clr-namespace:Witcher3StringEditor.Dialogs.Behaviors"
         d:DataContext="{d:DesignInstance Type=vm:DictionaryManagerDialogViewModel}"
         Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}"
         ui:WindowHelper.UseModernWindowStyle="True"
@@ -78,7 +80,11 @@
         </Button>
         <TreeView Grid.Row="2" Grid.Column="0" Width="300" Margin="16,16,0,0" BorderThickness="1"
                   BorderBrush="LightGray" ItemTemplateSelector="{StaticResource DictionaryTreeTemplateSelector}"
-                  ItemsSource="{Binding DictionaryGroups}" />
+                  ItemsSource="{Binding DictionaryGroups}">
+            <i:Interaction.Behaviors>
+                <b:TreeViewSelectedItemBehavior SelectedItem="{}"/>
+            </i:Interaction.Behaviors>
+        </TreeView>
         <sf:SfDataGrid Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0" ColumnSizer="Star">
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn HeaderText="原文" />
