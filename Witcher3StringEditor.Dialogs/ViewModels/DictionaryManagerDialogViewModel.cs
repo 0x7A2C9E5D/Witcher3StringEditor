@@ -17,11 +17,24 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 
 public partial class DictionaryManagerDialogViewModel : ObservableObject, IModalDialogViewModel
 {
+    /// <summary>
+    ///    The dialog service.
+    /// </summary>
     private readonly IDialogService dialogService;
+    
+    /// <summary>
+    ///     The dictionary service.
+    /// </summary>
     private readonly IDictionaryService dictionaryService;
 
-    [ObservableProperty] private Dictionary<string, string>? dictionaryTerms;
+    /// <summary>
+    ///    The dictionary terms.
+    /// </summary>
+    [ObservableProperty] private Dictionary<string,string>? dictionaryTerms;
 
+    /// <summary>
+    ///    The selected dictionary.
+    /// </summary>
     [ObservableProperty] private DictionaryInfo? selectedDictionary;
 
     /// <summary>
@@ -68,7 +81,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     /// <param name="value"></param>
     partial void OnSelectedDictionaryChanged(DictionaryInfo? value)
     {
-        dictionaryTerms = value is null ? [] : DictionaryProvider.GetEntries(value);
+        DictionaryTerms = value is null ? [] : DictionaryProvider.GetEntries(value);
     }
 
     /// <summary>

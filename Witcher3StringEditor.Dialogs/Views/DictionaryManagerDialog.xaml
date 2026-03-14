@@ -86,10 +86,10 @@
                 <b:TreeViewSelectedItemBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
         </TreeView>
-        <sf:SfDataGrid Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0" ColumnSizer="Star">
+        <sf:SfDataGrid ItemsSource="{Binding DictionaryTerms}" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0" ColumnSizer="Star">
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn HeaderText="原文" />
-                <sf:GridTextColumn HeaderText="译文" />
+                <sf:GridTextColumn HeaderText="原文" MappingName="Key"/>
+                <sf:GridTextColumn HeaderText="译文" MappingName="Value"/>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
         <sf:SfDataPager Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center" />
