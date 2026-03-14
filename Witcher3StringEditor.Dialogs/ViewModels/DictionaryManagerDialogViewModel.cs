@@ -19,12 +19,11 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
 {
     private readonly IDialogService dialogService;
     private readonly IDictionaryService dictionaryService;
-    private IDictionaryMangerService DictionaryMangerService => dictionaryService.DictionaryMangerService;
+
+    [ObservableProperty] private Dictionary<string, string>? dictionaryTerms;
 
     [ObservableProperty] private DictionaryInfo? selectedDictionary;
 
-    [ObservableProperty] private Dictionary<string, string>? dictionaryTerms; 
-    
     /// <summary>
     ///     Initializes a new instance of the DictionaryDialogViewModel class.
     /// </summary>
@@ -43,6 +42,8 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         });
     }
 
+    private IDictionaryMangerService DictionaryMangerService => dictionaryService.DictionaryMangerService;
+
     public ObservableCollection<DictionaryGroup> DictionaryGroups { get; } = [];
 
     /// <summary>
@@ -52,7 +53,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
 
     partial void OnSelectedDictionaryChanged(DictionaryInfo? value)
     {
-            
     }
 
     /// <summary>

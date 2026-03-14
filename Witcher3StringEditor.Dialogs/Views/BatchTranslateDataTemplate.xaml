@@ -12,8 +12,8 @@
         This template is used to display the UI for batch translation operations
         Binds to BatchItemsTranslationViewModel for data and command binding
     -->
-    <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-    <c:PathToDisplayNameConverter x:Key="FilePathToFileNameConverter"/>
+    <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <c:PathToDisplayNameConverter x:Key="FilePathToFileNameConverter" />
     <DataTemplate x:Key="BatchTranslateDataTemplate" DataType="{x:Type vm:BatchItemsTranslationViewModel}">
         <Grid>
             <Grid.RowDefinitions>
@@ -45,10 +45,10 @@
                     Visibility="{Binding IsDictionarySupported, Converter={StaticResource BoolToVisibilityConverter}}"
                     ui:ControlHelper.Header="{I18N {x:Static l:LangKeys.Dictionary}}"
                     ItemsSource="{Binding Dictionaries}"
-                    SelectedItem="{Binding SelectedDictionary}" >
+                    SelectedItem="{Binding SelectedDictionary}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path,Converter={StaticResource FilePathToFileNameConverter}}"/>
+                            <TextBlock Text="{Binding Path,Converter={StaticResource FilePathToFileNameConverter}}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>

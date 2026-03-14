@@ -39,6 +39,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private bool isBusy;
 
+    private bool isDictionaryReady; // Flag to indicate whether the dynamic dictionary service is ready
+
     /// <summary>
     ///     Gets or sets the maximum value for indices (typically the total item count)
     /// </summary>
@@ -214,8 +216,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             }
     }
 
-    private bool isDictionaryReady; // Flag to indicate whether the dynamic dictionary service is ready
-    
     /// <summary>
     ///     Binds the selected dictionary to the dynamic dictionary service if supported and needed
     /// </summary>
@@ -224,7 +224,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         if (SelectedDictionary != NoneDictionary) return;
         var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
         if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
-           isDictionaryReady = dynamicDictionaryService.Bind(SelectedDictionary!);
+            isDictionaryReady = dynamicDictionaryService.Bind(SelectedDictionary!);
     }
 
     /// <summary>

@@ -25,13 +25,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     private protected readonly IDictionaryService? DictionaryService;
 
-    private protected DictionaryInfo NoneDictionary { get; } = new(
-        string.Empty,
-        new Version(0, 0),
-        CultureInfo.GetCultureInfo("en"),
-        CultureInfo.GetCultureInfo("en"),
-        0);
-
     /// <summary>
     ///     The translation service used for translating text
     /// </summary>
@@ -90,6 +83,13 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         ToLanguage = GetPreferredLanguage(appSettings);
         UpdateDictionaryAvailability();
     }
+
+    private protected DictionaryInfo NoneDictionary { get; } = new(
+        string.Empty,
+        new Version(0, 0),
+        CultureInfo.GetCultureInfo("en"),
+        CultureInfo.GetCultureInfo("en"),
+        0);
 
     /// <summary>
     ///     Updates the availability of the dictionary service
@@ -196,7 +196,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private void UpdateDictionaryAvailability()
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if(ToLanguage == null) return;
+        if (ToLanguage == null) return;
         IsDictionarySupported = CanUseDictionary();
         if (DictionaryService == null) return;
         if (Dictionaries.Count >= 1) Dictionaries.Clear();

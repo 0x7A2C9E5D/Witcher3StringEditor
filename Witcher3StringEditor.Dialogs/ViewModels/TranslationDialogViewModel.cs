@@ -27,6 +27,11 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     private readonly IAppSettings appSettings;
 
     /// <summary>
+    ///     The dictionary service
+    /// </summary>
+    private readonly IDictionaryService? dictionaryService;
+
+    /// <summary>
     ///     The starting index for translation
     /// </summary>
     private readonly int index;
@@ -40,11 +45,6 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     ///     The collection of items to translate
     /// </summary>
     private readonly IReadOnlyList<ITrackableW3StringItem> w3StringItems;
-    
-    /// <summary>
-    ///     The dictionary service
-    /// </summary>
-    private readonly IDictionaryService? dictionaryService;
 
     /// <summary>
     ///     Gets or sets the current translation view model (either single or batch)
@@ -65,7 +65,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <param name="index">Starting index for translation</param>
     /// <param name="dictionaryService">Dictionary service</param>
     public TranslationDialogViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int index,IDictionaryService? dictionaryService)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int index, IDictionaryService? dictionaryService)
     {
         this.index = index;
         this.translator = translator;

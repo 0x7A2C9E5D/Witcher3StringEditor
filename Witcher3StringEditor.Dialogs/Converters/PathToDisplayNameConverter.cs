@@ -8,7 +8,7 @@ namespace Witcher3StringEditor.Dialogs.Converters;
 public class PathToDisplayNameConverter : IValueConverter
 {
     /// <summary>
-    ///   Converts a file path to a file name
+    ///     Converts a file path to a file name
     /// </summary>
     /// <param name="value"></param>
     /// <param name="targetType"></param>
@@ -25,7 +25,7 @@ public class PathToDisplayNameConverter : IValueConverter
     }
 
     /// <summary>
-    ///  Not implemented
+    ///     Not implemented
     /// </summary>
     /// <param name="value"></param>
     /// <param name="targetType"></param>
