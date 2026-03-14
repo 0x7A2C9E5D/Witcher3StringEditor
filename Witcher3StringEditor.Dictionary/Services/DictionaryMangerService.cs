@@ -47,7 +47,7 @@ public class DictionaryMangerService : IDictionaryMangerService
     private void LoadDictionariesFromDirectory(string path)
     {
         var dictionaryFiles = Directory.GetFiles(path)
-            .Where(f => f.EndsWith(".xliff") || f.EndsWith(".xlf")); // Get all xliff files
+            .Where(f => f.EndsWith(".txt")); // Get dictionary files
         dictionaryFiles.ForEach(dictionaryFile =>
         {
             try
