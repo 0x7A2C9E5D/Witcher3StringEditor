@@ -563,7 +563,7 @@
     <value>Nombre de termes</value>
   </data>
   <data name="ImportDictionaryFailedMessage" xml:space="preserve">
-    <value>Échec de l'importation : Le fichier doit être un fichier Xliff valide, la langue source doit être l'anglais et la langue cible ne peut pas être vide.</value>
+    <value>Format de dictionnaire invalide. Veuillez vérifier le contenu du fichier.</value>
   </data>
   <data name="ImportDictionaryFailedCaption" xml:space="preserve">
     <value>Échec de l'importation du dictionnaire</value>

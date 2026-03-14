@@ -539,7 +539,7 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
-        ///   查找类似 Import failed: The file must be a valid Xliff file, the source language must be English, and the target language cannot be empty. 的本地化字符串。
+        ///   查找类似 Invalid dictionary format. Please check the file content. 的本地化字符串。
         /// </summary>
         public static string ImportDictionaryFailedMessage {
             get {

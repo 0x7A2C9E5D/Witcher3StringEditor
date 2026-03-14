@@ -563,7 +563,7 @@
     <value>Kifejezések száma</value>
   </data>
   <data name="ImportDictionaryFailedMessage" xml:space="preserve">
-    <value>Az importálás sikertelen: A fájlnak érvényes Xliff fájlnak kell lennie, a forrásnyelvnek angolnak, a célnyelvnek pedig nem lehet üres.</value>
+    <value>Érvénytelen szótárformátum. Kérjük, ellenőrizze a fájl tartalmát.</value>
   </data>
   <data name="ImportDictionaryFailedCaption" xml:space="preserve">
     <value>A szótár importálása sikertelen</value>

@@ -563,7 +563,7 @@
     <value>用語数</value>
   </data>
   <data name="ImportDictionaryFailedMessage" xml:space="preserve">
-    <value>インポートに失敗しました：ファイルは有効な Xliff ファイルである必要があり、ソース言語は英語で、ターゲット言語は空にできません。</value>
+    <value>辞書フォーマットが無効です。ファイルの内容を確認してください。</value>
   </data>
   <data name="ImportDictionaryFailedCaption" xml:space="preserve">
     <value>辞書のインポートに失敗しました</value>

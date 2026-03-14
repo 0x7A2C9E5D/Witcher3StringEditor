@@ -563,7 +563,7 @@
     <value>词条数量</value>
   </data>
   <data name="ImportDictionaryFailedMessage" xml:space="preserve">
-    <value>导入失败：文件必须是合法的 Xliff 文件，源语言需为英语，且目标语言不能为空。</value>
+    <value>字典格式无效，请检查文件内容。</value>
   </data>
   <data name="ImportDictionaryFailedCaption" xml:space="preserve">
     <value>导入词典失败</value>
