@@ -15,7 +15,7 @@ public class DictionaryProvider : IDictionaryProvider
     private const string NotePrefix = "Note";
 
     /// <summary>
-    ///     Maps Witcher 3 language codes to standard CultureInfo codes
+    ///     Maps Witcher 3 special language codes to standard CultureInfo codes
     /// </summary>
     private static readonly Dictionary<string, string> W3LangMap = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -23,19 +23,8 @@ public class DictionaryProvider : IDictionaryProvider
         { "KR", "ko" },
         { "CN", "zh-Hans" },
         { "ZH", "zh-Hant" },
-        { "TR", "tr" },
         { "BR", "pt-BR" },
-        { "AR", "ar" },
-        { "RU", "ru" },
-        { "IT", "it" },
-        { "HU", "hu" },
-        { "ESMX", "es-MX" },
-        { "ES", "es" },
-        { "CZ", "cs" },
-        { "FR", "fr" },
-        { "DE", "de" },
-        { "EN", "en" },
-        { "PL", "pl" }
+        { "ESMX", "es-MX" }
     };
 
     public DictionaryInfo GetDictionaryInfo(string filePath)
@@ -85,7 +74,7 @@ public class DictionaryProvider : IDictionaryProvider
         var sourceLangRaw = parts[1].Trim();
         var targetLangRaw = parts[2].Trim();
 
-        // Convert Witcher 3 language codes to standard codes
+        // Convert Witcher 3 special language codes to standard codes
         var sourceLang = NormalizeLanguageCode(sourceLangRaw);
         var targetLang = NormalizeLanguageCode(targetLangRaw);
 
@@ -99,7 +88,7 @@ public class DictionaryProvider : IDictionaryProvider
         {
             throw new InvalidDataException(
                 $"Invalid language code '{sourceLangRaw}' or '{targetLangRaw}'. " +
-                $"Supported codes: {string.Join(", ", W3LangMap.Keys)}");
+                $"Supported codes: {string.Join(", ", W3LangMap.Keys)} or standard CultureInfo codes");
         }
 
         return (name, sourceLang, targetLang);
@@ -107,15 +96,15 @@ public class DictionaryProvider : IDictionaryProvider
 
     /// <summary>
     ///     Normalizes a language code from Witcher 3 format to standard CultureInfo format
+    ///     Only converts Witcher 3 specific abbreviations, keeps standard codes as-is
     /// </summary>
     private static string NormalizeLanguageCode(string code)
     {
-        return string.IsNullOrWhiteSpace(code)
-            ? throw new ArgumentException(@"Language code cannot be empty", nameof(code))
-            : W3LangMap.GetValueOrDefault(code, code); // Check if it's a Witcher 3 specific code
+        if (string.IsNullOrWhiteSpace(code))
+            throw new ArgumentException(@"Language code cannot be empty", nameof(code));
 
-
-        // If not in map, try to use as-is (might already be a standard code)
+        // Only convert Witcher 3 specific codes, otherwise keep original
+        return W3LangMap.GetValueOrDefault(code, code);
     }
 
     /// <summary>
