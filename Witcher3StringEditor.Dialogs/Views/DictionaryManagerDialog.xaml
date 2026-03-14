@@ -102,13 +102,37 @@
             </i:Interaction.Behaviors>
         </TreeView>
         <sf:SfDataGrid x:Name="SfDataGrid" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0"
-                       ColumnSizer="Star" ItemsSource="{Binding PagedSource, ElementName=SfDataPager}">
+                       ColumnSizer="Star" ItemsSource="{Binding PagedSource, ElementName=SfDataPager}"
+                       NavigationMode="Row" ShowRowHeader="True">
+            <sf:SfDataGrid.Resources>
+                <ResourceDictionary>
+                    <Style TargetType="sf:GridRowHeaderCell">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="sf:GridRowHeaderCell">
+                                    <Border x:Name="PART_RowHeaderCellBorder"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                        <Grid>
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Text="{Binding RowIndex,RelativeSource={RelativeSource TemplatedParent}}"
+                                                       TextAlignment="Center" />
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </sf:SfDataGrid.Resources>
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn MappingName="Key" />
                 <sf:GridTextColumn MappingName="Value" />
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
         <sf:SfDataPager x:Name="SfDataPager" Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center"
-                        Source="{Binding DictionaryTerms}" />
+                        Source="{Binding DictionaryTerms}" PageSize="30" />
     </Grid>
 </Window>

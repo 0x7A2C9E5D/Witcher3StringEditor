@@ -86,7 +86,8 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
 
     private protected DictionaryInfo NoneDictionary { get; } = new(
         string.Empty,
-        new Version(0, 0),
+        string.Empty,
+        string.Empty,
         CultureInfo.GetCultureInfo("en"),
         CultureInfo.GetCultureInfo("en"),
         0);
