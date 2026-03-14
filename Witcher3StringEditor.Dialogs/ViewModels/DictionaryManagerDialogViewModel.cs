@@ -18,21 +18,24 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public partial class DictionaryManagerDialogViewModel : ObservableObject, IModalDialogViewModel
 {
     private readonly IDialogService dialogService;
-    private readonly IDictionaryMangerService dictionaryMangerService;
+    private readonly IDictionaryService dictionaryService;
+    private IDictionaryMangerService DictionaryMangerService => dictionaryService.DictionaryMangerService;
 
     [ObservableProperty] private DictionaryInfo? selectedDictionary;
 
+    [ObservableProperty] private Dictionary<string, string>? dictionaryTerms; 
+    
     /// <summary>
     ///     Initializes a new instance of the DictionaryDialogViewModel class.
     /// </summary>
-    /// <param name="dictionaryMangerService"></param>
+    /// <param name="dictionaryService"></param>
     /// <param name="dialogService"></param>
-    public DictionaryManagerDialogViewModel(IDictionaryMangerService dictionaryMangerService,
+    public DictionaryManagerDialogViewModel(IDictionaryService dictionaryService,
         IDialogService dialogService)
     {
         this.dialogService = dialogService;
-        this.dictionaryMangerService = dictionaryMangerService;
-        var found = this.dictionaryMangerService.Find(null);
+        this.dictionaryService = dictionaryService;
+        var found = DictionaryMangerService.Find(null);
         found.GroupBy(x => x.TargetLanguage).ForEach(g =>
         {
             var group = new DictionaryGroup(g.Key, g.Select(x => x).ToList());
@@ -49,7 +52,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
 
     partial void OnSelectedDictionaryChanged(DictionaryInfo? value)
     {
-        throw new NotImplementedException();
+            
     }
 
     /// <summary>
@@ -71,7 +74,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
             {
-                var dictionaryInfo = dictionaryMangerService.Import(storageFile.LocalPath);
+                var dictionaryInfo = DictionaryMangerService.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return;
                 var found = DictionaryGroups.Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
                     .ToList();
@@ -102,7 +105,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     [RelayCommand]
     private void RemoveDictionary(DictionaryInfo dictionary)
     {
-        dictionaryMangerService.Remove(dictionary);
+        DictionaryMangerService.Remove(dictionary);
         var found = DictionaryGroups
             .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
         if (found is null) return;

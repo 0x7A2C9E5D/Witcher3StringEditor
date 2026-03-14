@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Net;
 using MoreLinq;
 using Serilog;
 using Witcher3StringEditor.Locales;

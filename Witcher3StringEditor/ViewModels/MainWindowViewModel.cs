@@ -674,7 +674,7 @@ internal partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task ShowDictionaryDialog()
     {
-        var dictionaryService = serviceProvider.GetRequiredService<IDictionaryMangerService>();
+        var dictionaryService = serviceProvider.GetRequiredService<IDictionaryService>();
         await dialogService.ShowDialogAsync(this,
             new DictionaryManagerDialogViewModel(dictionaryService, dialogService)); // Show the dictionary dialog
     }
