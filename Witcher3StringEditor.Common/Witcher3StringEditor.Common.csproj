@@ -15,8 +15,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
-        <PackageReference Include="Serilog" Version="4.3.1" />
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4"/>
+        <PackageReference Include="Serilog" Version="4.3.1"/>
         <PackageReference Include="SonarAnalyzer.CSharp" Version="10.20.0.135146">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,15 +24,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Constants\**" />
+        <Compile Remove="Constants\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Remove="Constants\**" />
+        <EmbeddedResource Remove="Constants\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Constants\**" />
+        <None Remove="Constants\**"/>
     </ItemGroup>
 
 </Project>

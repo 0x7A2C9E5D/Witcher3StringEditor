@@ -115,32 +115,32 @@ public static class MessageTokens
     ///     Token for messages indicating that a search has been requested
     /// </summary>
     public const string SearchRequested = "SearchRequested";
-    
+
     /// <summary>
     ///     Token for messages indicating that an invalid path has been provided
     /// </summary>
     public const string PathInvalid = "PathInvalid";
-    
+
     /// <summary>
     ///     Token for messages indicating that logs do not need to be cleaned
     /// </summary>
     public const string LogsNoNeedToClean = "LogsNoNeedToClean";
-    
+
     /// <summary>
     ///     Token for messages indicating that logs have been cleaned
     /// </summary>
     public const string LogsCleaned = "LogsCleaned";
-    
+
     /// <summary>
     ///     Token for messages indicating that logs have been collected
     /// </summary>
     public const string LogsCollected = "LogsCollected";
-    
+
     /// <summary>
     ///     Token for messages indicating that the translator has changed
     /// </summary>
     public const string TranslatorChanged = "TranslatorChanged";
-    
+
     /// <summary>
     ///     Token for messages indicating that an import dictionary failed
     /// </summary>

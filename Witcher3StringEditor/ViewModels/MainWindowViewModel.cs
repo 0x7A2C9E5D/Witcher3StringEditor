@@ -663,7 +663,7 @@ internal partial class MainWindowViewModel : ObservableObject
         var isUseDictionary = appSettings.Translator == "MicrosoftTranslator";
         var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
         var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse,
-            selectedIndex,dictionaryService);
+            selectedIndex, dictionaryService);
         await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable
     }
