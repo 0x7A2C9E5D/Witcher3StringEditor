@@ -18,6 +18,7 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:WindowHelper.SystemBackdropType="Mica"
         ui:TitleBar.ExtendViewIntoTitleBar="True"
+        WindowChrome.IsHitTestVisibleInChrome="True"
         Closed="DictionaryDialog_OnClosed"
         mc:Ignorable="d" Width="1200" Height="800">
     <Window.Resources>
@@ -81,7 +82,8 @@
                     <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.ImportDictionary}}" />
                 </StackPanel>
             </Button>
-            <Button Margin="16,0" Command="{Binding RemoveDictionaryCommand}" CommandParameter="{Binding SelectedDictionary}">
+            <Button Margin="16,0" Command="{Binding RemoveDictionaryCommand}"
+                    CommandParameter="{Binding SelectedDictionary}">
                 <StackPanel Orientation="Horizontal">
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
                     <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.RemoveDictionary}}" />
@@ -97,13 +99,15 @@
                 <b:TreeViewSelectedItemBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
         </TreeView>
-        <sf:SfDataGrid ItemsSource="{Binding DictionaryTerms}" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False"
-                       Margin="16,16,16,0" ColumnSizer="Star">
+        <sf:SfDataGrid Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False"
+                       Margin="16,16,16,0" ColumnSizer="Star"
+                       ItemsSource="{Binding PagedSource, ElementName=SfDataPager}">
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn HeaderText="原文" MappingName="Key" />
-                <sf:GridTextColumn HeaderText="译文" MappingName="Value" />
+                <sf:GridTextColumn MappingName="Key" />
+                <sf:GridTextColumn MappingName="Value" />
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
-        <sf:SfDataPager Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center" />
+        <sf:SfDataPager x:Name="SfDataPager" Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center"
+                        Source="{Binding DictionaryTerms}" />
     </Grid>
 </Window>
