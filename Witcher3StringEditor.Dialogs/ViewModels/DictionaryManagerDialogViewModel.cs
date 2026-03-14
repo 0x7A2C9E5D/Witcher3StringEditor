@@ -46,7 +46,12 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     ///     Dialog result.
     /// </summary>
     public bool? DialogResult => true;
-    
+
+    partial void OnSelectedDictionaryChanged(DictionaryInfo? value)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     ///     Adds a dictionary from a file.
     /// </summary>
