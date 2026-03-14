@@ -6,6 +6,11 @@
 public interface IDictionaryService
 {
     /// <summary>
+    ///     Dictionary provider
+    /// </summary>
+    IDictionaryProvider DictionaryProvider { get; }
+
+    /// <summary>
     ///     Dictionary manager service
     /// </summary>
     IDictionaryMangerService DictionaryMangerService { get; }

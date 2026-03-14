@@ -15,7 +15,7 @@ public class DictionaryService(
     /// <summary>
     ///     Dictionary manger service
     /// </summary>
-    public IDictionaryProvider Provider { get; } = provider;
+    public IDictionaryProvider DictionaryProvider { get; } = provider;
 
     /// <summary>
     ///     Dictionary manger service

@@ -42,8 +42,19 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         });
     }
 
+    /// <summary>
+    ///      The dictionary manager service.
+    /// </summary>
     private IDictionaryMangerService DictionaryMangerService => dictionaryService.DictionaryMangerService;
 
+    /// <summary>
+    ///      The dictionary service.
+    /// </summary>
+    private IDictionaryProvider DictionaryProvider => dictionaryService.DictionaryProvider;
+
+    /// <summary>
+    ///    Groups of dictionaries.
+    /// </summary>
     public ObservableCollection<DictionaryGroup> DictionaryGroups { get; } = [];
 
     /// <summary>
@@ -51,8 +62,13 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     /// </summary>
     public bool? DialogResult => true;
 
+    /// <summary>
+    ///      Selected dictionary.
+    /// </summary>
+    /// <param name="value"></param>
     partial void OnSelectedDictionaryChanged(DictionaryInfo? value)
     {
+        dictionaryTerms = value is null ? [] : DictionaryProvider.GetEntries(value);
     }
 
     /// <summary>
