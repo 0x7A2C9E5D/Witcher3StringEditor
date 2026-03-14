@@ -94,14 +94,14 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         {
             Filters =
             [
-                new FileFilter(Strings.FileFormatXliffFile, [".xliff", ".xlf"])
+                new FileFilter(Strings.FileFormatTextFile, ".txt")
             ]
         });
 
         try
         {
             if (storageFile is not null &&
-                Path.GetExtension(storageFile.LocalPath) is ".xliff" or ".xlf")
+                Path.GetExtension(storageFile.LocalPath) is ".txt")
             {
                 var dictionaryInfo = DictionaryMangerService.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return;
