@@ -6,8 +6,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using MoreLinq.Extensions;
 using Serilog;
-using Syncfusion.Data.Extensions;
+using Witcher3StringEditor.Dialogs.Models;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
@@ -24,13 +25,24 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     /// </summary>
     /// <param name="dictionaryMangerService"></param>
     /// <param name="dialogService"></param>
-    public DictionaryManagerDialogViewModel(IDictionaryMangerService dictionaryMangerService, IDialogService dialogService)
+    public DictionaryManagerDialogViewModel(IDictionaryMangerService dictionaryMangerService,
+        IDialogService dialogService)
     {
         this.dialogService = dialogService;
         this.dictionaryMangerService = dictionaryMangerService;
         var found = this.dictionaryMangerService.Find(null);
-        found.ForEach(x => Dictionaries.Add(x));
+        found.GroupBy(x => x.TargetLanguage).ForEach(g =>
+        {
+            var group = new DictionaryGroup
+            {
+                TargetLanguage = g.Key,
+                DictionaryNames = g.Select(x => x.Path).ToList()
+            };
+            DictionaryGroups.Add(group);
+        });
     }
+
+    public ObservableCollection<DictionaryGroup> DictionaryGroups { get; } = [];
 
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 

@@ -6,91 +6,85 @@
         xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
         xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
         xmlns:sf="http://schemas.syncfusion.com/wpf"
-        xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
         xmlns:l="clr-namespace:Witcher3StringEditor.Locales;assembly=Witcher3StringEditor.Locales"
+        xmlns:m="clr-namespace:Witcher3StringEditor.Dialogs.Models"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
+        xmlns:t="clr-namespace:Witcher3StringEditor.Dialogs.TemplateSelectors"
+        xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
         d:DataContext="{d:DesignInstance Type=vm:DictionaryManagerDialogViewModel}"
-        Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}" 
+        Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}"
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:WindowHelper.SystemBackdropType="Mica"
+        ui:TitleBar.ExtendViewIntoTitleBar="True"
         Closed="DictionaryDialog_OnClosed"
-        mc:Ignorable="d" Width="1200" Height="800" >
+        mc:Ignorable="d" Width="1200" Height="800">
+    <Window.Resources>
+        <c:PathToDisplayNameConverter x:Key="PathToDisplayNameConverter" />
+        <HierarchicalDataTemplate x:Key="DictionaryGroupTemplate" DataType="{x:Type m:DictionaryGroup}"
+                                  ItemsSource="{Binding DictionaryNames}">
+            <StackPanel Orientation="Horizontal">
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Folder}" />
+                <TextBlock Margin="5,0,0,0" Text="{Binding TargetLanguage.NativeName}" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+        <DataTemplate x:Key="DictionaryItemTemplate" DataType="{x:Type s:String}">
+            <StackPanel Orientation="Horizontal">
+                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Document}" />
+                <TextBlock Margin="5,0,0,0" Text="{Binding Converter={StaticResource PathToDisplayNameConverter}}" />
+            </StackPanel>
+        </DataTemplate>
+        <t:DictionaryTreeTemplateSelector x:Key="DictionaryTreeTemplateSelector"
+                                          DictionaryGroupTemplate="{StaticResource DictionaryGroupTemplate}"
+                                          DictionaryItemTemplate="{StaticResource DictionaryItemTemplate}" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Button Grid.Row="0" Grid.Column="1" Margin="0,16,16,16" Command="{Binding ImportDictionaryCommand}">
+        <Grid Height="48" Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!-- Dialog title text -->
+            <TextBlock
+                Grid.Column="0"
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Text="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}" />
+            <!-- Search box for filtering backup items -->
+            <ui:AutoSuggestBox
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}">
+                <ui:AutoSuggestBox.QueryIcon>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Search}" />
+                </ui:AutoSuggestBox.QueryIcon>
+            </ui:AutoSuggestBox>
+        </Grid>
+        <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="0,36,16,0">
             <StackPanel Orientation="Horizontal">
                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Import}" />
                 <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.ImportDictionary}}" />
             </StackPanel>
         </Button>
-        <sf:SfDataGrid NavigationMode="Row" RowHeight="35" ShowRowHeader="True"
-                       ItemsSource="{Binding PagedSource, ElementName=SfDataPager}"
-                       Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0"
-                       AllowResizingColumns="True" Margin="16,0"
-                       AutoGenerateColumns="False">
-            <sf:SfDataGrid.Resources>
-                <ResourceDictionary>
-                    <!-- Custom style for row header cells to display row numbers -->
-                    <Style TargetType="sf:GridRowHeaderCell">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="sf:GridRowHeaderCell">
-                                    <Border
-                                        x:Name="PART_RowHeaderCellBorder"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                        <Grid>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Text="{Binding RowIndex, RelativeSource={RelativeSource TemplatedParent}}"
-                                                TextAlignment="Center" />
-                                        </Grid>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                    <c:PathToDisplayNameConverter x:Key="PathToDisplayNameConverter" />
-                </ResourceDictionary>
-            </sf:SfDataGrid.Resources>
+        <TreeView Grid.Row="2" Grid.Column="0" Width="300" Margin="16,16,0,0" BorderThickness="1"
+                  BorderBrush="LightGray" ItemTemplateSelector="{StaticResource DictionaryTreeTemplateSelector}"
+                  ItemsSource="{Binding DictionaryGroups}" />
+        <sf:SfDataGrid Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0" ColumnSizer="Star">
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn TextAlignment="Center" MappingName="FilePath"
-                                   HeaderText="{I18N {x:Static l:LangKeys.FileName}}">
-                    <sf:GridTextColumn.ValueBinding>
-                        <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                        <Binding Path="Path" Converter="{StaticResource PathToDisplayNameConverter}" />
-                    </sf:GridTextColumn.ValueBinding>
-                </sf:GridTextColumn>
-                <sf:GridTextColumn TextAlignment="Center" MappingName="SourceLanguage.NativeName"
-                                   HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}" >
-                </sf:GridTextColumn>
-                <sf:GridTextColumn TextAlignment="Center" MappingName="TargetLanguage.NativeName"
-                                   HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}" />
-                <sf:GridTextColumn TextAlignment="Center" MappingName="TermCount"
-                                   HeaderText="{I18N {x:Static l:LangKeys.TermCount}}" />
-                <sf:GridTemplateColumn HeaderText="{I18N {x:Static l:LangKeys.Delete}}" MappingName="Delete">
-                    <sf:GridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button HorizontalAlignment="Center" CommandParameter="{Binding}"
-                                    Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.RemoveDictionaryCommand}">
-                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
-                            </Button>
-                        </DataTemplate>
-                    </sf:GridTemplateColumn.CellTemplate>
-                </sf:GridTemplateColumn>
+                <sf:GridTextColumn HeaderText="原文" />
+                <sf:GridTextColumn HeaderText="译文" />
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
-        <sf:SfDataPager PageSize="30" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Center"
-                        VerticalContentAlignment="Center" Margin="0,4" x:Name="SfDataPager"
-                        Source="{Binding Dictionaries}" />
+        <sf:SfDataPager Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center" />
     </Grid>
 </Window>
