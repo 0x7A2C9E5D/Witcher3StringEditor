@@ -29,7 +29,7 @@ public class XliffDictionaryProvider : IDictionaryProvider
 
     private static Dictionary<string, string> ParseTranslationUnitsToDictionary(IEnumerable<XElement> translationUnits)
     {
-        return translationUnits 
+        return translationUnits
             .Select(ParseTranslationUnit)
             .Where(pair => pair != null)
             .ToDictionary(pair => pair!.Value.Key, pair => pair!.Value.Value);

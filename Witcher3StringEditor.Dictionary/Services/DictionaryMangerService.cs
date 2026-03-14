@@ -66,15 +66,15 @@ public class DictionaryMangerService : IDictionaryMangerService
     /// <returns></returns>
     public DictionaryInfo? Import(string filePath)
     {
-            var fileName = Path.GetFileName(filePath);
-            if (dictionaries.Any(x => Path.GetFileName(x.Path) == fileName)) return null;
-            var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
-            var destFileName = Path.Combine(dictionaryPath, Path.GetFileName(filePath)); // Get destination file name
-            File.Copy(filePath, destFileName, true); // Copy file
-            var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
-            dictionaries.Add(newDictionaryInfo); // Add to collection
+        var fileName = Path.GetFileName(filePath);
+        if (dictionaries.Any(x => Path.GetFileName(x.Path) == fileName)) return null;
+        var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
+        var destFileName = Path.Combine(dictionaryPath, Path.GetFileName(filePath)); // Get destination file name
+        File.Copy(filePath, destFileName, true); // Copy file
+        var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
+        dictionaries.Add(newDictionaryInfo); // Add to collection
 
-            return dictionaryInfo;
+        return dictionaryInfo;
     }
 
     /// <summary>
@@ -98,11 +98,11 @@ public class DictionaryMangerService : IDictionaryMangerService
     public IEnumerable<DictionaryInfo> Find(CultureInfo? language)
     {
         if (language == null) return dictionaries;
-    
+
         // Get all target languages and find matches using culture matcher
         var languages = dictionaries.Select(x => x.TargetLanguage).ToList();
         var matchedLanguages = cultureMatcher.Matches(language, languages).ToHashSet();
-    
+
         // Return dictionaries with matched target languages
         return dictionaries.Where(d => matchedLanguages.Contains(d.TargetLanguage));
     }
