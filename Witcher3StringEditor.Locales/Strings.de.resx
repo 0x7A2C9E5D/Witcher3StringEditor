@@ -577,4 +577,10 @@
   <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
     <value>Löschbestätigung Wörterbuch</value>
   </data>
+  <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
+    <value>Das Wörterbuch existiert bereits. Möchten Sie es überschreiben?</value>
+  </data>
+  <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
+    <value>Bestätigung Wörterbuchüberschreibung</value>
+  </data>
 </root>

@@ -1,7 +1,10 @@
 ﻿using System.Globalization;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using MoreLinq;
 using Serilog;
 using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Messaging;
 
 namespace Witcher3StringEditor.Dictionary.Services;
 
@@ -64,10 +67,13 @@ public class DictionaryMangerService : IDictionaryMangerService
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public DictionaryInfo? Import(string filePath)
+    public async Task<DictionaryInfo?> Import(string filePath)
     {
         var fileName = Path.GetFileName(filePath);
-        if (dictionaries.Any(x => Path.GetFileName(x.Path) == fileName)) return null;
+        if (dictionaries.Any(x => Path.GetFileName(x.Path) == fileName) &&
+            !await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                MessageTokens.DictionaryOverwriteConfirm))
+            return null;
         var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
         var destFileName = Path.Combine(dictionaryPath, Path.GetFileName(filePath)); // Get destination file name
         File.Copy(filePath, destFileName, true); // Copy file

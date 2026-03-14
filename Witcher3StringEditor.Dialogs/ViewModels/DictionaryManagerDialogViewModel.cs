@@ -103,7 +103,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".txt")
             {
-                var dictionaryInfo = DictionaryMangerService.Import(storageFile.LocalPath);
+                var dictionaryInfo = await DictionaryMangerService.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return;
                 var found = DictionaryGroups.Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
                     .ToList();

@@ -321,6 +321,24 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dictionary Overwrite Confirm.
+        /// </summary>
+        public static string DictionaryOverwriteConfirmCaption {
+            get {
+                return ResourceManager.GetString("DictionaryOverwriteConfirmCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The dictionary already exists. Do you want to overwrite it?.
+        /// </summary>
+        public static string DictionaryOverwriteConfirmMessage {
+            get {
+                return ResourceManager.GetString("DictionaryOverwriteConfirmMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drag and Drop a Single File Here To Open.
         /// </summary>
         public static string DropHereTxt {

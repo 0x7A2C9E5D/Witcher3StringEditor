@@ -151,4 +151,8 @@ public static class MessageTokens
     /// </summary>
     public const string RemoveDictionaryConfirm = "RemoveDictionaryConfirm";
     
+    /// <summary>
+    ///     Token for messages indicating that a dictionary should be overwritten
+    /// </summary>
+    public const string DictionaryOverwriteConfirm = "DictionaryOverwriteConfirm";
 }

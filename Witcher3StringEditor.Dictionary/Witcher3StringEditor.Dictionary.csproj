@@ -15,6 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="LiteDB" Version="5.0.21" />
         <PackageReference Include="morelinq" Version="4.4.0"/>
         <PackageReference Include="NReco.Text.AhoCorasickDoubleArrayTrie" Version="1.1.1"/>
@@ -23,6 +24,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Witcher3StringEditor.Locales\Witcher3StringEditor.Locales.csproj"/>
+        <ProjectReference Include="..\Witcher3StringEditor.Messaging\Witcher3StringEditor.Messaging.csproj" />
     </ItemGroup>
 
 </Project>

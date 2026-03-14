@@ -577,4 +577,10 @@
   <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
     <value>删除字典确认</value>
   </data>
+  <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
+    <value>该词典已存在，是否覆盖？</value>
+  </data>
+  <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
+    <value>覆盖字典确认</value>
+  </data>
 </root>

@@ -577,4 +577,10 @@
   <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
     <value>辞書削除の確認</value>
   </data>
+  <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
+    <value>辞書は既に存在します。上書きしますか？</value>
+  </data>
+  <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
+    <value>辞書上書き確認</value>
+  </data>
 </root>

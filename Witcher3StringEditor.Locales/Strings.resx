@@ -577,4 +577,10 @@
   <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
     <value>Delete Dictionary Confirm</value>
   </data>
+  <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
+    <value>The dictionary already exists. Do you want to overwrite it?</value>
+  </data>
+  <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
+    <value>Dictionary Overwrite Confirm</value>
+  </data>
 </root>

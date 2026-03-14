@@ -36,25 +36,58 @@ public partial class DictionaryManagerDialog
     /// </summary>
     private void RegisterMessageHandlers()
     {
+        RegisterImportDictionaryFailedHandler(); // Register handler for ImportDictionaryFailed message
+        RegisterRemoveDictionaryConfirmHandler(); // Register handler for RemoveDictionaryConfirm message
+        RegisterDictionaryOverwriteConfirmHandler(); // Register handler for DictionaryOverwriteConfirm message
+    }
+
+    /// <summary>
+    ///     Registers handler for ImportDictionaryFailed message
+    /// </summary>
+    private void RegisterImportDictionaryFailedHandler()
+    {
         WeakReferenceMessenger.Default.Register<DictionaryManagerDialog, AsyncRequestMessage<bool>, string>(this,
             MessageTokens.ImportDictionaryFailed,
             (_, _) =>
             {
                 MessageBox.Show(Strings.ImportDictionaryFailedMessage,
-                    Strings.ImportDictionaryFailedCaption, 
+                    Strings.ImportDictionaryFailedCaption,
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             });
-        
+    }
+
+    /// <summary>
+    ///     Registers handler for RemoveDictionaryConfirm message
+    /// </summary>
+    private void RegisterRemoveDictionaryConfirmHandler()
+    {
         WeakReferenceMessenger.Default.Register<DictionaryManagerDialog, AsyncRequestMessage<bool>, string>(this,
             MessageTokens.RemoveDictionaryConfirm,
             (_, m) =>
             {
-               var result = MessageBox.Show(Strings.RemoveDictionaryConfirmMessage,
-                    Strings.RemoveDictionaryConfirmCaption, 
+                var result = MessageBox.Show(Strings.RemoveDictionaryConfirmMessage,
+                    Strings.RemoveDictionaryConfirmCaption,
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
-               m.Reply(result == MessageBoxResult.Yes);
+                m.Reply(result == MessageBoxResult.Yes);
+            });
+    }
+
+    /// <summary>
+    ///     Registers handler for DictionaryOverwriteConfirm message
+    /// </summary>
+    private void RegisterDictionaryOverwriteConfirmHandler()
+    {
+        WeakReferenceMessenger.Default.Register<DictionaryManagerDialog, AsyncRequestMessage<bool>, string>(this,
+            MessageTokens.DictionaryOverwriteConfirm,
+            (_, m) =>
+            {
+                var result = MessageBox.Show(Strings.DictionaryOverwriteConfirmMessage,
+                    Strings.DictionaryOverwriteConfirmCaption,
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+                m.Reply(result == MessageBoxResult.Yes);
             });
     }
 

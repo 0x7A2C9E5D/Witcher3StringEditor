@@ -15,7 +15,7 @@ public interface IDictionaryMangerService
     /// <summary>
     ///     Imports a dictionary from a file.
     /// </summary>
-    DictionaryInfo? Import(string filePath);
+    Task<DictionaryInfo?> Import(string filePath);
 
     /// <summary>
     ///     Removes the specified dictionary.
