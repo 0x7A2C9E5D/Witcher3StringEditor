@@ -15,9 +15,22 @@ public partial class DictionaryManagerDialog
     public DictionaryManagerDialog()
     {
         InitializeComponent(); // InitializeComponent
+        SetupSearchHelper(); // Setup search helper
         RegisterMessageHandlers(); // Register message handlers
+        
     }
 
+    /// <summary>
+    ///     Sets up the search helper for the data grid
+    ///     Enables filtering and disables case-sensitive search
+    /// </summary>
+    private void SetupSearchHelper()
+    {
+        SfDataGrid.SearchHelper.AllowFiltering = true;
+        SfDataGrid.SearchHelper.AllowCaseSensitiveSearch = false;
+        SfDataGrid.SearchHelper.CanHighlightSearchText = false;
+    }
+    
     /// <summary>
     ///     Registers message handlers for the DictionaryDialog
     /// </summary>
