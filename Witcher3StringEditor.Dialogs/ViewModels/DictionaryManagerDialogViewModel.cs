@@ -20,7 +20,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     private readonly IDialogService dialogService;
     private readonly IDictionaryMangerService dictionaryMangerService;
 
-    [ObservableProperty] private string selectedDictionary = string.Empty;
+    [ObservableProperty] private DictionaryInfo? selectedDictionary;
 
     /// <summary>
     ///     Initializes a new instance of the DictionaryDialogViewModel class.
