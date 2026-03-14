@@ -142,5 +142,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             DictionaryGroups.Remove(found);
         else
             found.Dictionaries.Remove(dictionary);
+        DictionaryTerms = [];
     }
 }
