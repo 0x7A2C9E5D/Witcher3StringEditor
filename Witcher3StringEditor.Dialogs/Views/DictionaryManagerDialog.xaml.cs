@@ -40,9 +40,21 @@ public partial class DictionaryManagerDialog
             MessageTokens.ImportDictionaryFailed,
             (_, _) =>
             {
-                MessageBox.Show(I18NExtension.Translate(LangKeys.ImportDictionaryFailedMessage),
-                    I18NExtension.Translate(LangKeys.ImportDictionaryFailedCaption), MessageBoxButton.OK,
+                MessageBox.Show(Strings.ImportDictionaryFailedMessage,
+                    Strings.ImportDictionaryFailedCaption, 
+                    MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            });
+        
+        WeakReferenceMessenger.Default.Register<DictionaryManagerDialog, AsyncRequestMessage<bool>, string>(this,
+            MessageTokens.RemoveDictionaryConfirm,
+            (_, m) =>
+            {
+               var result = MessageBox.Show(Strings.RemoveDictionaryConfirmMessage,
+                    Strings.RemoveDictionaryConfirmCaption, 
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+               m.Reply(result == MessageBoxResult.Yes);
             });
     }
 

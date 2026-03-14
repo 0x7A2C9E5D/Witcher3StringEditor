@@ -571,4 +571,10 @@
   <data name="RemoveDictionary" xml:space="preserve">
     <value>Delete Dictionary</value>
   </data>
+  <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this dictionary?</value>
+  </data>
+  <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
+    <value>Delete Dictionary Confirm</value>
+  </data>
 </root>

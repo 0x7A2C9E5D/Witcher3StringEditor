@@ -571,4 +571,10 @@
   <data name="RemoveDictionary" xml:space="preserve">
     <value>移除詞典</value>
   </data>
+  <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
+    <value>確定要刪除此字典嗎？</value>
+  </data>
+  <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
+    <value>刪除字典確認</value>
+  </data>
 </root>

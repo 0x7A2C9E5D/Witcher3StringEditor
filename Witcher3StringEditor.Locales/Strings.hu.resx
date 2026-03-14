@@ -571,4 +571,10 @@
   <data name="RemoveDictionary" xml:space="preserve">
     <value>Szótár törlése</value>
   </data>
+  <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
+    <value>Biztosan törli a szótárt?</value>
+  </data>
+  <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
+    <value>Szótár törlésének megerősítése</value>
+  </data>
 </root>

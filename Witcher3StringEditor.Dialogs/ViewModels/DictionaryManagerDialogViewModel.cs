@@ -18,22 +18,22 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public partial class DictionaryManagerDialogViewModel : ObservableObject, IModalDialogViewModel
 {
     /// <summary>
-    ///    The dialog service.
+    ///     The dialog service.
     /// </summary>
     private readonly IDialogService dialogService;
-    
+
     /// <summary>
     ///     The dictionary service.
     /// </summary>
     private readonly IDictionaryService dictionaryService;
 
     /// <summary>
-    ///    The dictionary terms.
+    ///     The dictionary terms.
     /// </summary>
-    [ObservableProperty] private Dictionary<string,string>? dictionaryTerms;
+    [ObservableProperty] private Dictionary<string, string>? dictionaryTerms;
 
     /// <summary>
-    ///    The selected dictionary.
+    ///     The selected dictionary.
     /// </summary>
     [ObservableProperty] private DictionaryInfo? selectedDictionary;
 
@@ -56,17 +56,17 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     }
 
     /// <summary>
-    ///      The dictionary manager service.
+    ///     The dictionary manager service.
     /// </summary>
     private IDictionaryMangerService DictionaryMangerService => dictionaryService.DictionaryMangerService;
 
     /// <summary>
-    ///      The dictionary service.
+    ///     The dictionary service.
     /// </summary>
     private IDictionaryProvider DictionaryProvider => dictionaryService.DictionaryProvider;
 
     /// <summary>
-    ///    Groups of dictionaries.
+    ///     Groups of dictionaries.
     /// </summary>
     public ObservableCollection<DictionaryGroup> DictionaryGroups { get; } = [];
 
@@ -76,7 +76,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     public bool? DialogResult => true;
 
     /// <summary>
-    ///      Selected dictionary.
+    ///     Selected dictionary.
     /// </summary>
     /// <param name="value"></param>
     partial void OnSelectedDictionaryChanged(DictionaryInfo? value)
@@ -132,16 +132,21 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     /// </summary>
     /// <param name="dictionary"></param>
     [RelayCommand]
-    private void RemoveDictionary(DictionaryInfo dictionary)
+    private async Task RemoveDictionary(DictionaryInfo? dictionary)
     {
-        DictionaryMangerService.Remove(dictionary);
-        var found = DictionaryGroups
-            .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
-        if (found is null) return;
-        if (found.Dictionaries.Count == 1)
-            DictionaryGroups.Remove(found);
-        else
-            found.Dictionaries.Remove(dictionary);
-        DictionaryTerms = [];
+        if(dictionary is null) return;
+        if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                MessageTokens.RemoveDictionaryConfirm))
+        {
+            DictionaryMangerService.Remove(dictionary);
+            var found = DictionaryGroups
+                .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
+            if (found is null) return;
+            if (found.Dictionaries.Count == 1)
+                DictionaryGroups.Remove(found);
+            else
+                found.Dictionaries.Remove(dictionary);
+            DictionaryTerms = [];
+        }
     }
 }

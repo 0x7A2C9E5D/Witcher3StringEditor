@@ -571,4 +571,10 @@
   <data name="RemoveDictionary" xml:space="preserve">
     <value>辞書を削除</value>
   </data>
+  <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
+    <value>この辞書を削除してもよろしいですか？</value>
+  </data>
+  <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
+    <value>辞書削除の確認</value>
+  </data>
 </root>
