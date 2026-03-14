@@ -10,9 +10,9 @@ namespace Witcher3StringEditor.Dictionary.Providers;
 /// </summary>
 public class DictionaryProvider : IDictionaryProvider
 {
-    private const string CommentPrefix = ";";
-    private const char Separator = '|';
-    private const string NotePrefix = "Note";
+    private const string CommentPrefix = ";"; // Comment prefix
+    private const char Separator = '|'; // Separator between key and value
+    private const string NotePrefix = "Note"; // Note prefix
 
     /// <summary>
     ///     Maps Witcher 3 special language codes to standard CultureInfo codes
@@ -27,6 +27,12 @@ public class DictionaryProvider : IDictionaryProvider
         { "ESMX", "es-MX" }
     };
 
+    /// <summary>
+    ///     A dictionary provider for custom format dictionary files
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidDataException"></exception>
     public DictionaryInfo GetDictionaryInfo(string filePath)
     {
         var lines = File.ReadAllLines(filePath);
@@ -50,6 +56,9 @@ public class DictionaryProvider : IDictionaryProvider
         );
     }
 
+    /// <summary>
+    ///     Gets dictionary entries from a file
+    /// </summary>
     public Dictionary<string, string> GetEntries(DictionaryInfo dictionary)
     {
         var lines = File.ReadAllLines(dictionary.Path);
@@ -100,11 +109,9 @@ public class DictionaryProvider : IDictionaryProvider
     /// </summary>
     private static string NormalizeLanguageCode(string code)
     {
-        if (string.IsNullOrWhiteSpace(code))
-            throw new ArgumentException(@"Language code cannot be empty", nameof(code));
-
-        // Only convert Witcher 3 specific codes, otherwise keep original
-        return W3LangMap.GetValueOrDefault(code, code);
+        return string.IsNullOrWhiteSpace(code)
+            ? throw new ArgumentException(@"Language code cannot be empty", nameof(code))
+            : W3LangMap.GetValueOrDefault(code, code); // Only convert Witcher 3 specific codes, otherwise keep original
     }
 
     /// <summary>
