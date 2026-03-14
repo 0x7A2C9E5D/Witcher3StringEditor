@@ -133,6 +133,6 @@
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
         <sf:SfDataPager x:Name="SfDataPager" Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center"
-                        Source="{Binding DictionaryTerms}" PageSize="30" />
+                        Source="{Binding DictionaryTerms}" PageSize="30" NumericButtonCount="10" />
     </Grid>
 </Window>

@@ -14,16 +14,40 @@ public class DictionaryProvider : IDictionaryProvider
     private const char Separator = '|';
     private const string NotePrefix = "Note";
 
+    /// <summary>
+    ///     Maps Witcher 3 language codes to standard CultureInfo codes
+    /// </summary>
+    private static readonly Dictionary<string, string> W3LangMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "JP", "ja" },
+        { "KR", "ko" },
+        { "CN", "zh-Hans" },
+        { "ZH", "zh-Hant" },
+        { "TR", "tr" },
+        { "BR", "pt-BR" },
+        { "AR", "ar" },
+        { "RU", "ru" },
+        { "IT", "it" },
+        { "HU", "hu" },
+        { "ESMX", "es-MX" },
+        { "ES", "es" },
+        { "CZ", "cs" },
+        { "FR", "fr" },
+        { "DE", "de" },
+        { "EN", "en" },
+        { "PL", "pl" }
+    };
+
     public DictionaryInfo GetDictionaryInfo(string filePath)
     {
         var lines = File.ReadAllLines(filePath);
-        
+
         if (lines.Length == 0)
             throw new InvalidDataException($"Dictionary file is empty: {filePath}");
 
         // Parse header
         var header = ParseHeader(lines[0].Trim());
-        
+
         // Extract note and count entries
         var (note, termCount) = ExtractMetadata(lines.Skip(1));
 
@@ -55,11 +79,15 @@ public class DictionaryProvider : IDictionaryProvider
 
         if (parts.Length != 3)
             throw new InvalidDataException(
-                $"Invalid header format. Expected: ;Name|SourceLang|TargetLang");
+                "Invalid header format. Expected: ;Name|SourceLang|TargetLang");
 
         var name = parts[0].Trim();
-        var sourceLang = parts[1].Trim().ToLowerInvariant();
-        var targetLang = parts[2].Trim().ToLowerInvariant();
+        var sourceLangRaw = parts[1].Trim();
+        var targetLangRaw = parts[2].Trim();
+
+        // Convert Witcher 3 language codes to standard codes
+        var sourceLang = NormalizeLanguageCode(sourceLangRaw);
+        var targetLang = NormalizeLanguageCode(targetLangRaw);
 
         // Validate language codes
         try
@@ -69,10 +97,25 @@ public class DictionaryProvider : IDictionaryProvider
         }
         catch (CultureNotFoundException)
         {
-            throw new InvalidDataException($"Invalid language code '{sourceLang}' or '{targetLang}'");
+            throw new InvalidDataException(
+                $"Invalid language code '{sourceLangRaw}' or '{targetLangRaw}'. " +
+                $"Supported codes: {string.Join(", ", W3LangMap.Keys)}");
         }
 
         return (name, sourceLang, targetLang);
+    }
+
+    /// <summary>
+    ///     Normalizes a language code from Witcher 3 format to standard CultureInfo format
+    /// </summary>
+    private static string NormalizeLanguageCode(string code)
+    {
+        return string.IsNullOrWhiteSpace(code)
+            ? throw new ArgumentException(@"Language code cannot be empty", nameof(code))
+            : W3LangMap.GetValueOrDefault(code, code); // Check if it's a Witcher 3 specific code
+
+
+        // If not in map, try to use as-is (might already be a standard code)
     }
 
     /// <summary>
@@ -86,7 +129,7 @@ public class DictionaryProvider : IDictionaryProvider
         foreach (var line in lines)
         {
             var trimmedLine = line.Trim();
-            
+
             if (string.IsNullOrEmpty(trimmedLine))
                 continue;
 
@@ -120,7 +163,7 @@ public class DictionaryProvider : IDictionaryProvider
         foreach (var line in lines)
         {
             var trimmedLine = line.Trim();
-            
+
             // Skip comments and empty lines
             if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith(CommentPrefix))
                 continue;
@@ -132,10 +175,7 @@ public class DictionaryProvider : IDictionaryProvider
             var key = parts[0].Trim();
             var value = parts[1].Trim();
 
-            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
-            {
-                entries[key] = value;
-            }
+            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value)) entries[key] = value;
         }
 
         return entries;
