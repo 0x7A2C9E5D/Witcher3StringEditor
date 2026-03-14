@@ -988,6 +988,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Dictionary.
+        /// </summary>
+        public static string RemoveDictionary {
+            get {
+                return ResourceManager.GetString("RemoveDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open File.
         /// </summary>
         public static string ReOpenFileCaption {
