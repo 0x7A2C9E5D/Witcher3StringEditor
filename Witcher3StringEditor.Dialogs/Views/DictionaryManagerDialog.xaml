@@ -69,7 +69,9 @@
             <ui:AutoSuggestBox
                 Grid.Column="1"
                 VerticalAlignment="Center"
-                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}">
+                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}"
+                QuerySubmitted="SearchBox_OnQuerySubmitted"
+                TextChanged="SearchBox_TextChanged">
                 <ui:AutoSuggestBox.QueryIcon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Search}" />
                 </ui:AutoSuggestBox.QueryIcon>
@@ -99,9 +101,8 @@
                 <b:TreeViewSelectedItemBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
         </TreeView>
-        <sf:SfDataGrid x:Name="SfDataGrid" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False"
-                       Margin="16,16,16,0" ColumnSizer="Star"
-                       ItemsSource="{Binding PagedSource, ElementName=SfDataPager}">
+        <sf:SfDataGrid x:Name="SfDataGrid" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0"
+                       ColumnSizer="Star" ItemsSource="{Binding PagedSource, ElementName=SfDataPager}">
             <sf:SfDataGrid.Columns>
                 <sf:GridTextColumn MappingName="Key" />
                 <sf:GridTextColumn MappingName="Value" />

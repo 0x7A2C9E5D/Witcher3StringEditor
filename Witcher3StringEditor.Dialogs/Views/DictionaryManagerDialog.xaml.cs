@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using iNKORE.UI.WPF.Modern.Controls;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
@@ -17,7 +18,6 @@ public partial class DictionaryManagerDialog
         InitializeComponent(); // InitializeComponent
         SetupSearchHelper(); // Setup search helper
         RegisterMessageHandlers(); // Register message handlers
-        
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public partial class DictionaryManagerDialog
         SfDataGrid.SearchHelper.AllowCaseSensitiveSearch = false;
         SfDataGrid.SearchHelper.CanHighlightSearchText = false;
     }
-    
+
     /// <summary>
     ///     Registers message handlers for the DictionaryDialog
     /// </summary>
@@ -54,5 +54,28 @@ public partial class DictionaryManagerDialog
     private void DictionaryDialog_OnClosed(object? sender, EventArgs e)
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
+    }
+
+    /// <summary>
+    ///     Handles the query submitted event of the search box
+    ///     Performs a search in the data grid based on the entered query text
+    /// </summary>
+    /// <param name="sender">The auto suggest box that triggered the event</param>
+    /// <param name="args">The event arguments containing the query text</param>
+    private void SearchBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        SfDataGrid.SearchHelper.Search(args.QueryText);
+    }
+
+    /// <summary>
+    ///     Handles the text changed event of the search box
+    ///     Clears the search when the text is empty or null
+    /// </summary>
+    /// <param name="sender">The auto suggest box that triggered the event</param>
+    /// <param name="args">The event arguments containing information about the text change</param>
+    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if (string.IsNullOrEmpty(sender.Text))
+            SfDataGrid.SearchHelper.ClearSearch();
     }
 }
