@@ -13,7 +13,7 @@
         Binds to BatchItemsTranslationViewModel for data and command binding
     -->
     <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    <c:PathToDisplayNameConverter x:Key="FilePathToFileNameConverter" />
+    <c:NoneDictionaryToStringConverter x:Key="NoneDictionaryToStringConverter" />
     <DataTemplate x:Key="BatchTranslateDataTemplate" DataType="{x:Type vm:BatchItemsTranslationViewModel}">
         <Grid>
             <Grid.RowDefinitions>
@@ -48,7 +48,7 @@
                     SelectedItem="{Binding SelectedDictionary}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path,Converter={StaticResource FilePathToFileNameConverter}}" />
+                            <TextBlock Text="{Binding Name,Converter={StaticResource NoneDictionaryToStringConverter}}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
