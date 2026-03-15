@@ -11,7 +11,6 @@
         xmlns:m="clr-namespace:Witcher3StringEditor.Dialogs.Models"
         xmlns:di="clr-namespace:Witcher3StringEditor.Dictionary;assembly=Witcher3StringEditor.Dictionary"
         xmlns:t="clr-namespace:Witcher3StringEditor.Dialogs.TemplateSelectors"
-        xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
         xmlns:b="clr-namespace:Witcher3StringEditor.Behaviors;assembly=Witcher3StringEditor.Behaviors"
         d:DataContext="{d:DesignInstance Type=vm:DictionaryManagerDialogViewModel}"
         Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}"
@@ -109,7 +108,7 @@
             </Button>
         </StackPanel>
 
-        <TreeView Grid.Row="2" Grid.Column="0" Width="300" Margin="16,16,0,0"
+        <TreeView Grid.Row="2" Grid.Column="0" Width="350" Margin="16,16,0,0"
                   BorderBrush="Gray"
                   BorderThickness="1" ItemTemplateSelector="{StaticResource DictionaryTreeTemplateSelector}"
                   ItemsSource="{Binding DictionaryGroups}">
