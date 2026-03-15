@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using Witcher3StringEditor.Common;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Locales;
 
 namespace Witcher3StringEditor.Dialogs.Converters;

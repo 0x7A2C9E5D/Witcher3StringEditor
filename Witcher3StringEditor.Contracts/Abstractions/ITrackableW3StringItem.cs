@@ -1,4 +1,4 @@
-﻿namespace Witcher3StringEditor.Common.Abstractions;
+﻿namespace Witcher3StringEditor.Contracts.Abstractions;
 
 /// <summary>
 ///     Defines a contract for trackable The Witcher 3 string items

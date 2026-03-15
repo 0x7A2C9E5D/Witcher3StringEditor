@@ -1,4 +1,4 @@
-﻿namespace Witcher3StringEditor.Common;
+﻿namespace Witcher3StringEditor.Contracts;
 
 /// <summary>
 ///     Represents the supported file types for The Witcher 3 string operations

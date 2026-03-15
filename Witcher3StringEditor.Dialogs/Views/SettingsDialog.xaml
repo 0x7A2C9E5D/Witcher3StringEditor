@@ -10,7 +10,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
-    xmlns:common="clr-namespace:Witcher3StringEditor.Common;assembly=Witcher3StringEditor.Common"
+    xmlns:common="clr-namespace:Witcher3StringEditor.Contracts;assembly=Witcher3StringEditor.Contracts"
     Title="{I18N {x:Static l:LangKeys.SettingsDialogTitle}}"
     Width="800"
     Height="800"

@@ -10,7 +10,7 @@
     xmlns:sf="http://schemas.syncfusion.com/wpf"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
-    xmlns:abstractions="clr-namespace:Witcher3StringEditor.Common.Abstractions;assembly=Witcher3StringEditor.Common"
+    xmlns:abstractions="clr-namespace:Witcher3StringEditor.Contracts.Abstractions;assembly=Witcher3StringEditor.Contracts"
     Title="{I18N {x:Static l:LangKeys.RecentDialogTitle}}"
     Width="1200"
     Height="800"

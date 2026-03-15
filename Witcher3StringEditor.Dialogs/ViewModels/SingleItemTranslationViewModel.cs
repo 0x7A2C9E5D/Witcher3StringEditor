@@ -8,7 +8,7 @@ using FluentResults;
 using GTranslate;
 using GTranslate.Translators;
 using Serilog;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.Models;
 using Witcher3StringEditor.Messaging;
 

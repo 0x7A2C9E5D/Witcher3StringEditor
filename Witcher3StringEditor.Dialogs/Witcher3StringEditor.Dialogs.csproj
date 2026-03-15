@@ -37,7 +37,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Witcher3StringEditor.Dictionary\Witcher3StringEditor.Dictionary.csproj"/>
         <ProjectReference Include="..\Witcher3StringEditor.Locales\Witcher3StringEditor.Locales.csproj"/>
-        <ProjectReference Include="..\Witcher3StringEditor.Common\Witcher3StringEditor.Common.csproj"/>
+        <ProjectReference Include="..\Witcher3StringEditor.Contracts\Witcher3StringEditor.Contracts.csproj" />
         <ProjectReference Include="..\Witcher3StringEditor.Messaging\Witcher3StringEditor.Messaging.csproj"/>
         <ProjectReference Include="..\Witcher3StringEditor.Serializers\Witcher3StringEditor.Serializers.csproj"/>
     </ItemGroup>

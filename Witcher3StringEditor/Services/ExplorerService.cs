@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Services;
 

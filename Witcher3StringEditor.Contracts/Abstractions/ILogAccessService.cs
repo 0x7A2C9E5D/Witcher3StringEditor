@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Serilog.Events;
 
-namespace Witcher3StringEditor.Common.Abstractions;
+namespace Witcher3StringEditor.Contracts.Abstractions;
 
 public interface ILogAccessService
 {

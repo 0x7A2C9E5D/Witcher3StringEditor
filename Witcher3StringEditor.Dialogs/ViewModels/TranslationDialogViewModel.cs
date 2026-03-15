@@ -7,7 +7,7 @@ using GTranslate;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
