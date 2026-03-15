@@ -83,7 +83,7 @@ public class DictionaryProvider : IDictionaryProvider
             throw new InvalidDataException(
                 "Invalid header format. Expected: ;Name|SourceLang|TargetLang");
 
-        var name = parts[0].Trim();
+        var name = parts[0][1..].Trim();
         var sourceLangRaw = parts[1].Trim();
         var targetLangRaw = parts[2].Trim();
 

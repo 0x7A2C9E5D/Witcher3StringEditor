@@ -22,7 +22,6 @@
         Closed="DictionaryDialog_OnClosed"
         mc:Ignorable="d" Width="1200" Height="800">
     <Window.Resources>
-        <c:PathToDisplayNameConverter x:Key="PathToDisplayNameConverter" />
         <HierarchicalDataTemplate x:Key="DictionaryGroupTemplate" DataType="{x:Type m:DictionaryGroup}"
                                   ItemsSource="{Binding Dictionaries}">
             <StackPanel Orientation="Horizontal">
@@ -52,7 +51,7 @@
                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Document}" />
                 <TextBlock Margin="5,0,0,0"
                            VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                           Text="{Binding Path, Converter={StaticResource PathToDisplayNameConverter}}" />
+                           Text="{Binding Name}" />
             </StackPanel>
         </DataTemplate>
         <t:DictionaryTreeTemplateSelector x:Key="DictionaryTreeTemplateSelector"
