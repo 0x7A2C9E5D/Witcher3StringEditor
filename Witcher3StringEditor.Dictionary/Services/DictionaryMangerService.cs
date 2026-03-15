@@ -41,16 +41,16 @@ public class DictionaryMangerService : IDictionaryMangerService
     /// <returns></returns>
     public async Task<DictionaryInfo?> Import(string filePath)
     {
-        var fileName = Path.GetFileName(filePath);
+        var fileName = Path.GetFileName(filePath); // Get file name
         var found = dictionaries
-            .Where(x => Path.GetFileName(x.Path) == fileName).ToList();
-        if (found.Count != 0)
+            .Where(x => Path.GetFileName(x.Path) == fileName).ToList(); // Find dictionaries with the same file name
+        if (found.Count != 0) // If found, ask user if they want to overwrite
         {
             if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                    MessageTokens.DictionaryOverwriteConfirm))
-                found.ForEach(x => dictionaries.Remove(x));
+                    MessageTokens.DictionaryOverwriteConfirm)) // Ask user if they want to overwrite
+                found.ForEach(x => dictionaries.Remove(x)); // Remove found dictionaries
             else
-                return null;
+                return null; // User canceled, return null
         }
 
         var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
@@ -82,7 +82,7 @@ public class DictionaryMangerService : IDictionaryMangerService
     /// <exception cref="NotImplementedException"></exception>
     public IEnumerable<DictionaryInfo> Find(CultureInfo? language)
     {
-        if (language == null) return dictionaries;
+        if (language == null) return dictionaries; // If no language specified, return all dictionaries
 
         // Get all target languages and find matches using culture matcher
         var languages = dictionaries.Select(x => x.TargetLanguage).ToList();
