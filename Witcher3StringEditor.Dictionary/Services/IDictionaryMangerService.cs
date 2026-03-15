@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Witcher3StringEditor.Dictionary;
+namespace Witcher3StringEditor.Dictionary.Services;
 
 /// <summary>
 ///     A class that represents a dictionary info.

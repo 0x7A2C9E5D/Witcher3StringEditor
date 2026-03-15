@@ -1,4 +1,4 @@
-﻿namespace Witcher3StringEditor.Dictionary;
+﻿namespace Witcher3StringEditor.Dictionary.Services;
 
 /// <summary>
 ///     A service that provides dictionary information and entries.

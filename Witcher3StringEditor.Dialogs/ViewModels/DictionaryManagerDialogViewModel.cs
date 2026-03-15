@@ -10,6 +10,8 @@ using MoreLinq.Extensions;
 using Serilog;
 using Witcher3StringEditor.Dialogs.Models;
 using Witcher3StringEditor.Dictionary;
+using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Dictionary.Services;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 

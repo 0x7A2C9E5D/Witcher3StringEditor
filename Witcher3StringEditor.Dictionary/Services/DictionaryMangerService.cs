@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using MoreLinq;
 using Serilog;
+using Witcher3StringEditor.Dictionary.Providers;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 

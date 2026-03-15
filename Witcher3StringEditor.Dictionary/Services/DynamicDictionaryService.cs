@@ -1,5 +1,6 @@
 ﻿using NReco.Text;
 using Serilog;
+using Witcher3StringEditor.Dictionary.Providers;
 
 namespace Witcher3StringEditor.Dictionary.Services;
 

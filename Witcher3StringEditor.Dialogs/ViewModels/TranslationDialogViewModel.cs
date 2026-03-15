@@ -9,6 +9,7 @@ using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dictionary;
+using Witcher3StringEditor.Dictionary.Services;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 
