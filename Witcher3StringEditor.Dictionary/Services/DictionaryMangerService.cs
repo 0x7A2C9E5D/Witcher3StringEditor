@@ -29,7 +29,7 @@ public class DictionaryMangerService : IDictionaryMangerService
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider
-        LoadDictionariesFromDirectory(PathHelper.DictionariesDirectory); // Load dictionaries from directory
+        LoadDictionariesFromDirectory(PathHelper.DictionaryDirectory); // Load dictionaries from directory
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class DictionaryMangerService : IDictionaryMangerService
         }
 
         var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
-        var destFileName = Path.Combine(PathHelper.DictionariesDirectory, fileName); // Get destination file name
+        var destFileName = Path.Combine(PathHelper.DictionaryDirectory, fileName); // Get destination file name
         File.Copy(filePath, destFileName, true); // Copy file
         var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
         dictionaries.Add(newDictionaryInfo); // Add to collection
