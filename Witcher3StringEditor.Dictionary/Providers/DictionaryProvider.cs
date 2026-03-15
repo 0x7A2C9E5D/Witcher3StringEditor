@@ -35,23 +35,27 @@ public class DictionaryProvider : IDictionaryProvider
     /// <exception cref="InvalidDataException"></exception>
     public DictionaryInfo GetDictionaryInfo(string filePath)
     {
-        var lines = File.ReadAllLines(filePath);
+        var lines = File.ReadAllLines(filePath); // Read all lines from the file
 
+        // Validate file is not empty
         if (lines.Length == 0)
             throw new InvalidDataException($"Dictionary file is empty: {filePath}");
 
         // Parse header
-        var header = ParseHeader(lines[0].Trim());
+        var (name, sourceLang, targetLang) = ParseHeader(lines[0].Trim());
+        
+        if(string.IsNullOrWhiteSpace(name))
+            name = Path.GetFileNameWithoutExtension(filePath); // Fallback to file name if name is empty
 
         // Extract note and count entries
         var (note, termCount) = ExtractMetadata(lines.Skip(1));
 
         return new DictionaryInfo(
-            filePath,
-            header.name,
+            filePath, 
+            name,
             note,
-            CultureInfo.GetCultureInfo(header.sourceLang),
-            CultureInfo.GetCultureInfo(header.targetLang),
+            CultureInfo.GetCultureInfo(sourceLang),
+            CultureInfo.GetCultureInfo(targetLang),
             termCount
         );
     }
