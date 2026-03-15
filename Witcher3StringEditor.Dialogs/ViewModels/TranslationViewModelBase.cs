@@ -11,6 +11,7 @@ using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Locales;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -87,7 +88,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
 
     private protected DictionaryInfo NoneDictionary { get; } = new(
         string.Empty,
-        string.Empty,
+        Strings.NoDictionary,
         string.Empty,
         CultureInfo.GetCultureInfo("en"),
         CultureInfo.GetCultureInfo("en"),

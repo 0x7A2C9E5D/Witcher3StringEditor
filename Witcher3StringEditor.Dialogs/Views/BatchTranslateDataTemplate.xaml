@@ -13,7 +13,6 @@
         Binds to BatchItemsTranslationViewModel for data and command binding
     -->
     <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    <c:NoneDictionaryToStringConverter x:Key="NoneDictionaryToStringConverter" />
     <DataTemplate x:Key="BatchTranslateDataTemplate" DataType="{x:Type vm:BatchItemsTranslationViewModel}">
         <Grid>
             <Grid.RowDefinitions>
@@ -48,7 +47,7 @@
                     SelectedItem="{Binding SelectedDictionary}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name,Converter={StaticResource NoneDictionaryToStringConverter}}" />
+                            <TextBlock Text="{Binding Name}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
