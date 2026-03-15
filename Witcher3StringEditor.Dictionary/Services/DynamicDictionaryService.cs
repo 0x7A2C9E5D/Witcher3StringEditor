@@ -40,19 +40,62 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         }
     }
 
-    public string Replace(string text)
+   public string Replace(string text)
     {
-        if (string.IsNullOrEmpty(text) || entries.Count == 0) return text; // No text or no terms
+        if (string.IsNullOrEmpty(text) || entries.Count == 0) return text;
+        
+        var offset = 0;
+        var lastEnd = -1;
         var processedText = text;
+
+        var hitsToProcess = new List<(AhoCorasickDoubleArrayTrie<int>.Hit Hit, string Phrase, string Translation)>();
+        
         matcher.ParseText(text, hit =>
         {
-            var phrase = text.Substring(hit.Begin, hit.Length); // Get phrase
-            if (!entries.TryGetValue(phrase, out var translation)) return; // If translation exists
-            var tag = string.Format(DynamicDictionaryTemplate, translation, phrase); // Replace phrase with tag
-            processedText = processedText.Remove(hit.Begin, hit.Length); // Remove phrase
-            processedText = processedText.Insert(hit.Begin, tag); // Insert tag
+            var phrase = text.Substring(hit.Begin, hit.Length);
+            
+            if (!entries.TryGetValue(phrase, out var translation)) 
+                return;
+            
+            if (IsAlreadyTagged(text, hit.Begin, hit.Length)) 
+                return;
+            
+            if (hit.Begin < lastEnd) 
+                return;
+            
+            hitsToProcess.Add((hit, phrase, translation));
+            lastEnd = hit.Begin + hit.Length;
         });
+        
+        foreach (var (hit, phrase, translation) in hitsToProcess.OrderBy(h => h.Hit.Begin))
+        {
+            var tag = string.Format(DynamicDictionaryTemplate, translation, phrase);
+            var position = hit.Begin + offset;
+            
+            processedText = processedText.Remove(position, hit.Length);
+            processedText = processedText.Insert(position, tag);
+            
+            offset += tag.Length - hit.Length;
+        }
 
         return processedText;
+    }
+
+    /// <summary>
+    ///     Checks if the substring at the specified position is already wrapped in a dictionary tag
+    /// </summary>
+    private bool IsAlreadyTagged(string text, int begin, int length)
+    {
+        const string openTagPrefix = "<mstrans:dictionary";
+        const string closeTagSuffix = "</mstrans:dictionary>";
+        
+        var checkStart = Math.Max(0, begin - openTagPrefix.Length * 2);
+        var checkEnd = Math.Min(text.Length, begin + length + closeTagSuffix.Length * 2);
+        
+        if (checkEnd <= checkStart) return false;
+        
+        var context = text.Substring(checkStart, checkEnd - checkStart);
+        
+        return context.Contains(openTagPrefix) && context.Contains(closeTagSuffix);
     }
 }
