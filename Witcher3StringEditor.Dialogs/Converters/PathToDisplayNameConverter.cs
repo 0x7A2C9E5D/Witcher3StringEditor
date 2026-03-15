@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Data;
+using Witcher3StringEditor.Locales;
 
 namespace Witcher3StringEditor.Dialogs.Converters;
 
@@ -20,7 +21,7 @@ public class PathToDisplayNameConverter : IValueConverter
         if (value is not string filePath)
             return DependencyProperty.UnsetValue;
         return filePath == string.Empty
-            ? I18NExtension.Translate("NoDictionary")!
+            ? Strings.NoDictionary!
             : Path.GetFileNameWithoutExtension(filePath);
     }
 
