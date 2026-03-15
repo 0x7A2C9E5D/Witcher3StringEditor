@@ -1,4 +1,5 @@
-﻿using NReco.Text;
+﻿using Cysharp.Text;
+using NReco.Text;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Providers;
 
@@ -6,9 +7,6 @@ namespace Witcher3StringEditor.Dictionary.Services;
 
 public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDictionaryService
 {
-    private const string DynamicDictionaryTemplate =
-        @"<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>";
-
     private readonly AhoCorasickDoubleArrayTrie<int> matcher = new();
     private Dictionary<string, string> entries = [];
 
@@ -40,62 +38,72 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         }
     }
 
-   public string Replace(string text)
+    public string Replace(string text)
     {
         if (string.IsNullOrEmpty(text) || entries.Count == 0) return text;
-        
-        var offset = 0;
-        var lastEnd = -1;
-        var processedText = text;
 
-        var hitsToProcess = new List<(AhoCorasickDoubleArrayTrie<int>.Hit Hit, string Phrase, string Translation)>();
-        
-        matcher.ParseText(text, hit =>
-        {
-            var phrase = text.Substring(hit.Begin, hit.Length);
-            
-            if (!entries.TryGetValue(phrase, out var translation)) 
-                return;
-            
-            if (IsAlreadyTagged(text, hit.Begin, hit.Length)) 
-                return;
-            
-            if (hit.Begin < lastEnd) 
-                return;
-            
-            hitsToProcess.Add((hit, phrase, translation));
-            lastEnd = hit.Begin + hit.Length;
-        });
-        
-        foreach (var (hit, phrase, translation) in hitsToProcess.OrderBy(h => h.Hit.Begin))
-        {
-            var tag = string.Format(DynamicDictionaryTemplate, translation, phrase);
-            var position = hit.Begin + offset;
-            
-            processedText = processedText.Remove(position, hit.Length);
-            processedText = processedText.Insert(position, tag);
-            
-            offset += tag.Length - hit.Length;
-        }
-
-        return processedText;
+        var hits = FindAndSortMatches(text, matcher);
+        hits = FilterValidHits(hits, text.Length);
+        return ReplaceMatches(text, hits, entries);
     }
 
-    /// <summary>
-    ///     Checks if the substring at the specified position is already wrapped in a dictionary tag
-    /// </summary>
-    private bool IsAlreadyTagged(string text, int begin, int length)
+    private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FindAndSortMatches(string text,
+        AhoCorasickDoubleArrayTrie<int> matcher)
     {
-        const string openTagPrefix = "<mstrans:dictionary";
-        const string closeTagSuffix = "</mstrans:dictionary>";
-        
-        var checkStart = Math.Max(0, begin - openTagPrefix.Length * 2);
-        var checkEnd = Math.Min(text.Length, begin + length + closeTagSuffix.Length * 2);
-        
-        if (checkEnd <= checkStart) return false;
-        
-        var context = text.Substring(checkStart, checkEnd - checkStart);
-        
-        return context.Contains(openTagPrefix) && context.Contains(closeTagSuffix);
+        var allHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store hits
+
+        matcher.ParseText(text, hit => { allHits.Add(hit); }); // Find all hits
+
+        return allHits
+            .OrderBy(x => x.Begin)
+            .ThenByDescending(x => x.Length)
+            .ToList(); // Sort hits
+    }
+
+    private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FilterValidHits(
+        IReadOnlyList<AhoCorasickDoubleArrayTrie<int>.Hit> hits, int textLength)
+    {
+        var occupied = new bool[textLength]; // Create array to track occupied characters
+        var validHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store valid hits
+        foreach (var hit in hits) // Iterate through hits
+        {
+            var isFree = true; // Initialize flag
+            for (var i = hit.Begin; i < hit.End; i++) // Iterate through characters
+            {
+                if (!occupied[i]) continue; // Check if character is free
+                isFree = false; // Set flag
+                break; // Break
+            }
+
+            if (!isFree) continue; // Check if hit is valid
+            validHits.Add(hit); // Add hit
+            Array.Fill(occupied, true, hit.Begin, hit.Length); // Mark characters as occupied
+        }
+
+        return validHits; // Return valid hits
+    }
+
+    private static string ReplaceMatches(string text, List<AhoCorasickDoubleArrayTrie<int>.Hit> hits,
+        Dictionary<string, string> entries)
+    {
+        var currentPos = 0; // Initialize current position
+        using var stringBuilder = ZString.CreateStringBuilder(); // Create string builder
+        foreach (var hit in hits) // Iterate through hits
+        {
+            if (hit.Begin > currentPos)
+                stringBuilder.Append(text.AsSpan(currentPos, hit.Begin - currentPos)); // Append text before hit
+            var phrase = text.Substring(hit.Begin, hit.Length); // Extract matched phrase
+            var translation = entries[phrase]; // Get translation from entries
+            stringBuilder.Append("<mstrans:dictionary translation='"); // Append opening tag with translation attribute
+            stringBuilder.Append(translation); // Append translation
+            stringBuilder.Append("'>"); // Append closing tag
+            stringBuilder.Append(phrase); // Append original phrase
+            stringBuilder.Append("</mstrans:dictionary>"); // Append closing tag
+            currentPos = hit.End; // Move current position
+        }
+
+        if (currentPos < text.Length) stringBuilder.Append(text.AsSpan(currentPos)); // Append remaining text
+
+        return stringBuilder.ToString(); // Return replaced text
     }
 }
