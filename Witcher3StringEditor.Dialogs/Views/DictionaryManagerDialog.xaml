@@ -127,8 +127,8 @@
                 </ResourceDictionary>
             </sf:SfDataGrid.Resources>
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn MappingName="Key" />
-                <sf:GridTextColumn MappingName="Value" />
+                <sf:GridTextColumn MappingName="Key" HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}" />
+                <sf:GridTextColumn MappingName="Value" HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}" />
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
         <sf:SfDataPager x:Name="SfDataPager" Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center"
