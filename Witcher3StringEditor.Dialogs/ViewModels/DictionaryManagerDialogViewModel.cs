@@ -101,20 +101,27 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         try
         {
             if (storageFile is not null &&
-                Path.GetExtension(storageFile.LocalPath) is ".txt")
+                Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
             {
-                var dictionaryInfo = await DictionaryMangerService.Import(storageFile.LocalPath);
-                if (dictionaryInfo == null) return;
-                var found = DictionaryGroups.Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
-                    .ToList();
-                if (found.Count != 0)
-                {
-                    found[0].Dictionaries.Add(dictionaryInfo);
+                var dictionaryInfo = 
+                    await DictionaryMangerService.Import(storageFile.LocalPath);
+                if (dictionaryInfo == null) return; // No dictionary found
+                var matchingGroup = DictionaryGroups
+                    .Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
+                    .ToList(); // Find existing group
+                if (matchingGroup.Count != 0) // If group exists, remove existing entries
+                { 
+                    var group = matchingGroup[0]; // Get group
+                    var fileName = Path.GetFileName(dictionaryInfo.Path); // Get file name
+                    var existingEntries = group.Dictionaries
+                        .Where(x => Path.GetFileName(x.Path) == fileName).ToArray(); // Find existing entries
+                    existingEntries.ForEach(x => group.Dictionaries.Remove(x)); // Remove existing entries
+                    matchingGroup[0].Dictionaries.Add(dictionaryInfo); // Add new entry
                 }
                 else
                 {
-                    var group = new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]);
-                    DictionaryGroups.Add(group);
+                    var group = new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]); // Create new group
+                    DictionaryGroups.Add(group); // Add new group
                 }
             }
         }
@@ -122,7 +129,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         {
             _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
                 MessageTokens.ImportDictionaryFailed);
-            Log.Warning(e, "Invalid dictionary file: {Path}", storageFile?.LocalPath);
             Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
         }
     }
