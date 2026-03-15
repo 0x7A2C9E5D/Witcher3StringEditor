@@ -95,9 +95,9 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
             var phrase = text.Substring(hit.Begin, hit.Length); // Extract matched phrase
             var translation = entries[phrase]; // Get translation from entries
             stringBuilder.Append("<mstrans:dictionary translation='"); // Append opening tag with translation attribute
-            stringBuilder.Append(translation); // Append translation
+            stringBuilder.Append(EscapeXml(translation)); // Append translation
             stringBuilder.Append("'>"); // Append closing tag
-            stringBuilder.Append(phrase); // Append original phrase
+            stringBuilder.Append(EscapeXml(phrase)); // Append original phrase
             stringBuilder.Append("</mstrans:dictionary>"); // Append closing tag
             currentPos = hit.End; // Move current position
         }
@@ -105,5 +105,16 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         if (currentPos < text.Length) stringBuilder.Append(text.AsSpan(currentPos)); // Append remaining text
 
         return stringBuilder.ToString(); // Return replaced text
+    }
+
+    private static string EscapeXml(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+        return text
+            .Replace("&", "&amp;")
+            .Replace("<", "&lt;")
+            .Replace(">", "&gt;")
+            .Replace("'", "&apos;")
+            .Replace("\"", "&quot;");
     }
 }
