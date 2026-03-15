@@ -10,5 +10,5 @@ public interface ICultureMatcher
     /// <param name="targetCulture"></param>
     /// <param name="availableCultures"></param>
     /// <returns></returns>
-    IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IList<CultureInfo> availableCultures);
+    IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IReadOnlyList<CultureInfo> availableCultures);
 }

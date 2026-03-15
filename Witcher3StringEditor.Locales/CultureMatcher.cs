@@ -17,7 +17,7 @@ public class CultureMatcher : ICultureMatcher
     /// <returns>
     ///     An array of matching cultures
     /// </returns>
-    public IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IList<CultureInfo> availableCultures)
+    public IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IReadOnlyList<CultureInfo> availableCultures)
     {
         var bestMatches = availableCultures
             .Where(x => x.Name == targetCulture.Name).ToArray();
