@@ -7,13 +7,24 @@ namespace Witcher3StringEditor.Dictionary.Services;
 
 public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDictionaryService
 {
-    private readonly AhoCorasickDoubleArrayTrie<int> matcher = new();
-    private Dictionary<string, string> entries = [];
+    private readonly AhoCorasickDoubleArrayTrie<int> matcher = new(); // Create term cache
+    private Dictionary<string, string> entries = []; // Create entries
 
+    /// <summary>
+    ///     A service that provides dynamic dictionary functionality.
+    /// </summary>
     public bool IsReady { get; private set; }
 
+    /// <summary>
+    ///     A service that provides dynamic dictionary functionality.
+    /// </summary>
     public DictionaryInfo? CurrentDictionary { get; private set; }
 
+    /// <summary>
+    ///     Binds the dynamic dictionary to the given dictionary.
+    /// </summary>
+    /// <param name="dictionary"></param>
+    /// <returns></returns>
     public bool Bind(DictionaryInfo dictionary)
     {
         try
@@ -38,6 +49,11 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         }
     }
 
+    /// <summary>
+    ///     Replaces all matches in the given text with their corresponding translations from the dynamic dictionary.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
     public string Replace(string text)
     {
         if (string.IsNullOrEmpty(text) || entries.Count == 0) return text;
@@ -47,6 +63,12 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         return ReplaceMatches(text, hits, entries);
     }
 
+    /// <summary>
+    ///     Finds all matches in the given text and returns them sorted by position and length.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="matcher"></param>
+    /// <returns></returns>
     private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FindAndSortMatches(string text,
         AhoCorasickDoubleArrayTrie<int> matcher)
     {
@@ -60,6 +82,12 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
             .ToList(); // Sort hits
     }
 
+    /// <summary>
+    ///     Filters out invalid hits from the given list of hits.
+    /// </summary>
+    /// <param name="hits"></param>
+    /// <param name="textLength"></param>
+    /// <returns></returns>
     private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FilterValidHits(
         IReadOnlyList<AhoCorasickDoubleArrayTrie<int>.Hit> hits, int textLength)
     {
@@ -83,6 +111,13 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         return validHits; // Return valid hits
     }
 
+    /// <summary>
+    ///     Replaces all matches in the given text with their corresponding translations from the dynamic dictionary.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="hits"></param>
+    /// <param name="entries"></param>
+    /// <returns></returns>
     private static string ReplaceMatches(string text, List<AhoCorasickDoubleArrayTrie<int>.Hit> hits,
         Dictionary<string, string> entries)
     {
@@ -107,6 +142,11 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         return stringBuilder.ToString(); // Return replaced text
     }
 
+    /// <summary>
+    ///     Escapes XML special characters in the given text.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
     private static string EscapeXml(string text)
     {
         if (string.IsNullOrEmpty(text)) return text;
