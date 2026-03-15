@@ -5,7 +5,6 @@ using GTranslate;
 using GTranslate.Translators;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
-using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Dictionary.Services;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
@@ -222,10 +221,14 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// </summary>
     private void BindDictionaryIfNeeded()
     {
-        if (SelectedDictionary == NoneDictionary) return;
-        var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
-        if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
-            isDictionaryReady = dynamicDictionaryService.Bind(SelectedDictionary!);
+        if (SelectedDictionary == NoneDictionary) return; // No dictionary selected, skip binding
+        var dynamicDictionaryService =
+            DictionaryService!.DynamicDictionaryService; // Get the dynamic dictionary service
+        if (dynamicDictionaryService.CurrentDictionary !=
+            SelectedDictionary) // Check if the current dictionary is different from the selected one
+            isDictionaryReady =
+                dynamicDictionaryService
+                    .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
     }
 
     /// <summary>
@@ -287,7 +290,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <returns>True if the translation is valid, false otherwise</returns>
     private static bool IsTranslationValid(string translation)
     {
-        return !string.IsNullOrWhiteSpace(translation);
+        return !string.IsNullOrWhiteSpace(translation); // Check if the translation is not null, empty, or whitespace
     }
 
     /// <summary>
@@ -296,7 +299,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="translatorName">The name of the translator that returned empty data</param>
     private static void LogEmptyTranslationResult(string translatorName)
     {
-        Log.Error("The translator: {Name} returned empty data.", translatorName);
+        Log.Error("The translator: {Name} returned empty data.",
+            translatorName); // Log an error indicating that the translator returned empty data
     }
 
     /// <summary>

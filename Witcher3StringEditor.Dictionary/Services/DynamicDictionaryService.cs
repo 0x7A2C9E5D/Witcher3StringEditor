@@ -34,7 +34,7 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
                 .Where(x => !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value))
                 .GroupBy(pair => pair.Key)
                 .Select(g => g.First())
-                .ToDictionary();
+                .ToDictionary(); // Get entries and filter out empty keys and values, then remove duplicates and convert to dictionary
             matcher.Build(entries.ToDictionary(kvp => kvp.Key, _ => 0)); // Build term cache
             IsReady = true; // Set ready
             return true; // Return success
@@ -56,11 +56,11 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     /// <returns></returns>
     public string Replace(string text)
     {
-        if (string.IsNullOrEmpty(text) || entries.Count == 0) return text;
-
-        var hits = FindAndSortMatches(text, matcher);
-        hits = FilterValidHits(hits, text.Length);
-        return ReplaceMatches(text, hits, entries);
+        if (string.IsNullOrEmpty(text) || entries.Count == 0) return text; // Return original text if it's empty or if there are no entries
+         
+        var hits = FindAndSortMatches(text, matcher); // Find and sort matches
+        hits = FilterValidHits(hits, text.Length); // Filter out invalid hits
+        return ReplaceMatches(text, hits, entries); // Replace matches with translations
     }
 
     /// <summary>

@@ -43,15 +43,16 @@ public class DictionaryProvider : IDictionaryProvider
 
         // Parse header
         var (name, sourceLang, targetLang) = ParseHeader(lines[0].Trim());
-        
-        if(string.IsNullOrWhiteSpace(name))
+
+        if (string.IsNullOrWhiteSpace(name))
             name = Path.GetFileNameWithoutExtension(filePath); // Fallback to file name if name is empty
 
         // Extract note and count entries
         var (note, termCount) = ExtractMetadata(lines.Skip(1));
 
+        // Create and return dictionary info
         return new DictionaryInfo(
-            filePath, 
+            filePath,
             name,
             note,
             CultureInfo.GetCultureInfo(sourceLang),
@@ -75,17 +76,18 @@ public class DictionaryProvider : IDictionaryProvider
     private static (string name, string sourceLang, string targetLang) ParseHeader(string headerLine)
     {
         if (!headerLine.StartsWith(CommentPrefix))
-            throw new InvalidDataException($"Missing header (must start with '{CommentPrefix}'");
+            throw new InvalidDataException(
+                $"Missing header (must start with '{CommentPrefix}'"); // Validate header starts with comment prefix
 
-        var parts = headerLine.Split(Separator, 3);
+        var parts = headerLine.Split(Separator, 3); // Split into 3 parts: Name, SourceLang, TargetLang
 
         if (parts.Length != 3)
             throw new InvalidDataException(
-                "Invalid header format. Expected: ;Name|SourceLang|TargetLang");
+                "Invalid header format. Expected: ;Name|SourceLang|TargetLang"); // Validate header has exactly 3 parts
 
-        var name = parts[0][1..].Trim();
-        var sourceLangRaw = parts[1].Trim();
-        var targetLangRaw = parts[2].Trim();
+        var name = parts[0][1..].Trim(); // Extract name (remove comment prefix and trim)
+        var sourceLangRaw = parts[1].Trim(); // Extract source language code
+        var targetLangRaw = parts[2].Trim(); // Extract target language code
 
         // Convert Witcher 3 special language codes to standard codes
         var sourceLang = NormalizeLanguageCode(sourceLangRaw);
@@ -99,12 +101,13 @@ public class DictionaryProvider : IDictionaryProvider
         }
         catch (CultureNotFoundException)
         {
+            // Validate that the normalized language codes are valid CultureInfo codes
             throw new InvalidDataException(
                 $"Invalid language code '{sourceLangRaw}' or '{targetLangRaw}'. " +
                 $"Supported codes: {string.Join(", ", W3LangMap.Keys)} or standard CultureInfo codes");
         }
 
-        return (name, sourceLang, targetLang);
+        return (name, sourceLang, targetLang); // Return parsed header information
     }
 
     /// <summary>
@@ -113,9 +116,10 @@ public class DictionaryProvider : IDictionaryProvider
     /// </summary>
     private static string NormalizeLanguageCode(string code)
     {
+        // Only convert Witcher 3 specific codes, otherwise keep original
         return string.IsNullOrWhiteSpace(code)
             ? throw new ArgumentException(@"Language code cannot be empty", nameof(code))
-            : W3LangMap.GetValueOrDefault(code, code); // Only convert Witcher 3 specific codes, otherwise keep original
+            : W3LangMap.GetValueOrDefault(code, code);
     }
 
     /// <summary>
@@ -123,34 +127,33 @@ public class DictionaryProvider : IDictionaryProvider
     /// </summary>
     private static (string note, int termCount) ExtractMetadata(IEnumerable<string> lines)
     {
-        string? note = null;
-        var termCount = 0;
+        string? note = null; // Note is optional, so it can be null if not found
+        var termCount = 0; // Initialize term count
 
         foreach (var line in lines)
         {
-            var trimmedLine = line.Trim();
+            var trimmedLine = line.Trim(); // Trim line for accurate processing
 
             if (string.IsNullOrEmpty(trimmedLine))
-                continue;
+                continue; // Skip empty lines
 
-            if (trimmedLine.StartsWith(CommentPrefix))
+            if (trimmedLine.StartsWith(CommentPrefix)) // Process comments for note extraction
             {
-                // Extract note on first occurrence
-                if (note is not null) continue;
-                var commentContent = trimmedLine[1..].Trim();
+                if (note is not null) continue; // Note already found, skip further comments
+                var commentContent = trimmedLine[1..].Trim(); // Remove comment prefix and trim
                 if (!commentContent.StartsWith($"{NotePrefix}{Separator}", StringComparison.OrdinalIgnoreCase))
-                    continue;
-                var parts = commentContent.Split(Separator, 2);
-                if (parts.Length == 2)
-                    note = parts[1].Trim();
+                    continue; // Not a note comment, skip
+                var parts = commentContent.Split(Separator, 2); // Split into "Note" and the actual note content
+                if (parts.Length == 2) // Validate note format and extract note content
+                    note = parts[1].Trim(); // Set note if valid format
             }
-            else if (IsValidEntry(trimmedLine))
+            else if (IsValidEntry(trimmedLine)) // Count valid entries
             {
-                termCount++;
+                termCount++; // Increment term count for each valid entry
             }
         }
 
-        return (note ?? string.Empty, termCount);
+        return (note ?? string.Empty, termCount); // Return note (or empty string if not found) and term count
     }
 
     /// <summary>
@@ -164,21 +167,21 @@ public class DictionaryProvider : IDictionaryProvider
         {
             var trimmedLine = line.Trim();
 
-            // Skip comments and empty lines
             if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith(CommentPrefix))
-                continue;
+                continue; // Skip comments and empty lines
 
-            var parts = trimmedLine.Split(Separator, 2);
+            var parts = trimmedLine.Split(Separator, 2); // Split into key and value, only on the first separator
             if (parts.Length != 2)
-                continue;
+                continue; // Skip lines that don't have exactly 2 parts (invalid format)
 
-            var key = parts[0].Trim();
-            var value = parts[1].Trim();
+            var key = parts[0].Trim(); // Extract and trim key
+            var value = parts[1].Trim(); // Extract and trim value
 
-            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value)) entries[key] = value;
+            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+                entries[key] = value; // Only add valid entries with non-empty keys and values
         }
 
-        return entries;
+        return entries; // Return parsed entries
     }
 
     /// <summary>
@@ -187,11 +190,14 @@ public class DictionaryProvider : IDictionaryProvider
     private static bool IsValidEntry(string line)
     {
         if (line.StartsWith(CommentPrefix))
-            return false;
+            return false; // Comments are not valid entries
 
-        var parts = line.Split(Separator, 2);
+        var parts = line.Split(Separator, 2); // Split into key and value, only on the first separator 
+
+        // Valid entry must have exactly 2 parts and both key and value must be non-empty after trimming
         return parts.Length == 2 &&
                !string.IsNullOrWhiteSpace(parts[0].Trim()) &&
-               !string.IsNullOrWhiteSpace(parts[1].Trim());
+               !string.IsNullOrWhiteSpace(parts[1]
+                   .Trim());
     }
 }
