@@ -25,5 +25,5 @@ public static class PathHelper
     /// <summary>
     ///    The dictionary directory.
     /// </summary>
-    public static readonly string DictionaryDirectory = Path.Combine(AppDataDirectory, "Directories");
+    public static readonly string DictionaryDirectory = Path.Combine(AppDataDirectory, "Dictionaries");
 }

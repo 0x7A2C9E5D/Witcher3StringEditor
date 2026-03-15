@@ -14,11 +14,9 @@ public class DictionaryMangerService : IDictionaryMangerService
 {
     private readonly ICultureMatcher cultureMatcher; // Culture matcher
 
-    private readonly IDictionaryProvider dictionaryProvider; // Dictionary provider
-
-    public DictionaryInfo? CurrentDictionary { get; set; } // Current dictionary
-
     private readonly List<DictionaryInfo> dictionaries = []; // Dictionaries
+
+    private readonly IDictionaryProvider dictionaryProvider; // Dictionary provider
 
     /// <summary>
     ///     Dictionary service
@@ -29,30 +27,12 @@ public class DictionaryMangerService : IDictionaryMangerService
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider
+        if (!Path.Exists(PathHelper.DictionaryDirectory)) 
+            Directory.CreateDirectory(PathHelper.DictionaryDirectory); // Create dictionary directory if it doesn't exist
         LoadDictionariesFromDirectory(PathHelper.DictionaryDirectory); // Load dictionaries from directory
     }
 
-    /// <summary>
-    ///     Load dictionaries from directory
-    /// </summary>
-    /// <param name="path"></param>
-    private void LoadDictionariesFromDirectory(string path)
-    {
-        var dictionaryFiles = Directory.GetFiles(path)
-            .Where(f => f.EndsWith(".txt")); // Get dictionary files
-        dictionaryFiles.ForEach(dictionaryFile =>
-        {
-            try
-            {
-                var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(dictionaryFile); // Get dictionary info
-                dictionaries.Add(dictionaryInfo); // Add to collection
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to load dictionary file: {Path}", dictionaryFile);
-            }
-        });
-    }
+    public DictionaryInfo? CurrentDictionary { get; set; } // Current dictionary
 
     /// <summary>
     ///     Import dictionary
@@ -110,5 +90,27 @@ public class DictionaryMangerService : IDictionaryMangerService
 
         // Return dictionaries with matched target languages
         return dictionaries.Where(d => matchedLanguages.Contains(d.TargetLanguage));
+    }
+
+    /// <summary>
+    ///     Load dictionaries from directory
+    /// </summary>
+    /// <param name="path"></param>
+    private void LoadDictionariesFromDirectory(string path)
+    {
+        var dictionaryFiles = Directory.GetFiles(path)
+            .Where(f => f.EndsWith(".txt")); // Get dictionary files
+        dictionaryFiles.ForEach(dictionaryFile =>
+        {
+            try
+            {
+                var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(dictionaryFile); // Get dictionary info
+                dictionaries.Add(dictionaryInfo); // Add to collection
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to load dictionary file: {Path}", dictionaryFile);
+            }
+        });
     }
 }
