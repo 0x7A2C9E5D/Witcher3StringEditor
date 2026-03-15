@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using CommunityToolkit.Diagnostics;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Helpers;
 using Witcher3StringEditor.Models;
 
 namespace Witcher3StringEditor.Services;
@@ -13,22 +14,6 @@ namespace Witcher3StringEditor.Services;
 /// </summary>
 internal class BackupService(IAppSettings appSettings) : IBackupService
 {
-    /// <summary>
-    ///     The path to the backup folder where backup files are stored
-    /// </summary>
-    private readonly string backupFolderPath
-        = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Backup");
-
-    /// <summary>
-    ///     Gets a value indicating whether the application is running in debug mode
-    /// </summary>
-#if DEBUG
-    private static bool IsDebug => true;
-#else
-    private static bool IsDebug => false;
-#endif
-
     /// <summary>
     ///     Creates a backup of the specified file
     /// </summary>
@@ -44,10 +29,10 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
                 FileName = Path.GetFileName(filePath), // Set file name
                 Hash = hash, // Set file hash
                 OrginPath = filePath, // Set original file path
-                BackupPath = Path.Combine(backupFolderPath, $"{Guid.NewGuid():N}.bak"), // Set backup file path
+                BackupPath = Path.Combine(PathHelper.BackupDirectory, $"{Guid.NewGuid():N}.bak"), // Set backup file path
                 BackupTime = DateTime.Now // Set backup time
             };
-            EnsureBackupDirectoryExists(backupFolderPath); // Ensure backup directory exists
+            EnsureBackupDirectoryExists(PathHelper.BackupDirectory); // Ensure backup directory exists
             return IsDuplicateBackup(backupItem) || ExecuteBackup(backupItem); // Check for duplicates or execute backup
         }
         catch (Exception ex)

@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Witcher3StringEditor.Helpers\Witcher3StringEditor.Helpers.csproj" />
         <ProjectReference Include="..\Witcher3StringEditor.Locales\Witcher3StringEditor.Locales.csproj"/>
         <ProjectReference Include="..\Witcher3StringEditor.Messaging\Witcher3StringEditor.Messaging.csproj"/>
     </ItemGroup>

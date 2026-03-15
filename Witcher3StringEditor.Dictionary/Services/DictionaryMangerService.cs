@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using MoreLinq;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Helpers;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 
@@ -11,17 +12,9 @@ namespace Witcher3StringEditor.Dictionary.Services;
 
 public class DictionaryMangerService : IDictionaryMangerService
 {
-#if DEBUG
-    private static bool IsDebug => true; // Debug
-#else
-    private static bool IsDebug => false; // Release
-#endif
-
     private readonly ICultureMatcher cultureMatcher; // Culture matcher
 
     private readonly IDictionaryProvider dictionaryProvider; // Dictionary provider
-
-    private readonly string dictionaryPath; // Dictionary path
 
     public DictionaryInfo? CurrentDictionary { get; set; } // Current dictionary
 
@@ -36,9 +29,7 @@ public class DictionaryMangerService : IDictionaryMangerService
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider
-        dictionaryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-            , IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Dictionaries"); // Dictionary path
-        LoadDictionariesFromDirectory(dictionaryPath); // Load dictionaries from directory
+        LoadDictionariesFromDirectory(PathHelper.DictionariesDirectory); // Load dictionaries from directory
     }
 
     /// <summary>
@@ -83,7 +74,7 @@ public class DictionaryMangerService : IDictionaryMangerService
         }
 
         var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
-        var destFileName = Path.Combine(dictionaryPath, fileName); // Get destination file name
+        var destFileName = Path.Combine(PathHelper.DictionariesDirectory, fileName); // Get destination file name
         File.Copy(filePath, destFileName, true); // Copy file
         var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
         dictionaries.Add(newDictionaryInfo); // Add to collection
