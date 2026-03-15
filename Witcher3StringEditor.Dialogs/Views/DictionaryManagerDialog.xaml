@@ -32,11 +32,23 @@
         </HierarchicalDataTemplate>
         <DataTemplate x:Key="DictionaryItemTemplate" DataType="{x:Type di:DictionaryInfo}">
             <StackPanel Orientation="Horizontal">
-                <StackPanel.ToolTip>
-                    <ToolTip>
-                        <TextBlock Text="{Binding Note}"/>
-                    </ToolTip>
-                </StackPanel.ToolTip>
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="ToolTip">
+                            <Setter.Value>
+                                <ToolTip Content="{Binding Note}" />
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Note}" Value="">
+                                <Setter Property="ToolTip" Value="{x:Null}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Note}" Value="{x:Null}">
+                                <Setter Property="ToolTip" Value="{x:Null}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Document}" />
                 <TextBlock Margin="5,0,0,0"
                            VerticalAlignment="Center" HorizontalAlignment="Stretch"
