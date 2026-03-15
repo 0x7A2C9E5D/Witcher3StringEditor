@@ -1,5 +1,5 @@
 ﻿using JetBrains.Annotations;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Serializers.Internal;
 

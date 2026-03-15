@@ -1,7 +1,7 @@
 using CommunityToolkit.Diagnostics;
 using Serilog;
 using Syncfusion.XlsIO;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Serializers.Internal;
 

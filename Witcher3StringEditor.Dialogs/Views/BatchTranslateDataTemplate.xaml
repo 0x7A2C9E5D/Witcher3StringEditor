@@ -4,12 +4,15 @@
     xmlns:iwk="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:l="clr-namespace:Witcher3StringEditor.Locales;assembly=Witcher3StringEditor.Locales"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:sf="http://schemas.syncfusion.com/wpf"
+    xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels">
     <!-- 
         Data template for batch translation view
         This template is used to display the UI for batch translation operations
         Binds to BatchItemsTranslationViewModel for data and command binding
     -->
+    <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <DataTemplate x:Key="BatchTranslateDataTemplate" DataType="{x:Type vm:BatchItemsTranslationViewModel}">
         <Grid>
             <Grid.RowDefinitions>
@@ -36,6 +39,18 @@
                     DisplayMemberPath="NativeName"
                     ItemsSource="{Binding Languages}"
                     SelectedValue="{Binding ToLanguage}" />
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    Visibility="{Binding IsDictionarySupported, Converter={StaticResource BoolToVisibilityConverter}}"
+                    ui:ControlHelper.Header="{I18N {x:Static l:LangKeys.Dictionary}}"
+                    ItemsSource="{Binding Dictionaries}"
+                    SelectedItem="{Binding SelectedDictionary}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <!-- Start index input control -->
                 <ui:NumberBox
                     x:Name="StartIndexInput"

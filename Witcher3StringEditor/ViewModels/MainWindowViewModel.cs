@@ -16,8 +16,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Serilog;
 using Syncfusion.Data.Extensions;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
+using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Helpers;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
@@ -50,6 +52,11 @@ internal partial class MainWindowViewModel : ObservableObject
     /// </summary>
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     private ObservableCollection<W3StringItemModel>? filteredW3StringItems;
+
+    /// <summary>
+    ///     Registers a message handler to listen for translator changes and update dictionary support status
+    /// </summary>
+    [ObservableProperty] private bool isSupportDictionary;
 
     /// <summary>
     ///     Gets or sets a value indicating whether an update is available
@@ -99,6 +106,8 @@ internal partial class MainWindowViewModel : ObservableObject
         settingsManagerService =
             serviceProvider.GetRequiredService<ISettingsManagerService>(); // Get settings manager service
         PageSize = appSettings.PageSize; // Set page size
+        IsSupportDictionary =
+            appSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
         RegisterMessengerHandlers(); // Register all message handlers
     }
 
@@ -122,15 +131,6 @@ internal partial class MainWindowViewModel : ObservableObject
     ///     Gets a value indicating whether a file can be opened
     /// </summary>
     private bool CanOpenFile => File.Exists(appSettings.W3StringsPath);
-
-    /// <summary>
-    ///     Gets a value indicating whether the application is running in debug mode
-    /// </summary>
-#if DEBUG
-    private static bool IsDebug => true;
-#else
-    private static bool IsDebug => false;
-#endif
 
     /// <summary>
     ///     Handles changes to the W3StringItems collection
@@ -196,6 +196,18 @@ internal partial class MainWindowViewModel : ObservableObject
         RegisterFileMessageHandlers(); // Register file message handlers
         RegisterSettingsMessageHandlers(); // Register settings message handlers
         RegisterSearchMessageHandlers(); // Register search message handlers
+        RegisterDictionarySupportMessageHandler(); // Register dictionary support message handler
+    }
+
+    /// <summary>
+    ///     Registers a handler to monitor changes to the translator setting and updates dictionary support accordingly.
+    /// </summary>
+    private void RegisterDictionarySupportMessageHandler()
+    {
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, ValueChangedMessage<string>, string>(
+            this,
+            MessageTokens.TranslatorChanged,
+            (_, m) => { IsSupportDictionary = m.Value == "MicrosoftTranslator"; });
     }
 
     /// <summary>
@@ -282,14 +294,12 @@ internal partial class MainWindowViewModel : ObservableObject
         Log.Information("OS Version: {Version}", // Log OS version
             $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
         Log.Information(".Net Runtime: {Runtime}", RuntimeInformation.FrameworkDescription); // Log .NET runtime version
-        Log.Information("Is Debug: {IsDebug}", IsDebug); // Log debug mode status
+        Log.Information("Is Debug: {IsDebug}", DebugHelper.IsDebug); // Log debug mode status
         Log.Information("Current Directory: {Directory}", Environment.CurrentDirectory); // Log current directory
-        Log.Information("AppData Folder: {Folder}", // Log AppData folder path
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor"));
-        Log.Information("Installed Language Packs: {Languages}", // Log installed language packs
-            string.Join(", ",
-                serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures.Select(x => x.Name)));
+        Log.Information("AppData Folder: {Folder}", PathHelper.AppDataDirectory); // Log AppData folder path
+        var supportedCultures = serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures;
+        Log.Information("Installed Language Packs: {Languages}",
+            string.Join(", ", supportedCultures.Select(x => x.Name))); // Log installed language packs
         Log.Information("Current Language: {Language}", appSettings.Language); // Log current language
     }
 
@@ -636,9 +646,22 @@ internal partial class MainWindowViewModel : ObservableObject
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
         var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
             .First(x => x.Name == appSettings.Translator);
-        await dialogService.ShowDialogAsync(this,
-            new TranslationDialogViewModel(appSettings, translator, itemsToUse,
-                selectedIndex)); // Show translation dialog
+        var isUseDictionary = appSettings.Translator == "MicrosoftTranslator";
+        var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
+        var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse,
+            selectedIndex, dictionaryService);
+        await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable
+    }
+
+    /// <summary>
+    ///     Shows the dictionary dialog
+    /// </summary>
+    [RelayCommand]
+    private async Task ShowDictionaryDialog()
+    {
+        var dictionaryService = serviceProvider.GetRequiredService<IDictionaryService>();
+        await dialogService.ShowDialogAsync(this,
+            new DictionaryManagerDialogViewModel(dictionaryService, dialogService)); // Show the dictionary dialog
     }
 }

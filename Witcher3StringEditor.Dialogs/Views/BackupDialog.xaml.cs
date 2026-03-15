@@ -23,9 +23,9 @@ public partial class BackupDialog
     /// </summary>
     public BackupDialog()
     {
-        InitializeComponent();
-        SetupSearchHelper();
-        RegisterMessageHandlers();
+        InitializeComponent(); // InitializeComponent
+        SetupSearchHelper(); // Setup search helper
+        RegisterMessageHandlers(); // Register message handlers
     }
 
     /// <summary>

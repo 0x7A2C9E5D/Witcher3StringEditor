@@ -1,11 +1,17 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
 using GTranslate.Translators;
+using MoreLinq;
 using Serilog;
-using Witcher3StringEditor.Common;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts;
+using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Dictionary;
+using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Locales;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -16,6 +22,11 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 /// </summary>
 public abstract partial class TranslationViewModelBase : ObservableObject, IAsyncDisposable
 {
+    /// <summary>
+    ///     The dictionary service used for managing dictionaries
+    /// </summary>
+    private protected readonly IDictionaryService? DictionaryService;
+
     /// <summary>
     ///     The translation service used for translating text
     /// </summary>
@@ -37,9 +48,19 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     [ObservableProperty] private ILanguage formLanguage;
 
     /// <summary>
+    ///     Gets or sets a value indicating whether the dictionary service is supported
+    /// </summary>
+    [ObservableProperty] private bool isDictionarySupported;
+
+    /// <summary>
     ///     Gets or sets the collection of supported languages for the current translator
     /// </summary>
     [ObservableProperty] private IEnumerable<ILanguage> languages;
+
+    /// <summary>
+    ///     Gets or sets the selected dictionary for translation
+    /// </summary>
+    [ObservableProperty] private DictionaryInfo? selectedDictionary;
 
     /// <summary>
     ///     Gets or sets the target language for translation
@@ -52,15 +73,31 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="appSettings">Application settings service</param>
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
+    /// <param name="dictionaryService">Dictionary service</param>
     protected TranslationViewModelBase(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDictionaryService? dictionaryService = null)
     {
-        W3StringItems = w3StringItems;
         Translator = translator;
+        DictionaryService = dictionaryService;
+        W3StringItems = w3StringItems;
         Languages = GetSupportedLanguages(translator);
         FormLanguage = Language.GetLanguage("en");
         ToLanguage = GetPreferredLanguage(appSettings);
+        UpdateDictionaryAvailability();
     }
+
+    private protected DictionaryInfo NoneDictionary { get; } = new(
+        string.Empty,
+        Strings.NoDictionary,
+        string.Empty,
+        CultureInfo.GetCultureInfo("en"),
+        CultureInfo.GetCultureInfo("en"),
+        0);
+
+    /// <summary>
+    ///     Updates the availability of the dictionary service
+    /// </summary>
+    public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 
     /// <summary>
     ///     Disposes of the view model resources asynchronously
@@ -68,6 +105,44 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     /// <returns>A ValueTask representing the asynchronous dispose operation</returns>
     public abstract ValueTask DisposeAsync();
+
+
+    /// <summary>
+    ///     Checks if the current language is supported by the dictionary service
+    /// </summary>
+    /// <returns>
+    ///     <code>true</code> if the language is supported, <code>false</code> otherwise.
+    /// </returns>
+    private bool CanUseDictionary()
+    {
+        return Translator.Name == "MicrosoftTranslator" && IsEnglishCulture(FormLanguage);
+    }
+
+    /// <summary>
+    ///     Checks if a given language is English
+    /// </summary>
+    /// <param name="language"></param>
+    /// <returns>
+    ///     <code>true</code> if the language is English, <code>false</code> otherwise.
+    /// </returns>
+    private static bool IsEnglishCulture(ILanguage language)
+    {
+        var culture = CultureInfo.GetCultureInfo(language.ISO6391);
+        return IsEnglishCulture(culture);
+    }
+
+    /// <summary>
+    ///     Checks if a given culture is English
+    /// </summary>
+    /// <param name="culture"></param>
+    /// <returns>
+    ///     <code>true</code> if the culture is English, <code>false</code> otherwise.
+    /// </returns>
+    private static bool IsEnglishCulture(CultureInfo culture)
+    {
+        var enCultureName = CultureInfo.GetCultureInfo("en").Name;
+        return culture.Name == enCultureName || culture.Parent.Name == enCultureName;
+    }
 
     /// <summary>
     ///     Gets a value indicating whether a translation operation is currently in progress
@@ -114,7 +189,27 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="value">The new source language value</param>
     partial void OnFormLanguageChanged(ILanguage value)
     {
+        UpdateDictionaryAvailability();
         Log.Information("The source language has been changed to: {Name}.", value.Name);
+    }
+
+    /// <summary>
+    ///     Updates the availability of the dictionary service
+    /// </summary>
+    private void UpdateDictionaryAvailability()
+    {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (ToLanguage == null) return;
+        IsDictionarySupported = CanUseDictionary();
+        if (DictionaryService == null) return;
+        if (Dictionaries.Count >= 1) Dictionaries.Clear();
+        Dictionaries.Add(NoneDictionary);
+        SelectedDictionary = NoneDictionary;
+        if (!IsDictionarySupported) return;
+        var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391);
+        var matchingDictionaries = DictionaryService.DictionaryMangerService.Find(targetLanguage).ToArray();
+        if (matchingDictionaries.Length != 0)
+            matchingDictionaries.ForEach(x => Dictionaries.Add(x));
     }
 
     /// <summary>
@@ -124,6 +219,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="value">The new target language value</param>
     partial void OnToLanguageChanged(ILanguage value)
     {
+        UpdateDictionaryAvailability();
         Log.Information("The target language has been changed to: {Name}.", value.Name);
     }
 }

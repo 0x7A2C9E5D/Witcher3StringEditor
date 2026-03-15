@@ -1,0 +1,161 @@
+﻿using System.Collections.ObjectModel;
+using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using MoreLinq.Extensions;
+using Serilog;
+using Witcher3StringEditor.Dialogs.Models;
+using Witcher3StringEditor.Dictionary;
+using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Messaging;
+
+namespace Witcher3StringEditor.Dialogs.ViewModels;
+
+public partial class DictionaryManagerDialogViewModel : ObservableObject, IModalDialogViewModel
+{
+    /// <summary>
+    ///     The dialog service.
+    /// </summary>
+    private readonly IDialogService dialogService;
+
+    /// <summary>
+    ///     The dictionary service.
+    /// </summary>
+    private readonly IDictionaryService dictionaryService;
+
+    /// <summary>
+    ///     The dictionary terms.
+    /// </summary>
+    [ObservableProperty] private Dictionary<string, string>? dictionaryTerms;
+
+    /// <summary>
+    ///     The selected dictionary.
+    /// </summary>
+    [ObservableProperty] private DictionaryInfo? selectedDictionary;
+
+    /// <summary>
+    ///     Initializes a new instance of the DictionaryDialogViewModel class.
+    /// </summary>
+    /// <param name="dictionaryService"></param>
+    /// <param name="dialogService"></param>
+    public DictionaryManagerDialogViewModel(IDictionaryService dictionaryService,
+        IDialogService dialogService)
+    {
+        this.dialogService = dialogService;
+        this.dictionaryService = dictionaryService;
+        var found = DictionaryMangerService.Find(null);
+        found.GroupBy(x => x.TargetLanguage).ForEach(g =>
+        {
+            var group = new DictionaryGroup(g.Key, g.Select(x => x).ToList());
+            DictionaryGroups.Add(group);
+        });
+    }
+
+    /// <summary>
+    ///     The dictionary manager service.
+    /// </summary>
+    private IDictionaryMangerService DictionaryMangerService => dictionaryService.DictionaryMangerService;
+
+    /// <summary>
+    ///     The dictionary service.
+    /// </summary>
+    private IDictionaryProvider DictionaryProvider => dictionaryService.DictionaryProvider;
+
+    /// <summary>
+    ///     Groups of dictionaries.
+    /// </summary>
+    public ObservableCollection<DictionaryGroup> DictionaryGroups { get; } = [];
+
+    /// <summary>
+    ///     Dialog result.
+    /// </summary>
+    public bool? DialogResult => true;
+
+    /// <summary>
+    ///     Selected dictionary.
+    /// </summary>
+    /// <param name="value"></param>
+    partial void OnSelectedDictionaryChanged(DictionaryInfo? value)
+    {
+        DictionaryTerms = value is null ? [] : DictionaryProvider.GetEntries(value);
+    }
+
+    /// <summary>
+    ///     Adds a dictionary from a file.
+    /// </summary>
+    [RelayCommand]
+    private async Task ImportDictionary()
+    {
+        using var storageFile = await dialogService.ShowOpenFileDialogAsync(this, new OpenFileDialogSettings
+        {
+            Filters =
+            [
+                new FileFilter(Strings.FileFormatTextFile, ".txt")
+            ]
+        });
+
+        try
+        {
+            if (storageFile is not null &&
+                Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
+            {
+                var dictionaryInfo = 
+                    await DictionaryMangerService.Import(storageFile.LocalPath);
+                if (dictionaryInfo == null) return; // No dictionary found
+                var matchingGroup = DictionaryGroups
+                    .Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
+                    .ToList(); // Find existing group
+                if (matchingGroup.Count != 0) // If group exists, remove existing entries
+                { 
+                    var group = matchingGroup[0]; // Get group
+                    var fileName = Path.GetFileName(dictionaryInfo.Path); // Get file name
+                    var existingEntries = group.Dictionaries
+                        .Where(x => Path.GetFileName(x.Path) == fileName).ToArray(); // Find existing entries
+                    existingEntries.ForEach(x => group.Dictionaries.Remove(x)); // Remove existing entries
+                    matchingGroup[0].Dictionaries.Add(dictionaryInfo); // Add new entry
+                }
+                else
+                {
+                    var group = new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]); // Create new group
+                    DictionaryGroups.Add(group); // Add new group
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                MessageTokens.ImportDictionaryFailed);
+            Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
+        }
+    }
+
+    /// <summary>
+    ///     Removes the specified dictionary.
+    /// </summary>
+    /// <param name="dictionary"></param>
+    [RelayCommand]
+    private async Task RemoveDictionary(DictionaryInfo? dictionary)
+    {
+        if (dictionary is null) return;
+        if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                MessageTokens.RemoveDictionaryConfirm))
+        {
+            DictionaryMangerService.Remove(dictionary);
+            var found = DictionaryGroups
+                .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
+            if (found is null) return;
+            if (found.Dictionaries.Count == 1)
+                DictionaryGroups.Remove(found);
+            else
+                found.Dictionaries.Remove(dictionary);
+            SelectedDictionary = null;
+            DictionaryTerms = [];
+        }
+    }
+}

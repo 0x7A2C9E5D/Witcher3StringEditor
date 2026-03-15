@@ -11,7 +11,7 @@ public interface ICultureResolver
     /// <summary>
     ///     Gets the collection of cultures supported by the application
     /// </summary>
-    public IEnumerable<CultureInfo> SupportedCultures { get; }
+    public IReadOnlyList<CultureInfo> SupportedCultures { get; }
 
     /// <summary>
     ///     Resolves the most appropriate supported culture based on the system's UI culture

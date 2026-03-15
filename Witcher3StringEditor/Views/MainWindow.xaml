@@ -2,7 +2,7 @@
     x:Class="Witcher3StringEditor.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:b="clr-namespace:Witcher3StringEditor.Dialogs.Behaviors;assembly=Witcher3StringEditor.Dialogs"
+    xmlns:b="clr-namespace:Witcher3StringEditor.Behaviors;assembly=Witcher3StringEditor.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:l="clr-namespace:Witcher3StringEditor.Locales;assembly=Witcher3StringEditor.Locales"
@@ -22,6 +22,11 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <sf:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
     <!-- Bind window loaded, closed, and closing events to corresponding commands -->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -182,6 +187,15 @@
                 Label="{I18N {x:Static l:LangKeys.TranslateBtnLabel}}">
                 <ui:AppBarButton.Icon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
+                </ui:AppBarButton.Icon>
+            </ui:AppBarButton>
+            <!-- Dictionary button -->
+            <ui:AppBarButton
+                Command="{Binding ShowDictionaryDialogCommand}"
+                Visibility="{Binding IsSupportDictionary,Converter={StaticResource BoolToVisibilityConverter}}"
+                Label="{I18N {x:Static l:LangKeys.DictionaryBtnLabel}}">
+                <ui:AppBarButton.Icon>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Dictionary}" />
                 </ui:AppBarButton.Icon>
             </ui:AppBarButton>
             <!-- Save button -->

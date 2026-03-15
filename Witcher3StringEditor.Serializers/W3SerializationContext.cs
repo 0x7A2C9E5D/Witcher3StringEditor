@@ -1,4 +1,4 @@
-using Witcher3StringEditor.Common;
+using Witcher3StringEditor.Contracts;
 
 namespace Witcher3StringEditor.Serializers;
 

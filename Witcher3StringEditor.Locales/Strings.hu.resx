@@ -1,541 +1,591 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <!-- 
+      Microsoft ResX Schema 
+      
+      Version 2.0
+      
+      The primary goals of this format is to allow a simple XML format 
+      that is mostly human readable. The generation and parsing of the 
+      various data types are done through the TypeConverter classes 
+      associated with the data types.
+      
+      Example:
+      
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+                  
+      There are any number of "resheader" rows that contain simple 
+      name/value pairs.
+      
+      Each data row contains a name, and value. The row also contains a 
+      type or mimetype. Type corresponds to a .NET class that support 
+      text/value conversion through the TypeConverter architecture. 
+      Classes that don't support this are serialized and stored with the 
+      mimetype set.
+      
+      The mimetype is used for serialized objects, and tells the 
+      ResXResourceReader how to depersist the object. This is currently not 
+      extensible. For a given mimetype the value must be set accordingly:
+      
+      Note - application/x-microsoft.net.object.binary.base64 is the format 
+      that the ResXResourceWriter will generate, however the reader can 
+      read any of the formats listed below.
+      
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+      
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+  
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array 
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Runtime" xml:space="preserve">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Runtime" xml:space="preserve">
     <value>Futtatókörnyezet:</value>
   </data>
-  <data name="OpenFileBtnLabel" xml:space="preserve">
+    <data name="OpenFileBtnLabel" xml:space="preserve">
     <value>Fájl megnyitása</value>
   </data>
-  <data name="AppTitle" xml:space="preserve">
+    <data name="AppTitle" xml:space="preserve">
     <value>The Witcher 3 szövegszerkesztő</value>
   </data>
-  <data name="SearchBoxPlaceholderText" xml:space="preserve">
+    <data name="SearchBoxPlaceholderText" xml:space="preserve">
     <value>Keresés</value>
   </data>
-  <data name="AddBtnLabel" xml:space="preserve">
+    <data name="AddBtnLabel" xml:space="preserve">
     <value>Rekord hozzáadása</value>
   </data>
-  <data name="EditBtnLabel" xml:space="preserve">
+    <data name="EditBtnLabel" xml:space="preserve">
     <value>Rekord szerkesztése</value>
   </data>
-  <data name="DeleteBtnLabel" xml:space="preserve">
+    <data name="DeleteBtnLabel" xml:space="preserve">
     <value>Rekordok törlése</value>
   </data>
-  <data name="SaveBtnLabel" xml:space="preserve">
+    <data name="SaveBtnLabel" xml:space="preserve">
     <value>Mentés</value>
   </data>
-  <data name="BackupBtnLabel" xml:space="preserve">
+    <data name="BackupBtnLabel" xml:space="preserve">
     <value>Biztonsági mentés</value>
   </data>
-  <data name="LogBtnLabel" xml:space="preserve">
+    <data name="LogBtnLabel" xml:space="preserve">
     <value>Napló</value>
   </data>
-  <data name="SettingsBtnLabel" xml:space="preserve">
+    <data name="SettingsBtnLabel" xml:space="preserve">
     <value>Beállítások</value>
   </data>
-  <data name="PlayBtnLabel" xml:space="preserve">
+    <data name="PlayBtnLabel" xml:space="preserve">
     <value>Játék indítása</value>
   </data>
-  <data name="TranslateBtnLabel" xml:space="preserve">
+    <data name="TranslateBtnLabel" xml:space="preserve">
     <value>Fordítás</value>
   </data>
-  <data name="OpenWorkingFolderBtnLabel" xml:space="preserve">
+    <data name="OpenWorkingFolderBtnLabel" xml:space="preserve">
     <value>Munkamappa megnyitása</value>
   </data>
-  <data name="UpdateAvailable" xml:space="preserve">
+    <data name="UpdateAvailable" xml:space="preserve">
     <value>Frissítés elérhető</value>
   </data>
-  <data name="RecentBtnLabel" xml:space="preserve">
+    <data name="RecentBtnLabel" xml:space="preserve">
     <value>Legutóbbiak</value>
   </data>
-  <data name="AboutBtnLabel" xml:space="preserve">
+    <data name="AboutBtnLabel" xml:space="preserve">
     <value>Rólunk</value>
   </data>
-  <data name="FileFormatSupported" xml:space="preserve">
+    <data name="FileFormatSupported" xml:space="preserve">
     <value>Összes támogatott formátum</value>
   </data>
-  <data name="FileFormatTextFile" xml:space="preserve">
+    <data name="FileFormatTextFile" xml:space="preserve">
     <value>Szövegfájl</value>
   </data>
-  <data name="FileFormatWitcher3StringsFile" xml:space="preserve">
+    <data name="FileFormatWitcher3StringsFile" xml:space="preserve">
     <value>The Witcher3 szövegfájl</value>
   </data>
-  <data name="AppExitMessage" xml:space="preserve">
+    <data name="AppExitMessage" xml:space="preserve">
     <value>Biztos, hogy ki akarsz lépni? Minden el nem mentett adat elveszik.</value>
   </data>
-  <data name="AppExitCaption" xml:space="preserve">
+    <data name="AppExitCaption" xml:space="preserve">
     <value>Kilépés</value>
   </data>
-  <data name="FileOpenedNoFoundMessage" xml:space="preserve">
+    <data name="FileOpenedNoFoundMessage" xml:space="preserve">
     <value>A megnyitott fájl nem létezik. Szeretné törölni a kapcsolódó bejegyzést?</value>
   </data>
-  <data name="ReOpenFileMessage" xml:space="preserve">
+    <data name="ReOpenFileMessage" xml:space="preserve">
     <value>A fájl megnyitása a nem mentett adatok elvesztését eredményezi. Szeretnéd folytatni?</value>
   </data>
-  <data name="ReOpenFileCaption" xml:space="preserve">
+    <data name="ReOpenFileCaption" xml:space="preserve">
     <value>Fájl megnyitása</value>
   </data>
-  <data name="FileOpenedNoFoundCaption" xml:space="preserve">
+    <data name="FileOpenedNoFoundCaption" xml:space="preserve">
     <value>A megnyitott fájl nem található</value>
   </data>
-  <data name="UpdateBtnContent" xml:space="preserve">
+    <data name="UpdateBtnContent" xml:space="preserve">
     <value>Frissítés</value>
   </data>
-  <data name="DropHereTxt" xml:space="preserve">
+    <data name="DropHereTxt" xml:space="preserve">
     <value>Húzz ide egy fájl a megnyitásához</value>
   </data>
-  <data name="FileFormatExcelWorkbook" xml:space="preserve">
+    <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excel munkalapok</value>
   </data>
-  <data name="FristRunMessage" xml:space="preserve">
+    <data name="FristRunMessage" xml:space="preserve">
     <value>(Kötelező) Első indításkor először állítsa be az encoder elérési útját.
 (Opcionális) Állítsa be a játék executable elérési útját a játék közvetlen indításához a szoftverben.</value>
   </data>
-  <data name="FristRunCaption" xml:space="preserve">
+    <data name="FristRunCaption" xml:space="preserve">
     <value>Első Indítási Konfigurációs Üzenet</value>
   </data>
-  <data name="MultipleInstanceMessage" xml:space="preserve">
+    <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>Több példány helyzetben az adatok helytelenül írhatók felül. Csak egyszeres példány-futtatás támogatott. Aktiválja az már nyitott ablakot?</value>
   </data>
-  <data name="MultipleInstanceCaption" xml:space="preserve">
+    <data name="MultipleInstanceCaption" xml:space="preserve">
     <value>A szoftver már fut</value>
   </data>
-  <data name="BackupRestoreMessage" xml:space="preserve">
+    <data name="BackupRestoreMessage" xml:space="preserve">
     <value>Ez a művelet felülírja a fájlt, és nem visszafordítható. Biztos, hogy folytatni akarja?</value>
   </data>
-  <data name="BackupDeleteMessage" xml:space="preserve">
+    <data name="BackupDeleteMessage" xml:space="preserve">
     <value>Ez a művelet véglegesen törli a fájlt, és nem vonható vissza. Biztos, hogy folytatni akarja?</value>
   </data>
-  <data name="SaveSuccess" xml:space="preserve">
+    <data name="SaveSuccess" xml:space="preserve">
     <value>Sikeres mentés</value>
   </data>
-  <data name="SaveFailure" xml:space="preserve">
+    <data name="SaveFailure" xml:space="preserve">
     <value>Sikertelen mentés</value>
   </data>
-  <data name="SaveResult" xml:space="preserve">
+    <data name="SaveResult" xml:space="preserve">
     <value>Eredmény mentése</value>
   </data>
-  <data name="AddDialogTitle" xml:space="preserve">
+    <data name="AddDialogTitle" xml:space="preserve">
     <value>Hozzáadás</value>
   </data>
-  <data name="EditDialogTitle" xml:space="preserve">
+    <data name="EditDialogTitle" xml:space="preserve">
     <value>Szerkesztés</value>
   </data>
-  <data name="SelectW3Strings" xml:space="preserve">
+    <data name="SelectW3Strings" xml:space="preserve">
     <value>w3strings.exe kiválasztása</value>
   </data>
-  <data name="SelectGameExe" xml:space="preserve">
+    <data name="SelectGameExe" xml:space="preserve">
     <value>witcher3.exe  kiválasztása</value>
   </data>
-  <data name="SubmitBtnContent" xml:space="preserve">
+    <data name="SubmitBtnContent" xml:space="preserve">
     <value>Elküldés</value>
   </data>
-  <data name="CancelBtnContent" xml:space="preserve">
+    <data name="CancelBtnContent" xml:space="preserve">
     <value>Mégsem</value>
   </data>
-  <data name="DeleteDialogTitle" xml:space="preserve">
+    <data name="DeleteDialogTitle" xml:space="preserve">
     <value>Törlés</value>
   </data>
-  <data name="DeleteDialogMessage" xml:space="preserve">
+    <data name="DeleteDialogMessage" xml:space="preserve">
     <value>A következő tétel(ek) törlésére készül:</value>
   </data>
-  <data name="DeleteBtnContent" xml:space="preserve">
+    <data name="DeleteBtnContent" xml:space="preserve">
     <value>Törlés</value>
   </data>
-  <data name="TranslateDialogTitle" xml:space="preserve">
+    <data name="TranslateDialogTitle" xml:space="preserve">
     <value>Fordítás</value>
   </data>
-  <data name="PreviousBtnContent" xml:space="preserve">
+    <data name="PreviousBtnContent" xml:space="preserve">
     <value>Előző</value>
   </data>
-  <data name="NextBtnContent" xml:space="preserve">
+    <data name="NextBtnContent" xml:space="preserve">
     <value>Következő</value>
   </data>
-  <data name="TranslateBtnContent" xml:space="preserve">
+    <data name="TranslateBtnContent" xml:space="preserve">
     <value>Fordítás</value>
   </data>
-  <data name="SaveBtnContent" xml:space="preserve">
+    <data name="SaveBtnContent" xml:space="preserve">
     <value>Mentés</value>
   </data>
-  <data name="SrcTxt" xml:space="preserve">
+    <data name="SrcTxt" xml:space="preserve">
     <value>Szöveg</value>
   </data>
-  <data name="TranslatedTxt" xml:space="preserve">
+    <data name="TranslatedTxt" xml:space="preserve">
     <value>Lefordított szöveg</value>
   </data>
-  <data name="SaveDialogTitle" xml:space="preserve">
+    <data name="SaveDialogTitle" xml:space="preserve">
     <value>Mentés</value>
   </data>
-  <data name="TargetFiletype" xml:space="preserve">
+    <data name="TargetFiletype" xml:space="preserve">
     <value>Célfájl típusa</value>
   </data>
-  <data name="TargetLanguage" xml:space="preserve">
+    <data name="TargetLanguage" xml:space="preserve">
     <value>Célnyelv</value>
   </data>
-  <data name="IgnoreIDSpaceCheck" xml:space="preserve">
+    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
     <value>ID helyellenőrzés figyelmen kívül hagyása</value>
   </data>
-  <data name="IDSpace" xml:space="preserve">
+    <data name="IDSpace" xml:space="preserve">
     <value>ID Terület</value>
   </data>
-  <data name="BackupDialogTitle" xml:space="preserve">
+    <data name="BackupDialogTitle" xml:space="preserve">
     <value>Biztonsági mentés</value>
   </data>
-  <data name="FileName" xml:space="preserve">
+    <data name="FileName" xml:space="preserve">
     <value>Fájlnév</value>
   </data>
-  <data name="Hash" xml:space="preserve">
+    <data name="Hash" xml:space="preserve">
     <value>Hash</value>
   </data>
-  <data name="OriginPath" xml:space="preserve">
+    <data name="OriginPath" xml:space="preserve">
     <value>Eredeti útvonal</value>
   </data>
-  <data name="BackupPath" xml:space="preserve">
+    <data name="BackupPath" xml:space="preserve">
     <value>Biztonsági mentés útvonala</value>
   </data>
-  <data name="BackupTime" xml:space="preserve">
+    <data name="BackupTime" xml:space="preserve">
     <value>Biztonsági mentés ideje</value>
   </data>
-  <data name="RestoreBtnContent" xml:space="preserve">
+    <data name="RestoreBtnContent" xml:space="preserve">
     <value>Visszaállítás</value>
   </data>
-  <data name="CloseBtnContent" xml:space="preserve">
+    <data name="CloseBtnContent" xml:space="preserve">
     <value>Bezárás</value>
   </data>
-  <data name="LogDialogTitle" xml:space="preserve">
+    <data name="LogDialogTitle" xml:space="preserve">
     <value>Napló</value>
   </data>
-  <data name="LogTime" xml:space="preserve">
+    <data name="LogTime" xml:space="preserve">
     <value>Naplózás ideje</value>
   </data>
-  <data name="LogLevel" xml:space="preserve">
+    <data name="LogLevel" xml:space="preserve">
     <value>Naplószint</value>
   </data>
-  <data name="LogMessage" xml:space="preserve">
+    <data name="LogMessage" xml:space="preserve">
     <value>Naplóbejegyzés</value>
   </data>
-  <data name="SettingsDialogTitle" xml:space="preserve">
+    <data name="SettingsDialogTitle" xml:space="preserve">
     <value>Beállítások</value>
   </data>
-  <data name="W3StringsPath" xml:space="preserve">
+    <data name="W3StringsPath" xml:space="preserve">
     <value>Kérem, válaszd ki a w3strings.exe fájlt</value>
   </data>
-  <data name="GameExePath" xml:space="preserve">
+    <data name="GameExePath" xml:space="preserve">
     <value>Kérem, válaszd ki a witcher3.exe fájlt</value>
   </data>
-  <data name="PreferredFileType" xml:space="preserve">
+    <data name="PreferredFileType" xml:space="preserve">
     <value>Kedvelt fájltípus</value>
   </data>
-  <data name="PreferredLanguage" xml:space="preserve">
+    <data name="PreferredLanguage" xml:space="preserve">
     <value>Kedvelt nyelv</value>
   </data>
-  <data name="IsOn" xml:space="preserve">
+    <data name="IsOn" xml:space="preserve">
     <value>Be</value>
   </data>
-  <data name="IsOff" xml:space="preserve">
+    <data name="IsOff" xml:space="preserve">
     <value>Ki</value>
   </data>
-  <data name="IdSpaceToolTip" xml:space="preserve">
+    <data name="IdSpaceToolTip" xml:space="preserve">
     <value>Az ID hely tartománya egy négyjegyű egész szám (0000 és 9999 között). Ha hiba van az észlelésben, a program automatikusan jelzi ezt az ID-tér negatív egységként való megjelenítésével. Kérjük, vegye figyelembe, hogy az eredmények csak referenciaként szolgálnak.</value>
   </data>
-  <data name="RecentDialogTitle" xml:space="preserve">
+    <data name="RecentDialogTitle" xml:space="preserve">
     <value>Legutóbbiak</value>
   </data>
-  <data name="Path" xml:space="preserve">
+    <data name="Path" xml:space="preserve">
     <value>Elérési útvonal</value>
   </data>
-  <data name="OpenedTime" xml:space="preserve">
+    <data name="OpenedTime" xml:space="preserve">
     <value>Megnyitás ideje</value>
   </data>
-  <data name="Mark" xml:space="preserve">
+    <data name="Mark" xml:space="preserve">
     <value>Jelölő</value>
   </data>
-  <data name="RecordDeletingMessgae" xml:space="preserve">
+    <data name="RecordDeletingMessgae" xml:space="preserve">
     <value>Ez a művelet véglegesen törli a kiválasztott bejegyzés(eke)t, és nem vonható vissza. Biztos, hogy folytatni szeretné?</value>
   </data>
-  <data name="Open" xml:space="preserve">
+    <data name="Open" xml:space="preserve">
     <value>Megnyitás</value>
   </data>
-  <data name="StartIndex" xml:space="preserve">
+    <data name="StartIndex" xml:space="preserve">
     <value>Kezdő mutató</value>
   </data>
-  <data name="EndIndex" xml:space="preserve">
+    <data name="EndIndex" xml:space="preserve">
     <value>Befejező mutató</value>
   </data>
-  <data name="BatchTranslateDialogTitle" xml:space="preserve">
+    <data name="BatchTranslateDialogTitle" xml:space="preserve">
     <value>Kötegelt fordítás</value>
   </data>
-  <data name="Pending" xml:space="preserve">
+    <data name="Pending" xml:space="preserve">
     <value>Függőben</value>
   </data>
-  <data name="Success" xml:space="preserve">
+    <data name="Success" xml:space="preserve">
     <value>Sikeres</value>
   </data>
-  <data name="Failure" xml:space="preserve">
+    <data name="Failure" xml:space="preserve">
     <value>Sikertelen</value>
   </data>
-  <data name="TranslatedTextInvalidMessage" xml:space="preserve">
+    <data name="TranslatedTextInvalidMessage" xml:space="preserve">
     <value>A lefordított szöveg érvénytelen. Kérjük, mentés előtt ellenőrizze és javítsa ki.</value>
   </data>
-  <data name="BackupFileNoFoundMessage" xml:space="preserve">
+    <data name="BackupFileNoFoundMessage" xml:space="preserve">
     <value>A biztonsági másolat fájl nem létezik. Szeretné folytatni a bejegyzés törlését?</value>
   </data>
-  <data name="BackupFileNoFoundCaption" xml:space="preserve">
+    <data name="BackupFileNoFoundCaption" xml:space="preserve">
     <value>Biztonsági másolat fájl nem található</value>
   </data>
-  <data name="BackupDeleteCaption" xml:space="preserve">
+    <data name="BackupDeleteCaption" xml:space="preserve">
     <value>Biztonsági mentés törlése</value>
   </data>
-  <data name="BackupRestoreCaption" xml:space="preserve">
+    <data name="BackupRestoreCaption" xml:space="preserve">
     <value>Biztonsági mentés visszaállítása</value>
   </data>
-  <data name="TranslatedTextInvalidCaption" xml:space="preserve">
+    <data name="TranslatedTextInvalidCaption" xml:space="preserve">
     <value>A lefordított szöveg érvénytelen</value>
   </data>
-  <data name="TranslateErrorCaption" xml:space="preserve">
+    <data name="TranslateErrorCaption" xml:space="preserve">
     <value>Fordítási hiba</value>
   </data>
-  <data name="TextLanguage" xml:space="preserve">
+    <data name="TextLanguage" xml:space="preserve">
     <value>Szöveg nyelve</value>
   </data>
-  <data name="TranslatedTextNoSavedMessage" xml:space="preserve">
+    <data name="TranslatedTextNoSavedMessage" xml:space="preserve">
     <value>A fordítás nincs elmentve. Elmenti most?</value>
   </data>
-  <data name="TranslatedTextNoSavedCaption" xml:space="preserve">
+    <data name="TranslatedTextNoSavedCaption" xml:space="preserve">
     <value>Fordítás nincs mentve</value>
   </data>
-  <data name="OperationResultCaption" xml:space="preserve">
+    <data name="OperationResultCaption" xml:space="preserve">
     <value>A művelet eredménye</value>
   </data>
-  <data name="OperationFailureMessage" xml:space="preserve">
+    <data name="OperationFailureMessage" xml:space="preserve">
     <value>A művelet sikertelen volt</value>
   </data>
-  <data name="RecordDeletingCaption" xml:space="preserve">
+    <data name="RecordDeletingCaption" xml:space="preserve">
     <value>A bejegyzés(ek) törlése folyamatban van</value>
   </data>
-  <data name="AboutDialogTitle" xml:space="preserve">
+    <data name="AboutDialogTitle" xml:space="preserve">
     <value>Rólunk</value>
   </data>
-  <data name="Version" xml:space="preserve">
+    <data name="Version" xml:space="preserve">
     <value>Verzió:</value>
   </data>
-  <data name="OS" xml:space="preserve">
+    <data name="OS" xml:space="preserve">
     <value>OS:</value>
   </data>
-  <data name="AppBuildTime" xml:space="preserve">
+    <data name="AppBuildTime" xml:space="preserve">
     <value>Készítési idő:</value>
   </data>
-  <data name="EncoderSettingCardHeader" xml:space="preserve">
+    <data name="EncoderSettingCardHeader" xml:space="preserve">
     <value>Kódoló útvonal</value>
   </data>
-  <data name="GameSettingCardHeader" xml:space="preserve">
+    <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Játék útvonal</value>
   </data>
-  <data name="GeneralSettingsHeader" xml:space="preserve">
+    <data name="GeneralSettingsHeader" xml:space="preserve">
     <value>Általános beállítások</value>
   </data>
-  <data name="TranslatorTranslatingMessage" xml:space="preserve">
+    <data name="TranslatorTranslatingMessage" xml:space="preserve">
     <value>A fordító jelenleg dolgozik, nem bánod el hagyni őt?</value>
   </data>
-  <data name="TranslatorTranslatingCaption" xml:space="preserve">
+    <data name="TranslatorTranslatingCaption" xml:space="preserve">
     <value>Fordítás folyamatban van</value>
   </data>
-  <data name="Translating" xml:space="preserve">
+    <data name="Translating" xml:space="preserve">
     <value>Fordítás folyamatban...</value>
   </data>
-  <data name="TranslationModeSwitchCaption" xml:space="preserve">
+    <data name="TranslationModeSwitchCaption" xml:space="preserve">
     <value>Fordítási Mód Váltásának Megerősítése</value>
   </data>
-  <data name="TranslationModeSwitchMessage" xml:space="preserve">
+    <data name="TranslationModeSwitchMessage" xml:space="preserve">
     <value>Fordítás folyamatban. A mód váltása megszakítja a folyamatot. Biztosan át szeretne váltani?</value>
   </data>
-  <data name="TranslationNotEmptyMessage" xml:space="preserve">
+    <data name="TranslationNotEmptyMessage" xml:space="preserve">
     <value>A fordítás már létezik. Szeretné felülírni az aktuális eredményt?</value>
   </data>
-  <data name="TranslationNotEmptyCaption" xml:space="preserve">
+    <data name="TranslationNotEmptyCaption" xml:space="preserve">
     <value>A fordítás már létezik</value>
   </data>
-  <data name="TranslatorSelection" xml:space="preserve">
+    <data name="TranslatorSelection" xml:space="preserve">
     <value>Automatikus fordító</value>
   </data>
-  <data name="UserInterfaceSettingsHeader" xml:space="preserve">
+    <data name="UserInterfaceSettingsHeader" xml:space="preserve">
     <value>Felhasználói felület beállításai</value>
   </data>
-  <data name="LanguageHelpText" xml:space="preserve">
+    <data name="LanguageHelpText" xml:space="preserve">
     <value>Nyelv</value>
   </data>
-  <data name="PageSize" xml:space="preserve">
+    <data name="PageSize" xml:space="preserve">
     <value>Oldalméret</value>
   </data>
-  <data name="PreferredFileTypeDescription" xml:space="preserve">
+    <data name="PreferredFileTypeDescription" xml:space="preserve">
     <value>Válassza ki az alapértelmezett fájlformátumot a The Witcher 3 karakterlánc fájlok mentéséhez</value>
   </data>
-  <data name="PreferredLanguageDescription" xml:space="preserve">
+    <data name="PreferredLanguageDescription" xml:space="preserve">
     <value>Válassza ki a fordítás cél nyelvét és a The Witcher 3 karakterlánc fájlok mentésekor használt alapértelmezett nyelvet</value>
   </data>
-  <data name="LanguageDescription" xml:space="preserve">
+    <data name="LanguageDescription" xml:space="preserve">
     <value>Válassza ki az alkalmazás felhasználói felületének nyelvét</value>
   </data>
-  <data name="PageSizeDescription" xml:space="preserve">
+    <data name="PageSizeDescription" xml:space="preserve">
     <value>Állítsa be a főfelület adatrácsonként megjelenített elemek számát</value>
   </data>
-  <data name="TranslatorSelectionDescription" xml:space="preserve">
+    <data name="TranslatorSelectionDescription" xml:space="preserve">
     <value>Válassza ki a szöveg fordításához használandó fordítási szolgáltatást</value>
   </data>
-  <data name="PathInvalidCaption" xml:space="preserve">
+    <data name="PathInvalidCaption" xml:space="preserve">
     <value>Érvénytelen Útvonal</value>
   </data>
-  <data name="PathInvalidMessage" xml:space="preserve">
+    <data name="PathInvalidMessage" xml:space="preserve">
     <value>Az aktuálisan beállított kodoló útvonal vagy játékútvonal érvénytelen. Kérjük, ellenőrizze a beállításokat.</value>
   </data>
-  <data name="PathInvalidIndicatorText" xml:space="preserve">
+    <data name="PathInvalidIndicatorText" xml:space="preserve">
     <value>(Érvénytelen)</value>
   </data>
-  <data name="PackageName" xml:space="preserve">
+    <data name="PackageName" xml:space="preserve">
     <value>Függőségek</value>
   </data>
-  <data name="PackageVersion" xml:space="preserve">
+    <data name="PackageVersion" xml:space="preserve">
     <value>Verzió</value>
   </data>
-  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
     <value>Nincs szükség naplófájlok tisztítására.</value>
   </data>
-  <data name="LogsCleanedMessage" xml:space="preserve">
+    <data name="LogsCleanedMessage" xml:space="preserve">
     <value>A naplófájlok megtisztítva lettek.</value>
   </data>
-  <data name="LogCleanupCaption" xml:space="preserve">
+    <data name="LogCleanupCaption" xml:space="preserve">
     <value>Naplótisztítás</value>
   </data>
-  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <data name="LogFilesCollectedCaption" xml:space="preserve">
     <value>Naplófájlok begyűjtve</value>
   </data>
-  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>A naplófájlok begyűjtve lettek. A fájlok elkészültek az asztalon.</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
-    <value>Naplókezelés</value>
-  </data>
-  <data name="LogManagementDescription" xml:space="preserve">
+    <data name="LogManagementDescription" xml:space="preserve">
     <value>Tallózás a napló mappában, lejárt naplók tisztítása, naplók gyűjtése</value>
   </data>
-  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <data name="LogManagement" xml:space="preserve">
+    <value>Naplókezelés</value>
+  </data>
+    <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>Fordítási mód váltása</value>
+  </data>
+    <data name="NoDictionary" xml:space="preserve">
+    <value>Ne használjon szótárt</value>
+  </data>
+    <data name="Dictionary" xml:space="preserve">
+    <value>Szótár</value>
+  </data>
+    <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>Szótárkezelés</value>
+  </data>
+    <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>Szótárkezelés</value>
+  </data>
+    <data name="ImportDictionary" xml:space="preserve">
+    <value>Szótár importálása</value>
+  </data>
+    <data name="SourceLanguage" xml:space="preserve">
+    <value>Forrásnyelv</value>
+  </data>
+    <data name="Delete" xml:space="preserve">
+    <value>Törlés</value>
+  </data>
+    <data name="TermCount" xml:space="preserve">
+    <value>Kifejezések száma</value>
+  </data>
+    <data name="ImportDictionaryFailedMessage" xml:space="preserve">
+    <value>Érvénytelen szótárformátum. Kérjük, ellenőrizze a fájl tartalmát.</value>
+  </data>
+    <data name="ImportDictionaryFailedCaption" xml:space="preserve">
+    <value>A szótár importálása sikertelen</value>
+  </data>
+    <data name="RemoveDictionary" xml:space="preserve">
+    <value>Szótár törlése</value>
+  </data>
+    <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
+    <value>Biztosan törli a szótárt?</value>
+  </data>
+    <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
+    <value>Szótár törlésének megerősítése</value>
+  </data>
+    <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
+    <value>A szótár már létezik. Felülírjam?</value>
+  </data>
+    <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
+    <value>Szótár felülírás megerősítése</value>
   </data>
 </root>

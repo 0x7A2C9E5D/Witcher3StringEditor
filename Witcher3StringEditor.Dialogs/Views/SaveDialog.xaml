@@ -9,7 +9,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
-    xmlns:com="clr-namespace:Witcher3StringEditor.Common;assembly=Witcher3StringEditor.Common"
+    xmlns:com="clr-namespace:Witcher3StringEditor.Contracts;assembly=Witcher3StringEditor.Contracts"
     xmlns:con="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
     Title="{I18N {x:Static l:LangKeys.SaveDialogTitle}}"
     Width="800"

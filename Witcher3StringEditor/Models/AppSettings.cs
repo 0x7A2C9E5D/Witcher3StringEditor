@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using Witcher3StringEditor.Common;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts;
+using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Models;
 

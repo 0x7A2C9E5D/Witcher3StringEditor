@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using JetBrains.Annotations;
 
-namespace Witcher3StringEditor.Common;
+namespace Witcher3StringEditor.Contracts;
 
 /// <summary>
 ///     Represents the supported languages for The Witcher 3 string operations

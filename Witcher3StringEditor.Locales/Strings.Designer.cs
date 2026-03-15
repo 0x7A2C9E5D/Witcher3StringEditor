@@ -251,6 +251,15 @@ namespace Witcher3StringEditor.Locales {
         /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
         public static string DeleteBtnContent {
             get {
                 return ResourceManager.GetString("DeleteBtnContent", resourceCulture);
@@ -281,6 +290,51 @@ namespace Witcher3StringEditor.Locales {
         public static string DeleteDialogTitle {
             get {
                 return ResourceManager.GetString("DeleteDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary.
+        /// </summary>
+        public static string Dictionary {
+            get {
+                return ResourceManager.GetString("Dictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary Management.
+        /// </summary>
+        public static string DictionaryBtnLabel {
+            get {
+                return ResourceManager.GetString("DictionaryBtnLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary Management.
+        /// </summary>
+        public static string DictionaryDialogTitle {
+            get {
+                return ResourceManager.GetString("DictionaryDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary Overwrite Confirm.
+        /// </summary>
+        public static string DictionaryOverwriteConfirmCaption {
+            get {
+                return ResourceManager.GetString("DictionaryOverwriteConfirmCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The dictionary already exists. Do you want to overwrite it?.
+        /// </summary>
+        public static string DictionaryOverwriteConfirmMessage {
+            get {
+                return ResourceManager.GetString("DictionaryOverwriteConfirmMessage", resourceCulture);
             }
         }
         
@@ -484,6 +538,33 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import Dict.
+        /// </summary>
+        public static string ImportDictionary {
+            get {
+                return ResourceManager.GetString("ImportDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import dictionary failed.
+        /// </summary>
+        public static string ImportDictionaryFailedCaption {
+            get {
+                return ResourceManager.GetString("ImportDictionaryFailedCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid dictionary format. Please check the file content..
+        /// </summary>
+        public static string ImportDictionaryFailedMessage {
+            get {
+                return ResourceManager.GetString("ImportDictionaryFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Off.
         /// </summary>
         public static string IsOff {
@@ -660,6 +741,15 @@ namespace Witcher3StringEditor.Locales {
         public static string NextBtnContent {
             get {
                 return ResourceManager.GetString("NextBtnContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Dictionary.
+        /// </summary>
+        public static string NoDictionary {
+            get {
+                return ResourceManager.GetString("NoDictionary", resourceCulture);
             }
         }
         
@@ -907,6 +997,33 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Dictionary.
+        /// </summary>
+        public static string RemoveDictionary {
+            get {
+                return ResourceManager.GetString("RemoveDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Dictionary Confirm.
+        /// </summary>
+        public static string RemoveDictionaryConfirmCaption {
+            get {
+                return ResourceManager.GetString("RemoveDictionaryConfirmCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this dictionary?.
+        /// </summary>
+        public static string RemoveDictionaryConfirmMessage {
+            get {
+                return ResourceManager.GetString("RemoveDictionaryConfirmMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open File.
         /// </summary>
         public static string ReOpenFileCaption {
@@ -1042,6 +1159,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Source Language.
+        /// </summary>
+        public static string SourceLanguage {
+            get {
+                return ResourceManager.GetString("SourceLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Text.
         /// </summary>
         public static string SrcTxt {
@@ -1101,6 +1227,15 @@ namespace Witcher3StringEditor.Locales {
         public static string TargetLanguage {
             get {
                 return ResourceManager.GetString("TargetLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Term Count.
+        /// </summary>
+        public static string TermCount {
+            get {
+                return ResourceManager.GetString("TermCount", resourceCulture);
             }
         }
         

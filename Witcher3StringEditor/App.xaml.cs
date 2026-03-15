@@ -16,9 +16,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using Syncfusion.Licensing;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dialogs.Views;
+using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Helpers;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers;
@@ -45,16 +48,7 @@ public sealed partial class App : IDisposable
 
     // Private fields
     private Mutex? mutex; // Mutex to prevent multiple instances
-
-    /// <summary>
-    ///     Gets a value indicating whether the application is running in debug mode
-    /// </summary>
-#if DEBUG
-    private static bool IsDebug => true;
-#else
-    private static bool IsDebug => false;
-#endif
-
+    
     /// <summary>
     ///     Disposes of the resources used by the application
     /// </summary>
@@ -114,9 +108,7 @@ public sealed partial class App : IDisposable
         logObserver = new AnonymousObserver<LogEvent>(logAccessService.Logs.Add);
 
         // Configure Serilog with multiple outputs: file, debug, and observer
-        Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                    , IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor", "Logs", "log.txt"),
+        Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(PathHelper.LogDirectory, "log.txt"),
                 rollingInterval: RollingInterval.Day, formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.Debug(formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.Observers(observable => observable.Subscribe(logObserver))
@@ -141,14 +133,10 @@ public sealed partial class App : IDisposable
     /// <returns>The full path to the application settings file</returns>
     private static string GetAppSettingsPath()
     {
-        // Determine the configuration folder path based on debug/release mode
-        var configFolderPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor");
-        var configPath = Path.Combine(configFolderPath, "AppSettings.Json");
+        var configPath = Path.Combine(PathHelper.AppDataDirectory, "AppSettings.Json");
         // Create the configuration folder if it doesn't exist
-        if (!Directory.Exists(configFolderPath))
-            Directory.CreateDirectory(configFolderPath);
+        if (!Directory.Exists(PathHelper.AppDataDirectory))
+            Directory.CreateDirectory(PathHelper.AppDataDirectory);
         return configPath;
     }
 
@@ -213,7 +201,7 @@ public sealed partial class App : IDisposable
     private bool IsAnotherInstanceRunning()
     {
         // Create a mutex with a unique name based on debug/release mode
-        mutex = new Mutex(true, IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor",
+        mutex = new Mutex(true, DebugHelper.IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor",
             out var createdNew);
         return !createdNew;
     }
@@ -283,13 +271,18 @@ public sealed partial class App : IDisposable
             .AddSingleton<IDialogManager, DialogManager>()
             .AddSingleton<IDialogService, DialogService>()
             .AddSingleton<ILogAccessService, LogAccessService>()
+            .AddSingleton<IDictionaryMangerService, DictionaryMangerService>()
+            .AddSingleton<IDictionaryProvider, DictionaryProvider>()
             .AddScoped<IExplorerService, ExplorerService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
+            .AddTransient<ICultureMatcher, CultureMatcher>()
             .AddTransient<ISettingsManagerService, SettingsManagerService>()
             .AddTransient<ITranslator, MicrosoftTranslator>()
             .AddTransient<ITranslator, GoogleTranslator>()
             .AddTransient<ITranslator, YandexTranslator>()
+            .AddTransient<IDynamicDictionaryService, DynamicDictionaryService>()
+            .AddTransient<IDictionaryService, DictionaryService>()
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());
     }
@@ -313,6 +306,7 @@ public sealed partial class App : IDisposable
         viewLocator.Register<TranslationDialogViewModel, TranslationDialog>();
         viewLocator.Register<RecentDialogViewModel, RecentDialog>();
         viewLocator.Register<AboutDialogViewModel, AboutDialog>();
+        viewLocator.Register<DictionaryManagerDialogViewModel, DictionaryManagerDialog>();
         return viewLocator;
     }
 

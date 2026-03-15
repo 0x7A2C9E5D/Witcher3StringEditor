@@ -1,541 +1,591 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <!-- 
+      Microsoft ResX Schema 
+      
+      Version 2.0
+      
+      The primary goals of this format is to allow a simple XML format 
+      that is mostly human readable. The generation and parsing of the 
+      various data types are done through the TypeConverter classes 
+      associated with the data types.
+      
+      Example:
+      
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+                  
+      There are any number of "resheader" rows that contain simple 
+      name/value pairs.
+      
+      Each data row contains a name, and value. The row also contains a 
+      type or mimetype. Type corresponds to a .NET class that support 
+      text/value conversion through the TypeConverter architecture. 
+      Classes that don't support this are serialized and stored with the 
+      mimetype set.
+      
+      The mimetype is used for serialized objects, and tells the 
+      ResXResourceReader how to depersist the object. This is currently not 
+      extensible. For a given mimetype the value must be set accordingly:
+      
+      Note - application/x-microsoft.net.object.binary.base64 is the format 
+      that the ResXResourceWriter will generate, however the reader can 
+      read any of the formats listed below.
+      
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+      
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+  
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array 
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Runtime" xml:space="preserve">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Runtime" xml:space="preserve">
     <value>Environnement d'exécution:</value>
   </data>
-  <data name="OpenFileBtnLabel" xml:space="preserve">
+    <data name="OpenFileBtnLabel" xml:space="preserve">
     <value>Ouvrir un fichier</value>
   </data>
-  <data name="AppTitle" xml:space="preserve">
+    <data name="AppTitle" xml:space="preserve">
     <value>Éditeur de chaînes de The Witcher 3</value>
   </data>
-  <data name="SearchBoxPlaceholderText" xml:space="preserve">
+    <data name="SearchBoxPlaceholderText" xml:space="preserve">
     <value>Rechercher</value>
   </data>
-  <data name="AddBtnLabel" xml:space="preserve">
+    <data name="AddBtnLabel" xml:space="preserve">
     <value>Ajouter un enregistrement</value>
   </data>
-  <data name="EditBtnLabel" xml:space="preserve">
+    <data name="EditBtnLabel" xml:space="preserve">
     <value>Modifier un enregistrement</value>
   </data>
-  <data name="DeleteBtnLabel" xml:space="preserve">
+    <data name="DeleteBtnLabel" xml:space="preserve">
     <value>Supprimer des enregistrements</value>
   </data>
-  <data name="SaveBtnLabel" xml:space="preserve">
+    <data name="SaveBtnLabel" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
-  <data name="BackupBtnLabel" xml:space="preserve">
+    <data name="BackupBtnLabel" xml:space="preserve">
     <value>Sauvegarde</value>
   </data>
-  <data name="LogBtnLabel" xml:space="preserve">
+    <data name="LogBtnLabel" xml:space="preserve">
     <value>Journal</value>
   </data>
-  <data name="SettingsBtnLabel" xml:space="preserve">
+    <data name="SettingsBtnLabel" xml:space="preserve">
     <value>Paramètres</value>
   </data>
-  <data name="PlayBtnLabel" xml:space="preserve">
+    <data name="PlayBtnLabel" xml:space="preserve">
     <value>Lancer le jeu</value>
   </data>
-  <data name="TranslateBtnLabel" xml:space="preserve">
+    <data name="TranslateBtnLabel" xml:space="preserve">
     <value>Traduire</value>
   </data>
-  <data name="OpenWorkingFolderBtnLabel" xml:space="preserve">
+    <data name="OpenWorkingFolderBtnLabel" xml:space="preserve">
     <value>Ouvrir le dossier de travail</value>
   </data>
-  <data name="UpdateAvailable" xml:space="preserve">
+    <data name="UpdateAvailable" xml:space="preserve">
     <value>Mise à jour disponible</value>
   </data>
-  <data name="RecentBtnLabel" xml:space="preserve">
+    <data name="RecentBtnLabel" xml:space="preserve">
     <value>Récentes</value>
   </data>
-  <data name="AboutBtnLabel" xml:space="preserve">
+    <data name="AboutBtnLabel" xml:space="preserve">
     <value>A propos de</value>
   </data>
-  <data name="FileFormatSupported" xml:space="preserve">
+    <data name="FileFormatSupported" xml:space="preserve">
     <value>Tous les formats supportés</value>
   </data>
-  <data name="FileFormatTextFile" xml:space="preserve">
+    <data name="FileFormatTextFile" xml:space="preserve">
     <value>Fichier texte</value>
   </data>
-  <data name="FileFormatWitcher3StringsFile" xml:space="preserve">
+    <data name="FileFormatWitcher3StringsFile" xml:space="preserve">
     <value>Fichier de chaînes de The Witcher 3</value>
   </data>
-  <data name="AppExitMessage" xml:space="preserve">
+    <data name="AppExitMessage" xml:space="preserve">
     <value>Êtes-vous sûr de vouloir quitter ?  Toutes les données non sauvegardées seront perdues.</value>
   </data>
-  <data name="AppExitCaption" xml:space="preserve">
+    <data name="AppExitCaption" xml:space="preserve">
     <value>Quitter</value>
   </data>
-  <data name="FileOpenedNoFoundMessage" xml:space="preserve">
+    <data name="FileOpenedNoFoundMessage" xml:space="preserve">
     <value>Le fichier ouvert n'existe pas. Voulez-vous supprimer l'enregistrement ?</value>
   </data>
-  <data name="ReOpenFileMessage" xml:space="preserve">
+    <data name="ReOpenFileMessage" xml:space="preserve">
     <value>L'ouverture du fichier entraînera la perte des données non sauvegardées ! Voulez-vous continuer ?</value>
   </data>
-  <data name="ReOpenFileCaption" xml:space="preserve">
+    <data name="ReOpenFileCaption" xml:space="preserve">
     <value>Ouvrir le fichier</value>
   </data>
-  <data name="FileOpenedNoFoundCaption" xml:space="preserve">
+    <data name="FileOpenedNoFoundCaption" xml:space="preserve">
     <value>Fichier ouvert introuvable</value>
   </data>
-  <data name="UpdateBtnContent" xml:space="preserve">
+    <data name="UpdateBtnContent" xml:space="preserve">
     <value>Mise à jour</value>
   </data>
-  <data name="DropHereTxt" xml:space="preserve">
+    <data name="DropHereTxt" xml:space="preserve">
     <value>Glissez-déposez un seul fichier ici pour l'ouvrir</value>
   </data>
-  <data name="FileFormatExcelWorkbook" xml:space="preserve">
+    <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Feuilles de calcul Excel</value>
   </data>
-  <data name="FristRunMessage" xml:space="preserve">
+    <data name="FristRunMessage" xml:space="preserve">
     <value>(Obligatoire) Lors du premier lancement, veuillez d'abord configurer le chemin de l'encodeur.
 (Optionnel) Configurez le chemin de l'exécutable du jeu pour lancer le jeu directement dans le logiciel.</value>
   </data>
-  <data name="FristRunCaption" xml:space="preserve">
+    <data name="FristRunCaption" xml:space="preserve">
     <value>Indication de Configuration au Premier Lancement</value>
   </data>
-  <data name="MultipleInstanceMessage" xml:space="preserve">
+    <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>Plusieurs instances peuvent entraîner une écrasement incorrect des données. Seule l'exécution en mono-instance est prise en charge. Voulez-vous réactiver la fenêtre déjà ouverte ?</value>
   </data>
-  <data name="MultipleInstanceCaption" xml:space="preserve">
+    <data name="MultipleInstanceCaption" xml:space="preserve">
     <value>Le logiciel est déjà en cours d'exécution</value>
   </data>
-  <data name="BackupRestoreMessage" xml:space="preserve">
+    <data name="BackupRestoreMessage" xml:space="preserve">
     <value>Cette opération écrase le fichier et ne peut être annulée ! Êtes-vous sûr de vouloir continuer ?</value>
   </data>
-  <data name="BackupDeleteMessage" xml:space="preserve">
+    <data name="BackupDeleteMessage" xml:space="preserve">
     <value>Cette opération effacera le fichier et ne pourra pas être annulée ! Êtes-vous sûr de vouloir continuer ?</value>
   </data>
-  <data name="SaveSuccess" xml:space="preserve">
+    <data name="SaveSuccess" xml:space="preserve">
     <value>Réussite de la sauvegarde</value>
   </data>
-  <data name="SaveFailure" xml:space="preserve">
+    <data name="SaveFailure" xml:space="preserve">
     <value>Échec de la sauvegarde</value>
   </data>
-  <data name="SaveResult" xml:space="preserve">
+    <data name="SaveResult" xml:space="preserve">
     <value>Sauvegarder le résultat</value>
   </data>
-  <data name="AddDialogTitle" xml:space="preserve">
+    <data name="AddDialogTitle" xml:space="preserve">
     <value>Ajouter</value>
   </data>
-  <data name="EditDialogTitle" xml:space="preserve">
+    <data name="EditDialogTitle" xml:space="preserve">
     <value>Modifier</value>
   </data>
-  <data name="SelectW3Strings" xml:space="preserve">
+    <data name="SelectW3Strings" xml:space="preserve">
     <value>Sélectionner w3strings.exe</value>
   </data>
-  <data name="SelectGameExe" xml:space="preserve">
+    <data name="SelectGameExe" xml:space="preserve">
     <value>Sélectionner witcher3.exe</value>
   </data>
-  <data name="SubmitBtnContent" xml:space="preserve">
+    <data name="SubmitBtnContent" xml:space="preserve">
     <value>Soumettre</value>
   </data>
-  <data name="CancelBtnContent" xml:space="preserve">
+    <data name="CancelBtnContent" xml:space="preserve">
     <value>Annuler</value>
   </data>
-  <data name="DeleteDialogTitle" xml:space="preserve">
+    <data name="DeleteDialogTitle" xml:space="preserve">
     <value>Supprimer</value>
   </data>
-  <data name="DeleteDialogMessage" xml:space="preserve">
+    <data name="DeleteDialogMessage" xml:space="preserve">
     <value>Vous supprimez ces enregistrements :</value>
   </data>
-  <data name="DeleteBtnContent" xml:space="preserve">
+    <data name="DeleteBtnContent" xml:space="preserve">
     <value>Supprimer</value>
   </data>
-  <data name="TranslateDialogTitle" xml:space="preserve">
+    <data name="TranslateDialogTitle" xml:space="preserve">
     <value>Traduire</value>
   </data>
-  <data name="PreviousBtnContent" xml:space="preserve">
+    <data name="PreviousBtnContent" xml:space="preserve">
     <value>Précédent</value>
   </data>
-  <data name="NextBtnContent" xml:space="preserve">
+    <data name="NextBtnContent" xml:space="preserve">
     <value>Suivant</value>
   </data>
-  <data name="TranslateBtnContent" xml:space="preserve">
+    <data name="TranslateBtnContent" xml:space="preserve">
     <value>Traduire</value>
   </data>
-  <data name="SaveBtnContent" xml:space="preserve">
+    <data name="SaveBtnContent" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
-  <data name="SrcTxt" xml:space="preserve">
+    <data name="SrcTxt" xml:space="preserve">
     <value>Texte</value>
   </data>
-  <data name="TranslatedTxt" xml:space="preserve">
+    <data name="TranslatedTxt" xml:space="preserve">
     <value>Texte traduit</value>
   </data>
-  <data name="SaveDialogTitle" xml:space="preserve">
+    <data name="SaveDialogTitle" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
-  <data name="TargetFiletype" xml:space="preserve">
+    <data name="TargetFiletype" xml:space="preserve">
     <value>Type de fichier cible</value>
   </data>
-  <data name="TargetLanguage" xml:space="preserve">
+    <data name="TargetLanguage" xml:space="preserve">
     <value>Langue cible</value>
   </data>
-  <data name="IgnoreIDSpaceCheck" xml:space="preserve">
+    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
     <value>Ignorer le contrôle de l'espace ID</value>
   </data>
-  <data name="IDSpace" xml:space="preserve">
+    <data name="IDSpace" xml:space="preserve">
     <value>Espace ID</value>
   </data>
-  <data name="BackupDialogTitle" xml:space="preserve">
+    <data name="BackupDialogTitle" xml:space="preserve">
     <value>Sauvegarde</value>
   </data>
-  <data name="FileName" xml:space="preserve">
+    <data name="FileName" xml:space="preserve">
     <value>Nom du fichier</value>
   </data>
-  <data name="Hash" xml:space="preserve">
+    <data name="Hash" xml:space="preserve">
     <value>Hash</value>
   </data>
-  <data name="OriginPath" xml:space="preserve">
+    <data name="OriginPath" xml:space="preserve">
     <value>Origine du chemin</value>
   </data>
-  <data name="BackupPath" xml:space="preserve">
+    <data name="BackupPath" xml:space="preserve">
     <value>Chemin de sauvegarde</value>
   </data>
-  <data name="BackupTime" xml:space="preserve">
+    <data name="BackupTime" xml:space="preserve">
     <value>Temps de sauvegarde</value>
   </data>
-  <data name="RestoreBtnContent" xml:space="preserve">
+    <data name="RestoreBtnContent" xml:space="preserve">
     <value>Restaurer</value>
   </data>
-  <data name="CloseBtnContent" xml:space="preserve">
+    <data name="CloseBtnContent" xml:space="preserve">
     <value>Fermer</value>
   </data>
-  <data name="LogDialogTitle" xml:space="preserve">
+    <data name="LogDialogTitle" xml:space="preserve">
     <value>Journal</value>
   </data>
-  <data name="LogTime" xml:space="preserve">
+    <data name="LogTime" xml:space="preserve">
     <value>Heure du journal</value>
   </data>
-  <data name="LogLevel" xml:space="preserve">
+    <data name="LogLevel" xml:space="preserve">
     <value>Niveau du journal</value>
   </data>
-  <data name="LogMessage" xml:space="preserve">
+    <data name="LogMessage" xml:space="preserve">
     <value>Message du journal</value>
   </data>
-  <data name="SettingsDialogTitle" xml:space="preserve">
+    <data name="SettingsDialogTitle" xml:space="preserve">
     <value>Paramètres</value>
   </data>
-  <data name="W3StringsPath" xml:space="preserve">
+    <data name="W3StringsPath" xml:space="preserve">
     <value>Veuillez sélectionner w3strings.exe</value>
   </data>
-  <data name="GameExePath" xml:space="preserve">
+    <data name="GameExePath" xml:space="preserve">
     <value>Veuillez sélectionner witcher3.exe</value>
   </data>
-  <data name="PreferredFileType" xml:space="preserve">
+    <data name="PreferredFileType" xml:space="preserve">
     <value>Type de fichier préféré</value>
   </data>
-  <data name="PreferredLanguage" xml:space="preserve">
+    <data name="PreferredLanguage" xml:space="preserve">
     <value>Langue préférée</value>
   </data>
-  <data name="IsOn" xml:space="preserve">
+    <data name="IsOn" xml:space="preserve">
     <value>Activé</value>
   </data>
-  <data name="IsOff" xml:space="preserve">
+    <data name="IsOff" xml:space="preserve">
     <value>Désactivé</value>
   </data>
-  <data name="IdSpaceToolTip" xml:space="preserve">
+    <data name="IdSpaceToolTip" xml:space="preserve">
     <value>La plage de l'espace d'identification est un nombre entier à quatre chiffres compris entre 0000 et 9999. Le programme détecte automatiquement l'espace d'identification et l'affiche sous la forme d'un moins un en cas d'erreur de détection. Les résultats ne sont donnés qu'à titre de référence.</value>
   </data>
-  <data name="RecentDialogTitle" xml:space="preserve">
+    <data name="RecentDialogTitle" xml:space="preserve">
     <value>Récent</value>
   </data>
-  <data name="Path" xml:space="preserve">
+    <data name="Path" xml:space="preserve">
     <value>Chemin d'accès</value>
   </data>
-  <data name="OpenedTime" xml:space="preserve">
+    <data name="OpenedTime" xml:space="preserve">
     <value>Temps d'ouverture</value>
   </data>
-  <data name="Mark" xml:space="preserve">
+    <data name="Mark" xml:space="preserve">
     <value>Marquer</value>
   </data>
-  <data name="RecordDeletingMessgae" xml:space="preserve">
+    <data name="RecordDeletingMessgae" xml:space="preserve">
     <value>Cette opération supprime le(s) enregistrement(s) et ne peut être annulée ?</value>
   </data>
-  <data name="Open" xml:space="preserve">
+    <data name="Open" xml:space="preserve">
     <value>Ouvrir</value>
   </data>
-  <data name="StartIndex" xml:space="preserve">
+    <data name="StartIndex" xml:space="preserve">
     <value>Index de départ</value>
   </data>
-  <data name="EndIndex" xml:space="preserve">
+    <data name="EndIndex" xml:space="preserve">
     <value>Index de fin</value>
   </data>
-  <data name="BatchTranslateDialogTitle" xml:space="preserve">
+    <data name="BatchTranslateDialogTitle" xml:space="preserve">
     <value>Traduire automatiquement</value>
   </data>
-  <data name="Pending" xml:space="preserve">
+    <data name="Pending" xml:space="preserve">
     <value>En attente</value>
   </data>
-  <data name="Success" xml:space="preserve">
+    <data name="Success" xml:space="preserve">
     <value>Réussite</value>
   </data>
-  <data name="Failure" xml:space="preserve">
+    <data name="Failure" xml:space="preserve">
     <value>Échec</value>
   </data>
-  <data name="TranslatedTextInvalidMessage" xml:space="preserve">
+    <data name="TranslatedTextInvalidMessage" xml:space="preserve">
     <value>Le texte traduit est invalide, impossible de le sauvegarder.</value>
   </data>
-  <data name="BackupFileNoFoundMessage" xml:space="preserve">
+    <data name="BackupFileNoFoundMessage" xml:space="preserve">
     <value>Le fichier de sauvegarde n'existe pas, faut-il supprimer l'enregistrement ?</value>
   </data>
-  <data name="BackupFileNoFoundCaption" xml:space="preserve">
+    <data name="BackupFileNoFoundCaption" xml:space="preserve">
     <value>Fichier de sauvegarde introuvable</value>
   </data>
-  <data name="BackupDeleteCaption" xml:space="preserve">
+    <data name="BackupDeleteCaption" xml:space="preserve">
     <value>Suppression de la sauvegarde</value>
   </data>
-  <data name="BackupRestoreCaption" xml:space="preserve">
+    <data name="BackupRestoreCaption" xml:space="preserve">
     <value>Restauration de la sauvegarde</value>
   </data>
-  <data name="TranslatedTextInvalidCaption" xml:space="preserve">
+    <data name="TranslatedTextInvalidCaption" xml:space="preserve">
     <value>Texte traduit invalide</value>
   </data>
-  <data name="TranslateErrorCaption" xml:space="preserve">
+    <data name="TranslateErrorCaption" xml:space="preserve">
     <value>Erreur de traduction</value>
   </data>
-  <data name="TextLanguage" xml:space="preserve">
+    <data name="TextLanguage" xml:space="preserve">
     <value>Langue du texte</value>
   </data>
-  <data name="TranslatedTextNoSavedMessage" xml:space="preserve">
+    <data name="TranslatedTextNoSavedMessage" xml:space="preserve">
     <value>La traduction n'a pas été sauvegardée. Voulez-vous sauvegarder ?</value>
   </data>
-  <data name="TranslatedTextNoSavedCaption" xml:space="preserve">
+    <data name="TranslatedTextNoSavedCaption" xml:space="preserve">
     <value>La traduction n'est pas sauvegardée</value>
   </data>
-  <data name="OperationResultCaption" xml:space="preserve">
+    <data name="OperationResultCaption" xml:space="preserve">
     <value>Résultat de l’opération</value>
   </data>
-  <data name="OperationFailureMessage" xml:space="preserve">
+    <data name="OperationFailureMessage" xml:space="preserve">
     <value>L’opération a échoué</value>
   </data>
-  <data name="RecordDeletingCaption" xml:space="preserve">
+    <data name="RecordDeletingCaption" xml:space="preserve">
     <value>Les records sont en cours de suppression</value>
   </data>
-  <data name="AboutDialogTitle" xml:space="preserve">
+    <data name="AboutDialogTitle" xml:space="preserve">
     <value>A propos de</value>
   </data>
-  <data name="Version" xml:space="preserve">
+    <data name="Version" xml:space="preserve">
     <value>Version:</value>
   </data>
-  <data name="OS" xml:space="preserve">
+    <data name="OS" xml:space="preserve">
     <value>OS:</value>
   </data>
-  <data name="AppBuildTime" xml:space="preserve">
+    <data name="AppBuildTime" xml:space="preserve">
     <value>Temps de construction:</value>
   </data>
-  <data name="EncoderSettingCardHeader" xml:space="preserve">
+    <data name="EncoderSettingCardHeader" xml:space="preserve">
     <value>Chemin de l'encodeur</value>
   </data>
-  <data name="GameSettingCardHeader" xml:space="preserve">
+    <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Chemin du jeu</value>
   </data>
-  <data name="GeneralSettingsHeader" xml:space="preserve">
+    <data name="GeneralSettingsHeader" xml:space="preserve">
     <value>Paramètres généraux</value>
   </data>
-  <data name="TranslatorTranslatingMessage" xml:space="preserve">
+    <data name="TranslatorTranslatingMessage" xml:space="preserve">
     <value>Le traducteur est en train de traduire. Vous voulez vraiment quitter ?</value>
   </data>
-  <data name="TranslatorTranslatingCaption" xml:space="preserve">
+    <data name="TranslatorTranslatingCaption" xml:space="preserve">
     <value>La traduction est en cours</value>
   </data>
-  <data name="Translating" xml:space="preserve">
+    <data name="Translating" xml:space="preserve">
     <value>Traduction en cours...</value>
   </data>
-  <data name="TranslationModeSwitchCaption" xml:space="preserve">
+    <data name="TranslationModeSwitchCaption" xml:space="preserve">
     <value>Changement de Mode de Traduction Confirmation</value>
   </data>
-  <data name="TranslationModeSwitchMessage" xml:space="preserve">
+    <data name="TranslationModeSwitchMessage" xml:space="preserve">
     <value>Traduction en cours. Le changement de mode de traduction va interrompre le processus. Voulez-vous vraiment changer de mode de traduction ?</value>
   </data>
-  <data name="TranslationNotEmptyMessage" xml:space="preserve">
+    <data name="TranslationNotEmptyMessage" xml:space="preserve">
     <value>La traduction existe déjà. Voulez-vous écraser le résultat actuel ?</value>
   </data>
-  <data name="TranslationNotEmptyCaption" xml:space="preserve">
+    <data name="TranslationNotEmptyCaption" xml:space="preserve">
     <value>La traduction existe déjà</value>
   </data>
-  <data name="TranslatorSelection" xml:space="preserve">
+    <data name="TranslatorSelection" xml:space="preserve">
     <value>Traducteur automatique</value>
   </data>
-  <data name="UserInterfaceSettingsHeader" xml:space="preserve">
+    <data name="UserInterfaceSettingsHeader" xml:space="preserve">
     <value>Paramètres de l'interface utilisateur</value>
   </data>
-  <data name="LanguageHelpText" xml:space="preserve">
+    <data name="LanguageHelpText" xml:space="preserve">
     <value>Langue</value>
   </data>
-  <data name="PageSize" xml:space="preserve">
+    <data name="PageSize" xml:space="preserve">
     <value>Taille de page</value>
   </data>
-  <data name="PreferredFileTypeDescription" xml:space="preserve">
+    <data name="PreferredFileTypeDescription" xml:space="preserve">
     <value>Sélectionnez le format de fichier par défaut pour enregistrer les fichiers de texte de The Witcher 3</value>
   </data>
-  <data name="PreferredLanguageDescription" xml:space="preserve">
+    <data name="PreferredLanguageDescription" xml:space="preserve">
     <value>Sélectionnez la langue cible pour la traduction et la langue par défaut utilisée lors de l'enregistrement des fichiers de texte de The Witcher 3</value>
   </data>
-  <data name="LanguageDescription" xml:space="preserve">
+    <data name="LanguageDescription" xml:space="preserve">
     <value>Sélectionnez la langue d'affichage de l'interface de l'application</value>
   </data>
-  <data name="PageSizeDescription" xml:space="preserve">
+    <data name="PageSizeDescription" xml:space="preserve">
     <value>Ajuster le nombre d'éléments affichés par page dans la grille de données de l'interface principale</value>
   </data>
-  <data name="TranslatorSelectionDescription" xml:space="preserve">
+    <data name="TranslatorSelectionDescription" xml:space="preserve">
     <value>Sélectionnez le service de traduction à utiliser pour traduire le texte</value>
   </data>
-  <data name="PathInvalidCaption" xml:space="preserve">
+    <data name="PathInvalidCaption" xml:space="preserve">
     <value>Chemin Invalide</value>
   </data>
-  <data name="PathInvalidMessage" xml:space="preserve">
+    <data name="PathInvalidMessage" xml:space="preserve">
     <value>Le chemin de l'encodeur ou du jeu actuellement défini est invalide. Veuillez vérifier vos paramètres.</value>
   </data>
-  <data name="PathInvalidIndicatorText" xml:space="preserve">
+    <data name="PathInvalidIndicatorText" xml:space="preserve">
     <value>(Invalide)</value>
   </data>
-  <data name="PackageName" xml:space="preserve">
+    <data name="PackageName" xml:space="preserve">
     <value>Dépendances</value>
   </data>
-  <data name="PackageVersion" xml:space="preserve">
+    <data name="PackageVersion" xml:space="preserve">
     <value>Version</value>
   </data>
-  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
     <value>Pas de nettoyage de journaux requis.</value>
   </data>
-  <data name="LogsCleanedMessage" xml:space="preserve">
+    <data name="LogsCleanedMessage" xml:space="preserve">
     <value>Les fichiers journaux ont été nettoyés.</value>
   </data>
-  <data name="LogCleanupCaption" xml:space="preserve">
+    <data name="LogCleanupCaption" xml:space="preserve">
     <value>Nettoyage des journaux</value>
   </data>
-  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <data name="LogFilesCollectedCaption" xml:space="preserve">
     <value>Fichiers journaux collectés</value>
   </data>
-  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>Les fichiers journaux ont été collectés. Les fichiers ont été créés sur votre bureau.</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
-    <value>Gestion des journaux</value>
-  </data>
-  <data name="LogManagementDescription" xml:space="preserve">
+    <data name="LogManagementDescription" xml:space="preserve">
     <value>Parcourir le dossier des journaux, nettoyer les journaux expirés, collecter les journaux</value>
   </data>
-  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <data name="LogManagement" xml:space="preserve">
+    <value>Gestion des journaux</value>
+  </data>
+    <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>Changer le mode de traduction</value>
+  </data>
+    <data name="NoDictionary" xml:space="preserve">
+    <value>Ne pas utiliser de dictionnaire</value>
+  </data>
+    <data name="Dictionary" xml:space="preserve">
+    <value>Dictionnaire</value>
+  </data>
+    <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>Gestion de dictionnaires</value>
+  </data>
+    <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>Gestion de dictionnaires</value>
+  </data>
+    <data name="ImportDictionary" xml:space="preserve">
+    <value>Importer dict</value>
+  </data>
+    <data name="SourceLanguage" xml:space="preserve">
+    <value>Langue source</value>
+  </data>
+    <data name="Delete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+    <data name="TermCount" xml:space="preserve">
+    <value>Nombre de termes</value>
+  </data>
+    <data name="ImportDictionaryFailedMessage" xml:space="preserve">
+    <value>Format de dictionnaire invalide. Veuillez vérifier le contenu du fichier.</value>
+  </data>
+    <data name="ImportDictionaryFailedCaption" xml:space="preserve">
+    <value>Échec de l'importation du dictionnaire</value>
+  </data>
+    <data name="RemoveDictionary" xml:space="preserve">
+    <value>Supprimer le dictionnaire</value>
+  </data>
+    <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
+    <value>Voulez-vous vraiment supprimer ce dictionnaire ?</value>
+  </data>
+    <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
+    <value>Confirmation de suppression du dictionnaire</value>
+  </data>
+    <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
+    <value>Le dictionnaire existe déjà. Voulez-vous le remplacer ?</value>
+  </data>
+    <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
+    <value>Confirmation de remplacement du dictionnaire</value>
   </data>
 </root>

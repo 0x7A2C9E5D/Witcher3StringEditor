@@ -2,7 +2,7 @@ using System.Diagnostics;
 using CommandLine;
 using CommunityToolkit.Diagnostics;
 using Serilog;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Serializers.Internal;
 

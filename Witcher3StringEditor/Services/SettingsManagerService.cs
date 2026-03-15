@@ -5,7 +5,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Serilog;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Messaging;
 
 namespace Witcher3StringEditor.Services;
@@ -67,7 +67,8 @@ internal class SettingsManagerService : ISettingsManagerService
     ///     Validates the W3Strings path setting
     /// </summary>
     /// <param name="appSettings">The application settings instance</param>
-    /// /// <returns></returns>
+    /// ///
+    /// <returns></returns>
     private static bool ValidateW3StringsPath(IAppSettings appSettings)
     {
         if (!File.Exists(appSettings.W3StringsPath)) // Check if file exists
@@ -86,7 +87,8 @@ internal class SettingsManagerService : ISettingsManagerService
     ///     Validates the game executable path setting
     /// </summary>
     /// <param name="appSettings">The application settings instance</param>
-    /// /// <returns></returns>
+    /// ///
+    /// <returns></returns>
     private static bool ValidateGameExePath(IAppSettings appSettings)
     {
         if (!string.IsNullOrWhiteSpace(appSettings.GameExePath)) // Check if game executable path is set
@@ -173,6 +175,8 @@ internal class SettingsManagerService : ISettingsManagerService
     private static void ApplyTranslatorChange(IAppSettings appSettings)
     {
         Log.Information("Translator changed to {Translator}", appSettings.Translator);
+        _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<string>(appSettings.Translator),
+            MessageTokens.TranslatorChanged); // Send message
     }
 
     /// <summary>

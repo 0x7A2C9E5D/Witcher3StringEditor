@@ -11,12 +11,18 @@ namespace Witcher3StringEditor.Locales;
 public class CultureResolver : ICultureResolver
 {
     /// <summary>
+    ///      Defines a contract for culture resolution functionality
+    /// </summary>
+    private readonly ICultureMatcher matcher;
+    
+    /// <summary>
     ///     Initializes a new instance of the CultureResolver class
     ///     Scans the application directory for culture-specific resource folders
     ///     and builds a list of supported cultures
     /// </summary>
-    public CultureResolver()
+    public CultureResolver(ICultureMatcher cultureMatcher)
     {
+        matcher = cultureMatcher; // Inject the ICultureMatcher instance 
         // Initialize the list of supported cultures with English as the default culture
         var supportedCultures = new List<CultureInfo> { new("en") };
         // Scan directories in the application's location to find additional supported cultures
@@ -46,7 +52,7 @@ public class CultureResolver : ICultureResolver
     ///     Gets the collection of cultures supported by the application
     ///     This is determined by the presence of culture-specific resource directories
     /// </summary>
-    public IEnumerable<CultureInfo> SupportedCultures { get; }
+    public IReadOnlyList<CultureInfo> SupportedCultures { get; }
 
     /// <summary>
     ///     Resolves the most appropriate supported culture for the current system
@@ -59,19 +65,7 @@ public class CultureResolver : ICultureResolver
         // Get the installed UI culture of the system as the starting point
         var cultureInfo = CultureInfo.InstalledUICulture;
         // Check if the exact culture is supported, if so return it immediately
-        if (SupportedCultures.Contains(cultureInfo)) return cultureInfo;
-        // Traverse up the culture hierarchy to find a supported parent culture
-        // For example, if zh-CN is not supported but zh is supported, we'll use zh
-        while (!Equals(cultureInfo.Parent, CultureInfo.InvariantCulture))
-        {
-            // Check if the current parent culture is supported
-            if (SupportedCultures.Contains(cultureInfo)) return cultureInfo;
-
-            // Move to the parent culture (e.g., zh-CN -> zh -> invariant)
-            cultureInfo = cultureInfo.Parent;
-        }
-
-        // If no supported culture is found in the hierarchy, fall back to English
-        return new CultureInfo("en");
+        var matches = matcher.Matches(cultureInfo, SupportedCultures).ToList();
+        return matches.Count != 0 ? matches[0] : CultureInfo.GetCultureInfo("en");
     }
 }

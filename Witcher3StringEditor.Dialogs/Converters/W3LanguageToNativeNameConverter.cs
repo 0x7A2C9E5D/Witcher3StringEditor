@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
-using Witcher3StringEditor.Common;
+using Witcher3StringEditor.Contracts;
 
 namespace Witcher3StringEditor.Dialogs.Converters;
 

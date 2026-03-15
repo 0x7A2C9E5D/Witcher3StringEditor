@@ -4,7 +4,9 @@ using FluentResults;
 using GTranslate;
 using GTranslate.Translators;
 using Serilog;
-using Witcher3StringEditor.Common.Abstractions;
+using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Dictionary;
+using Witcher3StringEditor.Dictionary.Services;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -38,6 +40,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private bool isBusy;
 
+    private bool isDictionaryReady; // Flag to indicate whether the dynamic dictionary service is ready
+
     /// <summary>
     ///     Gets or sets the maximum value for indices (typically the total item count)
     /// </summary>
@@ -65,9 +69,11 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="startIndex">Initial start index for translation</param>
+    /// <param name="dictionaryService">Dictionary service</param>
     public BatchItemsTranslationViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex) : base(appSettings, translator,
-        w3StringItems)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex,
+        IDictionaryService? dictionaryService = null) : base(appSettings, translator,
+        w3StringItems, dictionaryService)
     {
         StartIndex = startIndex; // Set start index
         EndIndex = MaxValue = W3StringItems.Count; // Set end index and maximum value
@@ -196,6 +202,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
+        BindDictionaryIfNeeded(); // Bind dictionary if needed
+
         foreach (var item in items) // Process each item in the collection
             if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
             {
@@ -210,6 +218,17 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     }
 
     /// <summary>
+    ///     Binds the selected dictionary to the dynamic dictionary service if supported and needed
+    /// </summary>
+    private void BindDictionaryIfNeeded()
+    {
+        if (SelectedDictionary == NoneDictionary) return;
+        var dynamicDictionaryService = DictionaryService!.DynamicDictionaryService;
+        if (dynamicDictionaryService.CurrentDictionary != SelectedDictionary)
+            isDictionaryReady = dynamicDictionaryService.Bind(SelectedDictionary!);
+    }
+
+    /// <summary>
     ///     Processes a single item for translation
     ///     Sends the translated result via messaging if successful
     /// </summary>
@@ -220,8 +239,11 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     {
         try
         {
+            var textToTranslated = isDictionaryReady
+                ? DictionaryService!.DynamicDictionaryService.Replace(item.Text)
+                : item.Text; // Replace with dictionary if needed
             var translation =
-                await TranslateItem(Translator, item.Text, toLanguage, fromLanguage); // Perform translation
+                await TranslateItem(Translator, textToTranslated, toLanguage, fromLanguage); // Perform translation
             if (translation.IsSuccess) // Check if translation succeeded
             {
                 item.Text = translation.Value; // Update with translated text
