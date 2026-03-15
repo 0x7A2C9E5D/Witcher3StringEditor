@@ -8,11 +8,6 @@ namespace Witcher3StringEditor.Dictionary;
 public interface IDictionaryMangerService
 {
     /// <summary>
-    ///     Gets or sets the current dictionary.
-    /// </summary>
-    DictionaryInfo? CurrentDictionary { get; set; }
-
-    /// <summary>
     ///     Imports a dictionary from a file.
     /// </summary>
     Task<DictionaryInfo?> Import(string filePath);
