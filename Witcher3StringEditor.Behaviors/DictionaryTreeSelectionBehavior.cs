@@ -1,19 +1,20 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
+using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Behaviors;
 
 /// <summary>
 ///     An attached behavior for TreeView that handles selected item changes
 /// </summary>
-public class TreeViewSelectedItemBehavior : Behavior<TreeView>
+public class DictionaryTreeSelectionBehavior : Behavior<TreeView>
 {
     /// <summary>
     ///     Dependency property for storing the selected item
     /// </summary>
     public static readonly DependencyProperty SelectedItemProperty =
-        DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(TreeViewSelectedItemBehavior),
+        DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(DictionaryTreeSelectionBehavior),
             new PropertyMetadata(null));
 
     /// <summary>
@@ -49,6 +50,7 @@ public class TreeViewSelectedItemBehavior : Behavior<TreeView>
     /// </summary>
     private void AssociatedObject_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-        if (e.NewValue != null) SelectedItem = e.NewValue;
+        if (e.NewValue is DictionaryInfo) 
+            SelectedItem = e.NewValue;
     }
 }
