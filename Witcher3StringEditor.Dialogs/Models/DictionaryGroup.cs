@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using Syncfusion.Data.Extensions;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.Models;
@@ -16,5 +18,5 @@ public class DictionaryGroup(CultureInfo targetLanguage, List<DictionaryInfo> di
     /// <summary>
     ///     Initializes a new instance of the DictionaryGroup class
     /// </summary>
-    public List<DictionaryInfo> Dictionaries { get; } = dictionaries;
+    public ObservableCollection<DictionaryInfo> Dictionaries { get; } = dictionaries.ToObservableCollection();
 }
