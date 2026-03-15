@@ -145,12 +145,12 @@ public static class MessageTokens
     ///     Token for messages indicating that an import dictionary failed
     /// </summary>
     public const string ImportDictionaryFailed = "ImportDictionaryFailed";
-    
+
     /// <summary>
     ///     Token for messages indicating that a dictionary should be removed
     /// </summary>
     public const string RemoveDictionaryConfirm = "RemoveDictionaryConfirm";
-    
+
     /// <summary>
     ///     Token for messages indicating that a dictionary should be overwritten
     /// </summary>

@@ -1,586 +1,591 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <!-- 
+      Microsoft ResX Schema 
+      
+      Version 2.0
+      
+      The primary goals of this format is to allow a simple XML format 
+      that is mostly human readable. The generation and parsing of the 
+      various data types are done through the TypeConverter classes 
+      associated with the data types.
+      
+      Example:
+      
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+                  
+      There are any number of "resheader" rows that contain simple 
+      name/value pairs.
+      
+      Each data row contains a name, and value. The row also contains a 
+      type or mimetype. Type corresponds to a .NET class that support 
+      text/value conversion through the TypeConverter architecture. 
+      Classes that don't support this are serialized and stored with the 
+      mimetype set.
+      
+      The mimetype is used for serialized objects, and tells the 
+      ResXResourceReader how to depersist the object. This is currently not 
+      extensible. For a given mimetype the value must be set accordingly:
+      
+      Note - application/x-microsoft.net.object.binary.base64 is the format 
+      that the ResXResourceWriter will generate, however the reader can 
+      read any of the formats listed below.
+      
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+      
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+  
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array 
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Runtime" xml:space="preserve">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Runtime" xml:space="preserve">
     <value>ランタイム環境:</value>
   </data>
-  <data name="OpenFileBtnLabel" xml:space="preserve">
+    <data name="OpenFileBtnLabel" xml:space="preserve">
     <value>ファイルを開く</value>
   </data>
-  <data name="AppTitle" xml:space="preserve">
+    <data name="AppTitle" xml:space="preserve">
     <value>ウィッチャー3 文字列エディタ</value>
   </data>
-  <data name="SearchBoxPlaceholderText" xml:space="preserve">
+    <data name="SearchBoxPlaceholderText" xml:space="preserve">
     <value>検索</value>
   </data>
-  <data name="AddBtnLabel" xml:space="preserve">
+    <data name="AddBtnLabel" xml:space="preserve">
     <value>レコード追加</value>
   </data>
-  <data name="EditBtnLabel" xml:space="preserve">
+    <data name="EditBtnLabel" xml:space="preserve">
     <value>レコード編集</value>
   </data>
-  <data name="DeleteBtnLabel" xml:space="preserve">
+    <data name="DeleteBtnLabel" xml:space="preserve">
     <value>レコード削除</value>
   </data>
-  <data name="SaveBtnLabel" xml:space="preserve">
+    <data name="SaveBtnLabel" xml:space="preserve">
     <value>保存</value>
   </data>
-  <data name="BackupBtnLabel" xml:space="preserve">
+    <data name="BackupBtnLabel" xml:space="preserve">
     <value>バックアップ</value>
   </data>
-  <data name="LogBtnLabel" xml:space="preserve">
+    <data name="LogBtnLabel" xml:space="preserve">
     <value>ログ</value>
   </data>
-  <data name="SettingsBtnLabel" xml:space="preserve">
+    <data name="SettingsBtnLabel" xml:space="preserve">
     <value>設定</value>
   </data>
-  <data name="PlayBtnLabel" xml:space="preserve">
+    <data name="PlayBtnLabel" xml:space="preserve">
     <value>ゲームをプレイ</value>
   </data>
-  <data name="TranslateBtnLabel" xml:space="preserve">
+    <data name="TranslateBtnLabel" xml:space="preserve">
     <value>翻訳</value>
   </data>
-  <data name="OpenWorkingFolderBtnLabel" xml:space="preserve">
+    <data name="OpenWorkingFolderBtnLabel" xml:space="preserve">
     <value>作業フォルダを開く</value>
   </data>
-  <data name="UpdateAvailable" xml:space="preserve">
+    <data name="UpdateAvailable" xml:space="preserve">
     <value>更新可能</value>
   </data>
-  <data name="RecentBtnLabel" xml:space="preserve">
+    <data name="RecentBtnLabel" xml:space="preserve">
     <value>最近開いたファイル</value>
   </data>
-  <data name="AboutBtnLabel" xml:space="preserve">
+    <data name="AboutBtnLabel" xml:space="preserve">
     <value>このソフトについて</value>
   </data>
-  <data name="FileFormatSupported" xml:space="preserve">
+    <data name="FileFormatSupported" xml:space="preserve">
     <value>すべての対応形式</value>
   </data>
-  <data name="FileFormatTextFile" xml:space="preserve">
+    <data name="FileFormatTextFile" xml:space="preserve">
     <value>テキストファイル</value>
   </data>
-  <data name="FileFormatWitcher3StringsFile" xml:space="preserve">
+    <data name="FileFormatWitcher3StringsFile" xml:space="preserve">
     <value>ウィッチャー3 文字列ファイル</value>
   </data>
-  <data name="AppExitMessage" xml:space="preserve">
+    <data name="AppExitMessage" xml:space="preserve">
     <value>終了しますか？保存されていないデータは失われます。</value>
   </data>
-  <data name="AppExitCaption" xml:space="preserve">
+    <data name="AppExitCaption" xml:space="preserve">
     <value>終了</value>
   </data>
-  <data name="FileOpenedNoFoundMessage" xml:space="preserve">
+    <data name="FileOpenedNoFoundMessage" xml:space="preserve">
     <value>開いたファイルが存在しません。関連する記録を削除しますか？</value>
   </data>
-  <data name="ReOpenFileMessage" xml:space="preserve">
+    <data name="ReOpenFileMessage" xml:space="preserve">
     <value>このファイルを開くと、保存されていないデータは失われます。続行しますか？</value>
   </data>
-  <data name="ReOpenFileCaption" xml:space="preserve">
+    <data name="ReOpenFileCaption" xml:space="preserve">
     <value>ファイルを開く</value>
   </data>
-  <data name="FileOpenedNoFoundCaption" xml:space="preserve">
+    <data name="FileOpenedNoFoundCaption" xml:space="preserve">
     <value>開いたファイルが見つかりません</value>
   </data>
-  <data name="UpdateBtnContent" xml:space="preserve">
+    <data name="UpdateBtnContent" xml:space="preserve">
     <value>更新</value>
   </data>
-  <data name="DropHereTxt" xml:space="preserve">
+    <data name="DropHereTxt" xml:space="preserve">
     <value>ファイルをここにドラッグ＆ドロップして開く</value>
   </data>
-  <data name="FileFormatExcelWorkbook" xml:space="preserve">
+    <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excelワークシート</value>
   </data>
-  <data name="FristRunMessage" xml:space="preserve">
+    <data name="FristRunMessage" xml:space="preserve">
     <value>（必須）初回実行時は、まずエンコーダーのパスを設定してください。
 （オプション）ゲームの実行ファイルパスを設定すると、ソフトウェア内から直接ゲームを起動できます。</value>
   </data>
-  <data name="FristRunCaption" xml:space="preserve">
+    <data name="FristRunCaption" xml:space="preserve">
     <value>初回設定</value>
   </data>
-  <data name="MultipleInstanceMessage" xml:space="preserve">
+    <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>複数インスタンスはデータの上書きエラーを引き起こす可能性があります。単一インスタンスのみサポートされています。既に開いているウィンドウを前面に表示しますか？</value>
   </data>
-  <data name="MultipleInstanceCaption" xml:space="preserve">
+    <data name="MultipleInstanceCaption" xml:space="preserve">
     <value>ソフトウェアは既に実行中です</value>
   </data>
-  <data name="BackupRestoreMessage" xml:space="preserve">
+    <data name="BackupRestoreMessage" xml:space="preserve">
     <value>この操作はファイルを上書きし、元に戻せません。続行しますか？</value>
   </data>
-  <data name="BackupDeleteMessage" xml:space="preserve">
+    <data name="BackupDeleteMessage" xml:space="preserve">
     <value>この操作はファイルを完全に削除し、元に戻せません。続行しますか？</value>
   </data>
-  <data name="SaveSuccess" xml:space="preserve">
+    <data name="SaveSuccess" xml:space="preserve">
     <value>保存成功</value>
   </data>
-  <data name="SaveFailure" xml:space="preserve">
+    <data name="SaveFailure" xml:space="preserve">
     <value>保存失敗</value>
   </data>
-  <data name="SaveResult" xml:space="preserve">
+    <data name="SaveResult" xml:space="preserve">
     <value>保存結果</value>
   </data>
-  <data name="AddDialogTitle" xml:space="preserve">
+    <data name="AddDialogTitle" xml:space="preserve">
     <value>追加</value>
   </data>
-  <data name="EditDialogTitle" xml:space="preserve">
+    <data name="EditDialogTitle" xml:space="preserve">
     <value>編集</value>
   </data>
-  <data name="SelectW3Strings" xml:space="preserve">
+    <data name="SelectW3Strings" xml:space="preserve">
     <value>w3strings.exeを選択</value>
   </data>
-  <data name="SelectGameExe" xml:space="preserve">
+    <data name="SelectGameExe" xml:space="preserve">
     <value>witcher3.exeを選択</value>
   </data>
-  <data name="SubmitBtnContent" xml:space="preserve">
+    <data name="SubmitBtnContent" xml:space="preserve">
     <value>送信</value>
   </data>
-  <data name="CancelBtnContent" xml:space="preserve">
+    <data name="CancelBtnContent" xml:space="preserve">
     <value>キャンセル</value>
   </data>
-  <data name="DeleteDialogTitle" xml:space="preserve">
+    <data name="DeleteDialogTitle" xml:space="preserve">
     <value>削除</value>
   </data>
-  <data name="DeleteDialogMessage" xml:space="preserve">
+    <data name="DeleteDialogMessage" xml:space="preserve">
     <value>以下の記録を削除します：</value>
   </data>
-  <data name="DeleteBtnContent" xml:space="preserve">
+    <data name="DeleteBtnContent" xml:space="preserve">
     <value>削除</value>
   </data>
-  <data name="TranslateDialogTitle" xml:space="preserve">
+    <data name="TranslateDialogTitle" xml:space="preserve">
     <value>翻訳</value>
   </data>
-  <data name="PreviousBtnContent" xml:space="preserve">
+    <data name="PreviousBtnContent" xml:space="preserve">
     <value>前へ</value>
   </data>
-  <data name="NextBtnContent" xml:space="preserve">
+    <data name="NextBtnContent" xml:space="preserve">
     <value>次へ</value>
   </data>
-  <data name="TranslateBtnContent" xml:space="preserve">
+    <data name="TranslateBtnContent" xml:space="preserve">
     <value>翻訳</value>
   </data>
-  <data name="SaveBtnContent" xml:space="preserve">
+    <data name="SaveBtnContent" xml:space="preserve">
     <value>保存</value>
   </data>
-  <data name="SrcTxt" xml:space="preserve">
+    <data name="SrcTxt" xml:space="preserve">
     <value>原文</value>
   </data>
-  <data name="TranslatedTxt" xml:space="preserve">
+    <data name="TranslatedTxt" xml:space="preserve">
     <value>翻訳テキスト</value>
   </data>
-  <data name="SaveDialogTitle" xml:space="preserve">
+    <data name="SaveDialogTitle" xml:space="preserve">
     <value>保存</value>
   </data>
-  <data name="TargetFiletype" xml:space="preserve">
+    <data name="TargetFiletype" xml:space="preserve">
     <value>ファイルタイプ</value>
   </data>
-  <data name="TargetLanguage" xml:space="preserve">
+    <data name="TargetLanguage" xml:space="preserve">
     <value>翻訳後の言語</value>
   </data>
-  <data name="IgnoreIDSpaceCheck" xml:space="preserve">
+    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
     <value>IDスペースチェックを無視</value>
   </data>
-  <data name="IDSpace" xml:space="preserve">
+    <data name="IDSpace" xml:space="preserve">
     <value>IDスペース</value>
   </data>
-  <data name="BackupDialogTitle" xml:space="preserve">
+    <data name="BackupDialogTitle" xml:space="preserve">
     <value>バックアップ</value>
   </data>
-  <data name="FileName" xml:space="preserve">
+    <data name="FileName" xml:space="preserve">
     <value>ファイル名</value>
   </data>
-  <data name="Hash" xml:space="preserve">
+    <data name="Hash" xml:space="preserve">
     <value>ハッシュ</value>
   </data>
-  <data name="OriginPath" xml:space="preserve">
+    <data name="OriginPath" xml:space="preserve">
     <value>元のパス</value>
   </data>
-  <data name="BackupPath" xml:space="preserve">
+    <data name="BackupPath" xml:space="preserve">
     <value>バックアップパス</value>
   </data>
-  <data name="BackupTime" xml:space="preserve">
+    <data name="BackupTime" xml:space="preserve">
     <value>バックアップ日時</value>
   </data>
-  <data name="RestoreBtnContent" xml:space="preserve">
+    <data name="RestoreBtnContent" xml:space="preserve">
     <value>復元</value>
   </data>
-  <data name="CloseBtnContent" xml:space="preserve">
+    <data name="CloseBtnContent" xml:space="preserve">
     <value>閉じる</value>
   </data>
-  <data name="LogDialogTitle" xml:space="preserve">
+    <data name="LogDialogTitle" xml:space="preserve">
     <value>ログ</value>
   </data>
-  <data name="LogTime" xml:space="preserve">
+    <data name="LogTime" xml:space="preserve">
     <value>ログ日時</value>
   </data>
-  <data name="LogLevel" xml:space="preserve">
+    <data name="LogLevel" xml:space="preserve">
     <value>ログレベル</value>
   </data>
-  <data name="LogMessage" xml:space="preserve">
+    <data name="LogMessage" xml:space="preserve">
     <value>ログメッセージ</value>
   </data>
-  <data name="SettingsDialogTitle" xml:space="preserve">
+    <data name="SettingsDialogTitle" xml:space="preserve">
     <value>設定</value>
   </data>
-  <data name="W3StringsPath" xml:space="preserve">
+    <data name="W3StringsPath" xml:space="preserve">
     <value>w3strings.exeを選択してください</value>
   </data>
-  <data name="GameExePath" xml:space="preserve">
+    <data name="GameExePath" xml:space="preserve">
     <value>witcher3.exeを選択してください</value>
   </data>
-  <data name="PreferredFileType" xml:space="preserve">
+    <data name="PreferredFileType" xml:space="preserve">
     <value>優先ファイルタイプ</value>
   </data>
-  <data name="PreferredLanguage" xml:space="preserve">
+    <data name="PreferredLanguage" xml:space="preserve">
     <value>優先言語</value>
   </data>
-  <data name="IsOn" xml:space="preserve">
+    <data name="IsOn" xml:space="preserve">
     <value>オン</value>
   </data>
-  <data name="IsOff" xml:space="preserve">
+    <data name="IsOff" xml:space="preserve">
     <value>オフ</value>
   </data>
-  <data name="IdSpaceToolTip" xml:space="preserve">
+    <data name="IdSpaceToolTip" xml:space="preserve">
     <value>IDスペースの範囲は0000から9999までの4桁の整数です。検出エラーが発生した場合、プログラムはIDスペースを-1と表示します。結果は参考情報のみです。</value>
   </data>
-  <data name="RecentDialogTitle" xml:space="preserve">
+    <data name="RecentDialogTitle" xml:space="preserve">
     <value>最近開いたファイル</value>
   </data>
-  <data name="Path" xml:space="preserve">
+    <data name="Path" xml:space="preserve">
     <value>パス</value>
   </data>
-  <data name="OpenedTime" xml:space="preserve">
+    <data name="OpenedTime" xml:space="preserve">
     <value>開いた日時</value>
   </data>
-  <data name="Mark" xml:space="preserve">
+    <data name="Mark" xml:space="preserve">
     <value>マーク</value>
   </data>
-  <data name="RecordDeletingMessgae" xml:space="preserve">
+    <data name="RecordDeletingMessgae" xml:space="preserve">
     <value>この操作は選択した記録を完全に削除し、元に戻せません。続行しますか？</value>
   </data>
-  <data name="Open" xml:space="preserve">
+    <data name="Open" xml:space="preserve">
     <value>開く</value>
   </data>
-  <data name="StartIndex" xml:space="preserve">
+    <data name="StartIndex" xml:space="preserve">
     <value>開始インデックス</value>
   </data>
-  <data name="EndIndex" xml:space="preserve">
+    <data name="EndIndex" xml:space="preserve">
     <value>終了インデックス</value>
   </data>
-  <data name="BatchTranslateDialogTitle" xml:space="preserve">
+    <data name="BatchTranslateDialogTitle" xml:space="preserve">
     <value>一括翻訳</value>
   </data>
-  <data name="Pending" xml:space="preserve">
+    <data name="Pending" xml:space="preserve">
     <value>処理待ち</value>
   </data>
-  <data name="Success" xml:space="preserve">
+    <data name="Success" xml:space="preserve">
     <value>成功</value>
   </data>
-  <data name="Failure" xml:space="preserve">
+    <data name="Failure" xml:space="preserve">
     <value>失敗</value>
   </data>
-  <data name="TranslatedTextInvalidMessage" xml:space="preserve">
+    <data name="TranslatedTextInvalidMessage" xml:space="preserve">
     <value>翻訳テキストが無効です。保存前に確認して修正してください。</value>
   </data>
-  <data name="BackupFileNoFoundMessage" xml:space="preserve">
+    <data name="BackupFileNoFoundMessage" xml:space="preserve">
     <value>バックアップファイルが存在しません。記録を削除しますか？</value>
   </data>
-  <data name="BackupFileNoFoundCaption" xml:space="preserve">
+    <data name="BackupFileNoFoundCaption" xml:space="preserve">
     <value>バックアップファイルが見つかりません</value>
   </data>
-  <data name="BackupDeleteCaption" xml:space="preserve">
+    <data name="BackupDeleteCaption" xml:space="preserve">
     <value>バックアップ削除</value>
   </data>
-  <data name="BackupRestoreCaption" xml:space="preserve">
+    <data name="BackupRestoreCaption" xml:space="preserve">
     <value>バックアップ復元</value>
   </data>
-  <data name="TranslatedTextInvalidCaption" xml:space="preserve">
+    <data name="TranslatedTextInvalidCaption" xml:space="preserve">
     <value>翻訳テキストが無効です</value>
   </data>
-  <data name="TranslateErrorCaption" xml:space="preserve">
+    <data name="TranslateErrorCaption" xml:space="preserve">
     <value>翻訳エラー</value>
   </data>
-  <data name="TextLanguage" xml:space="preserve">
+    <data name="TextLanguage" xml:space="preserve">
     <value>原文の言語</value>
   </data>
-  <data name="TranslatedTextNoSavedMessage" xml:space="preserve">
+    <data name="TranslatedTextNoSavedMessage" xml:space="preserve">
     <value>翻訳が保存されていません。今すぐ保存しますか？</value>
   </data>
-  <data name="TranslatedTextNoSavedCaption" xml:space="preserve">
+    <data name="TranslatedTextNoSavedCaption" xml:space="preserve">
     <value>翻訳が保存されていません</value>
   </data>
-  <data name="OperationResultCaption" xml:space="preserve">
+    <data name="OperationResultCaption" xml:space="preserve">
     <value>操作結果</value>
   </data>
-  <data name="OperationFailureMessage" xml:space="preserve">
+    <data name="OperationFailureMessage" xml:space="preserve">
     <value>操作に失敗しました</value>
   </data>
-  <data name="RecordDeletingCaption" xml:space="preserve">
+    <data name="RecordDeletingCaption" xml:space="preserve">
     <value>記録を削除中</value>
   </data>
-  <data name="AboutDialogTitle" xml:space="preserve">
+    <data name="AboutDialogTitle" xml:space="preserve">
     <value>このソフトについて</value>
   </data>
-  <data name="Version" xml:space="preserve">
+    <data name="Version" xml:space="preserve">
     <value>バージョン:</value>
   </data>
-  <data name="OS" xml:space="preserve">
+    <data name="OS" xml:space="preserve">
     <value>OS:</value>
   </data>
-  <data name="AppBuildTime" xml:space="preserve">
+    <data name="AppBuildTime" xml:space="preserve">
     <value>ビルド日時:</value>
   </data>
-  <data name="EncoderSettingCardHeader" xml:space="preserve">
+    <data name="EncoderSettingCardHeader" xml:space="preserve">
     <value>エンコーダーパス</value>
   </data>
-  <data name="GameSettingCardHeader" xml:space="preserve">
+    <data name="GameSettingCardHeader" xml:space="preserve">
     <value>ゲームパス</value>
   </data>
-  <data name="GeneralSettingsHeader" xml:space="preserve">
+    <data name="GeneralSettingsHeader" xml:space="preserve">
     <value>一般設定</value>
   </data>
-  <data name="TranslatorTranslatingMessage" xml:space="preserve">
+    <data name="TranslatorTranslatingMessage" xml:space="preserve">
     <value>翻訳エンジンが翻訳を処理中です。本当に終了しますか？</value>
   </data>
-  <data name="TranslatorTranslatingCaption" xml:space="preserve">
+    <data name="TranslatorTranslatingCaption" xml:space="preserve">
     <value>翻訳中</value>
   </data>
-  <data name="Translating" xml:space="preserve">
+    <data name="Translating" xml:space="preserve">
     <value>翻訳中...</value>
   </data>
-  <data name="TranslationModeSwitchCaption" xml:space="preserve">
+    <data name="TranslationModeSwitchCaption" xml:space="preserve">
     <value>翻訳モード切換確認</value>
   </data>
-  <data name="TranslationModeSwitchMessage" xml:space="preserve">
+    <data name="TranslationModeSwitchMessage" xml:space="preserve">
     <value>翻訳中です。翻訳モードを切り替えると処理が中断されます。切り替えますか？</value>
   </data>
-  <data name="TranslationNotEmptyMessage" xml:space="preserve">
+    <data name="TranslationNotEmptyMessage" xml:space="preserve">
     <value>翻訳は既に存在します。現在の結果を上書きしますか？</value>
   </data>
-  <data name="TranslationNotEmptyCaption" xml:space="preserve">
+    <data name="TranslationNotEmptyCaption" xml:space="preserve">
     <value>翻訳は既に存在します</value>
   </data>
-  <data name="TranslatorSelection" xml:space="preserve">
+    <data name="TranslatorSelection" xml:space="preserve">
     <value>翻訳エンジン</value>
   </data>
-  <data name="UserInterfaceSettingsHeader" xml:space="preserve">
+    <data name="UserInterfaceSettingsHeader" xml:space="preserve">
     <value>ユーザーインターフェース設定</value>
   </data>
-  <data name="LanguageHelpText" xml:space="preserve">
+    <data name="LanguageHelpText" xml:space="preserve">
     <value>言語</value>
   </data>
-  <data name="PageSize" xml:space="preserve">
+    <data name="PageSize" xml:space="preserve">
     <value>ページサイズ</value>
   </data>
-  <data name="PreferredFileTypeDescription" xml:space="preserve">
+    <data name="PreferredFileTypeDescription" xml:space="preserve">
     <value>ウィッチャー3の文字列ファイルを保存する際のデフォルトファイル形式を選択してください</value>
   </data>
-  <data name="PreferredLanguageDescription" xml:space="preserve">
+    <data name="PreferredLanguageDescription" xml:space="preserve">
     <value>翻訳時の目標言語とウィッチャー3文字アーカイブ保存時に使用するデフォルト言語を選択してください</value>
   </data>
-  <data name="LanguageDescription" xml:space="preserve">
+    <data name="LanguageDescription" xml:space="preserve">
     <value>アプリケーションインターフェースの表示言語を選択してください</value>
   </data>
-  <data name="PageSizeDescription" xml:space="preserve">
+    <data name="PageSizeDescription" xml:space="preserve">
     <value>メイン画面のデータグリッドでページごとに表示する項目数を調整します</value>
   </data>
-  <data name="TranslatorSelectionDescription" xml:space="preserve">
+    <data name="TranslatorSelectionDescription" xml:space="preserve">
     <value>テキスト翻訳に使用する翻訳サービスを選択してください</value>
   </data>
-  <data name="PathInvalidCaption" xml:space="preserve">
+    <data name="PathInvalidCaption" xml:space="preserve">
     <value>パスが無効</value>
   </data>
-  <data name="PathInvalidMessage" xml:space="preserve">
+    <data name="PathInvalidMessage" xml:space="preserve">
     <value>現在設定されているエンコーダーのパスまたはゲームのパスが無効になっています。設定を確認してください。</value>
   </data>
-  <data name="PathInvalidIndicatorText" xml:space="preserve">
+    <data name="PathInvalidIndicatorText" xml:space="preserve">
     <value>（無効）</value>
   </data>
-  <data name="PackageName" xml:space="preserve">
+    <data name="PackageName" xml:space="preserve">
     <value>依存項</value>
   </data>
-  <data name="PackageVersion" xml:space="preserve">
+    <data name="PackageVersion" xml:space="preserve">
     <value>バージョン</value>
   </data>
-  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
     <value>ログファイルのクリーンアップは不要です。</value>
   </data>
-  <data name="LogsCleanedMessage" xml:space="preserve">
+    <data name="LogsCleanedMessage" xml:space="preserve">
     <value>ログファイルはクリーンアップされました。</value>
   </data>
-  <data name="LogCleanupCaption" xml:space="preserve">
+    <data name="LogCleanupCaption" xml:space="preserve">
     <value>ログクリーンアップ</value>
   </data>
-  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <data name="LogFilesCollectedCaption" xml:space="preserve">
     <value>ログファイルを収集しました</value>
   </data>
-  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <data name="LogFilesCollectedMessage" xml:space="preserve">
     <value>ログファイルは収集されました。ファイルはデスクトップに作成されています。</value>
   </data>
-  <data name="LogManagementDescription" xml:space="preserve">
+    <data name="LogManagementDescription" xml:space="preserve">
     <value>ログフォルダー参照、有効期限切れログのクリーンアップ、ログ収集</value>
   </data>
-  <data name="LogManagement" xml:space="preserve">
+    <data name="LogManagement" xml:space="preserve">
     <value>ログ管理</value>
   </data>
-  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
     <value>翻訳モードを切り替える</value>
   </data>
-  <data name="NoDictionary" xml:space="preserve">
+    <data name="NoDictionary" xml:space="preserve">
     <value>辞書を使用しない</value>
   </data>
-  <data name="Dictionary" xml:space="preserve">
+    <data name="Dictionary" xml:space="preserve">
     <value>辞書</value>
   </data>
-  <data name="DictionaryBtnLabel" xml:space="preserve">
+    <data name="DictionaryBtnLabel" xml:space="preserve">
     <value>辞書管理</value>
   </data>
-  <data name="DictionaryDialogTitle" xml:space="preserve">
+    <data name="DictionaryDialogTitle" xml:space="preserve">
     <value>辞書管理</value>
   </data>
-  <data name="ImportDictionary" xml:space="preserve">
+    <data name="ImportDictionary" xml:space="preserve">
     <value>辞書をインポート</value>
   </data>
-  <data name="SourceLanguage" xml:space="preserve">
+    <data name="SourceLanguage" xml:space="preserve">
     <value>ソース言語</value>
   </data>
-  <data name="Delete" xml:space="preserve">
+    <data name="Delete" xml:space="preserve">
     <value>削除</value>
   </data>
-  <data name="TermCount" xml:space="preserve">
+    <data name="TermCount" xml:space="preserve">
     <value>用語数</value>
   </data>
-  <data name="ImportDictionaryFailedMessage" xml:space="preserve">
+    <data name="ImportDictionaryFailedMessage" xml:space="preserve">
     <value>辞書フォーマットが無効です。ファイルの内容を確認してください。</value>
   </data>
-  <data name="ImportDictionaryFailedCaption" xml:space="preserve">
+    <data name="ImportDictionaryFailedCaption" xml:space="preserve">
     <value>辞書のインポートに失敗しました</value>
   </data>
-  <data name="RemoveDictionary" xml:space="preserve">
+    <data name="RemoveDictionary" xml:space="preserve">
     <value>辞書を削除</value>
   </data>
-  <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
+    <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
     <value>この辞書を削除してもよろしいですか？</value>
   </data>
-  <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
+    <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
     <value>辞書削除の確認</value>
   </data>
-  <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
+    <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
     <value>辞書は既に存在します。上書きしますか？</value>
   </data>
-  <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
+    <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
     <value>辞書上書き確認</value>
   </data>
 </root>

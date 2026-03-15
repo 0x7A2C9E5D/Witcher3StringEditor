@@ -2,7 +2,7 @@
 using Microsoft.Xaml.Behaviors;
 using Syncfusion.UI.Xaml.Grid;
 
-namespace Witcher3StringEditor.Dialogs.Behaviors;
+namespace Witcher3StringEditor.Behaviors;
 
 /// <summary>
 ///     An attached behavior for SfDataGrid that handles dynamic row height calculation based on content

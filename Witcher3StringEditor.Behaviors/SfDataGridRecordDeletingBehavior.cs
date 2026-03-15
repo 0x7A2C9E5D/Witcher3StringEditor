@@ -4,13 +4,13 @@ using Microsoft.Xaml.Behaviors;
 using Serilog;
 using Syncfusion.UI.Xaml.Grid;
 
-namespace Witcher3StringEditor.Dialogs.Behaviors;
+namespace Witcher3StringEditor.Behaviors;
 
 /// <summary>
 ///     An attached behavior for SfDataGrid that handles record deletion confirmation
 ///     Intercepts record deletion events and shows a confirmation dialog before allowing the deletion to proceed
 /// </summary>
-internal class SfDataGridRecordDeletingBehavior : Behavior<SfDataGrid>
+public class SfDataGridRecordDeletingBehavior : Behavior<SfDataGrid>
 {
     /// <summary>
     ///     Called when the behavior is attached to the AssociatedObject

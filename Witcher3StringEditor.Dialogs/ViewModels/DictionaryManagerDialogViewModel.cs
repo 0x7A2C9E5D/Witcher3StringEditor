@@ -134,7 +134,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     [RelayCommand]
     private async Task RemoveDictionary(DictionaryInfo? dictionary)
     {
-        if(dictionary is null) return;
+        if (dictionary is null) return;
         if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
                 MessageTokens.RemoveDictionaryConfirm))
         {

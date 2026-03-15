@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 using Microsoft.Xaml.Behaviors;
-using WinRT;
 
-namespace Witcher3StringEditor.Dialogs.Behaviors;
+namespace Witcher3StringEditor.Behaviors;
 
 /// <summary>
 ///     An attached behavior that adds file drag-and-drop support to a FrameworkElement
@@ -69,6 +68,6 @@ public class FrameworkElementDropFileBehavior : Behavior<FrameworkElement>
     /// <param name="e">Drag event arguments</param>
     private void AssociatedObject_Drop(object sender, DragEventArgs e)
     {
-        Data = e.Data.GetData(DataFormats.FileDrop).As<string[]>();
+        Data = (string[])e.Data.GetData(DataFormats.FileDrop);
     }
 }

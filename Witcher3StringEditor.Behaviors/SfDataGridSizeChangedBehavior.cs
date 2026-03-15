@@ -3,7 +3,7 @@ using Microsoft.Xaml.Behaviors;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 
-namespace Witcher3StringEditor.Dialogs.Behaviors;
+namespace Witcher3StringEditor.Behaviors;
 
 /// <summary>
 ///     An attached behavior for SfDataGrid that handles grid resizing operations

@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
 
-namespace Witcher3StringEditor.Dialogs.Behaviors;
+namespace Witcher3StringEditor.Behaviors;
 
 /// <summary>
 ///     An attached behavior for TreeView that handles selected item changes
