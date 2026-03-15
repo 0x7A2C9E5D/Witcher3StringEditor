@@ -87,7 +87,7 @@ public class DictionaryMangerService : IDictionaryMangerService
         var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
         dictionaries.Add(newDictionaryInfo); // Add to collection
 
-        return dictionaryInfo;
+        return newDictionaryInfo; // Return new dictionary info
     }
 
     /// <summary>
