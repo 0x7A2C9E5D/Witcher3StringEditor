@@ -35,7 +35,7 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
                 .GroupBy(pair => pair.Key)
                 .Select(g => g.First())
                 .ToDictionary(); // Get entries and filter out empty keys and values, then remove duplicates and convert to dictionary
-            matcher.Build(entries.ToDictionary(kvp => kvp.Key, _ => 0)); // Build term cache
+            await Task.Run(() => matcher.Build(entries.ToDictionary(kvp => kvp.Key, _ => 0))); // Build term cache
             IsReady = true; // Set ready
             return true; // Return success
         }
