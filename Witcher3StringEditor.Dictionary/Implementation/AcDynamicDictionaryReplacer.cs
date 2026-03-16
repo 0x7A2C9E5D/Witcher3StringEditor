@@ -106,17 +106,10 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
         var validHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store valid hits
         foreach (var hit in hits) // Iterate through hits
         {
-            var isFree = true; // Initialize flag
-            for (var i = hit.Begin; i < hit.End; i++) // Iterate through characters
-            {
-                if (!occupied[i]) continue; // Check if character is free
-                isFree = false; // Set flag
-                break; // Break
-            }
-
-            if (!isFree) continue; // Check if hit is valid
+            var slice = occupied.AsSpan(hit.Begin, hit.Length); // Get slice of occupied array
+            if (slice.Contains(true)) continue; // Skip hits that overlap
+            slice.Fill(true);// Mark characters as occupied
             validHits.Add(hit); // Add hit
-            occupied.AsSpan(hit.Begin, hit.Length).Fill(true);// Mark characters as occupied
         }
 
         ArrayPool<bool>.Shared.Return(occupied); // Return array to pool
