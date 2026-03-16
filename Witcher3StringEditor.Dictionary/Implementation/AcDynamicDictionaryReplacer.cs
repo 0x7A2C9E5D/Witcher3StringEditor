@@ -1,6 +1,7 @@
 ﻿using Cysharp.Text;
 using NReco.Text;
 using Serilog;
+using System.Buffers;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using ZLinq;
 
@@ -99,7 +100,9 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FilterValidHits(
         IReadOnlyList<AhoCorasickDoubleArrayTrie<int>.Hit> hits, int textLength)
     {
-        var occupied = new bool[textLength]; // Create array to track occupied characters
+        var occupied = ArrayPool<bool>.Shared.Rent(textLength); // Rent array from pool
+        occupied.AsSpan().Clear(); // Initialize array to false
+
         var validHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store valid hits
         foreach (var hit in hits) // Iterate through hits
         {
@@ -116,6 +119,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             Array.Fill(occupied, true, hit.Begin, hit.Length); // Mark characters as occupied
         }
 
+        ArrayPool<bool>.Shared.Return(occupied); // Return array to pool
         return validHits; // Return valid hits
     }
 
