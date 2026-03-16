@@ -1,4 +1,5 @@
-﻿using Cysharp.Text;
+﻿using System.Buffers;
+using Cysharp.Text;
 using NReco.Text;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
@@ -9,6 +10,9 @@ namespace Witcher3StringEditor.Dictionary.Implementation;
 public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynamicDictionaryReplacer
 {
     private readonly AhoCorasickDoubleArrayTrie<int> matcher = new(); // Create term cache
+
+    private readonly ArrayPool<bool> occupiedPool = ArrayPool<bool>.Shared; // Create array pool for occupied characters
+
     private Dictionary<string, string> entries = []; // Create entries
 
     /// <summary>
@@ -92,10 +96,10 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     /// <param name="hits"></param>
     /// <param name="textLength"></param>
     /// <returns></returns>
-    private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FilterValidHits(
+    private List<AhoCorasickDoubleArrayTrie<int>.Hit> FilterValidHits(
         IReadOnlyList<AhoCorasickDoubleArrayTrie<int>.Hit> hits, int textLength)
     {
-        var occupied = new bool[textLength]; // Create array to track occupied characters
+        var occupied = occupiedPool.Rent(textLength);
         var validHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store valid hits
         foreach (var hit in hits) // Iterate through hits
         {
@@ -112,6 +116,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             Array.Fill(occupied, true, hit.Begin, hit.Length); // Mark characters as occupied
         }
 
+        occupiedPool.Return(occupied);
         return validHits; // Return valid hits
     }
 
