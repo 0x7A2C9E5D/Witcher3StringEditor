@@ -25,6 +25,7 @@ using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Services;
+using ZLinq;
 
 namespace Witcher3StringEditor.ViewModels;
 
@@ -483,8 +484,9 @@ internal partial class MainWindowViewModel : ObservableObject
         if (await dialogService.ShowDialogAsync(this, // Show edit dialog
                 dialogViewModel) == true && dialogViewModel.Item is not null) // Check if user confirmed changes
         {
-            var found = W3StringItems! // Find the item in the collection
-                .First(x => x.TrackingId == selectedItem.TrackingId);
+            var found = W3StringItems!
+                .AsValueEnumerable()
+                .First(x => x.TrackingId == selectedItem.TrackingId); // Find the item in the collection
             var index = W3StringItems!.IndexOf(found); // Get the item index
             // Update the item properties
             W3StringItems[index].StrId = dialogViewModel.Item.StrId;

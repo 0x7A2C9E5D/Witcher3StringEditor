@@ -57,6 +57,7 @@
         </PackageReference>
         <PackageReference Include="Syncfusion.SfGrid.WPF" Version="32.2.9"/>
         <PackageReference Include="System.Reactive" Version="6.1.0"/>
+        <PackageReference Include="ZLinq" Version="1.5.5" />
     </ItemGroup>
 
     <ItemGroup>
