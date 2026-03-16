@@ -50,7 +50,7 @@ public class DictionaryTreeSelectionBehavior : Behavior<TreeView>
     /// </summary>
     private void AssociatedObject_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-        if (e.NewValue is DictionaryInfo) 
+        if (e.NewValue is DictionaryInfo)
             SelectedItem = e.NewValue;
     }
 }

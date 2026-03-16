@@ -16,14 +16,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1" />
-        <PackageReference Include="Serilog" Version="4.3.1" />
-        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="32.2.9" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1"/>
+        <PackageReference Include="Serilog" Version="4.3.1"/>
+        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="32.2.9"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Witcher3StringEditor.Dictionary\Witcher3StringEditor.Dictionary.csproj" />
+        <ProjectReference Include="..\Witcher3StringEditor.Dictionary\Witcher3StringEditor.Dictionary.csproj"/>
     </ItemGroup>
 
 </Project>

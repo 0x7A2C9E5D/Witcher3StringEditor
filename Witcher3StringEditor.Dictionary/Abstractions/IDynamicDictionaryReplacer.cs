@@ -1,9 +1,9 @@
-﻿namespace Witcher3StringEditor.Dictionary.Services;
+﻿namespace Witcher3StringEditor.Dictionary.Abstractions;
 
 /// <summary>
-///     A service that provides dictionary information and entries.
+///     A service that provides dynamic dictionary functionality.
 /// </summary>
-public interface IDynamicDictionaryService
+public interface IDynamicDictionaryReplacer
 {
     /// <summary>
     ///     Indicates whether the service is ready to use.

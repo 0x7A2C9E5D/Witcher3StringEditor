@@ -5,7 +5,6 @@
     xmlns:l="clr-namespace:Witcher3StringEditor.Locales;assembly=Witcher3StringEditor.Locales"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:sf="http://schemas.syncfusion.com/wpf"
-    xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels">
     <!-- 
         Data template for batch translation view

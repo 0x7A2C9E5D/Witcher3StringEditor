@@ -1,11 +1,11 @@
 ﻿using System.Globalization;
 
-namespace Witcher3StringEditor.Dictionary.Services;
+namespace Witcher3StringEditor.Dictionary.Abstractions;
 
 /// <summary>
 ///     A class that represents a dictionary info.
 /// </summary>
-public interface IDictionaryMangerService
+public interface IDictionaryManager
 {
     /// <summary>
     ///     Imports a dictionary from a file.

@@ -11,10 +11,10 @@ namespace Witcher3StringEditor.Locales;
 public class CultureResolver : ICultureResolver
 {
     /// <summary>
-    ///      Defines a contract for culture resolution functionality
+    ///     Defines a contract for culture resolution functionality
     /// </summary>
     private readonly ICultureMatcher matcher;
-    
+
     /// <summary>
     ///     Initializes a new instance of the CultureResolver class
     ///     Scans the application directory for culture-specific resource folders

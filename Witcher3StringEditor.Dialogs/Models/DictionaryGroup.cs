@@ -1,6 +1,6 @@
-﻿using Syncfusion.Data.Extensions;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
+using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.Models;

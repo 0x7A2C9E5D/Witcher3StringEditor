@@ -3,14 +3,14 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using MoreLinq;
 using Serilog;
-using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Helpers;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 
-namespace Witcher3StringEditor.Dictionary.Services;
+namespace Witcher3StringEditor.Dictionary.Implementation;
 
-public class DictionaryMangerService : IDictionaryMangerService
+public class DictionaryManager : IDictionaryManager
 {
     private readonly ICultureMatcher cultureMatcher; // Culture matcher
 
@@ -23,7 +23,7 @@ public class DictionaryMangerService : IDictionaryMangerService
     /// </summary>
     /// <param name="matcher"></param>
     /// <param name="provider"></param>
-    public DictionaryMangerService(ICultureMatcher matcher, IDictionaryProvider provider)
+    public DictionaryManager(ICultureMatcher matcher, IDictionaryProvider provider)
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider

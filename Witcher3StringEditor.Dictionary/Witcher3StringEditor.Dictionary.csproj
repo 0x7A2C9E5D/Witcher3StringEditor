@@ -15,17 +15,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="morelinq" Version="4.4.0" />
-        <PackageReference Include="NReco.Text.AhoCorasickDoubleArrayTrie" Version="1.1.1" />
-        <PackageReference Include="Serilog" Version="4.3.1" />
-        <PackageReference Include="ZString" Version="2.6.0" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="morelinq" Version="4.4.0"/>
+        <PackageReference Include="NReco.Text.AhoCorasickDoubleArrayTrie" Version="1.1.1"/>
+        <PackageReference Include="Serilog" Version="4.3.1"/>
+        <PackageReference Include="ZString" Version="2.6.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Witcher3StringEditor.Helpers\Witcher3StringEditor.Helpers.csproj" />
-        <ProjectReference Include="..\Witcher3StringEditor.Locales\Witcher3StringEditor.Locales.csproj" />
-        <ProjectReference Include="..\Witcher3StringEditor.Messaging\Witcher3StringEditor.Messaging.csproj" />
+        <ProjectReference Include="..\Witcher3StringEditor.Helpers\Witcher3StringEditor.Helpers.csproj"/>
+        <ProjectReference Include="..\Witcher3StringEditor.Locales\Witcher3StringEditor.Locales.csproj"/>
+        <ProjectReference Include="..\Witcher3StringEditor.Messaging\Witcher3StringEditor.Messaging.csproj"/>
     </ItemGroup>
 
 </Project>

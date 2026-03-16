@@ -1,4 +1,4 @@
-﻿namespace Witcher3StringEditor.Dictionary.Providers;
+﻿namespace Witcher3StringEditor.Dictionary.Abstractions;
 
 /// <summary>
 ///     A service that provides dictionary information and entries.

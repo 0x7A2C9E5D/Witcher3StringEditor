@@ -19,8 +19,8 @@ using Syncfusion.Licensing;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dialogs.Views;
-using Witcher3StringEditor.Dictionary.Providers;
-using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Dictionary.Abstractions;
+using Witcher3StringEditor.Dictionary.Implementation;
 using Witcher3StringEditor.Helpers;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Models;
@@ -48,7 +48,7 @@ public sealed partial class App : IDisposable
 
     // Private fields
     private Mutex? mutex; // Mutex to prevent multiple instances
-    
+
     /// <summary>
     ///     Disposes of the resources used by the application
     /// </summary>
@@ -271,7 +271,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IDialogManager, DialogManager>()
             .AddSingleton<IDialogService, DialogService>()
             .AddSingleton<ILogAccessService, LogAccessService>()
-            .AddSingleton<IDictionaryMangerService, DictionaryMangerService>()
+            .AddSingleton<IDictionaryManager, DictionaryManager>()
             .AddSingleton<IDictionaryProvider, DictionaryProvider>()
             .AddScoped<IExplorerService, ExplorerService>()
             .AddScoped<IPlayGameService, PlayGameService>()
@@ -281,7 +281,7 @@ public sealed partial class App : IDisposable
             .AddTransient<ITranslator, MicrosoftTranslator>()
             .AddTransient<ITranslator, GoogleTranslator>()
             .AddTransient<ITranslator, YandexTranslator>()
-            .AddTransient<IDynamicDictionaryService, DynamicDictionaryService>()
+            .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());

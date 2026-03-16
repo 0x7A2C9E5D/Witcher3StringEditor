@@ -1,11 +1,11 @@
 ﻿using Cysharp.Text;
 using NReco.Text;
 using Serilog;
-using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Dictionary.Abstractions;
 
-namespace Witcher3StringEditor.Dictionary.Services;
+namespace Witcher3StringEditor.Dictionary.Implementation;
 
-public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDictionaryService
+public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynamicDictionaryReplacer
 {
     private readonly AhoCorasickDoubleArrayTrie<int> matcher = new(); // Create term cache
     private Dictionary<string, string> entries = []; // Create entries
@@ -56,8 +56,9 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     /// <returns></returns>
     public string Replace(string text)
     {
-        if (string.IsNullOrEmpty(text) || entries.Count == 0) return text; // Return original text if it's empty or if there are no entries
-         
+        if (string.IsNullOrEmpty(text) || entries.Count == 0)
+            return text; // Return original text if it's empty or if there are no entries
+
         var hits = FindAndSortMatches(text, matcher); // Find and sort matches
         hits = FilterValidHits(hits, text.Length); // Filter out invalid hits
         return ReplaceMatches(text, hits, entries); // Replace matches with translations
