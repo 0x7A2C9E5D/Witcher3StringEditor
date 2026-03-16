@@ -159,7 +159,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     /// <returns></returns>
     private static string EscapeXml(string text)
     {
-        if (string.IsNullOrEmpty(text) || text.IndexOfAny(['&', '<', '>', '\'', '"']) < 0)
+        if (string.IsNullOrWhiteSpace(text) || text.IndexOfAny(['&', '<', '>', '\'', '"']) < 0)
             return text; // Return original text if there are no special characters
 
         return text
