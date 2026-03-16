@@ -7,7 +7,7 @@ public static class DebugHelper
 {
 #if DEBUG
     /// <summary>
-    ///    Indicates whether the application is running in debug mode.
+    ///     Indicates whether the application is running in debug mode.
     /// </summary>
     public static bool IsDebug => true; // Debug
 #else

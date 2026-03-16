@@ -26,12 +26,12 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     private readonly IDialogService dialogService;
 
     /// <summary>
-    /// Provides access to the dictionary management functionality used by this class.
+    ///     Provides access to the dictionary management functionality used by this class.
     /// </summary>
     private readonly IDictionaryManager dictionaryManager;
 
     /// <summary>
-    /// Provides access to the underlying dictionary provider used for retrieving dictionary data.
+    ///     Provides access to the underlying dictionary provider used for retrieving dictionary data.
     /// </summary>
     private readonly IDictionaryProvider dictionaryProvider;
 

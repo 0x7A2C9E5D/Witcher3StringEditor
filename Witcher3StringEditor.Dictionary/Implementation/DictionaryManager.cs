@@ -11,7 +11,7 @@ using Witcher3StringEditor.Messaging;
 namespace Witcher3StringEditor.Dictionary.Implementation;
 
 /// <summary>
-///   Dictionary manager
+///     Dictionary manager
 /// </summary>
 public class DictionaryManager : IDictionaryManager
 {
