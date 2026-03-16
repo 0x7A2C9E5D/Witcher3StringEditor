@@ -116,7 +116,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
 
             if (!isFree) continue; // Check if hit is valid
             validHits.Add(hit); // Add hit
-            Array.Fill(occupied, true, hit.Begin, hit.Length); // Mark characters as occupied
+            occupied.AsSpan(hit.Begin, hit.Length).Fill(true);// Mark characters as occupied
         }
 
         ArrayPool<bool>.Shared.Return(occupied); // Return array to pool
