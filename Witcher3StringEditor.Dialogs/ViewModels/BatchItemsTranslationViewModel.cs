@@ -201,7 +201,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
-        BindDictionaryIfNeeded(); // Bind dictionary if needed
+        await BindDictionaryIfNeeded(); // Bind dictionary if needed
 
         foreach (var item in items) // Process each item in the collection
             if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
