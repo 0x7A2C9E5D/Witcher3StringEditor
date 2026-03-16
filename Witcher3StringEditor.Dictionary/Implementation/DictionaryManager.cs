@@ -10,6 +10,9 @@ using Witcher3StringEditor.Messaging;
 
 namespace Witcher3StringEditor.Dictionary.Implementation;
 
+/// <summary>
+///   Dictionary manager
+/// </summary>
 public class DictionaryManager : IDictionaryManager
 {
     private readonly ICultureMatcher cultureMatcher; // Culture matcher

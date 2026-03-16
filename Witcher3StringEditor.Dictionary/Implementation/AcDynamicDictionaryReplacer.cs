@@ -6,6 +6,10 @@ using ZLinq;
 
 namespace Witcher3StringEditor.Dictionary.Implementation;
 
+/// <summary>
+///   A service that provides dynamic dictionary functionality.
+/// </summary>
+/// <param name="provider"></param>
 public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynamicDictionaryReplacer
 {
     private readonly AhoCorasickDoubleArrayTrie<int> matcher = new(); // Create term cache
