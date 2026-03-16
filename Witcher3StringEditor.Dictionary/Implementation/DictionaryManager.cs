@@ -59,7 +59,7 @@ public class DictionaryManager : IDictionaryManager
         File.Copy(filePath, destFileName, true); // Copy file
         var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
         dictionaries.Add(newDictionaryInfo); // Add to collection
-
+        Log.Information("Imported dictionary: {Path}", destFileName);
         return newDictionaryInfo; // Return new dictionary info
     }
 
@@ -73,6 +73,7 @@ public class DictionaryManager : IDictionaryManager
         if (!dictionaries.Contains(dictionary)) return; // Not found
         File.Delete(dictionary.Path); // Delete the file
         dictionaries.Remove(dictionary); // Remove from collection
+        Log.Information("Removed dictionary: {Path}", dictionary.Path);
     }
 
     /// <summary>
@@ -100,7 +101,7 @@ public class DictionaryManager : IDictionaryManager
     private void LoadDictionariesFromDirectory(string path)
     {
         var dictionaryFiles = Directory.GetFiles(path)
-            .Where(f => f.EndsWith(".txt")); // Get dictionary files
+            .Where(f => f.EndsWith(".txt")).ToArray(); // Get dictionary files
         dictionaryFiles.ForEach(async void (dictionaryFile) =>
         {
             try
@@ -114,5 +115,6 @@ public class DictionaryManager : IDictionaryManager
                     dictionaryFile); // Log error if failed to load dictionary file
             }
         });
+        Log.Information("Loaded {Count} dictionary files", dictionaryFiles.Length);
     }
 }
