@@ -97,7 +97,7 @@ public class DictionaryMangerService : IDictionaryMangerService
     ///     Load dictionaries from directory
     /// </summary>
     /// <param name="path"></param>
-    private Task LoadDictionariesFromDirectory(string path)
+    private void LoadDictionariesFromDirectory(string path)
     {
         var dictionaryFiles = Directory.GetFiles(path)
             .Where(f => f.EndsWith(".txt")); // Get dictionary files
@@ -114,6 +114,5 @@ public class DictionaryMangerService : IDictionaryMangerService
                     dictionaryFile); // Log error if failed to load dictionary file
             }
         });
-        return Task.CompletedTask;
     }
 }
