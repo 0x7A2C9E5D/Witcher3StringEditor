@@ -228,6 +228,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             isDictionaryReady =
                 await DictionaryService
                     .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
+        Log.Information("The dictionary is ready: {0}.", isDictionaryReady);
     }
 
     /// <summary>
