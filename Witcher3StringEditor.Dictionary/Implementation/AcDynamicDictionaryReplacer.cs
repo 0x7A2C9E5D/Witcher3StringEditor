@@ -63,7 +63,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     /// <returns></returns>
     public string Replace(string text)
     {
-        if (string.IsNullOrEmpty(text) || entries.Count == 0)
+        if (string.IsNullOrWhiteSpace(text) || entries.Count == 0)
             return text; // Return original text if it's empty or if there are no entries
 
         var hits = FindAndSortMatches(text, matcher); // Find and sort matches
