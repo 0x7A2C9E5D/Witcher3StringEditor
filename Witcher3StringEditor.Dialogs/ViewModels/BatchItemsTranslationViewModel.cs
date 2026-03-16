@@ -221,7 +221,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// </summary>
     private async Task BindDictionaryIfNeeded()
     {
-        if (SelectedDictionary == NoneDictionary) return; // No dictionary selected, skip binding
+        if (SelectedDictionary == null || SelectedDictionary == NoneDictionary)
+            return; // No dictionary selected, skip binding
         if (DictionaryService!.CurrentDictionary !=
             SelectedDictionary) // Check if the current dictionary is different from the selected one
             isDictionaryReady =
