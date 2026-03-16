@@ -2,6 +2,7 @@
 using NReco.Text;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
+using ZLinq;
 
 namespace Witcher3StringEditor.Dictionary.Implementation;
 
@@ -31,6 +32,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
         {
             CurrentDictionary = dictionary; // Set current dictionary
             entries = (await provider.GetEntries(dictionary))
+                .AsValueEnumerable()
                 .Where(x => !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value))
                 .GroupBy(pair => pair.Key)
                 .Select(g => g.First())
@@ -78,6 +80,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
         matcher.ParseText(text, hit => { allHits.Add(hit); }); // Find all hits
 
         return allHits
+            .AsValueEnumerable()
             .OrderBy(x => x.Begin)
             .ThenByDescending(x => x.Length)
             .ToList(); // Sort hits
