@@ -155,6 +155,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         {
             dictionaryManager.Remove(dictionary);
             var found = DictionaryGroups
+                .AsValueEnumerable()
                 .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
             if (found is null) return;
             if (found.Dictionaries.Count == 1)
