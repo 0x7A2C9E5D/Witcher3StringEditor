@@ -19,17 +19,18 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
     /// </summary>
     /// <param name="filePath">The path to the file to back up</param>
     /// <returns>True if the backup was created successfully, false otherwise</returns>
-    public bool Backup(string filePath)
+    public async Task<bool> Backup(string filePath)
     {
         try
         {
-            var hash = ValidateAndGetHash(filePath); // Validate file and compute hash
+            var hash = await ValidateAndGetHash(filePath); // Validate file and compute hash
             var backupItem = new BackupItem // Create new backup item
             {
                 FileName = Path.GetFileName(filePath), // Set file name
                 Hash = hash, // Set file hash
                 OrginPath = filePath, // Set original file path
-                BackupPath = Path.Combine(PathHelper.BackupDirectory, $"{Guid.NewGuid():N}.bak"), // Set backup file path
+                BackupPath =
+                    Path.Combine(PathHelper.BackupDirectory, $"{Guid.NewGuid():N}.bak"), // Set backup file path
                 BackupTime = DateTime.Now // Set backup time
             };
             EnsureBackupDirectoryExists(PathHelper.BackupDirectory); // Ensure backup directory exists
@@ -94,10 +95,10 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
     /// </summary>
     /// <param name="filePath">The path to the file to validate and hash</param>
     /// <returns>The SHA256 hash of the file</returns>
-    private static string ValidateAndGetHash(string filePath)
+    private static async Task<string> ValidateAndGetHash(string filePath)
     {
         Guard.IsTrue(File.Exists(filePath)); // Ensure file exists
-        var hash = ComputeSha256Hash(filePath); // Compute SHA256 hash of the file
+        var hash = await ComputeSha256Hash(filePath); // Compute SHA256 hash of the file
         Guard.IsNotNullOrWhiteSpace(hash); // Ensure hash is not null or whitespace
         return hash; // Return the computed hash
     }
@@ -144,14 +145,15 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
     /// </summary>
     /// <param name="filePath">The path to the file to hash</param>
     /// <returns>The SHA256 hash of the file as a hexadecimal string</returns>
-    private static string ComputeSha256Hash(string filePath)
+    private static async Task<string> ComputeSha256Hash(string filePath)
     {
         try
         {
             Guard.IsTrue(File.Exists(filePath)); // Ensure file exists
             using var sha256 = SHA256.Create(); // Create SHA256 hasher
-            using var stream = File.OpenRead(filePath); // Open file for reading
-            return BitConverter.ToString(sha256.ComputeHash(stream)).Replace("-", "")
+            await using var stream = File.OpenRead(filePath); // Open file for reading
+            var hash = await sha256.ComputeHashAsync(stream);
+            return BitConverter.ToString(hash).Replace("-", "")
                 .ToLowerInvariant(); // Compute and format hash
         }
         catch (Exception ex)

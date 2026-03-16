@@ -11,7 +11,7 @@ public interface IBackupService
     /// </summary>
     /// <param name="filePath">The path to the file to back up</param>
     /// <returns>True if the backup was created successfully, false otherwise</returns>
-    public bool Backup(string filePath);
+    public Task<bool> Backup(string filePath);
 
     /// <summary>
     ///     Restores a file from the specified backup item
