@@ -1,7 +1,7 @@
-﻿using Cysharp.Text;
+﻿using System.Buffers;
+using Cysharp.Text;
 using NReco.Text;
 using Serilog;
-using System.Buffers;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using ZLinq;
 
@@ -108,7 +108,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
         {
             var slice = occupied.AsSpan(hit.Begin, hit.Length); // Get slice of occupied array
             if (slice.Contains(true)) continue; // Skip hits that overlap
-            slice.Fill(true);// Mark characters as occupied
+            slice.Fill(true); // Mark characters as occupied
             validHits.Add(hit); // Add hit
         }
 
@@ -128,23 +128,28 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     {
         var currentPos = 0; // Initialize current position
         using var stringBuilder = ZString.CreateStringBuilder(); // Create string builder
-        foreach (var hit in hits) // Iterate through hits
+
+        foreach (var hit in hits)
         {
+            // Append text before match
             if (hit.Begin > currentPos)
-                stringBuilder.Append(text.AsSpan(currentPos, hit.Begin - currentPos)); // Append text before hit
-            var phrase = text.Substring(hit.Begin, hit.Length); // Extract matched phrase
-            var translation = entries[phrase]; // Get translation from entries
-            stringBuilder.Append("<mstrans:dictionary translation='"); // Append opening tag with translation attribute
-            stringBuilder.Append(EscapeXml(translation)); // Append translation
-            stringBuilder.Append("'>"); // Append closing tag
-            stringBuilder.Append(EscapeXml(phrase)); // Append original phrase
-            stringBuilder.Append("</mstrans:dictionary>"); // Append closing tag
-            currentPos = hit.End; // Move current position
+                stringBuilder.Append(text.AsSpan(currentPos, hit.Begin - currentPos));
+            
+            // Append match
+            var phraseSpan = text.AsSpan(hit.Begin, hit.Length);
+            var phrase = phraseSpan.ToString();
+            var translation = entries[phrase];
+            stringBuilder.AppendFormat("<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>",
+                EscapeXml(translation),
+                EscapeXml(phrase));
+
+            currentPos = hit.End; // Update current position
         }
 
-        if (currentPos < text.Length) stringBuilder.Append(text.AsSpan(currentPos)); // Append remaining text
+        if (currentPos < text.Length)
+            stringBuilder.Append(text.AsSpan(currentPos)); // Append text after last match
 
-        return stringBuilder.ToString(); // Return replaced text
+        return stringBuilder.ToString();
     }
 
     /// <summary>
