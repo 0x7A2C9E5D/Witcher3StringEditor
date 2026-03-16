@@ -134,7 +134,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             // Append text before match
             if (hit.Begin > currentPos)
                 stringBuilder.Append(text.AsSpan(currentPos, hit.Begin - currentPos));
-            
+
             // Append match
             var phraseSpan = text.AsSpan(hit.Begin, hit.Length);
             var phrase = phraseSpan.ToString();
@@ -159,7 +159,9 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     /// <returns></returns>
     private static string EscapeXml(string text)
     {
-        if (string.IsNullOrEmpty(text)) return text;
+        if (string.IsNullOrEmpty(text) || text.IndexOfAny(['&', '<', '>', '\'', '"']) < 0)
+            return text; // Return original text if there are no special characters
+
         return text
             .Replace("&", "&amp;")
             .Replace("<", "&lt;")
