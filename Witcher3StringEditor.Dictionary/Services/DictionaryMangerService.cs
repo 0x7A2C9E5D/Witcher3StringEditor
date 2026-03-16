@@ -27,8 +27,9 @@ public class DictionaryMangerService : IDictionaryMangerService
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider
-        if (!Path.Exists(PathHelper.DictionaryDirectory)) 
-            Directory.CreateDirectory(PathHelper.DictionaryDirectory); // Create dictionary directory if it doesn't exist
+        if (!Path.Exists(PathHelper.DictionaryDirectory))
+            Directory.CreateDirectory(PathHelper
+                .DictionaryDirectory); // Create dictionary directory if it doesn't exist
         LoadDictionariesFromDirectory(PathHelper.DictionaryDirectory); // Load dictionaries from directory
     }
 
@@ -53,7 +54,7 @@ public class DictionaryMangerService : IDictionaryMangerService
                 return null; // User canceled, return null
         }
 
-        var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
+        var dictionaryInfo = await dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
         var destFileName = Path.Combine(PathHelper.DictionaryDirectory, fileName); // Get destination file name
         File.Copy(filePath, destFileName, true); // Copy file
         var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
@@ -96,21 +97,23 @@ public class DictionaryMangerService : IDictionaryMangerService
     ///     Load dictionaries from directory
     /// </summary>
     /// <param name="path"></param>
-    private void LoadDictionariesFromDirectory(string path)
+    private Task LoadDictionariesFromDirectory(string path)
     {
         var dictionaryFiles = Directory.GetFiles(path)
             .Where(f => f.EndsWith(".txt")); // Get dictionary files
-        dictionaryFiles.ForEach(dictionaryFile =>
+        dictionaryFiles.ForEach(async void (dictionaryFile) =>
         {
             try
             {
-                var dictionaryInfo = dictionaryProvider.GetDictionaryInfo(dictionaryFile); // Get dictionary info
+                var dictionaryInfo = await dictionaryProvider.GetDictionaryInfo(dictionaryFile); // Get dictionary info
                 dictionaries.Add(dictionaryInfo); // Add to collection
             }
             catch (Exception e)
             {
-                Log.Error(e, "Failed to load dictionary file: {Path}", dictionaryFile); // Log error if failed to load dictionary file
+                Log.Error(e, "Failed to load dictionary file: {Path}",
+                    dictionaryFile); // Log error if failed to load dictionary file
             }
         });
+        return Task.CompletedTask;
     }
 }

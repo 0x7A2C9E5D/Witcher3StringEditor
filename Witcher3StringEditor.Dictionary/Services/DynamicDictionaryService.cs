@@ -25,12 +25,12 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     /// </summary>
     /// <param name="dictionary"></param>
     /// <returns></returns>
-    public bool Bind(DictionaryInfo dictionary)
+    public async Task<bool> Bind(DictionaryInfo dictionary)
     {
         try
         {
             CurrentDictionary = dictionary; // Set current dictionary
-            entries = provider.GetEntries(dictionary)
+            entries = (await provider.GetEntries(dictionary))
                 .Where(x => !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value))
                 .GroupBy(pair => pair.Key)
                 .Select(g => g.First())

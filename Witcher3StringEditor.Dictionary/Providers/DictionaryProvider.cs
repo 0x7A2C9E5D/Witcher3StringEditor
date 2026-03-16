@@ -33,9 +33,9 @@ public class DictionaryProvider : IDictionaryProvider
     /// <param name="filePath"></param>
     /// <returns></returns>
     /// <exception cref="InvalidDataException"></exception>
-    public DictionaryInfo GetDictionaryInfo(string filePath)
+    public async Task<DictionaryInfo> GetDictionaryInfo(string filePath)
     {
-        var lines = File.ReadAllLines(filePath); // Read all lines from the file
+        var lines = await File.ReadAllLinesAsync(filePath); // Read all lines from the file
 
         // Validate file is not empty
         if (lines.Length == 0)
@@ -64,9 +64,9 @@ public class DictionaryProvider : IDictionaryProvider
     /// <summary>
     ///     Gets dictionary entries from a file
     /// </summary>
-    public Dictionary<string, string> GetEntries(DictionaryInfo dictionary)
+    public async Task<Dictionary<string, string>> GetEntries(DictionaryInfo dictionary)
     {
-        var lines = File.ReadAllLines(dictionary.Path);
+        var lines = await File.ReadAllLinesAsync(dictionary.Path);
         return ParseEntries(lines);
     }
 

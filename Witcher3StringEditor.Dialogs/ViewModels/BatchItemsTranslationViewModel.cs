@@ -219,7 +219,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <summary>
     ///     Binds the selected dictionary to the dynamic dictionary service if supported and needed
     /// </summary>
-    private void BindDictionaryIfNeeded()
+    private async Task BindDictionaryIfNeeded()
     {
         if (SelectedDictionary == NoneDictionary) return; // No dictionary selected, skip binding
         var dynamicDictionaryService =
@@ -227,7 +227,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         if (dynamicDictionaryService.CurrentDictionary !=
             SelectedDictionary) // Check if the current dictionary is different from the selected one
             isDictionaryReady =
-                dynamicDictionaryService
+                await dynamicDictionaryService
                     .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
     }
 

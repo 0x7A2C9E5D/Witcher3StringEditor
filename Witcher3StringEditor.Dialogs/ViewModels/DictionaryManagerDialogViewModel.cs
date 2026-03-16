@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -83,7 +84,13 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     /// <param name="value"></param>
     partial void OnSelectedDictionaryChanged(DictionaryInfo? value)
     {
-        DictionaryTerms = value is null ? [] : DictionaryProvider.GetEntries(value);
+        _ = Task.Run(async () =>
+        {
+            var terms = value is null ? [] :
+                await DictionaryProvider.GetEntries(value);
+
+            await Application.Current.Dispatcher.InvokeAsync(() => { DictionaryTerms = terms; });
+        });
     }
 
     /// <summary>
@@ -105,14 +112,14 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
             {
-                var dictionaryInfo = 
+                var dictionaryInfo =
                     await DictionaryMangerService.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return; // No dictionary found
                 var matchingGroup = DictionaryGroups
                     .Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
                     .ToList(); // Find existing group
                 if (matchingGroup.Count != 0) // If group exists, remove existing entries
-                { 
+                {
                     var group = matchingGroup[0]; // Get group
                     var fileName = Path.GetFileName(dictionaryInfo.Path); // Get file name
                     var existingEntries = group.Dictionaries
@@ -122,7 +129,8 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 }
                 else
                 {
-                    var group = new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]); // Create new group
+                    var group = new DictionaryGroup(dictionaryInfo.TargetLanguage,
+                        [dictionaryInfo]); // Create new group
                     DictionaryGroups.Add(group); // Add new group
                 }
             }
