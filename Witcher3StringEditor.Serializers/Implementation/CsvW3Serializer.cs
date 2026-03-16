@@ -88,7 +88,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
     private async Task WriteFileWithBackup(string filePath, string content)
     {
         if (File.Exists(filePath)) // If file exists
-            Guard.IsTrue(backupService.Backup(filePath)); // Create backup
+            Guard.IsTrue(await backupService.Backup(filePath)); // Create backup
         await File.WriteAllTextAsync(filePath, content); // Write file
     }
 

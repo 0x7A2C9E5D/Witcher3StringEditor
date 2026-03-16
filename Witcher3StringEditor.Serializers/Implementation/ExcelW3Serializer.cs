@@ -56,13 +56,13 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
         try
         {
             // Run the serialization process on a background thread to prevent UI blocking
-            return await Task.Run(() =>
+            return await Task.Run(async () =>
             {
                 Guard.IsGreaterThan(w3StringItems.Count, 0); // Require items to serialize
                 var filePath = Path.Combine(context.OutputDirectory,
                     $"{Enum.GetName(context.TargetLanguage)!.ToLowerInvariant()}.xlsx"); // Build language-specific Excel path
                 if (File.Exists(filePath))
-                    Guard.IsTrue(backupService.Backup(filePath)); // Backup existing file if exists
+                    Guard.IsTrue(await backupService.Backup(filePath)); // Backup existing file if exists
                 GenerateExcelFile(filePath, w3StringItems); // Generate Excel file
                 return true; // Return success
             });

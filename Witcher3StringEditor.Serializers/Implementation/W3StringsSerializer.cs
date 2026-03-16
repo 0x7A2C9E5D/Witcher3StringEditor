@@ -99,7 +99,7 @@ public class W3StringsSerializer(
                 tempContext)); // Serialize the items to a temporary CSV file
             Guard.IsTrue(await StartSerializationProcess(tempContext,
                 tempCsvPath)); // Encode the temporary CSV file to W3Strings format
-            Guard.IsTrue(ReplaceFileWithBackup(tempW3StringsPath,
+            Guard.IsTrue(await ReplaceFileWithBackup(tempW3StringsPath,
                 outputW3StringsPath)); // Replace the destination file with backup if needed
             return true; // Return true to indicate successful serialization
         }
@@ -136,10 +136,10 @@ public class W3StringsSerializer(
     /// <param name="sourceFilePath">The path to the source file</param>
     /// <param name="destinationFilePath">The path to the destination file</param>
     /// <returns>True if the replacement was successful, false otherwise</returns>
-    private bool ReplaceFileWithBackup(string sourceFilePath, string destinationFilePath)
+    private async Task<bool> ReplaceFileWithBackup(string sourceFilePath, string destinationFilePath)
     {
         if (File.Exists(destinationFilePath) &&
-            !backupService.Backup(destinationFilePath)) // Backup existing file before overwrite
+            !await backupService.Backup(destinationFilePath)) // Backup existing file before overwrite
             return false; // Return false if backup creation failed
         File.Copy(sourceFilePath, destinationFilePath, true); // Copy with overwrite
         return true; // Return true to indicate successful replacement
