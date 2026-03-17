@@ -86,7 +86,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         ToLanguage =
             GetPreferredLanguage(
                 appSettings); // Get the preferred target language from application settings and set the ToLanguage property
-        UpdateDictionaryAvailability(); // Update the availability of the dictionary service based on the initial source and target languages
     }
 
     private protected DictionaryInfo NoneDictionary { get; } = new(
