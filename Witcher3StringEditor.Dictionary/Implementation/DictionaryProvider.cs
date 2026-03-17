@@ -164,7 +164,9 @@ public class DictionaryProvider : IDictionaryProvider
     /// </summary>
     private static Dictionary<string, string> ParseEntries(IEnumerable<string> lines)
     {
-        var entries = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var entries =
+            new ConcurrentDictionary<string, string>(StringComparer
+                .OrdinalIgnoreCase); // Use ConcurrentDictionary for parallel processing
 
         lines.AsParallel() // Process lines in parallel
             .Select(line => line.Trim()) // Trim lines
