@@ -36,8 +36,6 @@ public class DictionaryManager : IDictionaryManager
         LoadDictionariesFromDirectory(PathHelper.DictionaryDirectory); // Load dictionaries from directory
     }
 
-    public DictionaryInfo? CurrentDictionary { get; set; } // Current dictionary
-
     /// <summary>
     ///     Import dictionary
     /// </summary>
