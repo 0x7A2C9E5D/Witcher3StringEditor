@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using MoreLinq.Extensions;
 using Serilog;
 using Witcher3StringEditor.Dialogs.Models;
 using Witcher3StringEditor.Dictionary;
