@@ -110,23 +110,9 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             {
                 // Try to import the dictionary
                 var dictionaryInfo =
-                    await dictionaryManager.Import(storageFile.LocalPath); 
-                if (dictionaryInfo == null) return;
-
-                // Regroup dictionaries by target language
-                DictionaryGroups.Clear();
-                dictionaryManager.Find(null).GroupBy(x => x.TargetLanguage).ForEach(g =>
-                {
-                    var group = new DictionaryGroup(g.Key, [.. g.Select(x => x)]);
-                    DictionaryGroups.Add(group);
-                });
-                
-               // Check if the selected dictionary is still valid after rebuild, clear selection and terms if removed
-                if (!DictionaryGroups.SelectMany(g => g.Dictionaries).Contains(SelectedDictionary))
-                {
-                    SelectedDictionary = null;
-                    DictionaryTerms = [];
-                }
+                    await dictionaryManager.Import(storageFile.LocalPath);
+                if (dictionaryInfo != null)
+                    RebuildDictionaryGroups();
             }
         }
         catch (Exception e)
@@ -135,6 +121,25 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 MessageTokens.ImportDictionaryFailed);
             Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
         }
+    }
+
+
+    private void RebuildDictionaryGroups()
+    {
+        // Regroup dictionaries by target language
+        DictionaryGroups.Clear();
+        dictionaryManager.Find(null).GroupBy(x => x.TargetLanguage)
+            .ForEach(g =>
+            {
+                var group = new DictionaryGroup(g.Key, [.. g.Select(x => x)]);
+                DictionaryGroups.Add(group);
+            });
+
+        // Check if the selected dictionary is still valid after rebuild, clear selection and terms if removed
+        if (DictionaryGroups.SelectMany(g => g.Dictionaries)
+            .Contains(SelectedDictionary)) return;
+        SelectedDictionary = null;
+        DictionaryTerms = [];
     }
 
     /// <summary>
@@ -149,15 +154,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 MessageTokens.RemoveDictionaryConfirm))
         {
             dictionaryManager.Remove(dictionary);
-            var found = DictionaryGroups
-                .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
-            if (found is null) return;
-            if (found.Dictionaries.Count == 1)
-                DictionaryGroups.Remove(found);
-            else
-                found.Dictionaries.Remove(dictionary);
-            SelectedDictionary = null;
-            DictionaryTerms = [];
+            RebuildDictionaryGroups();
         }
     }
 }
