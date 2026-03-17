@@ -108,7 +108,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <returns>A ValueTask representing the asynchronous dispose operation</returns>
     public abstract ValueTask DisposeAsync();
 
-
     /// <summary>
     ///     Checks if the current language is supported by the dictionary service
     /// </summary>
