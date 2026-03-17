@@ -35,14 +35,18 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     {
         try
         {
-            CurrentDictionary = dictionary; // Set current dictionary
-            entries = (await provider.GetEntries(dictionary))
-                .AsValueEnumerable()
+            var rawEntries 
+                = await provider.GetEntries(dictionary);
+            entries = (rawEntries)
+                .AsParallel()
                 .Where(x => !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value))
-                .GroupBy(pair => pair.Key)
-                .Select(g => g.First())
-                .ToDictionary(); // Get entries and filter out empty keys and values, then remove duplicates and convert to dictionary
-            await Task.Run(() => matcher.Build(entries.ToDictionary(kvp => kvp.Key, _ => 0))); // Build term cache
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value,
+                    StringComparer.OrdinalIgnoreCase
+                );
+            var terms = entries.ToDictionary(kvp => kvp.Key, _ => 0);
+            await Task.Run(() => matcher.Build(terms)); // Build term cache
             IsReady = true; // Set ready
             return true; // Return success
         }

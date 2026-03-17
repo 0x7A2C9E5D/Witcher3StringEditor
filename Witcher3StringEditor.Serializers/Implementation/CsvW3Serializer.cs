@@ -26,7 +26,8 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
     {
         try
         {
-            return await File.ReadLinesAsync(filePath) // Read lines from file
+            var lines = await File.ReadAllLinesAsync(filePath);
+            return lines.AsParallel()
                 .Where(line =>
                     !string.IsNullOrWhiteSpace(line) && !line.StartsWith(';')) // Filter out empty lines and comments
                 .Select(line => new { line, parts = line.Split('|') }) // Split each line into parts
@@ -38,7 +39,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
                     KeyName = x.parts[2].Trim(), // Extract key name
                     Text = x.parts[3].Trim() // Extract text
                 }) // Convert each line to a W3StringStringItem
-                .ToListAsync();
+                .ToList();
         }
         catch (Exception ex)
         {

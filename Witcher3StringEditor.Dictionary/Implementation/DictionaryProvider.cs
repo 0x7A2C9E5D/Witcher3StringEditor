@@ -162,27 +162,19 @@ public class DictionaryProvider : IDictionaryProvider
     /// </summary>
     private static Dictionary<string, string> ParseEntries(IEnumerable<string> lines)
     {
-        var entries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var line in lines)
-        {
-            var trimmedLine = line.Trim();
-
-            if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith(CommentPrefix))
-                continue; // Skip comments and empty lines
-
-            var parts = trimmedLine.Split(Separator, 2); // Split into key and value, only on the first separator
-            if (parts.Length != 2)
-                continue; // Skip lines that don't have exactly 2 parts (invalid format)
-
-            var key = parts[0].Trim(); // Extract and trim key
-            var value = parts[1].Trim(); // Extract and trim value
-
-            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
-                entries[key] = value; // Only add valid entries with non-empty keys and values
-        }
-
-        return entries; // Return parsed entries
+        return lines
+            .AsParallel()
+            .Select(line => line.Trim())
+            .Where(trimmedLine => !string.IsNullOrEmpty(trimmedLine) && !trimmedLine.StartsWith(CommentPrefix))
+            .Select(trimmedLine => trimmedLine.Split(Separator, 2))
+            .Where(parts => parts.Length == 2)
+            .Select(parts => new { Key = parts[0].Trim(), Value = parts[1].Trim() })
+            .Where(x => !string.IsNullOrEmpty(x.Key) && !string.IsNullOrEmpty(x.Value))
+            .ToDictionary(
+                x => x.Key,
+                x => x.Value,
+                StringComparer.OrdinalIgnoreCase
+            );
     }
 
     /// <summary>
