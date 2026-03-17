@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Text;
+﻿using System.Text;
 using NReco.Text;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
@@ -102,8 +101,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FilterValidHits(
         IReadOnlyList<AhoCorasickDoubleArrayTrie<int>.Hit> hits, int textLength)
     {
-        var occupied = ArrayPool<bool>.Shared.Rent(textLength); // Rent array from pool
-        occupied.AsSpan().Clear(); // Initialize array to false
+        var occupied = new bool[textLength]; // Rent array from pool
 
         var validHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store valid hits
         foreach (var hit in hits) // Iterate through hits
@@ -114,7 +112,6 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             validHits.Add(hit); // Add hit
         }
 
-        ArrayPool<bool>.Shared.Return(occupied); // Return array to pool
         return validHits; // Return valid hits
     }
 
