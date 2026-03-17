@@ -3,7 +3,6 @@ using Cysharp.Text;
 using NReco.Text;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
-using ZLinq;
 
 namespace Witcher3StringEditor.Dictionary.Implementation;
 
@@ -89,7 +88,6 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
         matcher.ParseText(text, hit => { allHits.Add(hit); }); // Find all hits
 
         return allHits
-            .AsValueEnumerable()
             .OrderBy(x => x.Begin)
             .ThenByDescending(x => x.Length)
             .ToList(); // Sort hits
