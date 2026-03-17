@@ -108,11 +108,10 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
             {
-                // Try to import the dictionary
+                // Try to import the dictionary, if successful, regroup dictionaries to reflect changes
                 var dictionaryInfo =
-                    await dictionaryManager.Import(storageFile.LocalPath);
-                if (dictionaryInfo != null)
-                    RebuildDictionaryGroups();
+                    await dictionaryManager.Import(storageFile.LocalPath); 
+                if (dictionaryInfo != null) ReGroupDictionaries();
             }
         }
         catch (Exception e)
@@ -122,9 +121,11 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
         }
     }
-
-
-    private void RebuildDictionaryGroups()
+    
+    /// <summary>
+    ///     Regroups all dictionaries by target language.
+    /// </summary>
+    private void ReGroupDictionaries()
     {
         // Regroup dictionaries by target language
         DictionaryGroups.Clear();
@@ -149,12 +150,12 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     [RelayCommand]
     private async Task RemoveDictionary(DictionaryInfo? dictionary)
     {
-        if (dictionary is null) return;
+        if (dictionary is null) return; // If no dictionary is selected, do nothing
         if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.RemoveDictionaryConfirm))
+                MessageTokens.RemoveDictionaryConfirm)) // Ask for confirmation before removing the dictionary
         {
-            dictionaryManager.Remove(dictionary);
-            RebuildDictionaryGroups();
+            dictionaryManager.Remove(dictionary); // Remove the dictionary
+            ReGroupDictionaries(); // Rebuild groups to reflect changes and check if selected dictionary is still valid
         }
     }
 }
