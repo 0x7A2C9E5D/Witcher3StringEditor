@@ -76,7 +76,7 @@ public class DictionaryProvider : IDictionaryProvider
     /// </summary>
     private static (string name, string sourceLang, string targetLang) ParseHeader(string headerLine)
     {
-        if (!headerLine.StartsWith(CommentPrefix,StringComparison.InvariantCulture))
+        if (!headerLine.StartsWith(CommentPrefix, StringComparison.InvariantCulture))
             throw new InvalidDataException(
                 $"Missing header (must start with '{CommentPrefix}'"); // Validate header starts with comment prefix
 
@@ -138,7 +138,8 @@ public class DictionaryProvider : IDictionaryProvider
             if (string.IsNullOrEmpty(trimmedLine))
                 continue; // Skip empty lines
 
-            if (trimmedLine.StartsWith(CommentPrefix, StringComparison.InvariantCulture)) // Process comments for note extraction
+            if (trimmedLine.StartsWith(CommentPrefix,
+                    StringComparison.InvariantCulture)) // Process comments for note extraction
             {
                 if (note is not null) continue; // Note already found, skip further comments
                 var commentContent = trimmedLine[1..].Trim(); // Remove comment prefix and trim
@@ -165,7 +166,8 @@ public class DictionaryProvider : IDictionaryProvider
         return lines
             .AsParallel()
             .Select(line => line.Trim())
-            .Where(trimmedLine => !string.IsNullOrEmpty(trimmedLine) && !trimmedLine.StartsWith(CommentPrefix, StringComparison.InvariantCulture))
+            .Where(trimmedLine => !string.IsNullOrEmpty(trimmedLine) &&
+                                  !trimmedLine.StartsWith(CommentPrefix, StringComparison.InvariantCulture))
             .Select(trimmedLine => trimmedLine.Split(Separator, 2))
             .Where(parts => parts.Length == 2)
             .Select(parts => new { Key = parts[0].Trim(), Value = parts[1].Trim() })
@@ -182,7 +184,7 @@ public class DictionaryProvider : IDictionaryProvider
     /// </summary>
     private static bool IsValidEntry(string line)
     {
-        if (line.StartsWith(CommentPrefix,StringComparison.InvariantCulture))
+        if (line.StartsWith(CommentPrefix, StringComparison.InvariantCulture))
             return false; // Comments are not valid entries
 
         var parts = line.Split(Separator, 2); // Split into key and value, only on the first separator 

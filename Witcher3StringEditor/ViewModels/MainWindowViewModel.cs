@@ -38,11 +38,11 @@ internal partial class MainWindowViewModel : ObservableObject
     private readonly IAppSettings appSettings; // Get application settings service
     private readonly IBackupService backupService; // Get backup service
     private readonly IDialogService dialogService; // Get dialog service
+    private readonly IDictionaryManager dictionaryManager; // Get dictionary manager
+    private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
-    private readonly IDictionaryManager dictionaryManager; // Get dictionary manager
-    private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider
 
     /// <summary>
     ///     Gets or sets the data from dropped files

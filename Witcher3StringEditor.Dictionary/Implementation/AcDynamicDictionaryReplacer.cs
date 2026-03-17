@@ -34,7 +34,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     {
         try
         {
-            var rawEntries 
+            var rawEntries
                 = await provider.GetEntries(dictionary);
             entries = rawEntries
                 .AsParallel()
