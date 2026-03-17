@@ -1,5 +1,5 @@
 ﻿using System.Buffers;
-using Cysharp.Text;
+using System.Text;
 using NReco.Text;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
@@ -129,7 +129,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
         Dictionary<string, string> entries)
     {
         var currentPos = 0; // Initialize current position
-        using var stringBuilder = ZString.CreateStringBuilder(); // Create string builder
+        var stringBuilder = new StringBuilder();
 
         foreach (var hit in hits)
         {
@@ -141,9 +141,8 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             var phraseSpan = text.AsSpan(hit.Begin, hit.Length);
             var phrase = phraseSpan.ToString();
             var translation = entries[phrase];
-            stringBuilder.AppendFormat("<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>",
-                EscapeXml(translation),
-                EscapeXml(phrase));
+            stringBuilder.Append(
+                $"<mstrans:dictionary translation='{EscapeXml(translation)}'>{EscapeXml(phrase)}</mstrans:dictionary>");
 
             currentPos = hit.End; // Update current position
         }
