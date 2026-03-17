@@ -214,23 +214,42 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     }
 
     /// <summary>
-    ///     Loads dictionaries for the current language
+    ///     Loads dictionaries for the current target language.
     /// </summary>
     private void LoadDictionariesForCurrentLanguage()
     {
-        if (Dictionaries.Count >= 1) Dictionaries.Clear(); // Clear existing dictionaries from the collection
-        Dictionaries.Add(NoneDictionary); // Always add the "None" option to the dictionary collection
-        SelectedDictionary = NoneDictionary; // Set the default selected dictionary to "None"
-        var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391); // Get the target language culture info
+        InitializeDictionaryCollection(); // Initialize the dictionary collection
+        var targetLanguage =
+            CultureInfo.GetCultureInfo(ToLanguage.ISO6391); // Get the culture info for the target language
         var matchingDictionaries =
-            DictionaryService!.Find(targetLanguage)
-                .ToArray(); // Find matching dictionaries for the target language1
-        if (matchingDictionaries.Length > 0) // Check if any matching dictionaries were found
-            matchingDictionaries.ForEach(x => Dictionaries.Add(x)); // Add matching dictionaries to the collection
+            DictionaryService!.Find(targetLanguage).ToArray(); // Find matching dictionaries for the target language
+        AddMatchingDictionaries(matchingDictionaries); // Add matching dictionaries to the collection
+
         Log.Information(
             "Dictionary availability has been updated. Is supported: {IsSupported}. Found {Count} matching dictionaries for target language: {Language}.",
             IsDictionarySupported, matchingDictionaries.Length,
-            ToLanguage.Name); // Log the update of dictionary availability
+            ToLanguage.Name); // Log the updated dictionary availability
+    }
+
+    /// <summary>
+    ///     Initializes the dictionary collection with default values.
+    /// </summary>
+    private void InitializeDictionaryCollection()
+    {
+        if (Dictionaries.Count >= 1)
+            Dictionaries.Clear(); // Clear the dictionary collection if it already contains items
+        Dictionaries.Add(NoneDictionary); // Add the "None" dictionary to the collection
+        SelectedDictionary = NoneDictionary; // Set the selected dictionary to "None"
+    }
+
+    /// <summary>
+    ///     Adds matching dictionaries to the collection.
+    /// </summary>
+    /// <param name="matchingDictionaries">The dictionaries to add.</param>
+    private void AddMatchingDictionaries(DictionaryInfo[] matchingDictionaries)
+    {
+        if (matchingDictionaries.Length > 0)
+            matchingDictionaries.ForEach(x => Dictionaries.Add(x));
     }
 
     /// <summary>
