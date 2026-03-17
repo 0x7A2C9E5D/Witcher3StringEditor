@@ -132,11 +132,11 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         dictionaryManager.Find(null).GroupBy(x => x.TargetLanguage)
             .ForEach(g =>
             {
-                var group = new DictionaryGroup(g.Key, [.. g.Select(x => x)]);
+                var group = new DictionaryGroup(g.Key, [..g]);
                 DictionaryGroups.Add(group);
             });
 
-        // Check if the selected dictionary is still valid after rebuild, clear selection and terms if removed
+        // Validate selected dictionary and clear if removed
         if (DictionaryGroups.SelectMany(g => g.Dictionaries)
             .Contains(SelectedDictionary)) return;
         SelectedDictionary = null;
