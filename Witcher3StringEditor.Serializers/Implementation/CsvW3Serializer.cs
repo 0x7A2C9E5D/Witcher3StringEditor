@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using CommunityToolkit.Diagnostics;
+﻿using CommunityToolkit.Diagnostics;
 using Cysharp.Text;
 using Serilog;
 using Witcher3StringEditor.Contracts;
@@ -27,27 +26,19 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
     {
         try
         {
-            var w3StringItems = new ConcurrentBag<IW3StringItem>();
-            var lines = await File.ReadAllLinesAsync(filePath);
-            await Parallel.ForEachAsync(lines, (line, _) =>
-            {
-                if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';'))
-                    return ValueTask.CompletedTask;
-                var parts = line.Split('|');
-                if (parts.Length != 4) return ValueTask.CompletedTask;
-
-                w3StringItems.Add(new W3StringStringItem
+            return await File.ReadLinesAsync(filePath) // Read lines from file
+                .Where(line =>
+                    !string.IsNullOrWhiteSpace(line) && !line.StartsWith(';')) // Filter out empty lines and comments
+                .Select(line => new { line, parts = line.Split('|') }) // Split each line into parts
+                .Where(x => x.parts.Length == 4) // Filter out lines with incorrect number of parts
+                .Select(IW3StringItem (x) => new W3StringStringItem
                 {
-                    StrId = parts[0].Trim(),
-                    KeyHex = parts[1].Trim(),
-                    KeyName = parts[2].Trim(),
-                    Text = parts[3].Trim()
-                });
-
-                return ValueTask.CompletedTask;
-            });
-
-            return w3StringItems.ToList();
+                    StrId = x.parts[0].Trim(), // Extract string ID
+                    KeyHex = x.parts[1].Trim(), // Extract key hex
+                    KeyName = x.parts[2].Trim(), // Extract key name
+                    Text = x.parts[3].Trim() // Extract text
+                }) // Convert each line to a W3StringStringItem
+                .ToListAsync();
         }
         catch (Exception ex)
         {
