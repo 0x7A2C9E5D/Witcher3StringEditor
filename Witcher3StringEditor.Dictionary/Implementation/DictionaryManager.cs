@@ -43,25 +43,10 @@ public class DictionaryManager : IDictionaryManager
     /// <returns></returns>
     public async Task<DictionaryInfo?> Import(string filePath)
     {
-        var fileName = Path.GetFileName(filePath); // Get file name
-        var found = dictionaries
-            .Where(x => Path.GetFileName(x.Path) == fileName).ToList(); // Find dictionaries with the same file name
-        if (found.Count != 0) // If found, ask user if they want to overwrite
-        {
-            if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                    MessageTokens.DictionaryOverwriteConfirm)) // Ask user if they want to overwrite
-                found.ForEach(x => dictionaries.Remove(x)); // Remove found dictionaries
-            else
-                return null; // User canceled, return null
-        }
+        if (!await HandleDuplicateDictionary(filePath))
+            return null;
 
-        var dictionaryInfo = await dictionaryProvider.GetDictionaryInfo(filePath); // Get dictionary info
-        var destFileName = Path.Combine(PathHelper.DictionaryDirectory, fileName); // Get destination file name
-        File.Copy(filePath, destFileName, true); // Copy file
-        var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
-        dictionaries.Add(newDictionaryInfo); // Add to collection
-        Log.Information("Imported dictionary: {Path}", destFileName);
-        return newDictionaryInfo; // Return new dictionary info
+        return await CopyAndRegisterDictionary(filePath);
     }
 
     /// <summary>
@@ -93,6 +78,47 @@ public class DictionaryManager : IDictionaryManager
 
         // Return dictionaries with matched target languages
         return dictionaries.Where(d => matchedLanguages.Contains(d.TargetLanguage));
+    }
+
+    /// <summary>
+    ///     Handle duplicate dictionary
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    private async Task<bool> HandleDuplicateDictionary(string filePath)
+    {
+        // Check for duplicate
+        var fileName = Path.GetFileName(filePath);
+        var found = 
+            dictionaries.Where(x => Path.GetFileName(x.Path) == fileName).ToList();
+        if (found.Count == 0) return true;
+        
+        // Ask for overwrite
+        if (!await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                MessageTokens.DictionaryOverwriteConfirm)) return false;
+        found.ForEach(x => dictionaries.Remove(x));
+        return true;
+    }
+
+    /// <summary>
+    ///     Copies the dictionary file and registers it in the collection.
+    /// </summary>
+    /// <param name="filePath">The source file path.</param>
+    /// <returns>The newly imported dictionary info.</returns>
+    private async Task<DictionaryInfo> CopyAndRegisterDictionary(string filePath)
+    {
+        // Copy the dictionary file
+        var fileName = Path.GetFileName(filePath);
+        var dictionaryInfo = await dictionaryProvider.GetDictionaryInfo(filePath);
+        var destFileName = Path.Combine(PathHelper.DictionaryDirectory, fileName);
+        File.Copy(filePath, destFileName, true);
+        
+        // Register the dictionary
+        var newDictionaryInfo = dictionaryInfo with { Path = destFileName };
+        dictionaries.Add(newDictionaryInfo);
+        
+        Log.Information("Imported dictionary: {Path}", destFileName);
+        return newDictionaryInfo;
     }
 
     /// <summary>
