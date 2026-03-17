@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using NReco.Text;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
@@ -35,7 +36,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
         {
             var rawEntries 
                 = await provider.GetEntries(dictionary);
-            entries = (rawEntries)
+            entries = rawEntries
                 .AsParallel()
                 .Where(x => !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value))
                 .ToDictionary(
@@ -138,7 +139,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             var phraseSpan = text.AsSpan(hit.Begin, hit.Length);
             var phrase = phraseSpan.ToString();
             var translation = entries[phrase];
-            stringBuilder.Append(
+            stringBuilder.Append(CultureInfo.InvariantCulture,
                 $"<mstrans:dictionary translation='{EscapeXml(translation)}'>{EscapeXml(phrase)}</mstrans:dictionary>");
 
             currentPos = hit.End; // Update current position

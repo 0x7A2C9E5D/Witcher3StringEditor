@@ -20,7 +20,7 @@ public class FrameworkElementDropFileBehavior : Behavior<FrameworkElement>
     /// <summary>
     ///     Gets or sets the array of dropped file paths
     /// </summary>
-    public string[] Data
+    public string[]? Data
     {
         get => (string[])GetValue(DataProperty);
         set => SetValue(DataProperty, value);
@@ -68,6 +68,6 @@ public class FrameworkElementDropFileBehavior : Behavior<FrameworkElement>
     /// <param name="e">Drag event arguments</param>
     private void AssociatedObject_Drop(object sender, DragEventArgs e)
     {
-        Data = (string[])e.Data.GetData(DataFormats.FileDrop);
+        Data = (string[]?)e.Data.GetData(DataFormats.FileDrop);
     }
 }

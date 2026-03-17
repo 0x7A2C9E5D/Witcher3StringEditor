@@ -104,7 +104,7 @@ public class DictionaryManager : IDictionaryManager
     private void LoadDictionariesFromDirectory(string path)
     {
         var dictionaryFiles = Directory.GetFiles(path)
-            .Where(f => f.EndsWith(".txt")).ToArray(); // Get dictionary files
+            .Where(f => f.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)).ToArray(); // Get dictionary files
         dictionaryFiles.ForEach(async void (dictionaryFile) =>
         {
             try
