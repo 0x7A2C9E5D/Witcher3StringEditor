@@ -206,19 +206,18 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private void UpdateDictionaryAvailability()
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (ToLanguage == null) return; // If target language is null, exit early
-        IsDictionarySupported =
+        if (ToLanguage == null || DictionaryService == null) return; // If target language is null, exit early
+        IsDictionarySupported = 
             CanUseDictionary(); // Check if dictionary can be used based on current translator and source language
-        if (DictionaryService == null) return; // If dictionary service is not available, exit early
+        if (!IsDictionarySupported) return; // If dictionary is not supported, exit early
         if (Dictionaries.Count >= 1) Dictionaries.Clear(); // Clear existing dictionaries from the collection
         Dictionaries.Add(NoneDictionary); // Always add the "None" option to the dictionary collection
         SelectedDictionary = NoneDictionary; // Set the default selected dictionary to "None"
-        if (!IsDictionarySupported) return; // If dictionary is not supported, exit early
         var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391); // Get the target language culture info
         var matchingDictionaries =
             DictionaryService.Find(targetLanguage)
                 .ToArray(); // Find matching dictionaries for the target language1
-        if (matchingDictionaries.Length != 0) // Check if any matching dictionaries were found
+        if (matchingDictionaries.Length > 0) // Check if any matching dictionaries were found
             matchingDictionaries.ForEach(x => Dictionaries.Add(x)); // Add matching dictionaries to the collection
         Log.Information(
             "Dictionary availability has been updated. Is supported: {IsSupported}. Found {Count} matching dictionaries for target language: {Language}.",
