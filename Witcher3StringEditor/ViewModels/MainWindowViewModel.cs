@@ -170,7 +170,8 @@ internal partial class MainWindowViewModel : ObservableObject
         // Handle item removals from the collection
         if (e is not { Action: NotifyCollectionChangedAction.Remove, OldItems: not null }) return;
         // Remove deleted items from the filtered results by matching TrackingId
-        e.OldItems.OfType<W3StringItemModel>().ForEach(x => FilteredW3StringItems.Remove(x));
+        e.OldItems.OfType<W3StringItemModel>()
+            .ForEach(x => FilteredW3StringItems.Remove(x));
         // Log the number of items removed
         Log.Information("Removed {Count} items from filtered results", e.OldItems.Count);
     }

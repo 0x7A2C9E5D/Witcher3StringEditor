@@ -58,11 +58,11 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         this.dictionaryManager = dictionaryManager;
         this.dictionaryProvider = dictionaryProvider;
         var found = dictionaryManager.Find(null);
-        found.GroupBy(x => x.TargetLanguage).ForEach(g =>
+        var groups = found.GroupBy(x => x.TargetLanguage);
+        foreach(var group in groups)
         {
-            var group = new DictionaryGroup(g.Key, g.Select(x => x).ToList());
-            DictionaryGroups.Add(group);
-        });
+            DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
+        }
     }
 
     /// <summary>
@@ -133,8 +133,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 .GroupBy(x => x.TargetLanguage);
         foreach (var group in groups)
         {
-            var g = new DictionaryGroup(group.Key, [..group]);
-            DictionaryGroups.Add(g);
+            DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
         }
 
         // Validate selected dictionary and clear if removed
