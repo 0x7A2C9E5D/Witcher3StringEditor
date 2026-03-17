@@ -207,15 +207,23 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (ToLanguage == null || DictionaryService == null) return; // If target language is null, exit early
-        IsDictionarySupported = 
+        IsDictionarySupported =
             CanUseDictionary(); // Check if dictionary can be used based on current translator and source language
         if (!IsDictionarySupported) return; // If dictionary is not supported, exit early
+        LoadDictionariesForCurrentLanguage(); // Load dictionaries for the current language
+    }
+
+    /// <summary>
+    ///     Loads dictionaries for the current language
+    /// </summary>
+    private void LoadDictionariesForCurrentLanguage()
+    {
         if (Dictionaries.Count >= 1) Dictionaries.Clear(); // Clear existing dictionaries from the collection
         Dictionaries.Add(NoneDictionary); // Always add the "None" option to the dictionary collection
         SelectedDictionary = NoneDictionary; // Set the default selected dictionary to "None"
         var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391); // Get the target language culture info
         var matchingDictionaries =
-            DictionaryService.Find(targetLanguage)
+            DictionaryService!.Find(targetLanguage)
                 .ToArray(); // Find matching dictionaries for the target language1
         if (matchingDictionaries.Length > 0) // Check if any matching dictionaries were found
             matchingDictionaries.ForEach(x => Dictionaries.Add(x)); // Add matching dictionaries to the collection
