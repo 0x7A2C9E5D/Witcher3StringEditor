@@ -14,7 +14,6 @@ using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
-using ZLinq;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -113,7 +112,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                     await dictionaryManager.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return; // No dictionary found
                 var matchingGroup = DictionaryGroups
-                    .AsValueEnumerable()
                     .Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
                     .ToList(); // Find existing group
                 if (matchingGroup.Count != 0) // If group exists, remove existing entries
@@ -121,7 +119,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                     var group = matchingGroup[0]; // Get group
                     var fileName = Path.GetFileName(dictionaryInfo.Path); // Get file name
                     var existingEntries = group.Dictionaries
-                        .AsValueEnumerable()
                         .Where(x => Path.GetFileName(x.Path) == fileName).ToArray(); // Find existing entries
                     existingEntries.ForEach(x => group.Dictionaries.Remove(x)); // Remove existing entries
                     matchingGroup[0].Dictionaries.Add(dictionaryInfo); // Add new entry
@@ -155,7 +152,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         {
             dictionaryManager.Remove(dictionary);
             var found = DictionaryGroups
-                .AsValueEnumerable()
                 .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
             if (found is null) return;
             if (found.Dictionaries.Count == 1)
