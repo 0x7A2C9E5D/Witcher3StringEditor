@@ -102,7 +102,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FilterValidHits(
         IReadOnlyList<AhoCorasickDoubleArrayTrie<int>.Hit> hits, int textLength)
     {
-        var occupied = new bool[textLength]; // Rent array from pool
+        var occupied = new bool[textLength]; // Create boolean array to mark occupied characters
 
         var validHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store valid hits
         foreach (var hit in hits) // Iterate through hits
