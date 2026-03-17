@@ -129,12 +129,13 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     {
         // Regroup dictionaries by target language
         DictionaryGroups.Clear();
-        dictionaryManager.Find(null).GroupBy(x => x.TargetLanguage)
-            .ForEach(g =>
-            {
-                var group = new DictionaryGroup(g.Key, [..g]);
-                DictionaryGroups.Add(group);
-            });
+        var groups  = dictionaryManager.Find(null)
+                .GroupBy(x => x.TargetLanguage);
+        foreach (var group in groups)
+        {
+            var g = new DictionaryGroup(group.Key, [..group]);
+            DictionaryGroups.Add(g);
+        }
 
         // Validate selected dictionary and clear if removed
         if (DictionaryGroups.SelectMany(g => g.Dictionaries)
