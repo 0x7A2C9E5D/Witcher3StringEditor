@@ -108,26 +108,24 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
             {
+                // Try to import the dictionary
                 var dictionaryInfo =
-                    await dictionaryManager.Import(storageFile.LocalPath);
-                if (dictionaryInfo == null) return; // No dictionary found
-                var matchingGroup = DictionaryGroups
-                    .Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
-                    .ToList(); // Find existing group
-                if (matchingGroup.Count != 0) // If group exists, remove existing entries
+                    await dictionaryManager.Import(storageFile.LocalPath); 
+                if (dictionaryInfo == null) return;
+
+                // Regroup dictionaries by target language
+                DictionaryGroups.Clear();
+                dictionaryManager.Find(null).GroupBy(x => x.TargetLanguage).ForEach(g =>
                 {
-                    var group = matchingGroup[0]; // Get group
-                    var fileName = Path.GetFileName(dictionaryInfo.Path); // Get file name
-                    var existingEntries = group.Dictionaries
-                        .Where(x => Path.GetFileName(x.Path) == fileName).ToArray(); // Find existing entries
-                    existingEntries.ForEach(x => group.Dictionaries.Remove(x)); // Remove existing entries
-                    matchingGroup[0].Dictionaries.Add(dictionaryInfo); // Add new entry
-                }
-                else
+                    var group = new DictionaryGroup(g.Key, [.. g.Select(x => x)]);
+                    DictionaryGroups.Add(group);
+                });
+                
+               // Check if the selected dictionary is still valid after rebuild, clear selection and terms if removed
+                if (!DictionaryGroups.SelectMany(g => g.Dictionaries).Contains(SelectedDictionary))
                 {
-                    var group = new DictionaryGroup(dictionaryInfo.TargetLanguage,
-                        [dictionaryInfo]); // Create new group
-                    DictionaryGroups.Add(group); // Add new group
+                    SelectedDictionary = null;
+                    DictionaryTerms = [];
                 }
             }
         }
