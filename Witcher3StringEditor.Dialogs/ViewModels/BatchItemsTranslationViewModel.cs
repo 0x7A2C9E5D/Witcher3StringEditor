@@ -5,7 +5,7 @@ using GTranslate;
 using GTranslate.Translators;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
-using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Dictionary.Abstractions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -221,14 +221,14 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// </summary>
     private async Task BindDictionaryIfNeeded()
     {
-        if (SelectedDictionary == NoneDictionary) return; // No dictionary selected, skip binding
-        var dynamicDictionaryService =
-            DictionaryService!.DynamicDictionaryService; // Get the dynamic dictionary service
-        if (dynamicDictionaryService.CurrentDictionary !=
+        if (SelectedDictionary == null || SelectedDictionary == NoneDictionary)
+            return; // No dictionary selected, skip binding
+        if (DictionaryService!.CurrentDictionary !=
             SelectedDictionary) // Check if the current dictionary is different from the selected one
             isDictionaryReady =
-                await dynamicDictionaryService
+                await DictionaryService
                     .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
+        Log.Information("The dictionary is ready: {0}.", isDictionaryReady);
     }
 
     /// <summary>
@@ -243,7 +243,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         try
         {
             var textToTranslated = isDictionaryReady
-                ? DictionaryService!.DynamicDictionaryService.Replace(item.Text)
+                ? DictionaryService!.Replace(item.Text)
                 : item.Text; // Replace with dictionary if needed
             var translation =
                 await TranslateItem(Translator, textToTranslated, toLanguage, fromLanguage); // Perform translation

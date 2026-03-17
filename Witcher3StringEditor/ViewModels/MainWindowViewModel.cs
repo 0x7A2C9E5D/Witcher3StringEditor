@@ -18,13 +18,14 @@ using Serilog;
 using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
-using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Helpers;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Services;
+using ZLinq;
 
 namespace Witcher3StringEditor.ViewModels;
 
@@ -38,6 +39,8 @@ internal partial class MainWindowViewModel : ObservableObject
     private readonly IAppSettings appSettings; // Get application settings service
     private readonly IBackupService backupService; // Get backup service
     private readonly IDialogService dialogService; // Get dialog service
+    private readonly IDictionaryManager dictionaryManager; // Get dictionary manager service
+    private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
@@ -103,6 +106,9 @@ internal partial class MainWindowViewModel : ObservableObject
         backupService = serviceProvider.GetRequiredService<IBackupService>(); // Get backup service
         dialogService = serviceProvider.GetRequiredService<IDialogService>(); // Get dialog service
         w3Serializer = serviceProvider.GetRequiredService<IW3Serializer>(); // Get serializer
+        dictionaryManager = serviceProvider.GetRequiredService<IDictionaryManager>(); // Get dictionary manager service
+        dictionaryProvider =
+            serviceProvider.GetRequiredService<IDictionaryProvider>(); // Get dictionary provider service
         settingsManagerService =
             serviceProvider.GetRequiredService<ISettingsManagerService>(); // Get settings manager service
         PageSize = appSettings.PageSize; // Set page size
@@ -478,8 +484,9 @@ internal partial class MainWindowViewModel : ObservableObject
         if (await dialogService.ShowDialogAsync(this, // Show edit dialog
                 dialogViewModel) == true && dialogViewModel.Item is not null) // Check if user confirmed changes
         {
-            var found = W3StringItems! // Find the item in the collection
-                .First(x => x.TrackingId == selectedItem.TrackingId);
+            var found = W3StringItems!
+                .AsValueEnumerable()
+                .First(x => x.TrackingId == selectedItem.TrackingId); // Find the item in the collection
             var index = W3StringItems!.IndexOf(found); // Get the item index
             // Update the item properties
             W3StringItems[index].StrId = dialogViewModel.Item.StrId;
@@ -660,8 +667,8 @@ internal partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task ShowDictionaryDialog()
     {
-        var dictionaryService = serviceProvider.GetRequiredService<IDictionaryService>();
         await dialogService.ShowDialogAsync(this,
-            new DictionaryManagerDialogViewModel(dictionaryService, dialogService)); // Show the dictionary dialog
+            new DictionaryManagerDialogViewModel(dictionaryManager, dictionaryProvider,
+                dialogService)); // Show the dictionary dialog
     }
 }

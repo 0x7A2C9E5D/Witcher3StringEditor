@@ -1,11 +1,17 @@
-﻿using Cysharp.Text;
+﻿using System.Buffers;
+using Cysharp.Text;
 using NReco.Text;
 using Serilog;
-using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Dictionary.Abstractions;
+using ZLinq;
 
-namespace Witcher3StringEditor.Dictionary.Services;
+namespace Witcher3StringEditor.Dictionary.Implementation;
 
-public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDictionaryService
+/// <summary>
+///     A service that provides dynamic dictionary functionality.
+/// </summary>
+/// <param name="provider"></param>
+public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynamicDictionaryReplacer
 {
     private readonly AhoCorasickDoubleArrayTrie<int> matcher = new(); // Create term cache
     private Dictionary<string, string> entries = []; // Create entries
@@ -31,6 +37,7 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         {
             CurrentDictionary = dictionary; // Set current dictionary
             entries = (await provider.GetEntries(dictionary))
+                .AsValueEnumerable()
                 .Where(x => !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value))
                 .GroupBy(pair => pair.Key)
                 .Select(g => g.First())
@@ -56,8 +63,9 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     /// <returns></returns>
     public string Replace(string text)
     {
-        if (string.IsNullOrEmpty(text) || entries.Count == 0) return text; // Return original text if it's empty or if there are no entries
-         
+        if (string.IsNullOrWhiteSpace(text) || entries.Count == 0)
+            return text; // Return original text if it's empty or if there are no entries
+
         var hits = FindAndSortMatches(text, matcher); // Find and sort matches
         hits = FilterValidHits(hits, text.Length); // Filter out invalid hits
         return ReplaceMatches(text, hits, entries); // Replace matches with translations
@@ -77,6 +85,7 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
         matcher.ParseText(text, hit => { allHits.Add(hit); }); // Find all hits
 
         return allHits
+            .AsValueEnumerable()
             .OrderBy(x => x.Begin)
             .ThenByDescending(x => x.Length)
             .ToList(); // Sort hits
@@ -91,23 +100,19 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     private static List<AhoCorasickDoubleArrayTrie<int>.Hit> FilterValidHits(
         IReadOnlyList<AhoCorasickDoubleArrayTrie<int>.Hit> hits, int textLength)
     {
-        var occupied = new bool[textLength]; // Create array to track occupied characters
+        var occupied = ArrayPool<bool>.Shared.Rent(textLength); // Rent array from pool
+        occupied.AsSpan().Clear(); // Initialize array to false
+
         var validHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store valid hits
         foreach (var hit in hits) // Iterate through hits
         {
-            var isFree = true; // Initialize flag
-            for (var i = hit.Begin; i < hit.End; i++) // Iterate through characters
-            {
-                if (!occupied[i]) continue; // Check if character is free
-                isFree = false; // Set flag
-                break; // Break
-            }
-
-            if (!isFree) continue; // Check if hit is valid
+            var slice = occupied.AsSpan(hit.Begin, hit.Length); // Get slice of occupied array
+            if (slice.Contains(true)) continue; // Skip hits that overlap
+            slice.Fill(true); // Mark characters as occupied
             validHits.Add(hit); // Add hit
-            Array.Fill(occupied, true, hit.Begin, hit.Length); // Mark characters as occupied
         }
 
+        ArrayPool<bool>.Shared.Return(occupied); // Return array to pool
         return validHits; // Return valid hits
     }
 
@@ -123,23 +128,28 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     {
         var currentPos = 0; // Initialize current position
         using var stringBuilder = ZString.CreateStringBuilder(); // Create string builder
-        foreach (var hit in hits) // Iterate through hits
+
+        foreach (var hit in hits)
         {
+            // Append text before match
             if (hit.Begin > currentPos)
-                stringBuilder.Append(text.AsSpan(currentPos, hit.Begin - currentPos)); // Append text before hit
-            var phrase = text.Substring(hit.Begin, hit.Length); // Extract matched phrase
-            var translation = entries[phrase]; // Get translation from entries
-            stringBuilder.Append("<mstrans:dictionary translation='"); // Append opening tag with translation attribute
-            stringBuilder.Append(EscapeXml(translation)); // Append translation
-            stringBuilder.Append("'>"); // Append closing tag
-            stringBuilder.Append(EscapeXml(phrase)); // Append original phrase
-            stringBuilder.Append("</mstrans:dictionary>"); // Append closing tag
-            currentPos = hit.End; // Move current position
+                stringBuilder.Append(text.AsSpan(currentPos, hit.Begin - currentPos));
+
+            // Append match
+            var phraseSpan = text.AsSpan(hit.Begin, hit.Length);
+            var phrase = phraseSpan.ToString();
+            var translation = entries[phrase];
+            stringBuilder.AppendFormat("<mstrans:dictionary translation='{0}'>{1}</mstrans:dictionary>",
+                EscapeXml(translation),
+                EscapeXml(phrase));
+
+            currentPos = hit.End; // Update current position
         }
 
-        if (currentPos < text.Length) stringBuilder.Append(text.AsSpan(currentPos)); // Append remaining text
+        if (currentPos < text.Length)
+            stringBuilder.Append(text.AsSpan(currentPos)); // Append text after last match
 
-        return stringBuilder.ToString(); // Return replaced text
+        return stringBuilder.ToString();
     }
 
     /// <summary>
@@ -149,7 +159,9 @@ public class DynamicDictionaryService(IDictionaryProvider provider) : IDynamicDi
     /// <returns></returns>
     private static string EscapeXml(string text)
     {
-        if (string.IsNullOrEmpty(text)) return text;
+        if (string.IsNullOrWhiteSpace(text) || text.IndexOfAny(['&', '<', '>', '\'', '"']) < 0)
+            return text; // Return original text if there are no special characters
+
         return text
             .Replace("&", "&amp;")
             .Replace("<", "&lt;")

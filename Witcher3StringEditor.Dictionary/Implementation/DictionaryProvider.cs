@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
+using Witcher3StringEditor.Dictionary.Abstractions;
 
-namespace Witcher3StringEditor.Dictionary.Providers;
+namespace Witcher3StringEditor.Dictionary.Implementation;
 
 /// <summary>
 ///     A dictionary provider for custom format dictionary files

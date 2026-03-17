@@ -5,12 +5,12 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
 using GTranslate.Translators;
-using MoreLinq;
+using MoreLinq.Extensions;
 using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dictionary;
-using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
@@ -217,7 +217,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         if (!IsDictionarySupported) return; // If dictionary is not supported, exit early
         var targetLanguage = CultureInfo.GetCultureInfo(ToLanguage.ISO6391); // Get the target language culture info
         var matchingDictionaries =
-            DictionaryService.DictionaryMangerService.Find(targetLanguage)
+            DictionaryService.Find(targetLanguage)
                 .ToArray(); // Find matching dictionaries for the target language1
         if (matchingDictionaries.Length != 0) // Check if any matching dictionaries were found
             matchingDictionaries.ForEach(x => Dictionaries.Add(x)); // Add matching dictionaries to the collection

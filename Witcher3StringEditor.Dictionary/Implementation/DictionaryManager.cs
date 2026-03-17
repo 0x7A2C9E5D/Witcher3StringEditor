@@ -3,14 +3,17 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using MoreLinq;
 using Serilog;
-using Witcher3StringEditor.Dictionary.Providers;
+using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Helpers;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 
-namespace Witcher3StringEditor.Dictionary.Services;
+namespace Witcher3StringEditor.Dictionary.Implementation;
 
-public class DictionaryMangerService : IDictionaryMangerService
+/// <summary>
+///     Dictionary manager
+/// </summary>
+public class DictionaryManager : IDictionaryManager
 {
     private readonly ICultureMatcher cultureMatcher; // Culture matcher
 
@@ -23,7 +26,7 @@ public class DictionaryMangerService : IDictionaryMangerService
     /// </summary>
     /// <param name="matcher"></param>
     /// <param name="provider"></param>
-    public DictionaryMangerService(ICultureMatcher matcher, IDictionaryProvider provider)
+    public DictionaryManager(ICultureMatcher matcher, IDictionaryProvider provider)
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider
@@ -59,7 +62,7 @@ public class DictionaryMangerService : IDictionaryMangerService
         File.Copy(filePath, destFileName, true); // Copy file
         var newDictionaryInfo = dictionaryInfo with { Path = destFileName }; // Create new dictionary info
         dictionaries.Add(newDictionaryInfo); // Add to collection
-
+        Log.Information("Imported dictionary: {Path}", destFileName);
         return newDictionaryInfo; // Return new dictionary info
     }
 
@@ -73,6 +76,7 @@ public class DictionaryMangerService : IDictionaryMangerService
         if (!dictionaries.Contains(dictionary)) return; // Not found
         File.Delete(dictionary.Path); // Delete the file
         dictionaries.Remove(dictionary); // Remove from collection
+        Log.Information("Removed dictionary: {Path}", dictionary.Path);
     }
 
     /// <summary>
@@ -97,10 +101,10 @@ public class DictionaryMangerService : IDictionaryMangerService
     ///     Load dictionaries from directory
     /// </summary>
     /// <param name="path"></param>
-    private Task LoadDictionariesFromDirectory(string path)
+    private void LoadDictionariesFromDirectory(string path)
     {
         var dictionaryFiles = Directory.GetFiles(path)
-            .Where(f => f.EndsWith(".txt")); // Get dictionary files
+            .Where(f => f.EndsWith(".txt")).ToArray(); // Get dictionary files
         dictionaryFiles.ForEach(async void (dictionaryFile) =>
         {
             try
@@ -114,6 +118,6 @@ public class DictionaryMangerService : IDictionaryMangerService
                     dictionaryFile); // Log error if failed to load dictionary file
             }
         });
-        return Task.CompletedTask;
+        Log.Information("Loaded {Count} dictionary files", dictionaryFiles.Length);
     }
 }

@@ -11,10 +11,10 @@ using MoreLinq.Extensions;
 using Serilog;
 using Witcher3StringEditor.Dialogs.Models;
 using Witcher3StringEditor.Dictionary;
-using Witcher3StringEditor.Dictionary.Providers;
-using Witcher3StringEditor.Dictionary.Services;
+using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
+using ZLinq;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -26,9 +26,14 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     private readonly IDialogService dialogService;
 
     /// <summary>
-    ///     The dictionary service.
+    ///     Provides access to the dictionary management functionality used by this class.
     /// </summary>
-    private readonly IDictionaryService dictionaryService;
+    private readonly IDictionaryManager dictionaryManager;
+
+    /// <summary>
+    ///     Provides access to the underlying dictionary provider used for retrieving dictionary data.
+    /// </summary>
+    private readonly IDictionaryProvider dictionaryProvider;
 
     /// <summary>
     ///     The dictionary terms.
@@ -43,30 +48,23 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     /// <summary>
     ///     Initializes a new instance of the DictionaryDialogViewModel class.
     /// </summary>
-    /// <param name="dictionaryService"></param>
+    /// <param name="dictionaryManager"></param>
+    /// <param name="dictionaryProvider"></param>
     /// <param name="dialogService"></param>
-    public DictionaryManagerDialogViewModel(IDictionaryService dictionaryService,
+    public DictionaryManagerDialogViewModel(IDictionaryManager dictionaryManager,
+        IDictionaryProvider dictionaryProvider,
         IDialogService dialogService)
     {
         this.dialogService = dialogService;
-        this.dictionaryService = dictionaryService;
-        var found = DictionaryMangerService.Find(null);
+        this.dictionaryManager = dictionaryManager;
+        this.dictionaryProvider = dictionaryProvider;
+        var found = dictionaryManager.Find(null);
         found.GroupBy(x => x.TargetLanguage).ForEach(g =>
         {
             var group = new DictionaryGroup(g.Key, g.Select(x => x).ToList());
             DictionaryGroups.Add(group);
         });
     }
-
-    /// <summary>
-    ///     The dictionary manager service.
-    /// </summary>
-    private IDictionaryMangerService DictionaryMangerService => dictionaryService.DictionaryMangerService;
-
-    /// <summary>
-    ///     The dictionary service.
-    /// </summary>
-    private IDictionaryProvider DictionaryProvider => dictionaryService.DictionaryProvider;
 
     /// <summary>
     ///     Groups of dictionaries.
@@ -86,8 +84,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     {
         _ = Task.Run(async () =>
         {
-            var terms = value is null ? [] :
-                await DictionaryProvider.GetEntries(value);
+            var terms = value is null ? [] : await dictionaryProvider.GetEntries(value);
 
             await Application.Current.Dispatcher.InvokeAsync(() => { DictionaryTerms = terms; });
         });
@@ -113,9 +110,10 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
             {
                 var dictionaryInfo =
-                    await DictionaryMangerService.Import(storageFile.LocalPath);
+                    await dictionaryManager.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return; // No dictionary found
                 var matchingGroup = DictionaryGroups
+                    .AsValueEnumerable()
                     .Where(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage))
                     .ToList(); // Find existing group
                 if (matchingGroup.Count != 0) // If group exists, remove existing entries
@@ -123,6 +121,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                     var group = matchingGroup[0]; // Get group
                     var fileName = Path.GetFileName(dictionaryInfo.Path); // Get file name
                     var existingEntries = group.Dictionaries
+                        .AsValueEnumerable()
                         .Where(x => Path.GetFileName(x.Path) == fileName).ToArray(); // Find existing entries
                     existingEntries.ForEach(x => group.Dictionaries.Remove(x)); // Remove existing entries
                     matchingGroup[0].Dictionaries.Add(dictionaryInfo); // Add new entry
@@ -154,8 +153,9 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
                 MessageTokens.RemoveDictionaryConfirm))
         {
-            DictionaryMangerService.Remove(dictionary);
+            dictionaryManager.Remove(dictionary);
             var found = DictionaryGroups
+                .AsValueEnumerable()
                 .FirstOrDefault(x => x.Dictionaries.Contains(dictionary));
             if (found is null) return;
             if (found.Dictionaries.Count == 1)
