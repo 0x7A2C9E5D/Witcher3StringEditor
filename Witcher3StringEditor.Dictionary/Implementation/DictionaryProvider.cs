@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Globalization;
+﻿using System.Globalization;
 using Witcher3StringEditor.Dictionary.Abstractions;
 
 namespace Witcher3StringEditor.Dictionary.Implementation;
@@ -69,7 +68,7 @@ public class DictionaryProvider : IDictionaryProvider
     public async Task<Dictionary<string, string>> GetEntries(DictionaryInfo dictionary)
     {
         var lines = await File.ReadAllLinesAsync(dictionary.Path);
-        return await ParseEntries(lines);
+        return ParseEntries(lines);
     }
 
     /// <summary>
@@ -161,31 +160,29 @@ public class DictionaryProvider : IDictionaryProvider
     /// <summary>
     ///     Parses dictionary entries from file lines
     /// </summary>
-    private static async Task<Dictionary<string, string>> ParseEntries(IEnumerable<string> lines)
+    private static Dictionary<string, string> ParseEntries(IEnumerable<string> lines)
     {
-        var entries = new ConcurrentDictionary<string, string>();
+        var entries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        await Parallel.ForEachAsync(lines, (line, _) =>
+        foreach (var line in lines)
         {
             var trimmedLine = line.Trim();
 
             if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith(CommentPrefix))
-                return ValueTask.CompletedTask; // Skip comments and empty lines
+                continue; // Skip comments and empty lines
 
             var parts = trimmedLine.Split(Separator, 2); // Split into key and value, only on the first separator
             if (parts.Length != 2)
-                return ValueTask.CompletedTask; // Skip lines that do not have exactly 2 parts (invalid format)
+                continue; // Skip lines that don't have exactly 2 parts (invalid format)
 
             var key = parts[0].Trim(); // Extract and trim key
             var value = parts[1].Trim(); // Extract and trim value
 
             if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                 entries[key] = value; // Only add valid entries with non-empty keys and values
+        }
 
-            return ValueTask.CompletedTask;
-        });
-
-        return entries.ToDictionary(); // Return parsed entries
+        return entries; // Return parsed entries
     }
 
     /// <summary>
