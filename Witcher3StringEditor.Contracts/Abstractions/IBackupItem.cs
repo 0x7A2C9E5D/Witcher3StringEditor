@@ -1,4 +1,6 @@
-﻿namespace Witcher3StringEditor.Contracts.Abstractions;
+﻿using JetBrains.Annotations;
+
+namespace Witcher3StringEditor.Contracts.Abstractions;
 
 /// <summary>
 ///     Defines a contract for backup item information
@@ -9,6 +11,7 @@ public interface IBackupItem
     /// <summary>
     ///     Gets the name of the backed up file
     /// </summary>
+    [UsedImplicitly]
     public string FileName { get; }
 
     /// <summary>
@@ -30,5 +33,6 @@ public interface IBackupItem
     /// <summary>
     ///     Gets the time when the backup was created
     /// </summary>
+    [UsedImplicitly]
     public DateTime BackupTime { get; }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using JetBrains.Annotations;
 using Serilog.Events;
 
 namespace Witcher3StringEditor.Dialogs.Models;
@@ -18,15 +19,18 @@ public record LogEventItemModel(LogEvent LogEvent)
     /// <summary>
     ///     Gets the timestamp when the log event occurred
     /// </summary>
+    [UsedImplicitly]
     public DateTimeOffset Timestamp => LogEvent.Timestamp;
 
     /// <summary>
     ///     Gets the level of the log event (e.g., Information, Warning, Error)
     /// </summary>
+    [UsedImplicitly]
     public LogEventLevel Level => LogEvent.Level;
 
     /// <summary>
     ///     Gets the rendered message of the log event
     /// </summary>
+    [UsedImplicitly]
     public string Message => LogEvent.RenderMessage(CultureInfo.InvariantCulture);
 }

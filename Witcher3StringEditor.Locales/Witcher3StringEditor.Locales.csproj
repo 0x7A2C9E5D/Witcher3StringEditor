@@ -17,6 +17,9 @@
 
     <ItemGroup>
         <PackageReference Include="Antelcat.I18N.WPF" Version="1.1.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="SonarAnalyzer.CSharp" Version="10.21.0.135717">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

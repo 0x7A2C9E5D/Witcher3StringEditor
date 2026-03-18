@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using JetBrains.Annotations;
 
 namespace Witcher3StringEditor.Contracts;
 
@@ -32,25 +33,25 @@ public enum W3Language
     ///     Czech language
     ///     Culture code: cs
     /// </summary>
-    [Description("cs")] Cz = 3,
+    [UsedImplicitly] [Description("cs")] Cz = 3,
 
     /// <summary>
     ///     German language
     ///     Culture code: de
     /// </summary>
-    [Description("de")] De = 4,
+    [UsedImplicitly] [Description("de")] De = 4,
 
     /// <summary>
     ///     English language
     ///     Culture code: en
     /// </summary>
-    [Description("en")] En = 5,
+    [UsedImplicitly] [Description("en")] En = 5,
 
     /// <summary>
     ///     Spanish language
     ///     Culture code: es
     /// </summary>
-    [Description("es")] Es = 6,
+    [UsedImplicitly] [Description("es")] Es = 6,
 
     /// <summary>
     ///     Mexican Spanish language
@@ -62,25 +63,25 @@ public enum W3Language
     ///     French language
     ///     Culture code: fr
     /// </summary>
-    [Description("fr")] Fr = 8,
+    [UsedImplicitly] [Description("fr")] Fr = 8,
 
     /// <summary>
     ///     Hungarian language
     ///     Culture code: hu
     /// </summary>
-    [Description("hu")] Hu = 9,
+    [UsedImplicitly] [Description("hu")] Hu = 9,
 
     /// <summary>
     ///     Italian language
     ///     Culture code: it
     /// </summary>
-    [Description("it")] It = 10,
+    [UsedImplicitly] [Description("it")] It = 10,
 
     /// <summary>
     ///     Japanese language
     ///     Culture code: ja
     /// </summary>
-    [Description("ja")] Jp = 11,
+    [UsedImplicitly] [Description("ja")] Jp = 11,
 
     /// <summary>
     ///     Korean language
@@ -92,19 +93,20 @@ public enum W3Language
     ///     Polish language
     ///     Culture code: pl
     /// </summary>
-    [Description("pl")] Pl = 13,
+    [UsedImplicitly] [Description("pl")] Pl = 13,
 
     /// <summary>
     ///     Russian language
     ///     Culture code: ru
     /// </summary>
-    [Description("ru")] Ru = 14,
+    [UsedImplicitly] [Description("ru")] Ru = 14,
 
     /// <summary>
     ///     Traditional Chinese language
     ///     Culture code: zh-Hant
     /// </summary>
-    [Description("zh-Hant")] Zh = 15,
+    [UsedImplicitly] [Description("zh-Hant")]
+    Zh = 15,
 
     /// <summary>
     ///     Turkish language

@@ -1,4 +1,6 @@
-﻿namespace Witcher3StringEditor.Contracts.Abstractions;
+﻿using JetBrains.Annotations;
+
+namespace Witcher3StringEditor.Contracts.Abstractions;
 
 /// <summary>
 ///     Defines a contract for The Witcher 3 string items
@@ -28,6 +30,7 @@ public interface IW3StringItem
     ///     Gets or sets the original text
     ///     The original text of the string before any modifications or translations
     /// </summary>
+    [UsedImplicitly]
     public string OldText { get; set; }
 
     /// <summary>
