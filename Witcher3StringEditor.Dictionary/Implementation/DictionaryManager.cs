@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using MoreLinq;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Helpers;
@@ -89,10 +88,10 @@ public class DictionaryManager : IDictionaryManager
     {
         // Check for duplicate
         var fileName = Path.GetFileName(filePath);
-        var found = 
+        var found =
             dictionaries.Where(x => Path.GetFileName(x.Path) == fileName).ToList();
         if (found.Count == 0) return true;
-        
+
         // Ask for overwrite
         if (!await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
                 MessageTokens.DictionaryOverwriteConfirm)) return false;
@@ -112,11 +111,11 @@ public class DictionaryManager : IDictionaryManager
         var dictionaryInfo = await dictionaryProvider.GetDictionaryInfo(filePath);
         var destFileName = Path.Combine(PathHelper.DictionaryDirectory, fileName);
         File.Copy(filePath, destFileName, true);
-        
+
         // Register the dictionary
         var newDictionaryInfo = dictionaryInfo with { Path = destFileName };
         dictionaries.Add(newDictionaryInfo);
-        
+
         Log.Information("Imported dictionary: {Path}", destFileName);
         return newDictionaryInfo;
     }
@@ -127,21 +126,24 @@ public class DictionaryManager : IDictionaryManager
     /// <param name="path"></param>
     private void LoadDictionariesFromDirectory(string path)
     {
-        var dictionaryFiles = Directory.GetFiles(path)
-            .Where(f => f.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)).ToArray(); // Get dictionary files
-        dictionaryFiles.ForEach(async void (dictionaryFile) =>
+        Task.Run(async () =>
         {
-            try
-            {
-                var dictionaryInfo = await dictionaryProvider.GetDictionaryInfo(dictionaryFile); // Get dictionary info
-                dictionaries.Add(dictionaryInfo); // Add to collection
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to load dictionary file: {Path}",
-                    dictionaryFile); // Log error if failed to load dictionary file
-            }
+            var dictionaryFiles = Directory.GetFiles(path)
+                .Where(f => f.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)).ToArray(); // Get dictionary files
+            foreach (var dictionaryFile in dictionaryFiles)
+                try
+                {
+                    var dictionaryInfo =
+                        await dictionaryProvider.GetDictionaryInfo(dictionaryFile); // Get dictionary info
+                    dictionaries.Add(dictionaryInfo); // Add to collection
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Failed to load dictionary file: {Path}",
+                        dictionaryFile); // Log error if failed to load dictionary file
+                }
+
+            Log.Information("Loaded {Count} dictionary files", dictionaryFiles.Length);
         });
-        Log.Information("Loaded {Count} dictionary files", dictionaryFiles.Length);
     }
 }
