@@ -279,7 +279,7 @@ public sealed partial class App : IDisposable
             .AddTransient<ICultureMatcher, CultureMatcher>()
             .AddTransient<ISettingsManagerService, SettingsManagerService>()
             .AddTransient<ITranslator, MicrosoftTranslator>()
-            .AddTransient<ITranslator, GoogleTranslator>()
+            .AddTransient<ITranslator, GoogleTranslator2>()
             .AddTransient<ITranslator, YandexTranslator>()
             .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()

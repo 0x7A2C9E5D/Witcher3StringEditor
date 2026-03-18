@@ -560,7 +560,7 @@ internal partial class MainWindowViewModel : ObservableObject
     private async Task ShowSettingsDialog()
     {
         var translators = serviceProvider.GetServices<ITranslator>().ToArray(); // Get all available translators
-        var names = translators.Select(x => x.Name); // Extract translator names
+        var names = translators.Select(x => x.Name.Replace("2", string.Empty)); // Extract translator names
         translators.ForEach(x => x.Cast<IDisposable>().Dispose()); // Dispose of translator instances
         await dialogService.ShowDialogAsync(this,
             new SettingDialogViewModel(appSettings, dialogService,
@@ -651,7 +651,7 @@ internal partial class MainWindowViewModel : ObservableObject
         var selectedIndex =
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
         var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
-            .First(x => x.Name == appSettings.Translator);
+            .First(x => x.Name.Contains(appSettings.Translator));
         var isUseDictionary = appSettings.Translator == "MicrosoftTranslator";
         var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
         var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse,
