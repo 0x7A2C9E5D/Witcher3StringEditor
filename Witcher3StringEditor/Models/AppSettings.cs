@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
@@ -91,7 +90,6 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This property is ignored during JSON serialization
     /// </summary>
     [JsonIgnore]
-    [UsedImplicitly]
     public string NexusModUrl => "https://www.nexusmods.com/witcher3/mods/10032";
 
     /// <summary>

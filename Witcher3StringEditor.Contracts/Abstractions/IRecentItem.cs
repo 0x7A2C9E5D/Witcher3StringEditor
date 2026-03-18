@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Witcher3StringEditor.Contracts.Abstractions;
+﻿namespace Witcher3StringEditor.Contracts.Abstractions;
 
 /// <summary>
 ///     Defines a contract for recent item information
@@ -16,7 +14,6 @@ public interface IRecentItem
     /// <summary>
     ///     Gets or sets the time when the item was last opened
     /// </summary>
-    [UsedImplicitly]
     public DateTime OpenedTime { get; set; }
 
     /// <summary>

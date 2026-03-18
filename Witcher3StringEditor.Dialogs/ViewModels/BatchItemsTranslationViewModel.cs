@@ -244,7 +244,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             var textToTranslated = isDictionaryReady
                 ? DictionaryService!.Replace(item.Text)
                 : item.Text; // Replace with dictionary if needed
-            var (success, translation)=
+            var (success, translation) =
                 await TranslateItem(Translator, textToTranslated, toLanguage, fromLanguage); // Perform translation
             if (success) // Check if translation succeeded
             {
@@ -272,7 +272,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="tLanguage">The target language</param>
     /// <param name="fLanguage">The source language</param>
     /// <returns>A Result containing the translated text if successful</returns>
-    private static async Task<(bool,string)> TranslateItem(ITranslator translator, string text, ILanguage tLanguage,
+    private static async Task<(bool, string)> TranslateItem(ITranslator translator, string text, ILanguage tLanguage,
         ILanguage fLanguage)
     {
         var translation =

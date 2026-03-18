@@ -1,5 +1,4 @@
 ﻿using Antelcat.I18N.Attributes;
-using JetBrains.Annotations;
 
 namespace Witcher3StringEditor.Locales;
 
@@ -9,5 +8,4 @@ namespace Witcher3StringEditor.Locales;
 ///     Uses Antelcat.I18N attributes to map resource keys to typed properties
 /// </summary>
 [ResourceKeysOf(typeof(Strings))]
-[UsedImplicitly]
 public partial class LangKeys;

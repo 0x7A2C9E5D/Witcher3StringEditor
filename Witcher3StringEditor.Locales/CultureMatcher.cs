@@ -1,12 +1,10 @@
 ﻿using System.Globalization;
-using JetBrains.Annotations;
 
 namespace Witcher3StringEditor.Locales;
 
 /// <summary>
 ///     Provides culture matching functionality for the application
 /// </summary>
-[PublicAPI]
 public class CultureMatcher : ICultureMatcher
 {
     /// <summary>

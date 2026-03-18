@@ -58,10 +58,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         this.dictionaryProvider = dictionaryProvider;
         var found = dictionaryManager.Find(null);
         var groups = found.GroupBy(x => x.TargetLanguage);
-        foreach(var group in groups)
-        {
-            DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
-        }
+        foreach (var group in groups) DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
     }
 
     /// <summary>
@@ -109,7 +106,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             {
                 // Try to import the dictionary, if successful, regroup dictionaries to reflect changes
                 var dictionaryInfo =
-                    await dictionaryManager.Import(storageFile.LocalPath); 
+                    await dictionaryManager.Import(storageFile.LocalPath);
                 if (dictionaryInfo != null) ReGroupDictionaries();
             }
         }
@@ -120,7 +117,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
         }
     }
-    
+
     /// <summary>
     ///     Regroups all dictionaries by target language.
     /// </summary>
@@ -128,12 +125,9 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     {
         // Regroup dictionaries by target language
         DictionaryGroups.Clear();
-        var groups  = dictionaryManager.Find(null)
-                .GroupBy(x => x.TargetLanguage);
-        foreach (var group in groups)
-        {
-            DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
-        }
+        var groups = dictionaryManager.Find(null)
+            .GroupBy(x => x.TargetLanguage);
+        foreach (var group in groups) DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
 
         // Validate selected dictionary and clear if removed
         if (DictionaryGroups.SelectMany(g => g.Dictionaries)

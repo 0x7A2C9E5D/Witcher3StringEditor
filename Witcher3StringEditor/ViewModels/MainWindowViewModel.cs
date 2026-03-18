@@ -510,7 +510,7 @@ internal partial class MainWindowViewModel : ObservableObject
         if (w3Items.Length > 0 &&
             await dialogService.ShowDialogAsync(this, new DeleteDataDialogViewModel(w3Items)) ==
             true) // Show delete confirmation dialog
-        
+
             foreach (var item in w3Items)
             {
                 var stringItem = item.Cast<W3StringItemModel>(); // Cast to string item model

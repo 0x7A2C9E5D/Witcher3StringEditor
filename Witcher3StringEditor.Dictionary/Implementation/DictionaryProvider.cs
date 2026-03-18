@@ -172,7 +172,8 @@ public class DictionaryProvider : IDictionaryProvider
             .Select(line => line.Trim()) // Trim lines
             .Where(trimmedLine =>
                 !string.IsNullOrEmpty(trimmedLine) &&
-                !trimmedLine.StartsWith(CommentPrefix,StringComparison.InvariantCulture)) // Skip empty lines and comments
+                !trimmedLine.StartsWith(CommentPrefix,
+                    StringComparison.InvariantCulture)) // Skip empty lines and comments
             .Select(trimmedLine => trimmedLine.Split(Separator, 2)) // Split into key and value
             .Where(parts => parts.Length == 2) // Validate format
             .Select(parts => new { Key = parts[0].Trim(), Value = parts[1].Trim() }) // Create anonymous type
