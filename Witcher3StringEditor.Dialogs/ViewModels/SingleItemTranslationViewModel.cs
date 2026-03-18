@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using FluentResults;
 using GTranslate;
 using GTranslate.Translators;
 using Serilog;
@@ -143,12 +142,12 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
                 CancellationTokenSource = new CancellationTokenSource(); // Create a new cancellation token source
                 CurrentTranslateItemModel.TranslatedText = string.Empty; // Clear the translation text
                 Log.Information("Starting translation."); // Log start of translation
-                var translationResult = await ExecuteTranslationTask(CurrentTranslateItemModel.Text,
-                    ToLanguage, FormLanguage, CancellationTokenSource); // Execute the translation task
-                if (translationResult.IsSuccess) // Check if translation was successful
+                var (success, translation) = await ExecuteTranslationTask(CurrentTranslateItemModel.Text,
+                    ToLanguage, FormLanguage, CancellationTokenSource);
+                if (success) // Check if translation was successful
                 {
-                    Guard.IsNotNullOrWhiteSpace(translationResult.Value); // Check if translation result is not empty
-                    CurrentTranslateItemModel.TranslatedText = translationResult.Value; // Set the translation text
+                    Guard.IsNotNullOrWhiteSpace(translation); // Check if translation result is not empty
+                    CurrentTranslateItemModel.TranslatedText = translation; // Set the translation text
                     Log.Information("Translation completed."); // Log completion of translation
                 }
                 else
@@ -183,7 +182,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     /// <param name="formLanguage">The source language</param>
     /// <param name="cancellationTokenSource">The cancellation token source</param>
     /// <returns>A Result containing the translated text if successful</returns>
-    private async Task<Result<string>> ExecuteTranslationTask(string text,
+    private async Task<(bool,string)> ExecuteTranslationTask(string text,
         ILanguage toLanguage, ILanguage formLanguage, CancellationTokenSource cancellationTokenSource)
     {
         var translateTask = Translator.TranslateAsync(text, toLanguage, formLanguage); // Start translation
@@ -192,8 +191,8 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
             Task.Delay(Timeout.Infinite, cancellationTokenSource.Token) // Cancellation task
         );
         return !completedTask.IsCanceled
-            ? Result.Ok((await translateTask).Translation)
-            : Result.Fail(string.Empty); // Return result or failure
+            ? (true,(await translateTask).Translation)
+            : (false,string.Empty); // Return result or failure
     }
 
     /// <summary>

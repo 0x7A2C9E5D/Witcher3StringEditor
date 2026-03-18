@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FluentResults;
 using GTranslate;
 using GTranslate.Translators;
 using Serilog;
@@ -245,11 +244,11 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             var textToTranslated = isDictionaryReady
                 ? DictionaryService!.Replace(item.Text)
                 : item.Text; // Replace with dictionary if needed
-            var translation =
+            var (success, translation)=
                 await TranslateItem(Translator, textToTranslated, toLanguage, fromLanguage); // Perform translation
-            if (translation.IsSuccess) // Check if translation succeeded
+            if (success) // Check if translation succeeded
             {
-                item.Text = translation.Value; // Update with translated text
+                item.Text = translation; // Update with translated text
                 SuccessCount++; // Increment success counter
             }
             else
@@ -273,14 +272,14 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="tLanguage">The target language</param>
     /// <param name="fLanguage">The source language</param>
     /// <returns>A Result containing the translated text if successful</returns>
-    private static async Task<Result<string>> TranslateItem(ITranslator translator, string text, ILanguage tLanguage,
+    private static async Task<(bool,string)> TranslateItem(ITranslator translator, string text, ILanguage tLanguage,
         ILanguage fLanguage)
     {
         var translation =
             (await translator.TranslateAsync(text, tLanguage, fLanguage)).Translation; // Perform translation
-        if (IsTranslationValid(translation)) return Result.Ok(translation); // Return success if valid
+        if (IsTranslationValid(translation)) return (true, translation); // Return success if valid
         LogEmptyTranslationResult(translator.Name); // Log error if invalid
-        return Result.Fail(string.Empty); // Return failure
+        return (false, string.Empty); // Return failure
     }
 
     /// <summary>
