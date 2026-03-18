@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-using cmdwtf;
 using CommandLine;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -588,7 +587,7 @@ internal partial class MainWindowViewModel : ObservableObject
             new AboutDialogViewModel(new Dictionary<string, object?> // Create view model with application information
             {
                 { "Version", ThisAssembly.AssemblyInformationalVersion }, // Application version
-                { "BuildTime", BuildTimestamp.BuildTime.ToLocalTime() }, // Build time
+                { "BuildTime", BuildInformation.BuildAt.ToLocalTime() }, // Build time
                 { "OS", $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})" }, // OS information
                 { "Runtime", RuntimeInformation.FrameworkDescription }, // Runtime information
                 {
