@@ -15,6 +15,10 @@ internal class ExplorerService : IExplorerService
     /// <param name="path">The path to open in Windows Explorer</param>
     public void Open(string path)
     {
-        using var _ = Process.Start("explorer.exe", path);
+        using var _ = Process.Start(new ProcessStartInfo
+        {
+            FileName = path,
+            UseShellExecute = true
+        });
     }
 }
