@@ -73,7 +73,7 @@
                     Command="{Binding SubmitCommand}">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Send}" />
-                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.SubmitBtnContent}}" />
+                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.SubmitBtnContent}}" />
                     </StackPanel>
                 </Button>
                 <!-- Cancel button to discard changes -->
@@ -82,7 +82,7 @@
                     Command="{Binding CancelCommand}">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Cancel}" />
-                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.CancelBtnContent}}" />
+                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.CancelBtnContent}}" />
                     </StackPanel>
                 </Button>
             </iwk:SimpleStackPanel>

@@ -153,7 +153,7 @@
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
-                            <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.TranslateBtnContent}}" />
+                            <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.TranslateBtnContent}}" />
                         </StackPanel>
                     </Button.Content>
                 </Button>
@@ -163,7 +163,7 @@
                     Command="{Binding CancelCommand}">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Cancel}" />
-                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.CancelBtnContent}}" />
+                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.CancelBtnContent}}" />
                     </StackPanel>
                 </Button>
             </iwk:SimpleStackPanel>

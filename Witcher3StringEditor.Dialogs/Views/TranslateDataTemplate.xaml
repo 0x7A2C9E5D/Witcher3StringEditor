@@ -98,7 +98,7 @@
                     Command="{Binding PreviousCommand}">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Previous}" />
-                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.PreviousBtnContent}}" />
+                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.PreviousBtnContent}}" />
                     </StackPanel>
                 </Button>
                 <!-- Translate button -->
@@ -108,7 +108,7 @@
                     Command="{Binding TranslateCommand}">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
-                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.TranslateBtnContent}}" />
+                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.TranslateBtnContent}}" />
                     </StackPanel>
                 </Button>
                 <!-- Save translation button -->
@@ -118,7 +118,7 @@
                     Command="{Binding SaveCommand}">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Save}" />
-                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.SaveBtnContent}}" />
+                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.SaveBtnContent}}" />
                     </StackPanel>
                 </Button>
                 <!-- Next item button -->
@@ -128,7 +128,7 @@
                     Command="{Binding NextCommand}">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Next}" />
-                        <TextBlock Margin="5,0,0,0" Text="{I18N {x:Static l:LangKeys.NextBtnContent}}" />
+                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.NextBtnContent}}" />
                     </StackPanel>
                 </Button>
             </iwk:SimpleStackPanel>
