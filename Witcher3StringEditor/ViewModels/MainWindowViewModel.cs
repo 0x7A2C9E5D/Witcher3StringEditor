@@ -298,7 +298,7 @@ internal partial class MainWindowViewModel : ObservableObject
         Log.Information("OS Version: {Version}", // Log OS version
             $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
         Log.Information(".Net Runtime: {Runtime}", RuntimeInformation.FrameworkDescription); // Log .NET runtime version
-        Log.Information("Is Debug: {IsDebug}", DebugHelper.IsDebug); // Log debug mode status
+        Log.Information("Is Debug: {IsDebug}", !BuildInformation.IsReleaseBuild); // Log debug mode status
         Log.Information("Current Directory: {Directory}", Environment.CurrentDirectory); // Log current directory
         Log.Information("AppData Folder: {Folder}", PathHelper.AppDataDirectory); // Log AppData folder path
         var supportedCultures = serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures;
