@@ -275,13 +275,13 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     }
 
     /// <summary>
-    ///   
+    ///     Translates the specified text using the provided translator and languages
     /// </summary>
-    /// <param name="translator"></param>
-    /// <param name="text"></param>
-    /// <param name="tLanguage"></param>
-    /// <param name="fLanguage"></param>
-    /// <returns></returns>
+    /// <param name="translator">The translation service to use for translating the text</param>
+    /// <param name="text">The source text to be translated</param>
+    /// <param name="tLanguage">The target language code for the translation</param>
+    /// <param name="fLanguage">The source language code of the original text</param>
+    /// <returns>A tuple containing a success flag and the translated text (or empty string if failed)</returns>
     private static async Task<(bool, string)> TranslateItem(
         ITranslator translator, string text, ILanguage tLanguage, ILanguage fLanguage)
     {
