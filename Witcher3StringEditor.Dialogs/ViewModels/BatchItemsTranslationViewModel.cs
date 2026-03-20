@@ -254,7 +254,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         {
             if (string.IsNullOrWhiteSpace(text))
                 return false;
-            
+
+            // Start the translation task and a cancellation task, and wait for either to complete
             var translateTask = TranslateItem(Translator, text, toLanguage, fromLanguage);
             var cancelTask = Task.Delay(Timeout.Infinite, cancellationToken);
             var completed = await Task.WhenAny(translateTask, cancelTask);
@@ -295,8 +296,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     private static async Task<(bool, string)> TranslateItem(
         ITranslator translator, string text, ILanguage tLanguage, ILanguage fLanguage)
     {
-        var result = await translator.TranslateAsync(text, tLanguage, fLanguage);
-        var translation = result.Translation;
+        var translation = (await translator.TranslateAsync(text, tLanguage, fLanguage)).Translation;
 
         if (IsTranslationValid(translation))
             return (true, translation);
