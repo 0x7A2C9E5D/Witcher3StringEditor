@@ -96,6 +96,7 @@
                   BorderThickness="1" ItemTemplateSelector="{StaticResource DictionaryTreeTemplateSelector}"
                   ItemsSource="{Binding DictionaryGroups}">
             <i:Interaction.Behaviors>
+                <b:DictionaryTreeExpandBehavior />
                 <b:DictionaryTreeSelectionBehavior
                     SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
