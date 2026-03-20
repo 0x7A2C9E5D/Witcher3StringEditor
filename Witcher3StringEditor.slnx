@@ -1,5 +1,4 @@
 <Solution>
-    <Project Path="Witcher3StringEditor.Behaviors/Witcher3StringEditor.Behaviors.csproj" Id="2bde6e39-d3ee-4a5c-a941-b31dd4ad8f68" />
     <Project Path="Witcher3StringEditor.Contracts/Witcher3StringEditor.Contracts.csproj" />
     <Project Path="Witcher3StringEditor.Dialogs/Witcher3StringEditor.Dialogs.csproj" />
     <Project Path="Witcher3StringEditor.Dictionary/Witcher3StringEditor.Dictionary.csproj" Id="31d1621c-ab13-48f7-a311-982001e8994b" />

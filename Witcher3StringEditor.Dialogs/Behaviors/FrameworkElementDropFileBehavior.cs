@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using Microsoft.Xaml.Behaviors;
 
-namespace Witcher3StringEditor.Behaviors;
+namespace Witcher3StringEditor.Dialogs.Behaviors;
 
 /// <summary>
 ///     An attached behavior that adds file drag-and-drop support to a FrameworkElement

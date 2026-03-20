@@ -2,7 +2,7 @@
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 
-namespace Witcher3StringEditor.Behaviors;
+namespace Witcher3StringEditor.Dialogs.Behaviors;
 
 /// <summary>
 ///     An attached behavior for SfDataGrid that handles row height invalidation when a cell edit operation ends

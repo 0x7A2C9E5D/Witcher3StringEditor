@@ -11,7 +11,7 @@
         xmlns:m="clr-namespace:Witcher3StringEditor.Dialogs.Models"
         xmlns:di="clr-namespace:Witcher3StringEditor.Dictionary;assembly=Witcher3StringEditor.Dictionary"
         xmlns:t="clr-namespace:Witcher3StringEditor.Dialogs.TemplateSelectors"
-        xmlns:b="clr-namespace:Witcher3StringEditor.Behaviors;assembly=Witcher3StringEditor.Behaviors"
+        xmlns:b="clr-namespace:Witcher3StringEditor.Dialogs.Behaviors"
         d:DataContext="{d:DesignInstance Type=vm:DictionaryManagerDialogViewModel}"
         Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}"
         ui:WindowHelper.UseModernWindowStyle="True"

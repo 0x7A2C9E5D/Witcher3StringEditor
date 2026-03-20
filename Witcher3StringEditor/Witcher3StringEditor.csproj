@@ -59,7 +59,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Witcher3StringEditor.Behaviors\Witcher3StringEditor.Behaviors.csproj" />
         <ProjectReference Include="..\Witcher3StringEditor.Dictionary\Witcher3StringEditor.Dictionary.csproj" />
         <ProjectReference Include="..\Witcher3StringEditor.Miscellaneous\Witcher3StringEditor.Miscellaneous.csproj" />
         <ProjectReference Include="..\Witcher3StringEditor.Locales\Witcher3StringEditor.Locales.csproj" />

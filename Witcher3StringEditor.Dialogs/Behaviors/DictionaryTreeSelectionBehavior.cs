@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
 using Witcher3StringEditor.Dictionary;
 
-namespace Witcher3StringEditor.Behaviors;
+namespace Witcher3StringEditor.Dialogs.Behaviors;
 
 /// <summary>
 ///     An attached behavior for TreeView that handles selected item changes
 /// </summary>
-public class DictionaryTreeSelectionBehavior : Behavior<TreeView>
+internal class DictionaryTreeSelectionBehavior : Behavior<TreeView>
 {
     /// <summary>
     ///     Dependency property for storing the selected item
