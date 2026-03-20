@@ -190,12 +190,19 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     }
 
     /// <summary>
-    ///     Processes a collection of items for translation
+    ///     Processes a collection of items for translation within the specified range
+    ///     Iterates through each item, attempts translation, and updates success/failure/pending counts
+    ///     Supports cancellation via the provided cancellation token
     /// </summary>
-    /// <param name="items">The items to translate</param>
-    /// <param name="toLanguage">The target language</param>
-    /// <param name="fromLanguage">The source language</param>
-    /// <param name="cancellationToken">Cancellation token to cancel the operation</param>
+    /// <param name="items">The enumerable collection of trackable string items to translate</param>
+    /// <param name="toLanguage">The target language code for translation</param>
+    /// <param name="fromLanguage">The source language code of the original text</param>
+    /// <param name="cancellationToken">Cancellation token to monitor for cancellation requests during processing</param>
+    /// <remarks>
+    ///     This method binds the dictionary if needed before processing.
+    ///     It updates SuccessCount, FailureCount, and PendingCount properties as each item is processed.
+    ///     Throws OperationCanceledException if cancellation is requested.
+    /// </remarks>
     private async Task ProcessTranslationItems(IEnumerable<ITrackableW3StringItem> items, ILanguage toLanguage,
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
@@ -225,6 +232,16 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         }
     }
 
+    /// <summary>
+    ///     Processes a single item for translation with cancellation support
+    ///     Applies dictionary replacement if ready, translates the text, and updates the item
+    /// </summary>
+    /// <param name="item">The trackable string item to translate</param>
+    /// <param name="toLanguage">The target language for translation</param>
+    /// <param name="fromLanguage">The source language of the text</param>
+    /// <param name="cancellationToken">Token to monitor for cancellation requests</param>
+    /// <returns>True if the translation was successful, false otherwise</returns>
+    /// <exception cref="OperationCanceledException">Thrown when the operation is canceled</exception>
     private async Task<bool> ProcessSingleItemWithCancellation(
         ITrackableW3StringItem item,
         ILanguage toLanguage,
@@ -257,6 +274,14 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         }
     }
 
+    /// <summary>
+    ///   
+    /// </summary>
+    /// <param name="translator"></param>
+    /// <param name="text"></param>
+    /// <param name="tLanguage"></param>
+    /// <param name="fLanguage"></param>
+    /// <returns></returns>
     private static async Task<(bool, string)> TranslateItem(
         ITranslator translator, string text, ILanguage tLanguage, ILanguage fLanguage)
     {
