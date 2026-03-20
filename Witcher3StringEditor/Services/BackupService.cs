@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using CommunityToolkit.Diagnostics;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
-using Witcher3StringEditor.Helpers;
+using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Models;
 
 namespace Witcher3StringEditor.Services;
@@ -30,10 +30,10 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
                 Hash = hash, // Set file hash
                 OrginPath = filePath, // Set original file path
                 BackupPath =
-                    Path.Combine(PathHelper.BackupDirectory, $"{Guid.NewGuid():N}.bak"), // Set backup file path
+                    Path.Combine(AppPaths.BackupDirectory, $"{Guid.NewGuid():N}.bak"), // Set backup file path
                 BackupTime = DateTime.Now // Set backup time
             };
-            EnsureBackupDirectoryExists(PathHelper.BackupDirectory); // Ensure backup directory exists
+            EnsureBackupDirectoryExists(AppPaths.BackupDirectory); // Ensure backup directory exists
             return IsDuplicateBackup(backupItem) || ExecuteBackup(backupItem); // Check for duplicates or execute backup
         }
         catch (Exception ex)

@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
-using Witcher3StringEditor.Helpers;
+using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 
@@ -29,10 +29,10 @@ public class DictionaryManager : IDictionaryManager
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider
-        if (!Path.Exists(PathHelper.DictionaryDirectory))
-            Directory.CreateDirectory(PathHelper
+        if (!Path.Exists(AppPaths.DictionaryDirectory))
+            Directory.CreateDirectory(AppPaths
                 .DictionaryDirectory); // Create dictionary directory if it doesn't exist
-        LoadDictionariesFromDirectory(PathHelper.DictionaryDirectory); // Load dictionaries from directory
+        LoadDictionariesFromDirectory(AppPaths.DictionaryDirectory); // Load dictionaries from directory
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ public class DictionaryManager : IDictionaryManager
         // Copy the dictionary file
         var fileName = Path.GetFileName(filePath);
         var dictionaryInfo = await dictionaryProvider.GetDictionaryInfo(filePath);
-        var destFileName = Path.Combine(PathHelper.DictionaryDirectory, fileName);
+        var destFileName = Path.Combine(AppPaths.DictionaryDirectory, fileName);
         File.Copy(filePath, destFileName, true);
 
         // Register the dictionary

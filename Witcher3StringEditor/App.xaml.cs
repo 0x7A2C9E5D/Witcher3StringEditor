@@ -21,7 +21,7 @@ using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dialogs.Views;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Dictionary.Implementation;
-using Witcher3StringEditor.Helpers;
+using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers;
@@ -108,7 +108,7 @@ public sealed partial class App : IDisposable
         logObserver = new AnonymousObserver<LogEvent>(logAccessService.Logs.Add);
 
         // Configure Serilog with multiple outputs: file, debug, and observer
-        Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(PathHelper.LogDirectory, "log.txt"),
+        Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(AppPaths.LogDirectory, "log.txt"),
                 rollingInterval: RollingInterval.Day, formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.Debug(formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.Observers(observable => observable.Subscribe(logObserver))
@@ -133,10 +133,10 @@ public sealed partial class App : IDisposable
     /// <returns>The full path to the application settings file</returns>
     private static string GetAppSettingsPath()
     {
-        var configPath = Path.Combine(PathHelper.AppDataDirectory, "AppSettings.Json");
+        var configPath = Path.Combine(AppPaths.AppDataDirectory, "AppSettings.Json");
         // Create the configuration folder if it doesn't exist
-        if (!Directory.Exists(PathHelper.AppDataDirectory))
-            Directory.CreateDirectory(PathHelper.AppDataDirectory);
+        if (!Directory.Exists(AppPaths.AppDataDirectory))
+            Directory.CreateDirectory(AppPaths.AppDataDirectory);
         return configPath;
     }
 

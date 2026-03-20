@@ -1,9 +1,9 @@
-﻿namespace Witcher3StringEditor.Helpers;
+﻿namespace Witcher3StringEditor.Miscellaneous;
 
 /// <summary>
 ///     A class that provides helper methods for working with paths.
 /// </summary>
-public static class PathHelper
+public static class AppPaths
 {
     /// <summary>
     ///     The application data directory.

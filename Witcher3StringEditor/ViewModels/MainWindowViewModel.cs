@@ -18,7 +18,7 @@ using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dictionary.Abstractions;
-using Witcher3StringEditor.Helpers;
+using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
@@ -300,7 +300,7 @@ internal partial class MainWindowViewModel : ObservableObject
         Log.Information(".Net Runtime: {Runtime}", RuntimeInformation.FrameworkDescription); // Log .NET runtime version
         Log.Information("Is Debug: {IsDebug}", !BuildInformation.IsReleaseBuild); // Log debug mode status
         Log.Information("Current Directory: {Directory}", Environment.CurrentDirectory); // Log current directory
-        Log.Information("AppData Folder: {Folder}", PathHelper.AppDataDirectory); // Log AppData folder path
+        Log.Information("AppData Folder: {Folder}", AppPaths.AppDataDirectory); // Log AppData folder path
         var supportedCultures = serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures;
         Log.Information("Installed Language Packs: {Languages}",
             string.Join(", ", supportedCultures.Select(x => x.Name))); // Log installed language packs

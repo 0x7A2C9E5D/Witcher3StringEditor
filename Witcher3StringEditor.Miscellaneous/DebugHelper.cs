@@ -1,4 +1,4 @@
-﻿namespace Witcher3StringEditor.Helpers;
+﻿namespace Witcher3StringEditor.Miscellaneous;
 
 /// <summary>
 ///     A helper class for debugging.
