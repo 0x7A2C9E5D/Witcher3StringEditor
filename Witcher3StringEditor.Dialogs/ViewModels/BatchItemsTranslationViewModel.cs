@@ -200,19 +200,75 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
-        await BindDictionaryIfNeeded(); // Bind dictionary if needed
+        await BindDictionaryIfNeeded();
 
-        foreach (var item in items) // Process each item in the collection
-            if (!cancellationToken.IsCancellationRequested) // Check if operation has been canceled
+        try
+        {
+            foreach (var item in items)
             {
-                await ProcessSingleItem(item, toLanguage, fromLanguage); // Translate the current item
-                PendingCount--; // Decrement the pending items counter
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var success = await ProcessSingleItemWithCancellation(
+                    item, toLanguage, fromLanguage, cancellationToken);
+
+                if (success)
+                    SuccessCount++;
+                else
+                    FailureCount++;
+
+                PendingCount--;
             }
-            else
-            {
-                Log.Information("The batch translation has been cancelled."); // Log cancellation
-                break; // Exit the loop if canceled
-            }
+        }
+        catch (OperationCanceledException ex)
+        {
+            Log.Warning(ex, "Batch translation cancelled.");
+        }
+    }
+
+    private async Task<bool> ProcessSingleItemWithCancellation(
+        ITrackableW3StringItem item,
+        ILanguage toLanguage,
+        ILanguage fromLanguage,
+        CancellationToken cancellationToken)
+    {
+        var text = isDictionaryReady ? DictionaryService!.Replace(item.Text) : item.Text;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            var translateTask = TranslateItem(Translator, text, toLanguage, fromLanguage);
+            var cancelTask = Task.Delay(Timeout.Infinite, cancellationToken);
+
+            var completed = await Task.WhenAny(translateTask, cancelTask);
+            if (completed == cancelTask)
+                return false;
+
+            var (ok, translation) = await translateTask;
+
+            if (!ok) return false;
+            item.Text = translation;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Translation failed: {Text}", text[..Math.Min(30, text.Length)]);
+            return false;
+        }
+    }
+
+    private static async Task<(bool, string)> TranslateItem(
+        ITranslator translator, string text, ILanguage tLanguage, ILanguage fLanguage)
+    {
+        var result = await translator.TranslateAsync(text, tLanguage, fLanguage);
+        var translation = result.Translation;
+
+        if (IsTranslationValid(translation))
+            return (true, translation);
+
+        LogEmptyTranslationResult(translator.Name);
+        return (false, string.Empty);
     }
 
     /// <summary>
@@ -228,58 +284,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
                 await DictionaryService
                     .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
         Log.Information("The dictionary is ready: {0}.", isDictionaryReady);
-    }
-
-    /// <summary>
-    ///     Processes a single item for translation
-    ///     Sends the translated result via messaging if successful
-    /// </summary>
-    /// <param name="item">The item to translate</param>
-    /// <param name="toLanguage">The target language</param>
-    /// <param name="fromLanguage">The source language</param>
-    private async Task ProcessSingleItem(ITrackableW3StringItem item, ILanguage toLanguage, ILanguage fromLanguage)
-    {
-        try
-        {
-            var textToTranslated = isDictionaryReady
-                ? DictionaryService!.Replace(item.Text)
-                : item.Text; // Replace with dictionary if needed
-            var (success, translation) =
-                await TranslateItem(Translator, textToTranslated, toLanguage, fromLanguage); // Perform translation
-            if (success) // Check if translation succeeded
-            {
-                item.Text = translation; // Update with translated text
-                SuccessCount++; // Increment success counter
-            }
-            else
-            {
-                FailureCount++; // Increment failure counter
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "The translator: {Name} returned an error. Exception: {ExceptionMessage}", // Log any errors
-                Translator.Name, ex.Message);
-            FailureCount++; // Increment failure counter
-        }
-    }
-
-    /// <summary>
-    ///     Translates a single text item
-    /// </summary>
-    /// <param name="translator">The translation service to use</param>
-    /// <param name="text">The text to translate</param>
-    /// <param name="tLanguage">The target language</param>
-    /// <param name="fLanguage">The source language</param>
-    /// <returns>A Result containing the translated text if successful</returns>
-    private static async Task<(bool, string)> TranslateItem(ITranslator translator, string text, ILanguage tLanguage,
-        ILanguage fLanguage)
-    {
-        var translation =
-            (await translator.TranslateAsync(text, tLanguage, fLanguage)).Translation; // Perform translation
-        if (IsTranslationValid(translation)) return (true, translation); // Return success if valid
-        LogEmptyTranslationResult(translator.Name); // Log error if invalid
-        return (false, string.Empty); // Return failure
     }
 
     /// <summary>
