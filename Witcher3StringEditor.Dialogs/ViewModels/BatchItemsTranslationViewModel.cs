@@ -237,21 +237,20 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         {
             if (string.IsNullOrWhiteSpace(text))
                 return false;
-
+            
             var translateTask = TranslateItem(Translator, text, toLanguage, fromLanguage);
             var cancelTask = Task.Delay(Timeout.Infinite, cancellationToken);
-
             var completed = await Task.WhenAny(translateTask, cancelTask);
             if (completed == cancelTask)
-                return false;
+                throw new OperationCanceledException();
 
-            var (ok, translation) = await translateTask;
+            var (success, translation) = await translateTask;
 
-            if (!ok) return false;
+            if (!success) return false;
             item.Text = translation;
             return true;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             Log.Error(ex, "Translation failed: {Text}", text[..Math.Min(30, text.Length)]);
             return false;
