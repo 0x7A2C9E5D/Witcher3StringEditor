@@ -269,9 +269,19 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            Log.Error(ex, "Translation failed: {Text}", text[..Math.Min(30, text.Length)]);
+            Log.Error(ex, "Translation failed: {Text}", GetLogSafeTextSnippet(text));
             return false;
         }
+    }
+
+    /// <summary>
+    ///     Gets a safe snippet of the text for logging purposes to avoid exposing sensitive or overly long content
+    /// </summary>
+    /// <param name="text">The original text to truncate</param>
+    /// <returns>The first 30 characters of the text, or the entire text if it is shorter than 30 characters</returns>
+    private static string GetLogSafeTextSnippet(string text)
+    {
+        return text[..Math.Min(30, text.Length)];
     }
 
     /// <summary>
