@@ -109,8 +109,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 var dictionaryInfo =
                     await dictionaryManager.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return;
-
-                // ✅ 将复杂的同步逻辑委托给专用方法
+                
                 UpdateOrAddDictionaryToGroups(dictionaryInfo);
             }
         }
@@ -172,14 +171,14 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         {
             // Create a new group for this language
             DictionaryGroups.Add(new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]));
-            Log.Debug("Created new group for {Language} and added dictionary: {Path}",
+            Log.Information("Created new group for {Language} and added dictionary: {Path}",
                 dictionaryInfo.TargetLanguage.EnglishName, dictionaryInfo.Path);
         }
         else
         {
             // Add to existing group
             targetGroup.Dictionaries.Add(dictionaryInfo);
-            Log.Debug("Added dictionary to existing group {Language}: {Path}",
+            Log.Information("Added dictionary to existing group {Language}: {Path}",
                 dictionaryInfo.TargetLanguage.EnglishName, dictionaryInfo.Path);
         }
     }
