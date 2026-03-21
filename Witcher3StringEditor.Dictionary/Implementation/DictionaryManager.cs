@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
-using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Miscellaneous;
 
 namespace Witcher3StringEditor.Dictionary.Implementation;
 
