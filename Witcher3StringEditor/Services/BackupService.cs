@@ -153,11 +153,7 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
             using var sha256 = SHA256.Create(); // Create SHA256 hasher
             await using var stream = File.OpenRead(filePath); // Open file for reading
             var hash = await sha256.ComputeHashAsync(stream);
-#if NET10_0
-            return Convert.ToHexStringLower(hash); // Compute and format hash
-#else
-            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant(); // Compute and format hash
-#endif
+            return Convert.ToHexString(hash).ToLowerInvariant(); // Compute and format hash
         }
         catch (Exception ex)
         {
