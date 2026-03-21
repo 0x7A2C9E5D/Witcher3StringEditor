@@ -41,7 +41,7 @@ public partial class DictionaryManagerDialog
         RegisterRemoveDictionaryConfirmHandler(); // Register handler for RemoveDictionaryConfirm message
         RegisterDictionaryOverwriteConfirmHandler(); // Register handler for DictionaryOverwriteConfirm message
     }
-    
+
     /// <summary>
     ///     Registers handler for ImportDictionaryFailed message
     /// </summary>
@@ -57,7 +57,7 @@ public partial class DictionaryManagerDialog
                     MessageBoxImage.Information);
             });
     }
-    
+
     /// <summary>
     ///     Registers handler for ImportDictionaryFailed message
     /// </summary>

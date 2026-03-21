@@ -24,7 +24,7 @@
         <t:DictionaryTreeTemplateSelector x:Key="DictionaryTreeTemplateSelector">
             <t:DictionaryTreeTemplateSelector.DictionaryGroupTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type m:DictionaryGroup}"
-                                  ItemsSource="{Binding Dictionaries}">
+                                          ItemsSource="{Binding Dictionaries}">
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Folder}" />
                         <TextBlock Margin="5,0,0,0" Text="{Binding TargetLanguage.NativeName}" />
@@ -36,8 +36,8 @@
                     <StackPanel Orientation="Horizontal">
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Document}" />
                         <TextBlock Margin="5,0,0,0"
-                           VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                           Text="{Binding Name}" />
+                                   VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                   Text="{Binding Name}" />
                     </StackPanel>
                 </DataTemplate>
             </t:DictionaryTreeTemplateSelector.DictionaryItemTemplate>
@@ -99,7 +99,7 @@
                   BorderThickness="1" ItemTemplateSelector="{StaticResource DictionaryTreeTemplateSelector}"
                   ItemsSource="{Binding DictionaryGroups}">
             <i:Interaction.Behaviors>
-                <b:DictionaryTreeBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}"/>
+                <b:DictionaryTreeBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
         </TreeView>
         <sf:SfDataGrid x:Name="SfDataGrid" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0"

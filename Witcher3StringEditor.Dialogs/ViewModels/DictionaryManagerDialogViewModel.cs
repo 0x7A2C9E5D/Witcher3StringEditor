@@ -109,7 +109,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 var dictionaryInfo =
                     await dictionaryManager.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return;
-                
+
                 UpdateOrAddDictionaryToGroups(dictionaryInfo);
                 _ = WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.DictionaryImported);
             }

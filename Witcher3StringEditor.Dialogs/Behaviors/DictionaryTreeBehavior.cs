@@ -6,7 +6,7 @@ using Witcher3StringEditor.Dictionary;
 namespace Witcher3StringEditor.Dialogs.Behaviors;
 
 /// <summary>
-///    A behavior class for handling selection changes in a TreeView
+///     A behavior class for handling selection changes in a TreeView
 /// </summary>
 internal class DictionaryTreeBehavior : Behavior<TreeView>
 {
