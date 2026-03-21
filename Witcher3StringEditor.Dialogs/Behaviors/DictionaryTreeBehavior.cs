@@ -150,12 +150,32 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     /// </summary>
     private void RestoreExpansionState()
     {
-        foreach (var item in AssociatedObject.Items)
+        if (expandedGroups.Count == 0) return;
+
+        TreeViewItem? toSelect = null;
+
+        // Get only groups that need to be expanded (intersection of data source and expanded state)
+        var groupsToExpand = AssociatedObject.ItemsSource.OfType<DictionaryGroup>()
+            .Where(group => expandedGroups.Contains(group.TargetLanguage)).ToList();
+        
+        foreach (var group in groupsToExpand)
         {
-            if (AssociatedObject.ItemContainerGenerator.ContainerFromItem(item) is not TreeViewItem treeViewItem ||
-                item is not DictionaryGroup group) continue;
-            // Check if this group was previously expanded by comparing culture names
-            if (expandedGroups.Contains(group.TargetLanguage)) treeViewItem.IsExpanded = true;
+            if (AssociatedObject.ItemContainerGenerator.ContainerFromItem(group) is not TreeViewItem treeViewItem)
+                continue;
+
+            treeViewItem.IsExpanded = true;
+            treeViewItem.UpdateLayout();
+
+            // Skip selection logic if we already found the item to select or no previous selection exists
+            if (previousSelectedItem == null || toSelect != null)
+                continue;
+
+            var dictionaryInfo = group.Dictionaries.FirstOrDefault(previousSelectedItem);
+            if (dictionaryInfo == null) continue;
+
+            toSelect = treeViewItem.ItemContainerGenerator.ContainerFromItem(dictionaryInfo) as TreeViewItem;
+            if (toSelect != null)
+                toSelect.IsSelected = true;
         }
     }
 
