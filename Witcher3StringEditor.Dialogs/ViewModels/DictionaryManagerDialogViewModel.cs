@@ -104,19 +104,30 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
             {
-                // Try to import the dictionary, if successful, regroup dictionaries to reflect changes
                 var dictionaryInfo =
                     await dictionaryManager.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return;
-                var found = DictionaryGroups
+                foreach (var group in DictionaryGroups.ToList())
+                {
+                    var existingEntry = group.Dictionaries
+                        .FirstOrDefault(d => d.Path.Equals(dictionaryInfo.Path, StringComparison.OrdinalIgnoreCase));
+                    if (existingEntry == null) continue;
+                    group.Dictionaries.Remove(existingEntry);
+                    if (group.Dictionaries.Count == 0)
+                    {
+                        DictionaryGroups.Remove(group);
+                    }
+                }
+
+                var targetGroup = DictionaryGroups
                     .FirstOrDefault(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage));
-                if (found == null)
+                if (targetGroup == null)
                 {
                     DictionaryGroups.Add(new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]));
                 }
                 else
                 {
-                    found.Dictionaries.Add(dictionaryInfo);
+                    targetGroup.Dictionaries.Add(dictionaryInfo);
                 }
             }
         }
