@@ -58,7 +58,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         this.dictionaryProvider = dictionaryProvider;
         var found = dictionaryManager.Find(null);
         var groups = found.GroupBy(x => x.TargetLanguage);
-        foreach (var group in groups) 
+        foreach (var group in groups)
             DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
     }
 
@@ -105,31 +105,13 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
             {
+                // Try to import the dictionary, if successful, regroup dictionaries to reflect changes
                 var dictionaryInfo =
                     await dictionaryManager.Import(storageFile.LocalPath);
                 if (dictionaryInfo == null) return;
-                foreach (var group in DictionaryGroups.ToList())
-                {
-                    var existingEntry = group.Dictionaries
-                        .FirstOrDefault(d => d.Path.Equals(dictionaryInfo.Path, StringComparison.OrdinalIgnoreCase));
-                    if (existingEntry == null) continue;
-                    group.Dictionaries.Remove(existingEntry);
-                    if (group.Dictionaries.Count == 0)
-                    {
-                        DictionaryGroups.Remove(group);
-                    }
-                }
 
-                var targetGroup = DictionaryGroups
-                    .FirstOrDefault(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage));
-                if (targetGroup == null)
-                {
-                    DictionaryGroups.Add(new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]));
-                }
-                else
-                {
-                    targetGroup.Dictionaries.Add(dictionaryInfo);
-                }
+                // ✅ 将复杂的同步逻辑委托给专用方法
+                UpdateOrAddDictionaryToGroups(dictionaryInfo);
             }
         }
         catch (Exception e)
@@ -137,6 +119,68 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
                 MessageTokens.ImportDictionaryFailed);
             Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
+        }
+    }
+
+    /// <summary>
+    ///     Updates the DictionaryGroups collection by first removing any existing entry with the same path,
+    ///     then adding the new dictionaryInfo to the group corresponding to its TargetLanguage.
+    ///     This ensures that each file path exists only once and in the correct language group.
+    /// </summary>
+    /// <param name="dictionaryInfo">The dictionary info to add or update.</param>
+    private void UpdateOrAddDictionaryToGroups(DictionaryInfo dictionaryInfo)
+    {
+        // Step 1: Remove any existing entry with the same path from any group
+        RemoveExistingEntryByPath(dictionaryInfo.Path);
+
+        // Step 2: Add the new entry to the correct target language group
+        AddToTargetLanguageGroup(dictionaryInfo);
+    }
+
+    /// <summary>
+    ///     Removes an existing DictionaryInfo from its group if found, based on the provided file path.
+    ///     Also removes the entire group if it becomes empty after removal.
+    /// </summary>
+    /// <param name="path">The file path of the dictionary to remove.</param>
+    private void RemoveExistingEntryByPath(string path)
+    {
+        foreach (var group in DictionaryGroups.ToList()) // Use ToList() to avoid modification during enumeration
+        {
+            var existingEntry =
+                group.Dictionaries.FirstOrDefault(d => d.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
+            if (existingEntry == null) continue;
+            group.Dictionaries.Remove(existingEntry);
+            Log.Information("Removed duplicate dictionary with same path from {OldLanguage}: {Path}",
+                group.TargetLanguage.EnglishName, path);
+
+            // If the group is now empty, remove the group itself
+            if (group.Dictionaries.Count == 0) DictionaryGroups.Remove(group);
+            break; // Path is unique, so we can exit after finding and removing the first match
+        }
+    }
+
+    /// <summary>
+    ///     Adds the given dictionaryInfo to the group matching its TargetLanguage.
+    ///     Creates a new group if no matching group exists.
+    /// </summary>
+    /// <param name="dictionaryInfo">The dictionary info to add.</param>
+    private void AddToTargetLanguageGroup(DictionaryInfo dictionaryInfo)
+    {
+        var targetGroup = DictionaryGroups.FirstOrDefault(g => Equals(g.TargetLanguage, dictionaryInfo.TargetLanguage));
+
+        if (targetGroup == null)
+        {
+            // Create a new group for this language
+            DictionaryGroups.Add(new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]));
+            Log.Debug("Created new group for {Language} and added dictionary: {Path}",
+                dictionaryInfo.TargetLanguage.EnglishName, dictionaryInfo.Path);
+        }
+        else
+        {
+            // Add to existing group
+            targetGroup.Dictionaries.Add(dictionaryInfo);
+            Log.Debug("Added dictionary to existing group {Language}: {Path}",
+                dictionaryInfo.TargetLanguage.EnglishName, dictionaryInfo.Path);
         }
     }
 
