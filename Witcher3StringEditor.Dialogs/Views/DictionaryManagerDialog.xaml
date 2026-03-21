@@ -21,24 +21,27 @@
         Closed="DictionaryDialog_OnClosed"
         mc:Ignorable="d" Width="1200" Height="800">
     <Window.Resources>
-        <HierarchicalDataTemplate x:Key="DictionaryGroupTemplate" DataType="{x:Type m:DictionaryGroup}"
+        <t:DictionaryTreeTemplateSelector x:Key="DictionaryTreeTemplateSelector">
+            <t:DictionaryTreeTemplateSelector.DictionaryGroupTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type m:DictionaryGroup}"
                                   ItemsSource="{Binding Dictionaries}">
-            <StackPanel Orientation="Horizontal">
-                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Folder}" />
-                <TextBlock Margin="5,0,0,0" Text="{Binding TargetLanguage.NativeName}" />
-            </StackPanel>
-        </HierarchicalDataTemplate>
-        <DataTemplate x:Key="DictionaryItemTemplate" DataType="{x:Type di:DictionaryInfo}">
-            <StackPanel Orientation="Horizontal">
-                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Document}" />
-                <TextBlock Margin="5,0,0,0"
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Folder}" />
+                        <TextBlock Margin="5,0,0,0" Text="{Binding TargetLanguage.NativeName}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </t:DictionaryTreeTemplateSelector.DictionaryGroupTemplate>
+            <t:DictionaryTreeTemplateSelector.DictionaryItemTemplate>
+                <DataTemplate DataType="{x:Type di:DictionaryInfo}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Document}" />
+                        <TextBlock Margin="5,0,0,0"
                            VerticalAlignment="Center" HorizontalAlignment="Stretch"
                            Text="{Binding Name}" />
-            </StackPanel>
-        </DataTemplate>
-        <t:DictionaryTreeTemplateSelector x:Key="DictionaryTreeTemplateSelector"
-                                          DictionaryGroupTemplate="{StaticResource DictionaryGroupTemplate}"
-                                          DictionaryItemTemplate="{StaticResource DictionaryItemTemplate}" />
+                    </StackPanel>
+                </DataTemplate>
+            </t:DictionaryTreeTemplateSelector.DictionaryItemTemplate>
+        </t:DictionaryTreeTemplateSelector>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
