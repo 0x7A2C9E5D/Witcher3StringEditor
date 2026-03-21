@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -15,16 +16,16 @@ namespace Witcher3StringEditor.Dialogs.Behaviors;
 internal class DictionaryTreeBehavior : Behavior<TreeView>
 {
     /// <summary>
-    ///     Stores expanded groups (using culture name as key)
-    /// </summary>
-    private readonly HashSet<string> expandedGroups = [];
-
-    /// <summary>
     ///     Dependency property for storing the selected item
     /// </summary>
     public static readonly DependencyProperty SelectedItemProperty =
         DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(DictionaryTreeBehavior),
             new PropertyMetadata(null));
+
+    /// <summary>
+    ///     Stores expanded groups (using culture name as key)
+    /// </summary>
+    private readonly HashSet<CultureInfo> expandedGroups = [];
 
     /// <summary>
     ///     Gets or sets the selected item
@@ -42,9 +43,9 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     protected override void OnAttached()
     {
         AssociatedObject.Loaded += OnTreeViewLoaded;
+        AssociatedObject.SelectedItemChanged += AssociatedObject_SelectedItemChanged;
         AssociatedObject.ItemContainerGenerator.StatusChanged += OnItemContainerStatusChanged;
         AssociatedObject.ItemContainerGenerator.ItemsChanged += OnItemsChanged;
-        AssociatedObject.SelectedItemChanged += AssociatedObject_SelectedItemChanged;
     }
 
     /// <summary>
@@ -54,9 +55,9 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     protected override void OnDetaching()
     {
         AssociatedObject.Loaded -= OnTreeViewLoaded;
+        AssociatedObject.SelectedItemChanged -= AssociatedObject_SelectedItemChanged;
         AssociatedObject.ItemContainerGenerator.StatusChanged -= OnItemContainerStatusChanged;
         AssociatedObject.ItemContainerGenerator.ItemsChanged -= OnItemsChanged;
-        AssociatedObject.SelectedItemChanged -= AssociatedObject_SelectedItemChanged;
     }
 
     /// <summary>
@@ -126,7 +127,7 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     private void OnTreeViewItemExpanded(object sender, RoutedEventArgs e)
     {
         if (sender is TreeViewItem { DataContext: DictionaryGroup group })
-            expandedGroups.Add(group.TargetLanguage.Name);
+            expandedGroups.Add(group.TargetLanguage);
     }
 
     /// <summary>
@@ -136,7 +137,7 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     private void OnTreeViewItemCollapsed(object sender, RoutedEventArgs e)
     {
         if (sender is TreeViewItem { DataContext: DictionaryGroup group })
-            expandedGroups.Remove(group.TargetLanguage.Name);
+            expandedGroups.Remove(group.TargetLanguage);
     }
 
     /// <summary>
@@ -149,7 +150,7 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
             if (AssociatedObject.ItemContainerGenerator.ContainerFromItem(item) is not TreeViewItem treeViewItem ||
                 item is not DictionaryGroup group) continue;
             // Check if this group was previously expanded by comparing culture names
-            if (expandedGroups.Contains(group.TargetLanguage.Name)) treeViewItem.IsExpanded = true;
+            if (expandedGroups.Contains(group.TargetLanguage)) treeViewItem.IsExpanded = true;
         }
     }
 
