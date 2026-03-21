@@ -185,7 +185,7 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     /// </summary>
     private void AssociatedObject_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-        previousSelectedItem = e.OldValue as DictionaryInfo ?? previousSelectedItem;
         SelectedItem = e.NewValue is DictionaryInfo ? e.NewValue : null;
+        previousSelectedItem = e.OldValue as DictionaryInfo ?? previousSelectedItem;
     }
 }
