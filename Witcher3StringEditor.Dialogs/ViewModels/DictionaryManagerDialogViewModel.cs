@@ -107,7 +107,17 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 // Try to import the dictionary, if successful, regroup dictionaries to reflect changes
                 var dictionaryInfo =
                     await dictionaryManager.Import(storageFile.LocalPath);
-                if (dictionaryInfo != null) ReGroupDictionaries();
+                if (dictionaryInfo == null) return;
+                var found = DictionaryGroups
+                    .FirstOrDefault(x => Equals(x.TargetLanguage, dictionaryInfo.TargetLanguage));
+                if (found == null)
+                {
+                    DictionaryGroups.Add(new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]));
+                }
+                else
+                {
+                    found.Dictionaries.Add(dictionaryInfo);
+                }
             }
         }
         catch (Exception e)
@@ -116,24 +126,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 MessageTokens.ImportDictionaryFailed);
             Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
         }
-    }
-
-    /// <summary>
-    ///     Regroups all dictionaries by target language.
-    /// </summary>
-    private void ReGroupDictionaries()
-    {
-        // Regroup dictionaries by target language
-        DictionaryGroups.Clear();
-        var groups = dictionaryManager.Find(null)
-            .GroupBy(x => x.TargetLanguage);
-        foreach (var group in groups) DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
-
-        // Validate selected dictionary and clear if removed
-        if (DictionaryGroups.SelectMany(g => g.Dictionaries)
-            .Contains(SelectedDictionary)) return;
-        SelectedDictionary = null;
-        DictionaryTerms = [];
     }
 
     /// <summary>
@@ -148,7 +140,11 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 MessageTokens.RemoveDictionaryConfirm)) // Ask for confirmation before removing the dictionary
         {
             dictionaryManager.Remove(dictionary); // Remove the dictionary
-            ReGroupDictionaries(); // Rebuild groups to reflect changes and check if selected dictionary is still valid
+            var found = DictionaryGroups
+                .FirstOrDefault(x => Equals(x.TargetLanguage, dictionary.TargetLanguage));
+            found?.Dictionaries.Remove(dictionary);
+            if (found?.Dictionaries.Count == 0)
+                DictionaryGroups.Remove(found);
         }
     }
 }
