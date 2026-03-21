@@ -105,7 +105,7 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     /// </summary>
     private void SubscribeToAllItemEvents()
     {
-        foreach (var item in AssociatedObject.Items)
+        foreach (var item in AssociatedObject.Items.OfType<DictionaryGroup>())
             if (AssociatedObject.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem treeViewItem)
                 SubscribeToItemEvents(treeViewItem);
     }
