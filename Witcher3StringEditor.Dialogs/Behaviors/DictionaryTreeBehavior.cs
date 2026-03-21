@@ -28,6 +28,11 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     private readonly HashSet<CultureInfo> expandedGroups = [];
 
     /// <summary>
+    ///     Stores the previously selected item
+    /// </summary>
+    private DictionaryInfo? previousSelectedItem;
+
+    /// <summary>
     ///     Gets or sets the selected item
     /// </summary>
     public object? SelectedItem
@@ -160,6 +165,7 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     /// </summary>
     private void AssociatedObject_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
+        previousSelectedItem = e.OldValue as DictionaryInfo ?? previousSelectedItem;
         SelectedItem = e.NewValue is DictionaryInfo ? e.NewValue : null;
     }
 }
