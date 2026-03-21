@@ -115,7 +115,8 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     /// </summary>
     private void SubscribeToItemEvents(TreeViewItem item)
     {
-        if (item.DataContext is not DictionaryGroup && item.DataContext is not DictionaryInfo) return;
+        if (item.DataContext is not DictionaryGroup) return;
+        
         // Remove existing handlers to avoid duplicates
         item.Expanded -= OnTreeViewItemExpanded;
         item.Collapsed -= OnTreeViewItemCollapsed;
