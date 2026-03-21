@@ -589,4 +589,10 @@
     <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
     <value>Szótár felülírás megerősítése</value>
   </data>
+    <data name="DictionaryImportedCaption" xml:space="preserve">
+      <value>Import befejeződött</value>
+    </data>
+    <data name="DictionaryImportedMessage" xml:space="preserve">
+      <value>Szótár sikeresen importálva lett.</value>
+    </data>
 </root>

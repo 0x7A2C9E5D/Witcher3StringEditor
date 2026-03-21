@@ -111,6 +111,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 if (dictionaryInfo == null) return;
                 
                 UpdateOrAddDictionaryToGroups(dictionaryInfo);
+                _ = WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.DictionaryImported);
             }
         }
         catch (Exception e)

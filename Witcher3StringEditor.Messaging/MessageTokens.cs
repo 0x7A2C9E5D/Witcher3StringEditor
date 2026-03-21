@@ -142,6 +142,11 @@ public static class MessageTokens
     public const string TranslatorChanged = "TranslatorChanged";
 
     /// <summary>
+    ///     Token for messages indicating that a dictionary has been imported
+    /// </summary>
+    public const string DictionaryImported = "DictionaryImported";
+    
+    /// <summary>
     ///     Token for messages indicating that an import dictionary failed
     /// </summary>
     public const string ImportDictionaryFailed = "ImportDictionaryFailed";
@@ -155,4 +160,5 @@ public static class MessageTokens
     ///     Token for messages indicating that a dictionary should be overwritten
     /// </summary>
     public const string DictionaryOverwriteConfirm = "DictionaryOverwriteConfirm";
+    
 }

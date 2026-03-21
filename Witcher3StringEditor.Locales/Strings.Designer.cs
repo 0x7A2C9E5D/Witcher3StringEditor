@@ -321,6 +321,24 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import Completed.
+        /// </summary>
+        public static string DictionaryImportedCaption {
+            get {
+                return ResourceManager.GetString("DictionaryImportedCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dictionary imported successfully..
+        /// </summary>
+        public static string DictionaryImportedMessage {
+            get {
+                return ResourceManager.GetString("DictionaryImportedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dictionary Overwrite Confirm.
         /// </summary>
         public static string DictionaryOverwriteConfirmCaption {

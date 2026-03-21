@@ -589,4 +589,10 @@
     <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
     <value>Dictionary Overwrite Confirm</value>
   </data>
+    <data name="DictionaryImportedCaption" xml:space="preserve">
+      <value>Import Completed</value>
+    </data>
+    <data name="DictionaryImportedMessage" xml:space="preserve">
+      <value>Dictionary imported successfully.</value>
+    </data>
 </root>

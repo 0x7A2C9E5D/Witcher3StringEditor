@@ -589,4 +589,10 @@
     <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
     <value>辞書上書き確認</value>
   </data>
+    <data name="DictionaryImportedCaption" xml:space="preserve">
+      <value>インポート完了</value>
+    </data>
+    <data name="DictionaryImportedMessage" xml:space="preserve">
+      <value>辞書のインポートに成功しました。</value>
+    </data>
 </root>

@@ -36,11 +36,28 @@ public partial class DictionaryManagerDialog
     /// </summary>
     private void RegisterMessageHandlers()
     {
+        RegisterDictionaryImportedHandler(); // Register handler for DictionaryImported message
         RegisterImportDictionaryFailedHandler(); // Register handler for ImportDictionaryFailed message
         RegisterRemoveDictionaryConfirmHandler(); // Register handler for RemoveDictionaryConfirm message
         RegisterDictionaryOverwriteConfirmHandler(); // Register handler for DictionaryOverwriteConfirm message
     }
-
+    
+    /// <summary>
+    ///     Registers handler for ImportDictionaryFailed message
+    /// </summary>
+    private void RegisterDictionaryImportedHandler()
+    {
+        WeakReferenceMessenger.Default.Register<DictionaryManagerDialog, string, string>(this,
+            MessageTokens.DictionaryImported,
+            (_, _) =>
+            {
+                MessageBox.Show(Strings.DictionaryImportedMessage,
+                    Strings.DictionaryImportedCaption,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            });
+    }
+    
     /// <summary>
     ///     Registers handler for ImportDictionaryFailed message
     /// </summary>
