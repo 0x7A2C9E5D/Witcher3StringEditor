@@ -29,9 +29,7 @@ public class DictionaryManager : IDictionaryManager
     {
         cultureMatcher = matcher; // Culture matcher
         dictionaryProvider = provider; // Dictionary provider
-        if (!Path.Exists(AppPaths.DictionaryDirectory))
-            Directory.CreateDirectory(AppPaths
-                .DictionaryDirectory); // Create dictionary directory if it doesn't exist
+        Directory.CreateDirectory(AppPaths.DictionaryDirectory); // Create dictionary directory if it doesn't exist
         LoadDictionariesFromDirectory(AppPaths.DictionaryDirectory); // Load dictionaries from directory
     }
 

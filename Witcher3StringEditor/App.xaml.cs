@@ -135,8 +135,7 @@ public sealed partial class App : IDisposable
     {
         var configPath = Path.Combine(AppPaths.AppDataDirectory, "AppSettings.Json");
         // Create the configuration folder if it doesn't exist
-        if (!Directory.Exists(AppPaths.AppDataDirectory))
-            Directory.CreateDirectory(AppPaths.AppDataDirectory);
+        Directory.CreateDirectory(AppPaths.AppDataDirectory);
         return configPath;
     }
 

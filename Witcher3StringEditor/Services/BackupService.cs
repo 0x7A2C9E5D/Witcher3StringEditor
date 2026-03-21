@@ -33,7 +33,7 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
                     Path.Combine(AppPaths.BackupDirectory, $"{Guid.NewGuid():N}.bak"), // Set backup file path
                 BackupTime = DateTime.Now // Set backup time
             };
-            EnsureBackupDirectoryExists(AppPaths.BackupDirectory); // Ensure backup directory exists
+            Directory.CreateDirectory(AppPaths.BackupDirectory); // Ensure backup directory exists
             return IsDuplicateBackup(backupItem) || ExecuteBackup(backupItem); // Check for duplicates or execute backup
         }
         catch (Exception ex)
@@ -55,8 +55,7 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
             Guard.IsTrue(File.Exists(backupItem.BackupPath)); // Ensure backup file exists
             var folder = Path.GetDirectoryName(backupItem.OrginPath); // Get directory of original file
             Guard.IsNotNullOrWhiteSpace(folder); // Ensure folder path is valid
-            if (!Directory.Exists(folder)) // Create directory if it doesn't exist
-                Directory.CreateDirectory(folder);
+            Directory.CreateDirectory(folder); // Create directory if it doesn't exist
             File.Copy(backupItem.BackupPath, backupItem.OrginPath, true); // Copy backup to original location
             Log.Information("Restore backup file: {FileName}.", backupItem.OrginPath); // Log successful restore
             return true; // Return true on success
@@ -101,16 +100,6 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
         var hash = await ComputeSha256Hash(filePath); // Compute SHA256 hash of the file
         Guard.IsNotNullOrWhiteSpace(hash); // Ensure hash is not null or whitespace
         return hash; // Return the computed hash
-    }
-
-    /// <summary>
-    ///     Ensures that the backup directory exists, creating it if necessary
-    /// </summary>
-    /// <param name="backupDirectoryPath">The path to the backup directory</param>
-    private static void EnsureBackupDirectoryExists(string backupDirectoryPath)
-    {
-        if (!Directory.Exists(backupDirectoryPath)) // Check if backup directory exists
-            Directory.CreateDirectory(backupDirectoryPath); // Create directory if it doesn't exist
     }
 
     /// <summary>
