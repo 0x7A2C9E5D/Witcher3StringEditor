@@ -4,36 +4,35 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Microsoft.Xaml.Behaviors;
 using Witcher3StringEditor.Dialogs.Models;
+using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.Behaviors;
 
 /// <summary>
-///     An attached behavior for TreeView that maintains expansion state of groups across data updates
+///     A behavior attached to TreeView for maintaining group expansion state and handling selection changes
 ///     Uses simple string (culture name) as key for expanded groups
 /// </summary>
-internal class DictionaryTreeExpandBehavior : Behavior<TreeView>
+internal class DictionaryTreeBehavior : Behavior<TreeView>
 {
     /// <summary>
-    ///     Dependency property for storing the expanded groups
-    ///     Uses culture name as simple string key
+    ///     Stores expanded groups (using culture name as key)
     /// </summary>
-    private static readonly DependencyProperty ExpandedGroupsProperty =
-        DependencyProperty.Register("ExpandedGroups", typeof(HashSet<string>), typeof(DictionaryTreeExpandBehavior),
+    private readonly HashSet<string> expandedGroups = [];
+
+    /// <summary>
+    ///     Dependency property for storing the selected item
+    /// </summary>
+    public static readonly DependencyProperty SelectedItemProperty =
+        DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(DictionaryTreeBehavior),
             new PropertyMetadata(null));
 
     /// <summary>
-    ///     Gets the set of expanded groups by culture name
+    ///     Gets or sets the selected item
     /// </summary>
-    private HashSet<string> ExpandedGroups
+    public object? SelectedItem
     {
-        get
-        {
-            var value = GetValue(ExpandedGroupsProperty);
-            if (value != null) return (HashSet<string>)value;
-            value = new HashSet<string>();
-            SetValue(ExpandedGroupsProperty, value);
-            return (HashSet<string>)value;
-        }
+        get => GetValue(SelectedItemProperty);
+        set => SetValue(SelectedItemProperty, value);
     }
 
     /// <summary>
@@ -45,6 +44,7 @@ internal class DictionaryTreeExpandBehavior : Behavior<TreeView>
         AssociatedObject.Loaded += OnTreeViewLoaded;
         AssociatedObject.ItemContainerGenerator.StatusChanged += OnItemContainerStatusChanged;
         AssociatedObject.ItemContainerGenerator.ItemsChanged += OnItemsChanged;
+        AssociatedObject.SelectedItemChanged += AssociatedObject_SelectedItemChanged;
     }
 
     /// <summary>
@@ -56,11 +56,12 @@ internal class DictionaryTreeExpandBehavior : Behavior<TreeView>
         AssociatedObject.Loaded -= OnTreeViewLoaded;
         AssociatedObject.ItemContainerGenerator.StatusChanged -= OnItemContainerStatusChanged;
         AssociatedObject.ItemContainerGenerator.ItemsChanged -= OnItemsChanged;
+        AssociatedObject.SelectedItemChanged -= AssociatedObject_SelectedItemChanged;
     }
 
     /// <summary>
     ///     Handles the Loaded event of the TreeView
-    ///     Restores expansion state for groups that were previously expanded
+    ///     Restores expansion state for previously expanded groups
     /// </summary>
     private void OnTreeViewLoaded(object sender, RoutedEventArgs e)
     {
@@ -69,7 +70,7 @@ internal class DictionaryTreeExpandBehavior : Behavior<TreeView>
 
     /// <summary>
     ///     Handles the ItemsChanged event of the ItemContainerGenerator
-    ///     This is called when items are added or removed
+    ///     Called when items are added or removed
     /// </summary>
     private void OnItemsChanged(object? sender, ItemsChangedEventArgs e)
     {
@@ -82,13 +83,13 @@ internal class DictionaryTreeExpandBehavior : Behavior<TreeView>
 
     /// <summary>
     ///     Handles the StatusChanged event of the ItemContainerGenerator
-    ///     This is called when items are regenerated (e.g. after ReGroup)
+    ///     Called when items are regenerated (e.g. after ReGroup)
     /// </summary>
     private void OnItemContainerStatusChanged(object? sender, EventArgs e)
     {
         if (AssociatedObject.ItemContainerGenerator.Status !=
             GeneratorStatus.ContainersGenerated) return;
-        // After containers are generated, restore the expansion state and subscribe to events
+        // After containers are generated, restore expansion state and subscribe to events
         RestoreExpansionState();
         SubscribeToAllItemEvents();
     }
@@ -108,7 +109,7 @@ internal class DictionaryTreeExpandBehavior : Behavior<TreeView>
     /// </summary>
     private void SubscribeToItemEvents(TreeViewItem item)
     {
-        if (item.DataContext is not DictionaryGroup) return;
+        if (item.DataContext is not DictionaryGroup && item.DataContext is not DictionaryInfo) return;
         // Remove existing handlers to avoid duplicates
         item.Expanded -= OnTreeViewItemExpanded;
         item.Collapsed -= OnTreeViewItemCollapsed;
@@ -120,26 +121,26 @@ internal class DictionaryTreeExpandBehavior : Behavior<TreeView>
 
     /// <summary>
     ///     Handles the Expanded event of a TreeViewItem
-    ///     Adds the group's culture name to expanded state
+    ///     Adds the group's culture name to expansion state
     /// </summary>
     private void OnTreeViewItemExpanded(object sender, RoutedEventArgs e)
     {
         if (sender is TreeViewItem { DataContext: DictionaryGroup group })
-            ExpandedGroups.Add(group.TargetLanguage.Name);
+            expandedGroups.Add(group.TargetLanguage.Name);
     }
 
     /// <summary>
     ///     Handles the Collapsed event of a TreeViewItem
-    ///     Removes the group's culture name from expanded state
+    ///     Removes the group's culture name from expansion state
     /// </summary>
     private void OnTreeViewItemCollapsed(object sender, RoutedEventArgs e)
     {
         if (sender is TreeViewItem { DataContext: DictionaryGroup group })
-            ExpandedGroups.Remove(group.TargetLanguage.Name);
+            expandedGroups.Remove(group.TargetLanguage.Name);
     }
 
     /// <summary>
-    ///     Restores the expansion state for groups that were previously expanded
+    ///     Restores the expansion state for previously expanded groups
     /// </summary>
     private void RestoreExpansionState()
     {
@@ -148,7 +149,16 @@ internal class DictionaryTreeExpandBehavior : Behavior<TreeView>
             if (AssociatedObject.ItemContainerGenerator.ContainerFromItem(item) is not TreeViewItem treeViewItem ||
                 item is not DictionaryGroup group) continue;
             // Check if this group was previously expanded by comparing culture names
-            if (ExpandedGroups.Contains(group.TargetLanguage.Name)) treeViewItem.IsExpanded = true;
+            if (expandedGroups.Contains(group.TargetLanguage.Name)) treeViewItem.IsExpanded = true;
         }
+    }
+
+    /// <summary>
+    ///     Handles the SelectedItemChanged event of the TreeView
+    ///     Updates the SelectedItem property if the selected value is of type DictionaryInfo
+    /// </summary>
+    private void AssociatedObject_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        SelectedItem = e.NewValue is DictionaryInfo ? e.NewValue : null;
     }
 }

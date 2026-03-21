@@ -96,9 +96,7 @@
                   BorderThickness="1" ItemTemplateSelector="{StaticResource DictionaryTreeTemplateSelector}"
                   ItemsSource="{Binding DictionaryGroups}">
             <i:Interaction.Behaviors>
-                <b:DictionaryTreeExpandBehavior />
-                <b:DictionaryTreeSelectionBehavior
-                    SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
+                <b:DictionaryTreeBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}"/>
             </i:Interaction.Behaviors>
         </TreeView>
         <sf:SfDataGrid x:Name="SfDataGrid" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0"
