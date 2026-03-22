@@ -12,6 +12,7 @@
         xmlns:di="clr-namespace:Witcher3StringEditor.Dictionary;assembly=Witcher3StringEditor.Dictionary"
         xmlns:t="clr-namespace:Witcher3StringEditor.Dialogs.TemplateSelectors"
         xmlns:b="clr-namespace:Witcher3StringEditor.Dialogs.Behaviors"
+        xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
         d:DataContext="{d:DesignInstance Type=vm:DictionaryManagerDialogViewModel}"
         Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}"
         ui:WindowHelper.UseModernWindowStyle="True"
@@ -21,6 +22,7 @@
         Closed="DictionaryDialog_OnClosed"
         mc:Ignorable="d" Width="1200" Height="800">
     <Window.Resources>
+        <c:EmptyStringHintConverter x:Key="EmptyStringHintConverter" />
         <t:DictionaryTreeTemplateSelector x:Key="DictionaryTreeTemplateSelector">
             <t:DictionaryTreeTemplateSelector.DictionaryGroupTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type m:DictionaryGroup}"
@@ -34,6 +36,15 @@
             <t:DictionaryTreeTemplateSelector.DictionaryItemTemplate>
                 <DataTemplate DataType="{x:Type di:DictionaryInfo}">
                     <StackPanel Orientation="Horizontal">
+                        <StackPanel.ToolTip>
+                            <ToolTip>
+                                <ToolTip.Content>
+                                    <MultiBinding Converter="{StaticResource EmptyStringHintConverter}">
+                                        <Binding Path="Note" />
+                                    </MultiBinding>
+                                </ToolTip.Content>
+                            </ToolTip>
+                        </StackPanel.ToolTip>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Document}" />
                         <TextBlock Margin="5,0,0,0"
                                    VerticalAlignment="Center" HorizontalAlignment="Stretch"
@@ -93,7 +104,6 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-
         <TreeView Grid.Row="2" Grid.Column="0" Width="350" Margin="16,16,0,0"
                   BorderBrush="Gray"
                   BorderThickness="1" ItemTemplateSelector="{StaticResource DictionaryTreeTemplateSelector}"
