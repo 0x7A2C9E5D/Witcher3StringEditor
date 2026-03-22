@@ -595,4 +595,7 @@
     <data name="DictionaryImportedMessage" xml:space="preserve">
       <value>詞典匯入成功。</value>
     </data>
+    <data name="NoDescription" xml:space="preserve">
+      <value>未提供描述</value>
+    </data>
 </root>

@@ -22,6 +22,7 @@
         Closed="DictionaryDialog_OnClosed"
         mc:Ignorable="d" Width="1200" Height="800">
     <Window.Resources>
+        <c:LangKeyToStringConverter x:Key="LangKeyToStringConverter" />
         <c:EmptyStringHintConverter x:Key="EmptyStringHintConverter" />
         <t:DictionaryTreeTemplateSelector x:Key="DictionaryTreeTemplateSelector">
             <t:DictionaryTreeTemplateSelector.DictionaryGroupTemplate>
@@ -41,6 +42,8 @@
                                 <ToolTip.Content>
                                     <MultiBinding Converter="{StaticResource EmptyStringHintConverter}">
                                         <Binding Path="Note" />
+                                        <Binding Source="{x:Static l:LangKeys.NoDescription}"
+                                                 Converter="{StaticResource LangKeyToStringConverter}" />
                                     </MultiBinding>
                                 </ToolTip.Content>
                             </ToolTip>

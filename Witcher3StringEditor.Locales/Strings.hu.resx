@@ -595,4 +595,7 @@
     <data name="DictionaryImportedMessage" xml:space="preserve">
       <value>Szótár sikeresen importálva lett.</value>
     </data>
+    <data name="NoDescription" xml:space="preserve">
+      <value>Nem adott meg leírást</value>
+    </data>
 </root>

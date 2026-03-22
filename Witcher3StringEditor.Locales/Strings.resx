@@ -595,4 +595,7 @@
     <data name="DictionaryImportedMessage" xml:space="preserve">
       <value>Dictionary imported successfully.</value>
     </data>
+    <data name="NoDescription" xml:space="preserve">
+      <value>No description provided</value>
+    </data>
 </root>

@@ -763,6 +763,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No description provided.
+        /// </summary>
+        public static string NoDescription {
+            get {
+                return ResourceManager.GetString("NoDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Dictionary.
         /// </summary>
         public static string NoDictionary {
