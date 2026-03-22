@@ -140,8 +140,6 @@ public class DictionaryManager : IDictionaryManager
                     Log.Error(e, "Failed to load dictionary file: {Path}",
                         dictionaryFile); // Log error if failed to load dictionary file
                 }
-
-            Log.Information("Loaded {Count} dictionary files", dictionaryFiles.Length);
         });
     }
 }

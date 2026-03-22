@@ -56,7 +56,8 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         this.dialogService = dialogService;
         this.dictionaryManager = dictionaryManager;
         this.dictionaryProvider = dictionaryProvider;
-        var found = dictionaryManager.Find(null);
+        var found = dictionaryManager.Find(null).ToList();
+        Log.Information("Found {Count} dictionaries in total.", found.Count);
         var groups = found.GroupBy(x => x.TargetLanguage);
         foreach (var group in groups)
             DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
