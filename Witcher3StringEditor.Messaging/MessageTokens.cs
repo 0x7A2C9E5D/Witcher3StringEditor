@@ -160,4 +160,9 @@ public static class MessageTokens
     ///     Token for messages indicating that a dictionary should be overwritten
     /// </summary>
     public const string DictionaryOverwriteConfirm = "DictionaryOverwriteConfirm";
+    
+    /// <summary>
+    ///     Token for messages indicating that a merge data should be confirmed
+    /// </summary>
+    public const string MergeDataConfirm = "MergeDataConfirm";
 }

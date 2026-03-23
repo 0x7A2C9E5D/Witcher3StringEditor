@@ -693,9 +693,12 @@ internal partial class MainWindowViewModel : ObservableObject
         });
         if (storageFile is not null &&
             Path.GetExtension(storageFile.LocalPath) is ".csv" or ".w3strings"
-                or ".xlsx") // Check if file has a supported extension
+                or ".xlsx" &&
+            await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                MessageTokens.MergeDataConfirm))
         {
-            var mergeData = 
+            // Check if file has a supported extension
+            var mergeData =
                 await w3Serializer.Deserialize(storageFile.LocalPath);
 
             var matchedPairs = W3StringItems!.Join(
@@ -705,7 +708,7 @@ internal partial class MainWindowViewModel : ObservableObject
                 (oldItem, newItem) => new { oldItem, newItem }
             );
 
-            foreach (var pair in matchedPairs) 
+            foreach (var pair in matchedPairs)
                 pair.oldItem.Text = pair.newItem.Text;
         }
     }

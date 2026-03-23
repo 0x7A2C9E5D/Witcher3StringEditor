@@ -745,6 +745,24 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirm Merge Data.
+        /// </summary>
+        public static string MergeDataConfirmCaption {
+            get {
+                return ResourceManager.GetString("MergeDataConfirmCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge data from file, update only items with the same ID..
+        /// </summary>
+        public static string MergeDataConfirmMessage {
+            get {
+                return ResourceManager.GetString("MergeDataConfirmMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Software is already running.
         /// </summary>
         public static string MultipleInstanceCaption {

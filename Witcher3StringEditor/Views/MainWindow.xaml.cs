@@ -27,7 +27,6 @@ public partial class MainWindow
         InitializeComponent(); // Initialize the UI components
         SetupSearchHelper(); // Set up the search helper functionality
         RegisterMessageHandlers(); // Register message handlers for inter-component communication
-        RegisterThemeChangedHandler(); // Register handler for theme change notifications
         DataContext = Ioc.Default.GetService<MainWindowViewModel>(); // Set the data context to the main view model
     }
 
@@ -63,6 +62,7 @@ public partial class MainWindow
         RegisterAsyncRequestMessageHandlers(); // Register async request message handlers
         RegisterFileOpenedMessageHandlers(); // Register file opened message handlers
         RegisterPageSizeChangedHandler(); // Register page size change message handler
+        RegisterThemeChangedHandler(); // Register handler for theme change notifications
     }
 
     /// <summary>
@@ -94,7 +94,9 @@ public partial class MainWindow
             (MessageTokens.FirstRun, () => Strings.FristRunMessage, () => Strings.FristRunCaption, MessageBoxButton.OK,
                 MessageBoxResult.OK),
             (MessageTokens.PathInvalid, () => Strings.PathInvalidMessage,
-                () => Strings.PathInvalidCaption, MessageBoxButton.OK, MessageBoxResult.OK)
+                () => Strings.PathInvalidCaption, MessageBoxButton.OK, MessageBoxResult.OK),
+            (MessageTokens.MergeDataConfirm, () => Strings.MergeDataConfirmMessage,
+                () => Strings.MergeDataConfirmCaption, MessageBoxButton.YesNo, MessageBoxResult.Yes)
         };
         // Register handlers for each scenario
         foreach (var (token, message, caption, button, excepted) in requestMessageHandlers)

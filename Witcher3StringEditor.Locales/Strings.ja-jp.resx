@@ -601,4 +601,10 @@
     <data name="MergeBtnLabel" xml:space="preserve">
       <value>データ統合</value>
     </data>
+    <data name="MergeDataConfirmCaption" xml:space="preserve">
+      <value>データ統合の確認</value>
+    </data>
+    <data name="MergeDataConfirmMessage" xml:space="preserve">
+      <value>ファイルからデータを統合し、同じ ID の項目のみを更新します。</value>
+    </data>
 </root>

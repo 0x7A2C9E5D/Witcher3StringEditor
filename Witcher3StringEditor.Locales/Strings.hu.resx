@@ -601,4 +601,10 @@
     <data name="MergeBtnLabel" xml:space="preserve">
       <value>Adatok összevonása</value>
     </data>
+    <data name="MergeDataConfirmCaption" xml:space="preserve">
+      <value>Összevonás megerősítése</value>
+    </data>
+    <data name="MergeDataConfirmMessage" xml:space="preserve">
+      <value>Adatok összevonása fájlból, csak azonos ID-jű elemek frissítése.</value>
+    </data>
 </root>

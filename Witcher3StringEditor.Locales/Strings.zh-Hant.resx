@@ -601,4 +601,10 @@
     <data name="MergeBtnLabel" xml:space="preserve">
       <value>合併資料</value>
     </data>
+    <data name="MergeDataConfirmCaption" xml:space="preserve">
+      <value>確認合併資料</value>
+    </data>
+    <data name="MergeDataConfirmMessage" xml:space="preserve">
+      <value>從檔案合併資料，僅更新相同 ID 的項目。</value>
+    </data>
 </root>

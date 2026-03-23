@@ -601,4 +601,10 @@
     <data name="MergeBtnLabel" xml:space="preserve">
       <value>Fusionner données</value>
     </data>
+    <data name="MergeDataConfirmCaption" xml:space="preserve">
+      <value>Confirmer la fusion</value>
+    </data>
+    <data name="MergeDataConfirmMessage" xml:space="preserve">
+      <value>Fusionner les données du fichier, mettre à jour uniquement les éléments de même ID.</value>
+    </data>
 </root>
