@@ -736,7 +736,7 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Merge.
+        ///   Looks up a localized string similar to Merge Data.
         /// </summary>
         public static string MergeBtnLabel {
             get {
