@@ -4,14 +4,14 @@ using System.Windows.Data;
 namespace Witcher3StringEditor.Dialogs.Converters;
 
 /// <summary>
-///   A converter for handling empty strings and custom hints.
+///     A converter for handling empty strings and custom hints.
 /// </summary>
 public class EmptyStringHintConverter : IMultiValueConverter
 {
     private static string EmptyPlaceholder => "-";
-    
+
     /// <summary>
-    ///   Converts an empty string to a placeholder string or a custom hint string if provided.
+    ///     Converts an empty string to a placeholder string or a custom hint string if provided.
     /// </summary>
     /// <param name="values"></param>
     /// <param name="targetType"></param>
@@ -28,7 +28,7 @@ public class EmptyStringHintConverter : IMultiValueConverter
     }
 
     /// <summary>
-    ///   Converts a custom hint string back to an empty string.
+    ///     Converts a custom hint string back to an empty string.
     /// </summary>
     /// <param name="value"></param>
     /// <param name="targetTypes"></param>
