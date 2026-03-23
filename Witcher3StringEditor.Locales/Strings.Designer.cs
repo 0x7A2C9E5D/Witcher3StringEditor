@@ -736,6 +736,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge.
+        /// </summary>
+        public static string MergeBtnLabel {
+            get {
+                return ResourceManager.GetString("MergeBtnLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Software is already running.
         /// </summary>
         public static string MultipleInstanceCaption {

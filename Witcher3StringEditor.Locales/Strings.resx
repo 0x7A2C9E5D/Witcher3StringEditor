@@ -598,4 +598,7 @@
     <data name="NoDescription" xml:space="preserve">
       <value>No description provided</value>
     </data>
+    <data name="MergeBtnLabel" xml:space="preserve">
+      <value>Merge</value>
+    </data>
 </root>

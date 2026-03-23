@@ -89,6 +89,7 @@ internal partial class MainWindowViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(AddCommand))]
     [NotifyCanExecuteChangedFor(nameof(EditCommand))]
     [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(MergeDataCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShowSaveDialogCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     private ObservableCollection<W3StringItemModel>? w3StringItems;
@@ -669,5 +670,43 @@ internal partial class MainWindowViewModel : ObservableObject
         await dialogService.ShowDialogAsync(this,
             new DictionaryManagerDialogViewModel(dictionaryManager, dictionaryProvider,
                 dialogService)); // Show the dictionary dialog
+    }
+
+    private bool CanMergeData()
+    {
+        return W3StringItems?.Any() == true;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanMergeData))]
+    private async Task MergeData()
+    {
+        // Show open file dialog
+        using var storageFile = await dialogService.ShowOpenFileDialogAsync(this, new OpenFileDialogSettings
+        {
+            Filters =
+            [
+                new FileFilter(Strings.FileFormatSupported, [".csv", ".xlsx", ".w3strings"]),
+                new FileFilter(Strings.FileFormatTextFile, ".csv"),
+                new FileFilter(Strings.FileFormatExcelWorkbook, ".xlsx"),
+                new FileFilter(Strings.FileFormatWitcher3StringsFile, ".w3strings")
+            ]
+        });
+        if (storageFile is not null &&
+            Path.GetExtension(storageFile.LocalPath) is ".csv" or ".w3strings"
+                or ".xlsx") // Check if file has a supported extension
+        {
+            var mergeData = 
+                await w3Serializer.Deserialize(storageFile.LocalPath);
+
+            var matchedPairs = W3StringItems!.Join(
+                mergeData,
+                oldItem => oldItem.StrId,
+                newItem => newItem.StrId,
+                (oldItem, newItem) => new { oldItem, newItem }
+            );
+
+            foreach (var pair in matchedPairs) 
+                pair.oldItem.Text = pair.newItem.Text;
+        }
     }
 }
