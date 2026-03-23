@@ -672,11 +672,18 @@ internal partial class MainWindowViewModel : ObservableObject
                 dialogService)); // Show the dictionary dialog
     }
 
+    /// <summary>
+    ///     Determines whether merge data can be executed
+    /// </summary>
+    /// <returns></returns>
     private bool CanMergeData()
     {
         return W3StringItems?.Any() == true;
     }
 
+    /// <summary>
+    ///     Merges data from a file
+    /// </summary>
     [RelayCommand(CanExecute = nameof(CanMergeData))]
     private async Task MergeData()
     {
