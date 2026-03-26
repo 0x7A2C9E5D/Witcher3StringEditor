@@ -129,16 +129,17 @@
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenFile}" />
                 </ui:AppBarButton.Icon>
             </ui:AppBarButton>
-            <ui:AppBarButton Command="{Binding MergeDataCommand}" Label="{I18N {x:Static l:LangKeys.MergeBtnLabel}}">
-                <ui:AppBarButton.Icon>
-                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.MergeCall}" />
-                </ui:AppBarButton.Icon>
-            </ui:AppBarButton>
             <!-- Recent files button -->
             <ui:AppBarButton Command="{Binding ShowRecentDialogCommand}"
                              Label="{I18N {x:Static l:LangKeys.RecentBtnLabel}}">
                 <ui:AppBarButton.Icon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Recent}" />
+                </ui:AppBarButton.Icon>
+            </ui:AppBarButton>
+            <!-- Merge data button -->
+            <ui:AppBarButton Command="{Binding MergeDataCommand}" Label="{I18N {x:Static l:LangKeys.MergeBtnLabel}}">
+                <ui:AppBarButton.Icon>
+                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.MergeCall}" />
                 </ui:AppBarButton.Icon>
             </ui:AppBarButton>
             <!-- Add entry button -->
