@@ -10,6 +10,7 @@
     xmlns:sf="http://schemas.syncfusion.com/wpf"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.ViewModels"
+    xmlns:m="clr-namespace:Witcher3StringEditor.Models"
     Title="{I18N {x:Static l:LangKeys.AppTitle}}"
     Width="1200"
     Height="800"
@@ -363,6 +364,15 @@
                     TextAlignment="Center" />
                 <!-- Text column with text wrapping -->
                 <sf:GridTextColumn MappingName="Text" TextWrapping="WrapWithOverflow" />
+                <sf:GridTemplateColumn MappingName="Undo" Width="100">
+                    <sf:GridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="m:W3StringItemModel">
+                            <Button HorizontalAlignment="Center" ClickMode="Press" Command="{Binding UndoEditCommand}">
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Undo}"/>
+                            </Button>
+                        </DataTemplate>
+                    </sf:GridTemplateColumn.CellTemplate>
+                </sf:GridTemplateColumn>
             </sf:SfDataGrid.Columns>
         </sf:SfDataGrid>
         <!-- Data pager for pagination -->

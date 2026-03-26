@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Models;
@@ -26,7 +27,9 @@ public partial class W3StringItemModel : ObservableObject, ITrackableW3StringIte
     ///     Gets or sets the original text of The Witcher 3 string item
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
-    [ObservableProperty] private string oldText = string.Empty;
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(UndoEditCommand))]
+    private string oldText = string.Empty;
 
     /// <summary>
     ///     Gets or sets the string ID of The Witcher 3 string item
@@ -86,5 +89,17 @@ public partial class W3StringItemModel : ObservableObject, ITrackableW3StringIte
     partial void OnTextChanging(string value)
     {
         if (string.IsNullOrWhiteSpace(OldText)) OldText = Text;
+    }
+
+    private bool CanUndoEdit()
+    {
+        return OldText!= string.Empty;
+    }
+    
+    [RelayCommand(CanExecute = nameof(CanUndoEdit))]
+    private void UndoEdit()
+    {
+        Text = OldText;
+        OldText = string.Empty;
     }
 }
