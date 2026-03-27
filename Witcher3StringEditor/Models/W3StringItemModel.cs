@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Models;
@@ -26,7 +27,10 @@ public partial class W3StringItemModel : ObservableObject, ITrackableW3StringIte
     ///     Gets or sets the original text of The Witcher 3 string item
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
-    [ObservableProperty] private string oldText = string.Empty;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsModified))]
+    [NotifyCanExecuteChangedFor(nameof(ResetTextCommand))]
+    private string oldText = string.Empty;
 
     /// <summary>
     ///     Gets or sets the string ID of The Witcher 3 string item
@@ -63,6 +67,11 @@ public partial class W3StringItemModel : ObservableObject, ITrackableW3StringIte
     }
 
     /// <summary>
+    ///     Gets a value indicating whether the Text property has been modified from its original value
+    /// </summary>
+    public bool IsModified => !string.IsNullOrEmpty(OldText);
+
+    /// <summary>
     ///     Gets the unique tracking identifier for this item
     ///     Used to track and identify specific instances of The Witcher 3 string items throughout the application
     /// </summary>
@@ -86,5 +95,24 @@ public partial class W3StringItemModel : ObservableObject, ITrackableW3StringIte
     partial void OnTextChanging(string value)
     {
         if (string.IsNullOrWhiteSpace(OldText)) OldText = Text;
+    }
+
+    /// <summary>
+    ///     Determines whether the ResetText command can be executed
+    /// </summary>
+    /// <returns></returns>
+    private bool CanResetText()
+    {
+        return IsModified;
+    }
+
+    /// <summary>
+    ///     Resets the Text property to the value of OldText and clears OldText
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanResetText))]
+    private void ResetText()
+    {
+        Text = OldText;
+        OldText = string.Empty;
     }
 }
