@@ -364,9 +364,10 @@
                     MinimumWidth="200"
                     TextAlignment="Center" />
                 <!-- Text column with text wrapping -->
-                <sf:GridTextColumn MappingName="Text" TextWrapping="WrapWithOverflow" />
+                <sf:GridTextColumn MappingName="Text" TextWrapping="WrapWithOverflow" MinimumWidth="300" />
                 <!-- Reset button column -->
-                <sf:GridTemplateColumn MappingName="IsModified" HeaderText="Reset" Width="100" AllowFocus="False">
+                <sf:GridTemplateColumn MappingName="IsModified" HeaderText="Reset" Width="100" MinimumWidth="50"
+                                       AllowFocus="False">
                     <sf:GridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="m:W3StringItemModel">
                             <Button HorizontalAlignment="Center" VerticalAlignment="Center"
