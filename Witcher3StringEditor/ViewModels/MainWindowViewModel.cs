@@ -468,7 +468,7 @@ internal partial class MainWindowViewModel : ObservableObject
         }
         else
         {
-            Log.Information("The W3Item has not been added."); // Log cancelled addition
+            Log.Information("The W3Item has not been added."); // Log canceled addition
         }
     }
 
@@ -495,7 +495,7 @@ internal partial class MainWindowViewModel : ObservableObject
         }
         else
         {
-            Log.Information("The W3Item has not been updated."); // Log cancelled update
+            Log.Information("The W3Item has not been updated."); // Log canceled update
         }
     }
 
