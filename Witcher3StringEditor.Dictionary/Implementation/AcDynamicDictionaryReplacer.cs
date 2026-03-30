@@ -85,7 +85,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     {
         var allHits = new List<AhoCorasickDoubleArrayTrie<int>.Hit>(); // Create list to store hits
 
-        matcher.ParseText(text, hit => { allHits.Add(hit); }); // Find all hits
+        matcher.ParseText(text, allHits.Add); // Find all hits
 
         return allHits
             .OrderBy(x => x.Begin)
