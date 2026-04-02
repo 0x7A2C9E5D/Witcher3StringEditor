@@ -214,11 +214,11 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
         for (var i = 0; i < w3StringItems.Count; i++)
         {
             var rowIndex = i + 2; //Row 1 is header, data starts from row 2
-            worksheet[rowIndex, 1].Value = w3StringItems[i].StrId; //Column A: StrId
-            worksheet[rowIndex, 2].Value = w3StringItems[i].KeyHex; //Column B: KeyHex
-            worksheet[rowIndex, 3].Value = w3StringItems[i].KeyName; //Column C: KeyName
-            worksheet[rowIndex, 4].Value = w3StringItems[i].OldText; //Column D: OldText
-            worksheet[rowIndex, 5].Value = w3StringItems[i].Text; //Column E: Text
+            worksheet[$"A{rowIndex}"].Value = w3StringItems[i].StrId; //Column A: StrId
+            worksheet[$"B{rowIndex}"].Value = w3StringItems[i].KeyHex; //Column B: KeyHex
+            worksheet[$"C{rowIndex}"].Value = w3StringItems[i].KeyName; //Column C: KeyName
+            worksheet[$"D{rowIndex}"].Value = w3StringItems[i].OldText; //Column D: OldText
+            worksheet[$"E{rowIndex}"].Value = w3StringItems[i].Text; //Column E: Text
         }
     }
 }
