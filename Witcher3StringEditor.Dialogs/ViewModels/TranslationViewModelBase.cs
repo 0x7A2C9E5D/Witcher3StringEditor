@@ -114,11 +114,10 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <returns>
     ///     <code>true</code> if the language is supported, <code>false</code> otherwise.
     /// </returns>
-    private bool CanUseDictionary()
+    private bool IsDictionaryAvailable()
     {
-        return Translator.Name == "MicrosoftTranslator" &&
-               IsEnglishCulture(
-                   FormLanguage); // Dictionary is only supported for Microsoft Translator when the source language is English
+        // Dictionary is only supported for Microsoft Translator when the source language is English
+        return Translator.Name == "MicrosoftTranslator" && IsEnglishCulture(FormLanguage);
     }
 
     /// <summary>
@@ -206,8 +205,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (ToLanguage == null || DictionaryService == null) return; // If target language is null, exit early
-        IsDictionarySupported =
-            CanUseDictionary(); // Check if dictionary can be used based on current translator and source language
+        IsDictionarySupported = IsDictionaryAvailable(); // Update dictionary availability 
         if (!IsDictionarySupported) return; // If dictionary is not supported, exit early
         LoadDictionariesForCurrentLanguage(); // Load dictionaries for the current language
     }
