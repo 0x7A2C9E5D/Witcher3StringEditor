@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net;
 using System.Text;
 using NReco.Text;
 using Serilog;
@@ -140,7 +141,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             var phrase = phraseSpan.ToString();
             var translation = entries[phrase];
             stringBuilder.Append(CultureInfo.InvariantCulture,
-                $"<mstrans:dictionary translation='{EscapeXml(translation)}'>{EscapeXml(phrase)}</mstrans:dictionary>");
+                $"<mstrans:dictionary translation='{WebUtility.HtmlEncode(translation)}'>{WebUtility.HtmlEncode(phrase)}</mstrans:dictionary>");
 
             currentPos = hit.End; // Update current position
         }
@@ -149,23 +150,5 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             stringBuilder.Append(text.AsSpan(currentPos)); // Append text after last match
 
         return stringBuilder.ToString();
-    }
-
-    /// <summary>
-    ///     Escapes XML special characters in the given text.
-    /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    private static string EscapeXml(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text) || text.IndexOfAny(['&', '<', '>', '\'', '"']) < 0)
-            return text; // Return original text if there are no special characters
-
-        return text
-            .Replace("&", "&amp;")
-            .Replace("<", "&lt;")
-            .Replace(">", "&gt;")
-            .Replace("'", "&apos;")
-            .Replace("\"", "&quot;");
     }
 }
