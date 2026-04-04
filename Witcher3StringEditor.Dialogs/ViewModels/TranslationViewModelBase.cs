@@ -245,8 +245,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="matchingDictionaries">The dictionaries to add.</param>
     private void AddMatchingDictionaries(DictionaryInfo[] matchingDictionaries)
     {
-        if (matchingDictionaries.Length > 0)
-            matchingDictionaries.ForEach(x => Dictionaries.Add(x));
+        matchingDictionaries.ForEach(x => Dictionaries.Add(x));
     }
 
     /// <summary>
