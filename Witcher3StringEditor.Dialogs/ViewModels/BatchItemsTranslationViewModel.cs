@@ -38,8 +38,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private bool isBusy;
 
-    private bool isDictionaryReady; // Flag to indicate whether the dynamic dictionary service is ready
-
     /// <summary>
     ///     Gets or sets the maximum value for indices (typically the total item count)
     /// </summary>
@@ -248,7 +246,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
-        var text = isDictionaryReady ? DictionaryService!.Replace(item.Text) : item.Text;
+        var text = DictionaryService?.IsReady == true ? DictionaryService!.Replace(item.Text) : item.Text;
 
         try
         {
@@ -314,10 +312,9 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             return; // No dictionary selected, skip binding
         if (DictionaryService!.CurrentDictionary !=
             SelectedDictionary) // Check if the current dictionary is different from the selected one
-            isDictionaryReady =
-                await DictionaryService
-                    .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
-        Log.Information("The dictionary is ready: {0}.", isDictionaryReady);
+            await DictionaryService
+                .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
+        Log.Information("The dictionary is ready: {0}.", DictionaryService!.IsReady);
     }
 
     /// <summary>

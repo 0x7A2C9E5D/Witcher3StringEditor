@@ -45,9 +45,9 @@ public class DictionaryService(
 
     public DictionaryInfo? CurrentDictionary => dynamicDictionaryReplacer.CurrentDictionary;
 
-    public Task<bool> Bind(DictionaryInfo dictionary)
+    public async Task Bind(DictionaryInfo dictionary)
     {
-        return dynamicDictionaryReplacer.Bind(dictionary);
+        await dynamicDictionaryReplacer.Bind(dictionary);
     }
 
     public string Replace(string text)

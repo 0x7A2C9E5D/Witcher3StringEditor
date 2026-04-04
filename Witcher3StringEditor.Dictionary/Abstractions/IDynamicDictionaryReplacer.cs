@@ -18,7 +18,7 @@ public interface IDynamicDictionaryReplacer
     /// <summary>
     ///     Binds the service to the specified dictionary.
     /// </summary>
-    Task<bool> Bind(DictionaryInfo dictionary);
+    Task Bind(DictionaryInfo dictionary);
 
     /// <summary>
     ///     Replaces the specified text with the corresponding translation.

@@ -31,7 +31,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
     /// </summary>
     /// <param name="dictionary"></param>
     /// <returns></returns>
-    public async Task<bool> Bind(DictionaryInfo dictionary)
+    public async Task Bind(DictionaryInfo dictionary)
     {
         try
         {
@@ -49,7 +49,6 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             await Task.Run(() => matcher.Build(terms)); // Build term cache
             CurrentDictionary = dictionary; // Set current dictionary
             IsReady = true; // Set ready
-            return true; // Return success
         }
         catch (Exception e)
         {
@@ -57,7 +56,6 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             CurrentDictionary = null; // Clear current dictionary
             entries.Clear(); // Clear entries
             IsReady = false; // Set not ready
-            return false; // Return failure
         }
     }
 
