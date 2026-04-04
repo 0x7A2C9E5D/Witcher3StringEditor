@@ -48,6 +48,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
             var terms = entries.ToDictionary(kvp => kvp.Key, _ => 0);
             await Task.Run(() => matcher.Build(terms)); // Build term cache
             IsReady = true; // Set ready
+            CurrentDictionary = dictionary; // Set current dictionary
             return true; // Return success
         }
         catch (Exception e)
