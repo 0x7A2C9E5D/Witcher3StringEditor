@@ -45,10 +45,10 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
                     kvp => kvp.Value,
                     StringComparer.OrdinalIgnoreCase
                 );
-            var terms = entries.ToDictionary(kvp => kvp.Key, _ => 0);
+            var terms = entries.ToDictionary(kvp => kvp.Key, _ => 0); // Create term list
             await Task.Run(() => matcher.Build(terms)); // Build term cache
-            IsReady = true; // Set ready
             CurrentDictionary = dictionary; // Set current dictionary
+            IsReady = true; // Set ready
             return true; // Return success
         }
         catch (Exception e)
