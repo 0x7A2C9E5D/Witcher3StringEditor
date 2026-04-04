@@ -215,7 +215,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     private void LoadDictionariesForCurrentLanguage()
     {
-        InitializeDictionaryCollection(); // Initialize the dictionary collection
+        ResetDictionaries(); // Initialize the dictionary collection
         var targetLanguage =
             CultureInfo.GetCultureInfo(ToLanguage.ISO6391); // Get the culture info for the target language
         var matchingDictionaries =
@@ -231,7 +231,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <summary>
     ///     Initializes the dictionary collection with default values.
     /// </summary>
-    private void InitializeDictionaryCollection()
+    private void ResetDictionaries()
     {
         if (Dictionaries.Count >= 1)
             Dictionaries.Clear(); // Clear the dictionary collection if it already contains items
