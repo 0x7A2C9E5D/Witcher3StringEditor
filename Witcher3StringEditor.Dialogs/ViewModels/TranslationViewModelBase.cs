@@ -207,13 +207,13 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         if (ToLanguage == null || DictionaryService == null) return; // If target language is null, exit early
         IsDictionarySupported = IsDictionaryAvailable(); // Update dictionary availability 
         if (!IsDictionarySupported) return; // If dictionary is not supported, exit early
-        LoadDictionariesForCurrentLanguage(); // Load dictionaries for the current language
+        LoadDictionaries(); // Load dictionaries for the current language
     }
 
     /// <summary>
     ///     Loads dictionaries for the current target language.
     /// </summary>
-    private void LoadDictionariesForCurrentLanguage()
+    private void LoadDictionaries()
     {
         ResetDictionaries(); // Initialize the dictionary collection
         var targetLanguage =
