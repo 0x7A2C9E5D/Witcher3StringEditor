@@ -314,7 +314,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             SelectedDictionary) // Check if the current dictionary is different from the selected one
             await DictionaryService
                 .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
-        Log.Information("The dictionary is ready: {0}.", DictionaryService!.IsReady);
+        Log.Information("The dictionary is ready: {0}.", DictionaryService.IsReady);
     }
 
     /// <summary>
