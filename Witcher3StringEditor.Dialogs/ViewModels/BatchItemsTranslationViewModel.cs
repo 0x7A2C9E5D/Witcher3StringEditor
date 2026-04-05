@@ -324,7 +324,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <returns>True if the translation is valid, false otherwise</returns>
     private static bool IsTranslationValid(string translation)
     {
-        return !string.IsNullOrWhiteSpace(translation); // Check if the translation is not null, empty, or whitespace
+        return !string.IsNullOrWhiteSpace(translation);
     }
 
     /// <summary>
@@ -334,7 +334,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     private static void LogEmptyTranslationResult(string translatorName)
     {
         Log.Error("The translator: {Name} returned empty data.",
-            translatorName); // Log an error indicating that the translator returned empty data
+            translatorName);
     }
 
     /// <summary>
