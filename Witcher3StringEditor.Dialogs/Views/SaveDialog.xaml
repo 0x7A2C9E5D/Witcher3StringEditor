@@ -212,19 +212,15 @@
                 <Button
                     MinWidth="100"
                     Command="{Binding SaveCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Save}" />
-                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.SaveBtnContent}}" />
-                    </StackPanel>
+                    <ui:IconAndText Icon="{x:Static ui:SegoeFluentIcons.Save}"
+                                    Content="{I18N {x:Static l:LangKeys.SaveBtnContent}}" Spacing="8" />
                 </Button>
                 <!-- Cancel button -->
                 <Button
                     MinWidth="100"
                     Command="{Binding CancelCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Cancel}" />
-                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.CancelBtnContent}}" />
-                    </StackPanel>
+                    <ui:IconAndText Icon="{x:Static ui:SegoeFluentIcons.Cancel}"
+                                    Content="{I18N {x:Static l:LangKeys.CancelBtnContent}}" Spacing="8" />
                 </Button>
             </iwk:SimpleStackPanel>
         </Grid>

@@ -86,10 +86,8 @@
                 Margin="0,0,0,16"
                 HorizontalAlignment="Right"
                 Command="{Binding SwitchCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Switch}" />
-                    <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.SwitchTranslationModeBtnContent}}" />
-                </StackPanel>
+                <ui:IconAndText Icon="{x:Static ui:SegoeFluentIcons.Switch}"
+                                Content="{I18N {x:Static l:LangKeys.SwitchTranslationModeBtnContent}}" Spacing="8" />
             </Button>
             <!-- Content control that displays the appropriate translation view based on the current view model -->
             <ContentControl

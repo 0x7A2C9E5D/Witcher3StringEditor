@@ -137,20 +137,16 @@
                     MinWidth="100"
                     HorizontalAlignment="Right"
                     Command="{Binding DeleteCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
-                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.DeleteBtnContent}}" />
-                    </StackPanel>
+                    <ui:IconAndText Icon="{x:Static ui:SegoeFluentIcons.Delete}"
+                                    Content="{I18N {x:Static l:LangKeys.DeleteBtnContent}}" Spacing="8" />
                 </Button>
                 <!-- Cancel button -->
                 <Button
                     MinWidth="100"
                     HorizontalAlignment="Left"
                     Command="{Binding CancelCommand}">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Cancel}" />
-                        <TextBlock Margin="8,0,0,0" Text="{I18N {x:Static l:LangKeys.CancelBtnContent}}" />
-                    </StackPanel>
+                    <ui:IconAndText Icon="{x:Static ui:SegoeFluentIcons.Cancel}"
+                                    Content="{I18N {x:Static l:LangKeys.CancelBtnContent}}" Spacing="8" />
                 </Button>
             </iwk:SimpleStackPanel>
         </Grid>
