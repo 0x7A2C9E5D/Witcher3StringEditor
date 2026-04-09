@@ -704,10 +704,11 @@ internal partial class MainWindowViewModel : ObservableObject
             await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
                 MessageTokens.MergeDataConfirm))
         {
-            // Check if file has a supported extension
+            // Deserialize the file
             var mergeData =
                 await w3Serializer.Deserialize(storageFile.LocalPath);
 
+            // Join the two collections
             var matchedPairs = W3StringItems!.Join(
                 mergeData,
                 oldItem => oldItem.StrId,
@@ -715,6 +716,7 @@ internal partial class MainWindowViewModel : ObservableObject
                 (oldItem, newItem) => new { oldItem, newItem }
             );
 
+            // Update the text of the old items
             foreach (var pair in matchedPairs)
                 pair.oldItem.Text = pair.newItem.Text;
         }
