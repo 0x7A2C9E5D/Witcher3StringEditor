@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 
@@ -74,8 +74,8 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     /// <param name="recentItems">The collection of recent items</param>
     [JsonConstructor]
     public AppSettings(string w3StringsPath, string gameExePath, W3FileType preferredW3FileType,
-        W3Language preferredLanguage, ObservableCollection<BackupItem> backupItems,
-        ObservableCollection<RecentItem> recentItems)
+        W3Language preferredLanguage, ObservableCollection<IBackupItem> backupItems,
+        ObservableCollection<IRecentItem> recentItems)
     {
         GameExePath = gameExePath;
         W3StringsPath = w3StringsPath;
