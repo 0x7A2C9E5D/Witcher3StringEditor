@@ -110,7 +110,6 @@ public sealed partial class App : IDisposable
         // Configure Serilog with multiple outputs: file, debug, and observer
         Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(AppPaths.LogDirectory, "log.txt"),
                 rollingInterval: RollingInterval.Day, formatProvider: CultureInfo.InvariantCulture)
-            .WriteTo.Debug(formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.Observers(observable => observable.Subscribe(logObserver))
             .CreateLogger();
     }

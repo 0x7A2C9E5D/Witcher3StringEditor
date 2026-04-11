@@ -14,7 +14,7 @@ namespace Witcher3StringEditor.Services;
 internal class ConfigService(string filePath) : IConfigService
 {
     /// <summary>
-    ///      JSON serializer options
+    ///     JSON serializer options
     /// </summary>
     private readonly JsonSerializerOptions jsonSerializerOptions = new()
     {
@@ -22,13 +22,13 @@ internal class ConfigService(string filePath) : IConfigService
         Converters =
         {
             new JsonStringEnumConverter(),
-            new InterfaceJsonConverter<IRecentItem,RecentItem>(),
-            new InterfaceJsonConverter<IBackupItem,BackupItem>(),
+            new InterfaceJsonConverter<IRecentItem, RecentItem>(),
+            new InterfaceJsonConverter<IBackupItem, BackupItem>(),
             new ObservableCollectionJsonConverter<IBackupItem>(),
             new ObservableCollectionJsonConverter<IRecentItem>()
         }
     };
-    
+
     /// <summary>
     ///     Saves the specified settings to a configuration file
     /// </summary>

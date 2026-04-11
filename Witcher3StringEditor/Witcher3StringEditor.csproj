@@ -28,8 +28,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.2" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+        <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.2"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
         <PackageReference Include="GTranslate" Version="2.3.1"/>
         <PackageReference Include="HanumanInstitute.MvvmDialogs.Wpf" Version="2.1.0"/>
         <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1"/>
@@ -45,14 +45,13 @@
         </PackageReference>
         <PackageReference Include="Serilog" Version="4.3.1"/>
         <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0"/>
-        <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0"/>
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
         <PackageReference Include="Serilog.Sinks.Observable" Version="3.0.0"/>
         <PackageReference Include="SonarAnalyzer.CSharp" Version="10.23.0.137933">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="33.1.47" />
+        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="33.1.47"/>
         <PackageReference Include="System.Reactive" Version="6.1.0"/>
     </ItemGroup>
 
