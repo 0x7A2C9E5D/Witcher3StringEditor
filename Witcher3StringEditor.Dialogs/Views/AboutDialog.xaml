@@ -140,6 +140,9 @@
                     <sf:GridTextColumn HeaderText="{I18N {x:Static l:LangKeys.PackageVersion}}" MappingName="Version"
                                        Width="200" />
                 </sf:SfDataGrid.Columns>
+                <sf:SfDataGrid.SortColumnDescriptions>
+                    <sf:SortColumnDescription ColumnName="Name" SortDirection="Ascending" />
+                </sf:SfDataGrid.SortColumnDescriptions>
             </sf:SfDataGrid>
         </Grid>
     </Grid>

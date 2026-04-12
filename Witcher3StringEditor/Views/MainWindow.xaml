@@ -378,6 +378,9 @@
                     </sf:GridTemplateColumn.CellTemplate>
                 </sf:GridTemplateColumn>
             </sf:SfDataGrid.Columns>
+            <sf:SfDataGrid.SortColumnDescriptions>
+                <sf:SortColumnDescription ColumnName="StrId" SortDirection="Ascending" />
+            </sf:SfDataGrid.SortColumnDescriptions>
         </sf:SfDataGrid>
         <!-- Data pager for pagination -->
         <sf:SfDataPager

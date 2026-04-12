@@ -401,9 +401,8 @@ internal partial class MainWindowViewModel : ObservableObject
     private async Task<ObservableCollection<W3StringItemModel>> DeserializeW3StringItems(string fileName)
     {
         Log.Information("The file {FileName} is being opened...", fileName); // Log file opening
-        var items = await w3Serializer.Deserialize(fileName); // Deserialize file contents
-        var orderedItems = items.OrderBy(x => x.StrId); // Order items by ID
-        return orderedItems.Select(x => new W3StringItemModel(x))
+        var deserializedItems  = await w3Serializer.Deserialize(fileName); // Deserialize file contents
+        return deserializedItems.Select(x => new W3StringItemModel(x))
             .ToObservableCollection(); // Convert to observable collection
     }
 
@@ -594,7 +593,6 @@ internal partial class MainWindowViewModel : ObservableObject
                 {
                     "Package", DependencyContext.Default?
                         .RuntimeLibraries.Where(static x => x.Type == "package")
-                        .OrderBy(x => x.Name) // Package information
                 }
             }));
     }
