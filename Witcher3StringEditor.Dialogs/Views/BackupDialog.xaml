@@ -181,6 +181,9 @@
                     </sf:GridTemplateColumn.CellTemplate>
                 </sf:GridTemplateColumn>
             </sf:SfDataGrid.Columns>
+            <sf:SfDataGrid.SortColumnDescriptions>
+                <sf:SortColumnDescription ColumnName="BackupTime" SortDirection="Descending" />
+            </sf:SfDataGrid.SortColumnDescriptions>
         </sf:SfDataGrid>
         <!-- Data pager for pagination of backup items -->
         <sf:SfDataPager
