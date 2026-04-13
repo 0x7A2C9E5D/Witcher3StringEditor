@@ -379,7 +379,8 @@ internal partial class MainWindowViewModel : ObservableObject
         try
         {
             if (!await HandleReOpenFile(fileName)) return; // Handle reopening file logic
-            W3StringItems = await DeserializeW3StringItems(fileName); // Deserialize file contents
+            W3StringItems = (await DeserializeW3StringItems(fileName))
+                .OrderBy(x => x.StrId).ToObservableCollection(); // Deserialize file contents
             SetOutputFolder(fileName, folder => OutputFolder = folder); // Set output folder based on file location
             UpdateRecentItems(fileName); // Update recent items list
             SearchText = string.Empty; // Clear search text
