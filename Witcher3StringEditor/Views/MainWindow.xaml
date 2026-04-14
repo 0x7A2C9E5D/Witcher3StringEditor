@@ -295,7 +295,7 @@
             RowHeight="30"
             SelectionMode="Extended"
             ShowRowHeader="True"
-            GridPasteOption="None">
+            GridPasteOption="None" SortColumnsChanged="SfDataGrid_OnSortColumnsChanged">
             <sf:SfDataGrid.Resources>
                 <ResourceDictionary>
                     <!-- Custom style for row header cells to display row numbers -->

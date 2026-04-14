@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -49,12 +48,6 @@ internal partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private string[]? dropFileData;
 
     /// <summary>
-    ///     Gets the filtered collection of W3String items
-    /// </summary>
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
-    private ObservableCollection<W3StringItemModel>? filteredW3StringItems;
-
-    /// <summary>
     ///     Registers a message handler to listen for translator changes and update dictionary support status
     /// </summary>
     [ObservableProperty] private bool isSupportDictionary;
@@ -70,6 +63,12 @@ internal partial class MainWindowViewModel : ObservableObject
     /// </summary>
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(OpenWorkingFolderCommand))]
     private string outputFolder = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the source collection for the DataGrid
+    /// </summary>
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
+    private IList<W3StringItemModel>? pagedSource;
 
     /// <summary>
     ///     Gets or sets the page size
@@ -137,46 +136,6 @@ internal partial class MainWindowViewModel : ObservableObject
     private bool CanOpenFile => File.Exists(appSettings.W3StringsPath);
 
     /// <summary>
-    ///     Handles changes to the W3StringItems collection
-    /// </summary>
-    partial void OnW3StringItemsChanged(ObservableCollection<W3StringItemModel>? oldValue,
-        ObservableCollection<W3StringItemModel>? newValue)
-    {
-        // Unsubscribe from the old collection's CollectionChanged event to prevent memory leaks
-        if (oldValue is not null) oldValue.CollectionChanged -= W3StringItems_CollectionChanged;
-        // Subscribe to the new collection's CollectionChanged event to handle item additions/removals
-        if (newValue is not null) newValue.CollectionChanged += W3StringItems_CollectionChanged;
-    }
-
-    /// <summary>
-    ///     Handles collection change events for the W3StringItems collection
-    /// </summary>
-    /// <param name="sender">The ObservableCollection that raised the event</param>
-    /// <param name="e">The collection change event arguments</param>
-    private void W3StringItems_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        // Return early if filteredW3StringItems is not initialized
-        if (FilteredW3StringItems is null) return;
-        // Handle item additions to the collection
-        if (e is { Action: NotifyCollectionChangedAction.Add, NewItems: not null })
-        {
-            // Add new items to the filtered results
-            FilterW3StringItems(e.NewItems.OfType<W3StringItemModel>(), SearchText)
-                .ForEach(x => FilteredW3StringItems.Add(x));
-            // Log the number of items added
-            Log.Information("Added {Count} items to filtered results", e.NewItems.Count);
-        }
-
-        // Handle item removals from the collection
-        if (e is not { Action: NotifyCollectionChangedAction.Remove, OldItems: not null }) return;
-        // Remove deleted items from the filtered results by matching TrackingId
-        e.OldItems.OfType<W3StringItemModel>()
-            .ForEach(x => FilteredW3StringItems.Remove(x));
-        // Log the number of items removed
-        Log.Information("Removed {Count} items from filtered results", e.OldItems.Count);
-    }
-
-    /// <summary>
     ///     Registers message handlers for settings-related messages
     /// </summary>
     private void RegisterSettingsMessageHandlers()
@@ -220,48 +179,10 @@ internal partial class MainWindowViewModel : ObservableObject
     /// </summary>
     private void RegisterSearchMessageHandlers()
     {
-        WeakReferenceMessenger.Default.Register<MainWindowViewModel, ValueChangedMessage<bool>, string>(
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, List<W3StringItemModel>, string>(
             this,
-            MessageTokens.SearchRequested,
-            (_, m) => { HandleSearchRequested(m.Value); });
-    }
-
-    /// <summary>
-    ///     Handles search request
-    /// </summary>
-    private void HandleSearchRequested(bool isSearched)
-    {
-        if (isSearched)
-        {
-            FilteredW3StringItems = FilterW3StringItems(W3StringItems, SearchText).ToObservableCollection();
-            Log.Information("Search completed. Found {Count} items matching {SearchText}",
-                FilteredW3StringItems.Count, SearchText);
-        }
-        else
-        {
-            FilteredW3StringItems = null;
-            Log.Information("Search cleared.");
-        }
-    }
-
-    /// <summary>
-    ///     Applies filter to W3String items based on search text
-    /// </summary>
-    /// <param name="items">The items to filter</param>
-    /// <param name="searchText">The search text to filter by</param>
-    /// <returns>Filtered collection of W3String items</returns>
-    private static IEnumerable<W3StringItemModel> FilterW3StringItems(IEnumerable<W3StringItemModel>? items,
-        string searchText)
-    {
-        // Return early if search text is empty or items are null
-        if (string.IsNullOrWhiteSpace(searchText) || items is null)
-            return items ?? [];
-        // Filter items based on search text
-        return items.Where(item =>
-            item.StrId.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-            item.KeyHex.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-            item.KeyName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-            item.Text.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            MessageTokens.DataGridPagedSourceChanged,
+            (_, m) => { PagedSource = m; });
     }
 
     /// <summary>
@@ -464,12 +385,23 @@ internal partial class MainWindowViewModel : ObservableObject
             && dialogViewModel.Item is not null) // Check if user confirmed
         {
             W3StringItems!.Add(dialogViewModel.Item.Cast<W3StringItemModel>()); // Add new item to collection
+            await RequestDataGridPagedSource(); // Request updated paged source
             Log.Information("New W3Item added."); // Log successful addition
         }
         else
         {
             Log.Information("The W3Item has not been added."); // Log canceled addition
         }
+    }
+
+    /// <summary>
+    ///     Requests an updated paged source for the data grid
+    /// </summary>
+    private async Task RequestDataGridPagedSource()
+    {
+        await Task.Delay(50); // Delay to allow time for the collection to update
+        PagedSource = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<List<W3StringItemModel>>(),
+            MessageTokens.RequestDataGridPagedSource); // Send request for updated paged source
     }
 
     /// <summary>
@@ -511,12 +443,15 @@ internal partial class MainWindowViewModel : ObservableObject
         if (w3Items.Length > 0 &&
             await dialogService.ShowDialogAsync(this, new DeleteDataDialogViewModel(w3Items)) ==
             true) // Show delete confirmation dialog
-
+        {
             foreach (var item in w3Items)
             {
                 var stringItem = item.Cast<W3StringItemModel>(); // Cast to string item model
                 W3StringItems!.Remove(stringItem); // Remove from main collection
             }
+
+            await RequestDataGridPagedSource(); // Request updated paged source
+        }
     }
 
     /// <summary>
@@ -636,8 +571,8 @@ internal partial class MainWindowViewModel : ObservableObject
     /// <returns>True if translate dialog can be shown, false otherwise</returns>
     private bool CanShowTranslateDialog()
     {
-        if (FilteredW3StringItems is not null) // Check if we have search results
-            return FilteredW3StringItems.Any(); // Return true if search results exist
+        if (PagedSource is not null) // Check if we have search results
+            return PagedSource.Any(); // Return true if search results exist
         return W3StringItems?.Any() == true; // Otherwise check if we have any W3String items
     }
 
@@ -648,14 +583,14 @@ internal partial class MainWindowViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanShowTranslateDialog))]
     private async Task ShowTranslateDialog(IW3StringItem? selectedItem)
     {
-        var itemsToUse = FilteredW3StringItems ?? W3StringItems!; // Use filtered items if available
+        var itemsToUse = PagedSource ?? W3StringItems!; // Use filtered items if available
         var selectedIndex =
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
         var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
             .First(x => x.Name.Contains(appSettings.Translator));
         var isUseDictionary = appSettings.Translator == "MicrosoftTranslator";
         var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
-        var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse,
+        var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse.ToList(),
             selectedIndex, dictionaryService);
         await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable

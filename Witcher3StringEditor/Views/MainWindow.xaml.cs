@@ -6,8 +6,11 @@ using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls;
 using iNKORE.UI.WPF.Modern.Controls.Primitives;
 using Serilog;
+using Syncfusion.Data;
+using Syncfusion.UI.Xaml.Grid;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Models;
 using Witcher3StringEditor.ViewModels;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
@@ -111,6 +114,18 @@ public partial class MainWindow
                         button,
                         MessageBoxImage.Question) == excepted);
                 });
+
+        WeakReferenceMessenger.Default.Register<MainWindow, AsyncRequestMessage<List<W3StringItemModel>>, string>(
+            this,
+            MessageTokens.RequestDataGridPagedSource,
+            (_, m) =>
+            {
+                // Reply with the current data grid paged source
+                m.Reply(((PagedCollectionView)SfDataGrid.ItemsSource)
+                    .GetInternalList()
+                    .Cast<W3StringItemModel>()
+                    .ToList());
+            }); // Request data grid paged source
     }
 
     /// <summary>
@@ -145,14 +160,20 @@ public partial class MainWindow
     /// </summary>
     /// <param name="sender">The source of the event</param>
     /// <param name="args">The event arguments containing the query text</param>
-    private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    private async void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        if (SfDataGrid.ItemsSource is null || string.IsNullOrWhiteSpace(args.QueryText))
-            return; // Ensure there's data to search before proceeding
-        SfDataGrid.SearchHelper.Search(args.QueryText); // Perform the search and collect results
-        _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(true),
-            MessageTokens.SearchRequested); // Send the search results to the search request message
-        Log.Information("Search query submitted: {QueryText}", args.QueryText); // Log the search query
+        try
+        {
+            if (SfDataGrid.ItemsSource is null || string.IsNullOrWhiteSpace(args.QueryText))
+                return; // Ensure there's data to search before proceeding
+            SfDataGrid.SearchHelper.Search(args.QueryText); // Perform the search and collect results
+            await NotifyDataGridSourceChanged(); // Notify data grid source changed
+            Log.Information("Search query submitted: {QueryText}", args.QueryText); // Log the search query
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error performing search.");
+        }
     }
 
     /// <summary>
@@ -161,12 +182,19 @@ public partial class MainWindow
     /// </summary>
     /// <param name="sender">The source of the event</param>
     /// <param name="args">The event arguments</param>
-    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    private async void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        if (!string.IsNullOrWhiteSpace(sender.Text)) return; // Return if search text is not empty
-        SfDataGrid.SearchHelper.ClearSearch(); // Clear the search helper results
-        _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(false),
-            MessageTokens.SearchRequested); // Send an empty search result to the search request message
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(sender.Text)) return; // Return if search text is not empty
+            SfDataGrid.SearchHelper.ClearSearch(); // Clear the search helper results
+            await NotifyDataGridSourceChanged(); // Notify data grid source changed
+            Log.Information("Search query cleared."); // Log the search query cleared
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Error clearing search."); // Log the error
+        }
     }
 
     /// <summary>
@@ -226,5 +254,28 @@ public partial class MainWindow
             ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Light
                 ? ApplicationTheme.Dark
                 : ApplicationTheme.Light;
+    }
+
+    private async void SfDataGrid_OnSortColumnsChanged(object? sender, GridSortColumnsChangedEventArgs e)
+    {
+        try
+        {
+            await NotifyDataGridSourceChanged(); // Notify data grid source changed
+            Log.Information("Sorting columns changed."); // Log the change
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error in SfDataGrid_OnSortColumnsChanged"); // Log the error
+        }
+    }
+
+    private async Task NotifyDataGridSourceChanged()
+    {
+        await Task.Delay(50);
+        var items = ((PagedCollectionView)SfDataGrid.ItemsSource)
+            .GetInternalList().Cast<W3StringItemModel>()
+            .ToList(); // Get the internal list and cast to W3StringItemModel
+        WeakReferenceMessenger.Default.Send(items,
+            MessageTokens.DataGridPagedSourceChanged); // Send the list to the message bus
     }
 }
