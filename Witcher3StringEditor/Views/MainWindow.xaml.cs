@@ -271,7 +271,7 @@ public partial class MainWindow
 
     private async Task NotifyDataGridSourceChanged()
     {
-        await Task.Delay(50);
+        await Task.Delay(100);
         var items = ((PagedCollectionView)SfDataGrid.ItemsSource)
             .GetInternalList().Cast<W3StringItemModel>()
             .ToList(); // Get the internal list and cast to W3StringItemModel

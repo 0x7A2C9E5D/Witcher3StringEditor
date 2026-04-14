@@ -399,7 +399,7 @@ internal partial class MainWindowViewModel : ObservableObject
     /// </summary>
     private async Task RequestDataGridPagedSource()
     {
-        await Task.Delay(50); // Delay to allow time for the collection to update
+        await Task.Delay(100); // Delay to allow time for the collection to update
         PagedSource = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<List<W3StringItemModel>>(),
             MessageTokens.RequestDataGridPagedSource); // Send request for updated paged source
     }
