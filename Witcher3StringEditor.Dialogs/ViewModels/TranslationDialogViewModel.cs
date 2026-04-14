@@ -32,11 +32,6 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     private readonly IDictionaryService? dictionaryService;
 
     /// <summary>
-    ///     The starting index for translation
-    /// </summary>
-    private readonly int index;
-
-    /// <summary>
     ///     The translation service
     /// </summary>
     private readonly ITranslator translator;
@@ -67,7 +62,6 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     public TranslationDialogViewModel(IAppSettings appSettings, ITranslator translator,
         IReadOnlyList<ITrackableW3StringItem> w3StringItems, int index, IDictionaryService? dictionaryService)
     {
-        this.index = index;
         this.translator = translator;
         this.appSettings = appSettings;
         this.w3StringItems = w3StringItems;
@@ -102,9 +96,11 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
                 await DisposeCurrentViewModelAsync(); // Dispose current view model
                 var formLange = CurrentViewModel.FormLanguage; // Save current source language
                 CurrentViewModel = CurrentViewModel is BatchItemsTranslationViewModel // Switch view model type
-                    ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems, index)
+                    ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems,
+                        ((BatchItemsTranslationViewModel)CurrentViewModel).StartIndex - 1)
                     : new BatchItemsTranslationViewModel(appSettings, translator,
-                        w3StringItems, index + 1, dictionaryService);
+                        w3StringItems, ((SingleItemTranslationViewModel)CurrentViewModel).CurrentItemIndex + 1,
+                        dictionaryService);
                 CurrentViewModel.FormLanguage = formLange; // Restore source language
                 Title = CurrentViewModel is BatchItemsTranslationViewModel // Update dialog title
                     ? Strings.BatchTranslateDialogTitle
