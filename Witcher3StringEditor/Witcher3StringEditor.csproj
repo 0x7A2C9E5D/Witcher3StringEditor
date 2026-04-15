@@ -35,7 +35,7 @@
         <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1"/>
         <PackageReference Include="LinkDotNet.BuildInformation" Version="2.1.2"/>
         <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.6" />
-        <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.269">
+        <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.275">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
