@@ -161,25 +161,6 @@ internal partial class MainWindowViewModel : ObservableObject
         RegisterSettingsMessageHandlers(); // Register settings message handlers
         RegisterSearchMessageHandlers(); // Register search message handlers
         RegisterDictionarySupportMessageHandler(); // Register dictionary support message handler
-        RegisterDuplicateCountMessageHandler(); // Register duplicate count message handler
-    }
-
-    /// <summary>
-    ///     Registers a handler to monitor changes to the duplicate count of a W3StringItem.
-    /// </summary>
-    private void RegisterDuplicateCountMessageHandler()
-    {
-        WeakReferenceMessenger.Default
-            .Register<MainWindowViewModel, AsyncRequestMessage<ITrackableW3StringItem, int>, string>(
-                this,
-                MessageTokens.CheckDuplicateCount,
-                (_, m) =>
-                {
-                    var count = W3StringItems!.Count(x => x.StrId == m.Request.StrId);
-                    if (!string.IsNullOrWhiteSpace(m.Request.KeyName))
-                        count += W3StringItems!.Count(x => x.KeyName == m.Request.KeyName);
-                    m.Reply(count);
-                });
     }
 
     /// <summary>
