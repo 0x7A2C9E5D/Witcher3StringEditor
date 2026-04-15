@@ -170,4 +170,9 @@ public static class MessageTokens
     ///     Token for messages indicating that a request for data grid paged source has been made
     /// </summary>
     public const string RequestDataGridPagedSource = "RequestDataGridPagedSource";
+    
+    /// <summary>
+    ///      Token for messages indicating that a duplicate count check should be made
+    /// </summary>
+    public const string CheckDuplicateCount = "CheckDuplicateCount";
 }
