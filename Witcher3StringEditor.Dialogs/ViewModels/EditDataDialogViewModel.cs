@@ -16,14 +16,12 @@ public partial class EditDataDialogViewModel(ITrackableW3StringItem w3StringItem
     : ObservableObject, IModalDialogViewModel, ICloseable
 {
     /// <summary>
-    ///     Gets whether the item is new (no StrId)
+    ///     Gets the title for the dialog window
+    ///     Displays "Add" if the item is new (no StrId), or "Edit" if editing an existing item
     /// </summary>
-    private bool IsNewItem => string.IsNullOrWhiteSpace(w3StringItem.StrId);
-
-    /// <summary>
-    ///      Gets the dialog title
-    /// </summary>
-    public string Title => IsNewItem ? Strings.AddDialogTitle : Strings.EditDialogTitle;
+    public string Title { get; } = string.IsNullOrWhiteSpace(w3StringItem.StrId)
+        ? Strings.AddDialogTitle
+        : Strings.EditDialogTitle;
 
     /// <summary>
     ///     Gets a clone of The Witcher 3 string item being edited
