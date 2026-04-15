@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Messaging;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -23,7 +21,7 @@ public partial class EditDataDialogViewModel(ITrackableW3StringItem w3StringItem
     private bool IsNewItem => string.IsNullOrWhiteSpace(w3StringItem.StrId);
 
     /// <summary>
-    ///     Gets the dialog title
+    ///      Gets the dialog title
     /// </summary>
     public string Title => IsNewItem ? Strings.AddDialogTitle : Strings.EditDialogTitle;
 
@@ -49,13 +47,8 @@ public partial class EditDataDialogViewModel(ITrackableW3StringItem w3StringItem
     ///     Sets the dialog result to true and requests the dialog to close
     /// </summary>
     [RelayCommand]
-    private async Task Submit()
+    private void Submit()
     {
-        if (string.IsNullOrWhiteSpace(w3StringItem.StrId)) return;
-        var duplicateCount = await WeakReferenceMessenger.Default.Send(
-            new AsyncRequestMessage<ITrackableW3StringItem, int>(w3StringItem));
-        var hasDuplicate = IsNewItem ? duplicateCount > 0 : duplicateCount > 1;
-        if (hasDuplicate) return;
         DialogResult = true;
         RequestClose?.Invoke(this, EventArgs.Empty);
     }
