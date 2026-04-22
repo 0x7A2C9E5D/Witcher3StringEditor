@@ -30,7 +30,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="33.2.3" />
-        <PackageReference Include="System.Linq.AsyncEnumerable" Version="10.0.6" />
+        <PackageReference Include="System.Linq.AsyncEnumerable" Version="10.0.7" />
         <PackageReference Include="ZString" Version="2.6.0"/>
     </ItemGroup>
 
