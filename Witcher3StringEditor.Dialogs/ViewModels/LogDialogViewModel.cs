@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
 using HanumanInstitute.MvvmDialogs;
 using Serilog.Events;
 using Syncfusion.Data.Extensions;
@@ -16,7 +15,7 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 ///     Implements IModalDialogViewModel to support dialog result handling
 /// </summary>
 public sealed class LogDialogViewModel
-    : ObservableObject, IModalDialogViewModel, IDisposable
+    : DisposableViewModel, IModalDialogViewModel
 {
     /// <summary>
     ///     The source collection of log events to display
@@ -48,16 +47,7 @@ public sealed class LogDialogViewModel
     ///     Gets the collection of log events for display in the UI
     /// </summary>
     public ObservableCollection<LogEventItemModel> LogEvents { get; } = [];
-
-    /// <summary>
-    ///     Releases all resources used by the LogDialogViewModel
-    ///     Calls the protected Dispose method with disposing parameter set to true
-    /// </summary>
-    public void Dispose()
-    {
-        Dispose(true); // Dispose of managed resources
-    }
-
+    
     /// <summary>
     ///     Gets the dialog result value
     ///     Returns true to indicate that the dialog was closed successfully
@@ -95,14 +85,13 @@ public sealed class LogDialogViewModel
         foreach (LogEventItemModel item in e.OldItems)
             await Dispatcher.CurrentDispatcher.InvokeAsync(() => sourceLogEvents.Remove(item.EventEntry));
     }
-
-
+    
     /// <summary>
     ///     Releases the resources used by the LogDialogViewModel
     ///     Unsubscribes from collection change events to prevent memory leaks
     /// </summary>
     /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources</param>
-    private void Dispose(bool disposing)
+    protected override void Dispose(bool disposing)
     {
         if (disposedValue) return; // Return if resources have already been disposed
         if (disposing) // Only unsubscribe from events when disposing managed resources

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Specialized;
 using System.IO;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
@@ -15,7 +14,7 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 ///     Manages the display and interaction with recently opened files
 ///     Implements IModalDialogViewModel for dialog result handling and ICloseable for close notifications
 /// </summary>
-public sealed partial class RecentDialogViewModel : ObservableObject, IModalDialogViewModel, ICloseable, IDisposable
+public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalDialogViewModel, ICloseable
 {
     /// <summary>
     ///     Tracks whether the object has been disposed to prevent multiple disposals
@@ -43,16 +42,7 @@ public sealed partial class RecentDialogViewModel : ObservableObject, IModalDial
     ///     Event that is raised when the dialog requests to be closed
     /// </summary>
     public event EventHandler? RequestClose;
-
-    /// <summary>
-    ///     Releases all resources used by the LogDialogViewModel
-    ///     Calls the protected Dispose method with disposing parameter set to true
-    /// </summary>
-    public void Dispose()
-    {
-        Dispose(true); // Dispose of managed resources
-    }
-
+    
     /// <summary>
     ///     Gets the dialog result value
     ///     Returns true to indicate that the dialog was closed successfully
@@ -64,7 +54,7 @@ public sealed partial class RecentDialogViewModel : ObservableObject, IModalDial
     ///     Unsubscribes from collection change events to prevent memory leaks
     /// </summary>
     /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources</param>
-    private void Dispose(bool disposing)
+    protected override void Dispose(bool disposing)
     {
         if (disposedValue) return; // Return if resources have already been disposed
         if (disposing) // Only unsubscribe from events when disposing managed resources
