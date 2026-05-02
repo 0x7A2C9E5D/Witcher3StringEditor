@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Data;
 using HanumanInstitute.MvvmDialogs;
 using Serilog.Events;
 using Syncfusion.Data.Extensions;
@@ -23,12 +24,18 @@ public sealed class LogDialogViewModel
     private readonly ObservableCollection<LogEvent> sourceLogEvents;
     
     /// <summary>
+    ///      The lock object used to synchronize access to the log events collection
+    /// </summary>
+    private readonly object logEventsLock = new();
+    
+    /// <summary>
     ///     Initializes a new instance of the LogDialogViewModel class
     /// </summary>
     /// <param name="logAccessService">The log access service</param>
     public LogDialogViewModel(ILogAccessService logAccessService)
     {
         sourceLogEvents = logAccessService.Logs; // Initialize the source collection
+        BindingOperations.EnableCollectionSynchronization(LogEvents, logEventsLock); 
         // Subscribe to UI collection changes to sync deletions back to source collection
         LogEvents.CollectionChanged += OnLogEventsCollectionChanged;
         // Subscribe to source collection changes to sync new items to UI collection
