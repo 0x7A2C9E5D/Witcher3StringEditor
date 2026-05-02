@@ -86,7 +86,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             var terms = value is null ? [] : await dictionaryProvider.GetEntries(value);
 
             await Application.Current.Dispatcher.InvokeAsync(() => { DictionaryTerms = terms; });
-        });
+        }).ConfigureAwait(false);
     }
 
     /// <summary>

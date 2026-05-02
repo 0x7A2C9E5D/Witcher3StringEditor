@@ -32,7 +32,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
                 var usedRange = worksheet.UsedRange; // Get data range
                 return worksheet.ExportData<W3StringStringItem>(1, 1, usedRange.LastRow,
                     usedRange.LastColumn); // Export data
-            });
+            }).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -65,7 +65,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
                     Guard.IsTrue(await backupService.Backup(filePath)); // Backup existing file if exists
                 GenerateExcelFile(filePath, w3StringItems); // Generate Excel file
                 return true; // Return success
-            });
+            }).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

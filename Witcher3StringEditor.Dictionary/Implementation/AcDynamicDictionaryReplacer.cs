@@ -46,7 +46,7 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
                     StringComparer.OrdinalIgnoreCase
                 );
             var terms = entries.ToDictionary(kvp => kvp.Key, _ => 0); // Create term list
-            await Task.Run(() => matcher.Build(terms)); // Build term cache
+            await Task.Run(() => matcher.Build(terms)).ConfigureAwait(false); // Build term cache
             CurrentDictionary = dictionary; // Set current dictionary
             IsReady = true; // Set ready
         }

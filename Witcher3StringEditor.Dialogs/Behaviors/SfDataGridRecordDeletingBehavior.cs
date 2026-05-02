@@ -47,6 +47,7 @@ public class SfDataGridRecordDeletingBehavior : Behavior<SfDataGrid>
         }
         catch (Exception ex)
         {
+            e.Cancel = true;
             Log.Error(ex, "An error occurred while deleting a record.");
         }
     }
