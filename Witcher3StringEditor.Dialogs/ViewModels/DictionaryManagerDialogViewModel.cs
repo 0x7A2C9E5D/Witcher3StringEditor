@@ -111,7 +111,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 // Try to import the dictionary, if successful, regroup dictionaries to reflect changes
                 var dictionaryInfo =
                     await dictionaryManager.Import(storageFile.LocalPath);
-                if (dictionaryInfo == null) return;
+                if (dictionaryInfo is null) return;
 
                 UpdateOrAddDictionaryToGroups(dictionaryInfo);
                 _ = WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.DictionaryImported);
@@ -151,7 +151,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         {
             var existingEntry =
                 group.Dictionaries.FirstOrDefault(d => d.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
-            if (existingEntry == null) continue;
+            if (existingEntry is null) continue;
             group.Dictionaries.Remove(existingEntry);
             Log.Information("Removed duplicate dictionary with same path from {OldLanguage}: {Path}",
                 group.TargetLanguage.EnglishName, path);
@@ -171,7 +171,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     {
         var targetGroup = DictionaryGroups.FirstOrDefault(g => Equals(g.TargetLanguage, dictionaryInfo.TargetLanguage));
 
-        if (targetGroup == null)
+        if (targetGroup is null)
         {
             // Create a new group for this language
             DictionaryGroups.Add(new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]));

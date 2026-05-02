@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using CommandLine;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -349,7 +350,7 @@ internal partial class MainWindowViewModel : ObservableObject
     private static void SetOutputFolder(string fileName, Action<string> onOutputFolderChanged)
     {
         var folder = Path.GetDirectoryName(fileName); // Extract directory from file name
-        if (folder is null) return; // Return if directory is null
+        Guard.IsNotNull(folder); // Guard against null
         onOutputFolderChanged(folder); // Notify of folder change
         Log.Information("Working directory set to {Folder}.", folder); // Log folder change
     }
