@@ -21,13 +21,7 @@ public sealed class LogDialogViewModel
     ///     The source collection of log events to display
     /// </summary>
     private readonly ObservableCollection<LogEvent> sourceLogEvents;
-
-    /// <summary>
-    ///     Tracks whether the object has been disposed to prevent multiple disposals
-    ///     Set to true when Dispose method is called
-    /// </summary>
-    private bool disposedValue;
-
+    
     /// <summary>
     ///     Initializes a new instance of the LogDialogViewModel class
     /// </summary>
@@ -93,15 +87,11 @@ public sealed class LogDialogViewModel
     /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources</param>
     protected override void Dispose(bool disposing)
     {
-        if (disposedValue) return; // Return if resources have already been disposed
-        if (disposing) // Only unsubscribe from events when disposing managed resources
-        {
-            // Unsubscribe from UI collection changes to prevent memory leaks when dialog is closed
-            LogEvents.CollectionChanged -= OnLogEventsCollectionChanged;
-            // Unsubscribe from source collection changes to prevent memory leaks when dialog is closed
-            sourceLogEvents.CollectionChanged -= OnSourceLogsCollectionChanged;
-        }
-
-        disposedValue = true; // Mark resources as disposed
+        base.Dispose(disposing);
+        if (!disposing) return; // Only unsubscribe from events when disposing managed resources
+        // Unsubscribe from UI collection changes to prevent memory leaks when dialog is closed
+        LogEvents.CollectionChanged -= OnLogEventsCollectionChanged;
+        // Unsubscribe from source collection changes to prevent memory leaks when dialog is closed
+        sourceLogEvents.CollectionChanged -= OnSourceLogsCollectionChanged;
     }
 }

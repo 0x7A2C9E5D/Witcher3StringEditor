@@ -17,12 +17,6 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalDialogViewModel, ICloseable
 {
     /// <summary>
-    ///     Tracks whether the object has been disposed to prevent multiple disposals
-    ///     Set to true when Dispose method is called
-    /// </summary>
-    private bool disposedValue;
-
-    /// <summary>
     ///     Initializes a new instance of the RecentDialogViewModel class
     /// </summary>
     /// <param name="appSettings">Application settings containing the recent items collection</param>
@@ -56,10 +50,9 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
     /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources</param>
     protected override void Dispose(bool disposing)
     {
-        if (disposedValue) return; // Return if resources have already been disposed
+        base.Dispose(disposing);
         if (disposing) // Only unsubscribe from events when disposing managed resources
             AppSettings.RecentItems.CollectionChanged -= OnRecentItemsOnCollectionChanged;
-        disposedValue = true; // Mark resources as disposed
     }
 
     /// <summary>
