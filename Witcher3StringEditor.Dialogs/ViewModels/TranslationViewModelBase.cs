@@ -215,7 +215,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private void UpdateDictionaryAvailability()
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (ToLanguage == null || DictionaryService == null) return; // If target language is null, exit early
+        if (ToLanguage is null || DictionaryService is null) return; // If target language is null, exit early
         IsDictionarySupported = IsDictionaryAvailable(); // Update dictionary availability 
         if (!IsDictionarySupported) return; // If dictionary is not supported, exit early
         LoadDictionaries(); // Load dictionaries for the current language

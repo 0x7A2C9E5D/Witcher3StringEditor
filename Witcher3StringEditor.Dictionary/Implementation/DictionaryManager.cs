@@ -67,7 +67,7 @@ public class DictionaryManager : IDictionaryManager
     /// <exception cref="NotImplementedException"></exception>
     public IEnumerable<DictionaryInfo> Find(CultureInfo? language)
     {
-        if (language == null) return dictionaries; // If no language specified, return all dictionaries
+        if (language is null) return dictionaries; // If no language specified, return all dictionaries
 
         // Get all target languages and find matches using culture matcher
         var languages = dictionaries.Select(x => x.TargetLanguage).ToList();

@@ -394,7 +394,7 @@ internal partial class MainWindowViewModel : ObservableObject
             Log.Information("The W3Item has not been added."); // Log canceled addition
         }
     }
-
+    
     /// <summary>
     ///     Requests an updated paged source for the data grid
     /// </summary>
