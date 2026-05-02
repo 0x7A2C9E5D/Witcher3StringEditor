@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows.Threading;
+using System.Windows;
 using HanumanInstitute.MvvmDialogs;
 using Serilog.Events;
 using Syncfusion.Data.Extensions;
@@ -61,7 +61,7 @@ public sealed class LogDialogViewModel
         if (e is not { Action: NotifyCollectionChangedAction.Add, NewItems: not null }) return;
         // Add each new item to the UI collection on the UI thread
         foreach (LogEvent item in e.NewItems)
-            await Dispatcher.CurrentDispatcher.InvokeAsync(() => LogEvents.Add(new LogEventItemModel(item)));
+            await Application.Current.Dispatcher.InvokeAsync(() => LogEvents.Add(new LogEventItemModel(item)));
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public sealed class LogDialogViewModel
         if (e is not { Action: NotifyCollectionChangedAction.Remove, OldItems: not null }) return;
         // Remove each deleted item from the source collection on the UI thread
         foreach (LogEventItemModel item in e.OldItems)
-            await Dispatcher.CurrentDispatcher.InvokeAsync(() => sourceLogEvents.Remove(item.EventEntry));
+            await Application.Current.Dispatcher.InvokeAsync(() => sourceLogEvents.Remove(item.EventEntry));
     }
     
     /// <summary>
