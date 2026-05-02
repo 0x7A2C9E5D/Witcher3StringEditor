@@ -101,13 +101,24 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 
+    
     /// <summary>
-    ///     Disposes of the view model resources asynchronously
-    ///     Must be implemented by derived classes
+    ///    Gets a value indicating whether the translation operation is busy
     /// </summary>
     /// <returns>A ValueTask representing the asynchronous dispose operation</returns>
-    public abstract ValueTask DisposeAsync();
+    public async ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+        if (CancellationTokenSource is not null)
+        {
+            if (!CancellationTokenSource.IsCancellationRequested)
+                await CancellationTokenSource.CancelAsync();
+            CancellationTokenSource.Dispose();
+        }
 
+        Log.Information("{ViewModelName} is being disposed.", GetType().Name);
+    }
+    
     /// <summary>
     ///     Checks if the current language is supported by the dictionary service
     /// </summary>

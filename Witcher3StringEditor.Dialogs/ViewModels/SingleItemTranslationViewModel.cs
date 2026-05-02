@@ -85,24 +85,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     {
         return IsBusy;
     }
-
-    /// <summary>
-    ///     Disposes of the view model resources
-    ///     Cancels any ongoing translation operations and disposes the cancellation token source
-    /// </summary>
-    public override async ValueTask DisposeAsync()
-    {
-        // Cancel any ongoing translation operations
-        if (CancellationTokenSource is not null)
-        {
-            if (!CancellationTokenSource.IsCancellationRequested) // Check if cancellation is not already requested
-                await CancellationTokenSource.CancelAsync(); // Cancel the cancellation token
-            CancellationTokenSource.Dispose(); // Dispose the cancellation token source
-        }
-
-        Log.Information("SingleItemTranslationViewModel is being disposed."); // Log disposal
-    }
-
+    
     /// <summary>
     ///     Called when the CurrentItemIndex property changes
     ///     Updates the current translate item model with the selected item's data

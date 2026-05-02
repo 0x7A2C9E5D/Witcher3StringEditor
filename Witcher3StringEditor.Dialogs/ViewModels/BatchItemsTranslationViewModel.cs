@@ -87,25 +87,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     ///     Start is available when no translation operation is in progress
     /// </summary>
     private bool CanStart => !IsBusy;
-
-    /// <summary>
-    ///     Disposes of the view model resources
-    ///     Cancels any ongoing translation operations and disposes the cancellation token source
-    /// </summary>
-    public override async ValueTask DisposeAsync()
-    {
-        // Cancel any ongoing translation operations
-        if (CancellationTokenSource is not null)
-        {
-            // Check if cancellation is not already requested
-            if (!CancellationTokenSource.IsCancellationRequested)
-                await CancellationTokenSource.CancelAsync(); // Cancel the cancellation token
-            CancellationTokenSource.Dispose(); // Dispose the cancellation token source
-        }
-
-        Log.Information("BatchItemsTranslationViewModel is being disposed.");
-    }
-
+    
     /// <summary>
     ///     Gets a value indicating whether a translation operation is currently in progress
     /// </summary>
