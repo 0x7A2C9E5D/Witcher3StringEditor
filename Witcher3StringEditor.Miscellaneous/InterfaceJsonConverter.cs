@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace Witcher3StringEditor.Miscellaneous;
 
 /// <summary>
-///    JSON converter for interfaces
+///     JSON converter for interfaces
 /// </summary>
 /// <typeparam name="TInterface"></typeparam>
 /// <typeparam name="TImpl"></typeparam>
@@ -12,7 +12,7 @@ public class InterfaceJsonConverter<TInterface, TImpl> : JsonConverter<TInterfac
     where TImpl : TInterface
 {
     /// <summary>
-    ///    Reads an interface from JSON
+    ///     Reads an interface from JSON
     /// </summary>
     /// <param name="reader"></param>
     /// <param name="typeToConvert"></param>
@@ -27,7 +27,7 @@ public class InterfaceJsonConverter<TInterface, TImpl> : JsonConverter<TInterfac
     }
 
     /// <summary>
-    ///    Writes an interface to JSON
+    ///     Writes an interface to JSON
     /// </summary>
     /// <param name="writer"></param>
     /// <param name="value"></param>

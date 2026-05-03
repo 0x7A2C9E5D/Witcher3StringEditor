@@ -5,13 +5,13 @@ using System.Text.Json.Serialization;
 namespace Witcher3StringEditor.Miscellaneous;
 
 /// <summary>
-///    JSON converter for ObservableCollection
+///     JSON converter for ObservableCollection
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class ObservableCollectionJsonConverter<T> : JsonConverter<ObservableCollection<T>>
 {
     /// <summary>
-    ///    Reads an ObservableCollection from JSON
+    ///     Reads an ObservableCollection from JSON
     /// </summary>
     /// <param name="reader"></param>
     /// <param name="typeToConvert"></param>
@@ -25,7 +25,7 @@ public class ObservableCollectionJsonConverter<T> : JsonConverter<ObservableColl
     }
 
     /// <summary>
-    ///    Writes an ObservableCollection to JSON
+    ///     Writes an ObservableCollection to JSON
     /// </summary>
     /// <param name="writer"></param>
     /// <param name="value"></param>

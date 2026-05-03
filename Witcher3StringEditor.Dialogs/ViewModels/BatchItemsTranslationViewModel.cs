@@ -87,7 +87,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     ///     Start is available when no translation operation is in progress
     /// </summary>
     private bool CanStart => !IsBusy;
-    
+
     /// <summary>
     ///     Gets a value indicating whether a translation operation is currently in progress
     /// </summary>
@@ -188,9 +188,9 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         CancellationToken cancellationToken)
     {
         try
-        { 
+        {
             await BindDictionaryIfNeeded();
-            
+
             foreach (var item in items)
             {
                 cancellationToken.ThrowIfCancellationRequested();

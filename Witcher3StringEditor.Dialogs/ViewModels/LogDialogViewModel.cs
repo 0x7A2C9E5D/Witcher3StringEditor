@@ -19,15 +19,15 @@ public sealed class LogDialogViewModel
     : DisposableViewModel, IModalDialogViewModel
 {
     /// <summary>
+    ///     The lock object used to synchronize access to the log events collection
+    /// </summary>
+    private readonly object logEventsLock = new();
+
+    /// <summary>
     ///     The source collection of log events to display
     /// </summary>
     private readonly ObservableCollection<LogEvent> sourceLogEvents;
-    
-    /// <summary>
-    ///      The lock object used to synchronize access to the log events collection
-    /// </summary>
-    private readonly object logEventsLock = new();
-    
+
     /// <summary>
     ///     Initializes a new instance of the LogDialogViewModel class
     /// </summary>
@@ -35,7 +35,7 @@ public sealed class LogDialogViewModel
     public LogDialogViewModel(ILogAccessService logAccessService)
     {
         sourceLogEvents = logAccessService.Logs; // Initialize the source collection
-        BindingOperations.EnableCollectionSynchronization(LogEvents, logEventsLock); 
+        BindingOperations.EnableCollectionSynchronization(LogEvents, logEventsLock);
         // Subscribe to UI collection changes to sync deletions back to source collection
         LogEvents.CollectionChanged += OnLogEventsCollectionChanged;
         // Subscribe to source collection changes to sync new items to UI collection
@@ -48,7 +48,7 @@ public sealed class LogDialogViewModel
     ///     Gets the collection of log events for display in the UI
     /// </summary>
     public ObservableCollection<LogEventItemModel> LogEvents { get; } = [];
-    
+
     /// <summary>
     ///     Gets the dialog result value
     ///     Returns true to indicate that the dialog was closed successfully
@@ -86,7 +86,7 @@ public sealed class LogDialogViewModel
         foreach (LogEventItemModel item in e.OldItems)
             await Application.Current.Dispatcher.InvokeAsync(() => sourceLogEvents.Remove(item.EventEntry));
     }
-    
+
     /// <summary>
     ///     Releases the resources used by the LogDialogViewModel
     ///     Unsubscribes from collection change events to prevent memory leaks

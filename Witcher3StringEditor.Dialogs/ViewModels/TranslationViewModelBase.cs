@@ -101,9 +101,9 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 
-    
+
     /// <summary>
-    ///    Gets a value indicating whether the translation operation is busy
+    ///     Gets a value indicating whether the translation operation is busy
     /// </summary>
     /// <returns>A ValueTask representing the asynchronous dispose operation</returns>
     public async ValueTask DisposeAsync()
@@ -118,7 +118,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
 
         Log.Information("{ViewModelName} is being disposed.", GetType().Name);
     }
-    
+
     /// <summary>
     ///     Checks if the current language is supported by the dictionary service
     /// </summary>

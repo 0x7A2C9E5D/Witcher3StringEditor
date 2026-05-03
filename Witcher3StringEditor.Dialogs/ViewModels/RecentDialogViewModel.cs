@@ -36,7 +36,7 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
     ///     Event that is raised when the dialog requests to be closed
     /// </summary>
     public event EventHandler? RequestClose;
-    
+
     /// <summary>
     ///     Gets the dialog result value
     ///     Returns true to indicate that the dialog was closed successfully

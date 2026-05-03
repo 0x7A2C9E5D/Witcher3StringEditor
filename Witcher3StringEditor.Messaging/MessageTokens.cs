@@ -160,12 +160,12 @@ public static class MessageTokens
     ///     Token for messages indicating that a merge data should be confirmed
     /// </summary>
     public const string MergeDataConfirm = "MergeDataConfirm";
-    
+
     /// <summary>
     ///     Token for messages indicating that the data grid paged source has changed
     /// </summary>
     public const string DataGridPagedSourceChanged = "DataGridPagedSourceChanged";
-    
+
     /// <summary>
     ///     Token for messages indicating that a request for data grid paged source has been made
     /// </summary>

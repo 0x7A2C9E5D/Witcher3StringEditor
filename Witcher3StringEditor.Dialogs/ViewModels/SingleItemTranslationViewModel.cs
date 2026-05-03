@@ -85,7 +85,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     {
         return IsBusy;
     }
-    
+
     /// <summary>
     ///     Called when the CurrentItemIndex property changes
     ///     Updates the current translate item model with the selected item's data

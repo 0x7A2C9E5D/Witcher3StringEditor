@@ -192,7 +192,7 @@
                 </sf:GridTemplateColumn>
             </sf:SfDataGrid.Columns>
             <sf:SfDataGrid.SortColumnDescriptions>
-                <sf:SortColumnDescription ColumnName="OpenedTime" SortDirection="Descending"/>
+                <sf:SortColumnDescription ColumnName="OpenedTime" SortDirection="Descending" />
             </sf:SfDataGrid.SortColumnDescriptions>
         </sf:SfDataGrid>
         <!-- Data pager for pagination of recent items -->
