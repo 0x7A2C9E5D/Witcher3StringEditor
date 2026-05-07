@@ -1,13 +1,8 @@
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reactive;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows;
-using Windows.Win32;
-using Windows.Win32.Foundation;
-using Windows.Win32.UI.WindowsAndMessaging;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
