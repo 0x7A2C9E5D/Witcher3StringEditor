@@ -87,7 +87,7 @@ public sealed partial class App : IDisposable
     private void InitializeApplication()
     {
         SetupExceptionHandling(); // Setup global exception handling
-        InitializeServices(GetAppSettingsPath()); // Initialize dependency injection services
+        InitializeServices(); // Initialize dependency injection services
         InitializeAppSettings(); // Load application settings
         InitializeLogging(); // Setup logging system
         RegisterSyncfusionLicense(); // Register Syncfusion license for UI components
@@ -250,16 +250,14 @@ public sealed partial class App : IDisposable
     ///     Initializes the dependency injection services
     ///     Registers all services, view models, and other dependencies with the IoC container
     /// </summary>
-    /// <param name="configPath">The path to the configuration file</param>
-    private static void InitializeServices(string configPath)
+    private static void InitializeServices()
     {
         // Configure the IoC container with all required services
         Ioc.Default.ConfigureServices(new ServiceCollection()
             .AddLogging(builder => builder.AddSerilog())
             .AddSingleton<IViewLocator, StrongViewLocator>(_ => CreatStrongViewLocator())
-            .AddSingleton<IConfigService, ConfigService>(_ => new ConfigService(configPath))
-            .AddSingleton<IAppSettings, AppSettings>(_ =>
-                Ioc.Default.GetRequiredService<IConfigService>().Load<AppSettings>())
+            .AddSingleton<IConfigService, ConfigService>()
+            .AddSingleton<IAppSettings, AppSettings>()
             .AddSingleton<ICultureResolver, CultureResolver>()
             .AddSingleton<IBackupService, BackupService>()
             .AddSingleton<ICsvW3Serializer, CsvW3Serializer>()

@@ -13,6 +13,11 @@ public static class AppPaths
             DebugHelper.IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor");
 
     /// <summary>
+    ///     The application settings path.
+    /// </summary>
+    public static readonly string ConfigPath = Path.Combine(AppDataDirectory, "AppSettings.json");
+
+    /// <summary>
     ///     The log directory.
     /// </summary>
     public static readonly string LogDirectory = Path.Combine(AppDataDirectory, "Logs");
