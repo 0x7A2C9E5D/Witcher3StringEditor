@@ -43,6 +43,7 @@ internal partial class MainWindowViewModel : ObservableObject
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
     private readonly IAppDiagnostics appDiagnostics; // Get app diagnostics
+    private readonly IRecentFilesService recentFilesService; // Get recent files service
 
     /// <summary>
     ///     Gets or sets the data from dropped files
@@ -99,7 +100,7 @@ internal partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(IBackupService backupService, IDialogService dialogService,
         IDictionaryManager dictionaryManager, IDictionaryProvider dictionaryProvider, IServiceProvider serviceProvider,
         ISettingsManagerService settingsManagerService, IW3Serializer w3Serializer, IAppDiagnostics appDiagnostics,
-        ICheckUpdateService checkUpdateService)
+        ICheckUpdateService checkUpdateService, IRecentFilesService recentFilesService)
     {
         this.backupService = backupService;
         this.dialogService = dialogService;
@@ -110,6 +111,7 @@ internal partial class MainWindowViewModel : ObservableObject
         this.w3Serializer = w3Serializer;
         this.appDiagnostics = appDiagnostics;
         this.checkUpdateService = checkUpdateService;
+        this.recentFilesService = recentFilesService;
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
@@ -119,7 +121,7 @@ internal partial class MainWindowViewModel : ObservableObject
     /// <summary>
     ///     Gets or sets the application settings
     /// </summary>
-    public IAppSettings AppSettings => settingsManagerService.AppSettings;
+    private IAppSettings AppSettings => settingsManagerService.AppSettings;
 
     /// <summary>
     ///     Gets a value indicating whether there are The Witcher 3 string items
@@ -548,7 +550,7 @@ internal partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task ShowRecentDialog()
     {
-        using var recentDialogViewModel = new RecentDialogViewModel(AppSettings); // Create recent dialog view model
+        using var recentDialogViewModel = new RecentDialogViewModel(recentFilesService); // Create recent dialog view model
         await dialogService.ShowDialogAsync(this, recentDialogViewModel); // Show the recent files dialog
     }
 

@@ -16,21 +16,13 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 /// </summary>
 public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalDialogViewModel, ICloseable
 {
-    /// <summary>
-    ///     Initializes a new instance of the RecentDialogViewModel class
-    /// </summary>
-    /// <param name="appSettings">Application settings containing the recent items collection</param>
-    public RecentDialogViewModel(IAppSettings appSettings)
-    {
-        AppSettings = appSettings;
-        AppSettings.RecentItems.CollectionChanged +=
-            OnRecentItemsOnCollectionChanged; // Subscribe to collection change events
-    }
+    private readonly IRecentFilesService recentFilesService;
 
-    /// <summary>
-    ///     Gets the application settings service
-    /// </summary>
-    public IAppSettings AppSettings { get; }
+    public RecentDialogViewModel(IRecentFilesService recentFilesService)
+    {
+        this.recentFilesService = recentFilesService;
+        recentFilesService.RecentItems.CollectionChanged += OnRecentItemsOnCollectionChanged;
+    }
 
     /// <summary>
     ///     Event that is raised when the dialog requests to be closed
@@ -52,7 +44,7 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
     {
         base.Dispose(disposing);
         if (disposing) // Only unsubscribe from events when disposing managed resources
-            AppSettings.RecentItems.CollectionChanged -= OnRecentItemsOnCollectionChanged;
+            recentFilesService.RecentItems.CollectionChanged -= OnRecentItemsOnCollectionChanged;
     }
 
     /// <summary>
@@ -113,7 +105,7 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
     /// <param name="recentItem">The recent item to remove</param>
     private void TryRemoveRecentItem(IRecentItem recentItem)
     {
-        if (AppSettings.RecentItems.Remove(recentItem))
+        if (recentFilesService.RecentItems.Remove(recentItem))
             Log.Information("The recent item for file {Path} has been removed.", recentItem.FilePath);
         else
             Log.Error("The recent item for file {Path} could not be removed.", recentItem.FilePath);
