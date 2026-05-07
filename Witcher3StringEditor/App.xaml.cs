@@ -35,8 +35,6 @@ namespace Witcher3StringEditor;
 /// </summary>
 public sealed partial class App : IDisposable
 {
-    private IAppSettings? appSettings; // Application settings
-    private IConfigService? configService; // Configuration service
     private bool disposedValue; // Flag to indicate whether the object has been disposed
     private ObserverBase<LogEvent>? logObserver; // Observer for log events
     private SingleInstanceManager? singleInstanceManager; // Single instance manager
@@ -82,11 +80,18 @@ public sealed partial class App : IDisposable
     {
         SetupExceptionHandling(); // Setup global exception handling
         InitializeServices(); // Initialize dependency injection services
-        InitializeAppSettings(); // Load application settings
         InitializeLogging(); // Setup logging system
         RegisterSyncfusionLicense(); // Register Syncfusion license for UI components
-        InitializeCulture(); // Set application culture (language)
-        new MainWindow().Show(); // Show the main window
+        ShowMainWindow(); // Show the main window
+    }
+
+    private static void ShowMainWindow()
+    {
+        var window = new MainWindow
+        {
+            DataContext = Ioc.Default.GetRequiredService<MainWindowViewModel>()
+        };
+        window.Show();
     }
 
     /// <summary>
@@ -106,34 +111,6 @@ public sealed partial class App : IDisposable
                 rollingInterval: RollingInterval.Day, formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.Observers(observable => observable.Subscribe(logObserver))
             .CreateLogger();
-    }
-
-    /// <summary>
-    ///     Initializes the application settings
-    ///     Loads configuration service and application settings from the IoC container
-    /// </summary>
-    private void InitializeAppSettings()
-    {
-        // Get configuration service and application settings from the IoC container
-        configService = Ioc.Default.GetRequiredService<IConfigService>();
-        appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
-    }
-    
-    /// <summary>
-    ///     Initializes the application culture (language)
-    ///     Sets the culture based on saved settings or resolves the supported culture
-    /// </summary>
-    private void InitializeCulture()
-    {
-        // Determine culture based on saved settings or resolve supported culture
-        var cultureInfo = appSettings!.Language == string.Empty
-            ? Ioc.Default.GetRequiredService<ICultureResolver>().ResolveSupportedCulture()
-            : new CultureInfo(appSettings.Language);
-        // Save the resolved culture if it wasn't previously set
-        if (appSettings.Language == string.Empty)
-            appSettings.Language = cultureInfo.Name;
-        // Apply the culture to the application
-        I18NExtension.Culture = cultureInfo;
     }
 
     /// <summary>
@@ -171,7 +148,7 @@ public sealed partial class App : IDisposable
             Log.Error(exception, "Unobserved task exception: {ExceptionMessage}", exception.Message);
         };
     }
-    
+
     /// <summary>
     ///     Initializes the dependency injection services
     ///     Registers all services, view models, and other dependencies with the IoC container
@@ -205,7 +182,7 @@ public sealed partial class App : IDisposable
             .AddTransient<ITranslator, YandexTranslator>()
             .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()
-            .AddSingleton<IAppDiagnostics,AppDiagnostics>()
+            .AddSingleton<IAppDiagnostics, AppDiagnostics>()
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());
     }
@@ -240,13 +217,20 @@ public sealed partial class App : IDisposable
     /// <param name="e">Exit event arguments</param>
     protected override void OnExit(ExitEventArgs e)
     {
-        // Save application settings before exiting
-        configService?.Save(appSettings);
-        // Log application exit and flush logs
-        Log.Information("Application exited.");
-        Log.CloseAndFlush();
-        // Dispose resources
-        Dispose();
+        SaveAppSettings(); // Save application settings
+        Log.Information("Application exited."); // Log application exit
+        Log.CloseAndFlush(); // Flush logs
+        Dispose(); // Dispose of resources
+    }
+
+    /// <summary>
+    ///     Saves application settings to the configuration file
+    /// </summary>
+    private static void SaveAppSettings()
+    {
+        var appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
+        var configService = Ioc.Default.GetRequiredService<IConfigService>();
+        configService.Save(appSettings);
     }
 
     /// <summary>
@@ -255,14 +239,9 @@ public sealed partial class App : IDisposable
     /// <param name="disposing">True if called from Dispose(), false if called from finalizer</param>
     private void Dispose(bool disposing)
     {
-        // Dispose managed resources
         if (disposedValue) return;
         if (disposing)
-        {
             logObserver?.Dispose();
-        }
-
-        // Mark as disposed
         disposedValue = true;
     }
 }
