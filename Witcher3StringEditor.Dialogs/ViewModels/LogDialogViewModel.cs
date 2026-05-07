@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Data;
 using HanumanInstitute.MvvmDialogs;
 using Serilog.Events;
-using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.Models;
 
@@ -40,8 +39,7 @@ public sealed class LogDialogViewModel
         LogEvents.CollectionChanged += OnLogEventsCollectionChanged;
         // Subscribe to source collection changes to sync new items to UI collection
         sourceLogEvents.CollectionChanged += OnSourceLogsCollectionChanged;
-        // Add existing log events to the UI collection
-        sourceLogEvents.ForEach(x => LogEvents.Add(new LogEventItemModel(x)));
+        InitializeExistingLogs(); // Initialize existing logs
     }
 
     /// <summary>
@@ -56,19 +54,39 @@ public sealed class LogDialogViewModel
     public bool? DialogResult => true;
 
     /// <summary>
+    ///     Initializes the log events collection with existing log events
+    /// </summary>
+    private void InitializeExistingLogs()
+    {
+        lock (logEventsLock)
+        {
+            var models = sourceLogEvents
+                .Select(x => new LogEventItemModel(x)).ToList();
+            foreach (var model in models)
+                LogEvents.Add(model);
+        }
+    }
+
+    /// <summary>
     ///     Handles changes to the source log events collection
     ///     Adds new log events to the UI collection when items are added to the source collection
     /// </summary>
     /// <param name="sender">The source collection</param>
     /// <param name="e">The collection change event arguments</param>
     // ReSharper disable once AsyncVoidEventHandlerMethod
-    private async void OnSourceLogsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    private void OnSourceLogsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         // Only handle Add actions with valid items
         if (e is not { Action: NotifyCollectionChangedAction.Add, NewItems: not null }) return;
         // Add each new item to the UI collection on the UI thread
         foreach (LogEvent item in e.NewItems)
-            await Application.Current.Dispatcher.InvokeAsync(() => LogEvents.Add(new LogEventItemModel(item)));
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                lock (logEventsLock)
+                {
+                    LogEvents.Add(new LogEventItemModel(item));
+                }
+            });
     }
 
     /// <summary>
@@ -84,7 +102,13 @@ public sealed class LogDialogViewModel
         if (e is not { Action: NotifyCollectionChangedAction.Remove, OldItems: not null }) return;
         // Remove each deleted item from the source collection on the UI thread
         foreach (LogEventItemModel item in e.OldItems)
-            await Application.Current.Dispatcher.InvokeAsync(() => sourceLogEvents.Remove(item.EventEntry));
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                lock (logEventsLock)
+                {
+                    sourceLogEvents.Remove(item.EventEntry);
+                }
+            });
     }
 
     /// <summary>
@@ -94,7 +118,7 @@ public sealed class LogDialogViewModel
     /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources</param>
     protected override void Dispose(bool disposing)
     {
-        base.Dispose(disposing);
+        base.Dispose(disposing); // Call the base class's Dispose method
         if (!disposing) return; // Only unsubscribe from events when disposing managed resources
         // Unsubscribe from UI collection changes to prevent memory leaks when dialog is closed
         LogEvents.CollectionChanged -= OnLogEventsCollectionChanged;
