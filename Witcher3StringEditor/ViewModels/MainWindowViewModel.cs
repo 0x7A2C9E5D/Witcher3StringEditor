@@ -20,7 +20,6 @@ using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
-using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Services;
@@ -33,20 +32,18 @@ namespace Witcher3StringEditor.ViewModels;
 /// </summary>
 internal partial class MainWindowViewModel : ObservableObject
 {
+
     // Dependency services
     private readonly IBackupService backupService; // Get backup service
+    private readonly ICheckUpdateService checkUpdateService; // Get check update service
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDictionaryManager dictionaryManager; // Get dictionary manager
     private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
+    private readonly IAppDiagnostics appDiagnostics; // Get app diagnostics
 
-    /// <summary>
-    ///      Gets or sets the application settings
-    /// </summary>
-    public IAppSettings AppSettings => settingsManagerService.AppSettings;
-    
     /// <summary>
     ///     Gets or sets the data from dropped files
     /// </summary>
@@ -98,25 +95,31 @@ internal partial class MainWindowViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     private ObservableCollection<W3StringItemModel>? w3StringItems;
 
-    /// <summary>
-    ///     Initializes a new instance of the MainWindowViewModel class
-    /// </summary>
-    /// <param name="serviceProvider">The service provider used to resolve dependencies</param>
-    public MainWindowViewModel(IServiceProvider serviceProvider)
+
+    public MainWindowViewModel(IBackupService backupService, IDialogService dialogService,
+        IDictionaryManager dictionaryManager, IDictionaryProvider dictionaryProvider, IServiceProvider serviceProvider,
+        ISettingsManagerService settingsManagerService, IW3Serializer w3Serializer, IAppDiagnostics appDiagnostics,
+        ICheckUpdateService checkUpdateService)
     {
-        this.serviceProvider = serviceProvider; // Store the service provider
-        backupService = serviceProvider.GetRequiredService<IBackupService>(); // Get backup service
-        dialogService = serviceProvider.GetRequiredService<IDialogService>(); // Get dialog service
-        w3Serializer = serviceProvider.GetRequiredService<IW3Serializer>(); // Get serializer
-        dictionaryManager = serviceProvider.GetRequiredService<IDictionaryManager>(); // Get dictionary manager
-        dictionaryProvider = serviceProvider.GetRequiredService<IDictionaryProvider>(); // Get dictionary provider
-        settingsManagerService =
-            serviceProvider.GetRequiredService<ISettingsManagerService>(); // Get settings manager service
+        this.backupService = backupService;
+        this.dialogService = dialogService;
+        this.dictionaryManager = dictionaryManager;
+        this.dictionaryProvider = dictionaryProvider;
+        this.serviceProvider = serviceProvider;
+        this.settingsManagerService = settingsManagerService;
+        this.w3Serializer = w3Serializer;
+        this.appDiagnostics = appDiagnostics;
+        this.checkUpdateService = checkUpdateService;
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
         RegisterMessengerHandlers(); // Register all message handlers
     }
+
+    /// <summary>
+    ///     Gets or sets the application settings
+    /// </summary>
+    public IAppSettings AppSettings => settingsManagerService.AppSettings;
 
     /// <summary>
     ///     Gets a value indicating whether there are The Witcher 3 string items
@@ -208,29 +211,9 @@ internal partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task WindowLoaded()
     {
-        LogApplicationStartupInfo(); // Log application startup information
+        appDiagnostics.LogStartupInfo(); // Log application startup information
         await settingsManagerService.CheckSettings(); // Check application settings
-        IsUpdateAvailable =
-            await serviceProvider.GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
-    }
-
-    /// <summary>
-    ///     Logs application startup information including version, OS, and other diagnostic data
-    /// </summary>
-    private void LogApplicationStartupInfo()
-    {
-        Log.Information("Application started."); // Log application start
-        Log.Information("Application Version: {Version}", ThisAssembly.AssemblyFileVersion); // Log application version
-        Log.Information("OS Version: {Version}", // Log OS version
-            $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})");
-        Log.Information(".Net Runtime: {Runtime}", RuntimeInformation.FrameworkDescription); // Log .NET runtime version
-        Log.Information("Is Debug: {IsDebug}", !BuildInformation.IsReleaseBuild); // Log debug mode status
-        Log.Information("Current Directory: {Directory}", Environment.CurrentDirectory); // Log current directory
-        Log.Information("AppData Folder: {Folder}", AppPaths.AppDataDirectory); // Log AppData folder path
-        var supportedCultures = serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures;
-        Log.Information("Installed Language Packs: {Languages}",
-            string.Join(", ", supportedCultures.Select(x => x.Name))); // Log installed language packs
-        Log.Information("Current Language: {Language}", AppSettings.Language); // Log current language
+        IsUpdateAvailable = await checkUpdateService.CheckUpdate(); // Check for updates
     }
 
     /// <summary>
