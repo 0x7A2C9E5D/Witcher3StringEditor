@@ -43,11 +43,8 @@ public sealed partial class App : IDisposable
     private IAppSettings? appSettings; // Application settings
     private IConfigService? configService; // Configuration service
     private bool disposedValue; // Flag to indicate whether the object has been disposed
-
     private ObserverBase<LogEvent>? logObserver; // Observer for log events
-
-    // Private fields
-    private Mutex? mutex; // Mutex to prevent multiple instances
+    private SingleInstanceManager? singleInstanceManager; // Single instance manager
 
     /// <summary>
     ///     Disposes of the resources used by the application
@@ -64,13 +61,15 @@ public sealed partial class App : IDisposable
     /// <param name="e">Startup event arguments</param>
     protected override void OnStartup(StartupEventArgs e)
     {
+        singleInstanceManager = new SingleInstanceManager(DebugHelper.IsDebug);
         // Check if another instance is already running
-        if (IsAnotherInstanceRunning())
+        if (singleInstanceManager.IsAnotherInstanceRunning())
         {
             // If another instance is running, ask user if they want to activate it
             if (MessageBox.Show(Strings.MultipleInstanceMessage, Strings.MultipleInstanceCaption,
                     MessageBoxButton.YesNo,
-                    MessageBoxImage.Information) == MessageBoxResult.Yes) ActivateExistingInstance();
+                    MessageBoxImage.Information) == MessageBoxResult.Yes)
+                singleInstanceManager.ActivateExistingInstance();
             Shutdown();
         }
         else
@@ -124,20 +123,7 @@ public sealed partial class App : IDisposable
         configService = Ioc.Default.GetRequiredService<IConfigService>();
         appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
     }
-
-    /// <summary>
-    ///     Gets the path to the application settings file
-    ///     Creates the configuration folder if it doesn't exist
-    /// </summary>
-    /// <returns>The full path to the application settings file</returns>
-    private static string GetAppSettingsPath()
-    {
-        var configPath = Path.Combine(AppPaths.AppDataDirectory, "AppSettings.Json");
-        // Create the configuration folder if it doesn't exist
-        Directory.CreateDirectory(AppPaths.AppDataDirectory);
-        return configPath;
-    }
-
+    
     /// <summary>
     ///     Initializes the application culture (language)
     ///     Sets the culture based on saved settings or resolves the supported culture
@@ -190,62 +176,7 @@ public sealed partial class App : IDisposable
             Log.Error(exception, "Unobserved task exception: {ExceptionMessage}", exception.Message);
         };
     }
-
-    /// <summary>
-    ///     Checks if another instance of the application is already running
-    ///     Uses a mutex to determine if this is the only instance
-    /// </summary>
-    /// <returns>True if another instance is running, false otherwise</returns>
-    private bool IsAnotherInstanceRunning()
-    {
-        // Create a mutex with a unique name based on debug/release mode
-        mutex = new Mutex(true, DebugHelper.IsDebug ? "Witcher3StringEditor_Debug" : "Witcher3StringEditor",
-            out var createdNew);
-        return !createdNew;
-    }
-
-    /// <summary>
-    ///     Activates an existing instance of the application
-    ///     Finds the existing process and brings its window to the foreground
-    /// </summary>
-    private static void ActivateExistingInstance()
-    {
-        // Find the existing process instance
-        using var existingProcess = FindExistingProcessInstance();
-        // Activate the window of the existing instance
-        var mainWindowHandle = new HWND(existingProcess.MainWindowHandle);
-        ActivateExistingInstanceWindow(mainWindowHandle);
-    }
-
-    /// <summary>
-    ///     Activates the window of an existing application instance
-    ///     Restores the window if minimized and brings it to the foreground
-    /// </summary>
-    /// <param name="mainWindowHandle">The handle to the main window of the existing instance</param>
-    private static void ActivateExistingInstanceWindow(HWND mainWindowHandle)
-    {
-        // Get the current window placement
-        var placement = new WINDOWPLACEMENT();
-        placement.length = (uint)Marshal.SizeOf(placement);
-        if (PInvoke.GetWindowPlacement(mainWindowHandle, ref placement).Value == 0) return;
-        // Restore the window if it's minimized
-        if (placement.showCmd == SHOW_WINDOW_CMD.SW_SHOWMINIMIZED)
-            PInvoke.ShowWindow(mainWindowHandle, SHOW_WINDOW_CMD.SW_RESTORE);
-        // Bring the window to the foreground
-        PInvoke.SetForegroundWindow(mainWindowHandle);
-    }
-
-    /// <summary>
-    ///     Finds an existing process instance of the application
-    /// </summary>
-    /// <returns>The existing process instance</returns>
-    private static Process FindExistingProcessInstance()
-    {
-        // Get the current process to find processes with the same name
-        using var currentProcess = Process.GetCurrentProcess();
-        return Process.GetProcessesByName(currentProcess.ProcessName).First(p => p.Id != currentProcess.Id);
-    }
-
+    
     /// <summary>
     ///     Initializes the dependency injection services
     ///     Registers all services, view models, and other dependencies with the IoC container
@@ -333,7 +264,6 @@ public sealed partial class App : IDisposable
         if (disposedValue) return;
         if (disposing)
         {
-            mutex?.Dispose();
             logObserver?.Dispose();
         }
 
