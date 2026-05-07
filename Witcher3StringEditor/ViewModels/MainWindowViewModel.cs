@@ -34,7 +34,6 @@ namespace Witcher3StringEditor.ViewModels;
 internal partial class MainWindowViewModel : ObservableObject
 {
     // Dependency services
-    private readonly IAppSettings appSettings; // Get application settings service
     private readonly IBackupService backupService; // Get backup service
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDictionaryManager dictionaryManager; // Get dictionary manager
@@ -43,6 +42,11 @@ internal partial class MainWindowViewModel : ObservableObject
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
 
+    /// <summary>
+    ///      Gets or sets the application settings
+    /// </summary>
+    public IAppSettings AppSettings => settingsManagerService.AppSettings;
+    
     /// <summary>
     ///     Gets or sets the data from dropped files
     /// </summary>
@@ -101,7 +105,6 @@ internal partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(IServiceProvider serviceProvider)
     {
         this.serviceProvider = serviceProvider; // Store the service provider
-        appSettings = serviceProvider.GetRequiredService<IAppSettings>(); // Get application settings service
         backupService = serviceProvider.GetRequiredService<IBackupService>(); // Get backup service
         dialogService = serviceProvider.GetRequiredService<IDialogService>(); // Get dialog service
         w3Serializer = serviceProvider.GetRequiredService<IW3Serializer>(); // Get serializer
@@ -109,9 +112,9 @@ internal partial class MainWindowViewModel : ObservableObject
         dictionaryProvider = serviceProvider.GetRequiredService<IDictionaryProvider>(); // Get dictionary provider
         settingsManagerService =
             serviceProvider.GetRequiredService<ISettingsManagerService>(); // Get settings manager service
-        PageSize = appSettings.PageSize; // Set page size
+        PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
-            appSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
+            AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
         RegisterMessengerHandlers(); // Register all message handlers
     }
 
@@ -129,12 +132,12 @@ internal partial class MainWindowViewModel : ObservableObject
     /// <summary>
     ///     Gets a value indicating whether the game can be played
     /// </summary>
-    private bool CanPlayGame => File.Exists(appSettings.GameExePath);
+    private bool CanPlayGame => File.Exists(AppSettings.GameExePath);
 
     /// <summary>
     ///     Gets a value indicating whether a file can be opened
     /// </summary>
-    private bool CanOpenFile => File.Exists(appSettings.W3StringsPath);
+    private bool CanOpenFile => File.Exists(AppSettings.W3StringsPath);
 
     /// <summary>
     ///     Registers message handlers for settings-related messages
@@ -227,7 +230,7 @@ internal partial class MainWindowViewModel : ObservableObject
         var supportedCultures = serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures;
         Log.Information("Installed Language Packs: {Languages}",
             string.Join(", ", supportedCultures.Select(x => x.Name))); // Log installed language packs
-        Log.Information("Current Language: {Language}", appSettings.Language); // Log current language
+        Log.Information("Current Language: {Language}", AppSettings.Language); // Log current language
     }
 
     /// <summary>
@@ -362,10 +365,10 @@ internal partial class MainWindowViewModel : ObservableObject
     /// <param name="fileName">The file name to add or update in the recent items list</param>
     private void UpdateRecentItems(string fileName)
     {
-        var foundItem = appSettings.RecentItems.FirstOrDefault(x => x.FilePath == fileName); // Find existing item
+        var foundItem = AppSettings.RecentItems.FirstOrDefault(x => x.FilePath == fileName); // Find existing item
         if (foundItem is null) // If item not found
         {
-            appSettings.RecentItems.Add(new RecentItem(fileName, DateTime.Now)); // Add new recent item
+            AppSettings.RecentItems.Add(new RecentItem(fileName, DateTime.Now)); // Add new recent item
             Log.Information("Added {FileName} to recent items.", fileName); // Log addition
         }
         else // If item found
@@ -462,7 +465,7 @@ internal partial class MainWindowViewModel : ObservableObject
     private async Task ShowBackupDialog()
     {
         await dialogService.ShowDialogAsync(this,
-            new BackupDialogViewModel(appSettings, backupService));
+            new BackupDialogViewModel(AppSettings, backupService));
     }
 
     /// <summary>
@@ -472,7 +475,7 @@ internal partial class MainWindowViewModel : ObservableObject
     private async Task ShowSaveDialog()
     {
         await dialogService.ShowDialogAsync(this,
-            new SaveDialogViewModel(appSettings,
+            new SaveDialogViewModel(AppSettings,
                 serviceProvider.GetRequiredService<IW3Serializer>(),
                 W3StringItems!,
                 OutputFolder));
@@ -500,7 +503,7 @@ internal partial class MainWindowViewModel : ObservableObject
         var names = translators.Select(x => x.Name.Replace("2", string.Empty)); // Extract translator names
         translators.ForEach(x => x.Cast<IDisposable>().Dispose()); // Dispose of translator instances
         await dialogService.ShowDialogAsync(this,
-            new SettingDialogViewModel(appSettings, dialogService,
+            new SettingDialogViewModel(AppSettings, dialogService,
                 serviceProvider.GetRequiredService<IExplorerService>(), names,
                 serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures)); // Show the settings dialog
     }
@@ -552,7 +555,7 @@ internal partial class MainWindowViewModel : ObservableObject
     private void OpenNexusMods()
     {
         serviceProvider.GetRequiredService<IExplorerService>()
-            .Open(appSettings.NexusModUrl); // Open the NexusMods page
+            .Open(AppSettings.NexusModUrl); // Open the NexusMods page
         Log.Information("NexusMods opened."); // Log successful opening
     }
 
@@ -562,7 +565,7 @@ internal partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task ShowRecentDialog()
     {
-        using var recentDialogViewModel = new RecentDialogViewModel(appSettings); // Create recent dialog view model
+        using var recentDialogViewModel = new RecentDialogViewModel(AppSettings); // Create recent dialog view model
         await dialogService.ShowDialogAsync(this, recentDialogViewModel); // Show the recent files dialog
     }
 
@@ -588,10 +591,10 @@ internal partial class MainWindowViewModel : ObservableObject
         var selectedIndex =
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
         var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
-            .First(x => x.Name.Contains(appSettings.Translator));
-        var isUseDictionary = appSettings.Translator == "MicrosoftTranslator";
+            .First(x => x.Name.Contains(AppSettings.Translator));
+        var isUseDictionary = AppSettings.Translator == "MicrosoftTranslator";
         var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
-        var translationDialogViewModel = new TranslationDialogViewModel(appSettings, translator, itemsToUse.ToList(),
+        var translationDialogViewModel = new TranslationDialogViewModel(AppSettings, translator, itemsToUse.ToList(),
             selectedIndex, dictionaryService);
         await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable
