@@ -1,6 +1,4 @@
-using Witcher3StringEditor.Contracts.Abstractions;
-
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Contracts.Abstractions;
 
 /// <summary>
 ///     Defines a contract for settings management operations
