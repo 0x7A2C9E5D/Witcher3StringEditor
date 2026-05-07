@@ -279,6 +279,7 @@ public sealed partial class App : IDisposable
             .AddTransient<ITranslator, YandexTranslator>()
             .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()
+            .AddSingleton<IAppDiagnostics,AppDiagnostics>()
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());
     }
