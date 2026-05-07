@@ -1,3 +1,5 @@
+using Witcher3StringEditor.Contracts.Abstractions;
+
 namespace Witcher3StringEditor.Services;
 
 /// <summary>
@@ -11,4 +13,9 @@ public interface ISettingsManagerService
     /// </summary>
     /// <returns>A task that represents the asynchronous operation</returns>
     Task CheckSettings();
+    
+    /// <summary>
+    ///     Gets the application settings instance
+    /// </summary>
+    IAppSettings AppSettings { get; }
 }

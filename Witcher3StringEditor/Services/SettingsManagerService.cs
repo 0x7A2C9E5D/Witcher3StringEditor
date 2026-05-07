@@ -16,10 +16,8 @@ namespace Witcher3StringEditor.Services;
 /// </summary>
 internal class SettingsManagerService : ISettingsManagerService
 {
-    /// <summary>
-    ///     The application settings instance
-    /// </summary>
-    private readonly IAppSettings appSettings;
+
+    public IAppSettings AppSettings { get; }
 
     /// <summary>
     ///     Initializes a new instance of the SettingsManagerService class
@@ -27,8 +25,8 @@ internal class SettingsManagerService : ISettingsManagerService
     /// <param name="appSettings">The application settings instance</param>
     public SettingsManagerService(IAppSettings appSettings)
     {
-        this.appSettings = appSettings; // Store the app settings instance
-        if (this.appSettings is INotifyPropertyChanged
+        AppSettings = appSettings; // Store the app settings instance
+        if (AppSettings is INotifyPropertyChanged
             notifyPropertyChanged) // Check if app settings supports property change notifications
             notifyPropertyChanged.PropertyChanged += OnAppSettingsPropertyChanged; // Register property change handler
     }
@@ -43,9 +41,9 @@ internal class SettingsManagerService : ISettingsManagerService
         Log.Information("Checking whether the settings are correct."); //Log checking message
         if (await CheckRequiredSettings()) return; // Check required settings
         var hasErrors = false; // Create a flag to indicate whether there are errors
-        hasErrors |= !ValidateW3StringsPath(appSettings); // Validate W3Strings path
-        hasErrors |= !ValidateGameExePath(appSettings); // Validate game executable path
-        LogAdditionalSettings(appSettings); // Log additional settings
+        hasErrors |= !ValidateW3StringsPath(AppSettings); // Validate W3Strings path
+        hasErrors |= !ValidateGameExePath(AppSettings); // Validate game executable path
+        LogAdditionalSettings(AppSettings); // Log additional settings
         await HandleValidationResult(hasErrors); // Handle validation result
     }
 
@@ -55,7 +53,7 @@ internal class SettingsManagerService : ISettingsManagerService
     /// <returns>True if first run setup was triggered, otherwise false</returns>
     private async Task<bool> CheckRequiredSettings()
     {
-        if (!string.IsNullOrWhiteSpace(appSettings.W3StringsPath)) return false; // Check if W3Strings path is set
+        if (!string.IsNullOrWhiteSpace(AppSettings.W3StringsPath)) return false; // Check if W3Strings path is set
         Log.Error(
             "Settings are incorrect or initial setup is incomplete."); // Log settings incorrect or incomplete message
         _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
@@ -155,10 +153,10 @@ internal class SettingsManagerService : ISettingsManagerService
                     MessageTokens.GameExePathChanged);
                 break;
             case nameof(IAppSettings.Translator): // If Translator changed
-                ApplyTranslatorChange(appSettings); // Apply translator change
+                ApplyTranslatorChange(AppSettings); // Apply translator change
                 break;
             case nameof(IAppSettings.Language): // If Language changed
-                ApplyLanguageChange(appSettings.Language); // Apply language change
+                ApplyLanguageChange(AppSettings.Language); // Apply language change
                 break;
             case nameof(IAppSettings.PageSize): // If PageSize changed
                 _ = WeakReferenceMessenger.Default.Send(
