@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows;
 using CommandLine;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -11,6 +12,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using iNKORE.UI.WPF.DragDrop;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Serilog;
@@ -30,24 +32,20 @@ namespace Witcher3StringEditor.ViewModels;
 ///     Main window view model for the Witcher 3 String Editor application
 ///     Handles file operations, UI commands, and coordination between services and dialogs
 /// </summary>
-internal partial class MainWindowViewModel : ObservableObject
+internal partial class MainWindowViewModel : ObservableObject, IDropTarget
 {
+    private readonly IAppDiagnostics appDiagnostics; // Get app diagnostics
+
     // Dependency services
     private readonly IBackupService backupService; // Get backup service
     private readonly ICheckUpdateService checkUpdateService; // Get check update service
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDictionaryManager dictionaryManager; // Get dictionary manager
     private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider
+    private readonly IRecentFilesService recentFilesService; // Get recent files service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
-    private readonly IAppDiagnostics appDiagnostics; // Get app diagnostics
-    private readonly IRecentFilesService recentFilesService; // Get recent files service
-
-    /// <summary>
-    ///     Gets or sets the data from dropped files
-    /// </summary>
-    [ObservableProperty] private string[]? dropFileData;
 
     /// <summary>
     ///     Registers a message handler to listen for translator changes and update dictionary support status
@@ -142,6 +140,36 @@ internal partial class MainWindowViewModel : ObservableObject
     ///     Gets a value indicating whether a file can be opened
     /// </summary>
     private bool CanOpenFile => File.Exists(AppSettings.W3StringsPath);
+
+    /// <summary>
+    ///     Handles the drag over event
+    /// </summary>
+    /// <param name="dropInfo"></param>
+    public void DragOver(IDropInfo dropInfo)
+    {
+        dropInfo.Effects = DragDropEffects.Copy;
+    }
+
+    /// <summary>
+    ///     Handles the drop event
+    /// </summary>
+    /// <param name="dropInfo"></param>
+    public async void Drop(IDropInfo dropInfo)
+    {
+        try
+        {
+            var dropData = dropInfo.Data as string[]; // Get the dropped data
+            var file = dropData?.FirstOrDefault(); // Get the first file
+            if (file is null) return; // Check if file is null
+            var ext = Path.GetExtension(file); // Get the file extension
+            if (ext is ".csv" or ".w3strings" or ".xlsx")
+                await OpenFile(file); // Open file if extension is supported
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error while dropping file");
+        }
+    }
 
     /// <summary>
     ///     Registers message handlers for settings-related messages
@@ -239,21 +267,6 @@ internal partial class MainWindowViewModel : ObservableObject
     private void WindowClosed()
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
-    }
-
-    /// <summary>
-    ///     Handles dropped files
-    ///     Opens the file if it has a supported extension
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanOpenFile))]
-    private async Task DropFile()
-    {
-        if (DropFileData?.Length > 0) // Check if any files were dropped
-        {
-            var file = DropFileData[0]; // Get the first dropped file
-            var ext = Path.GetExtension(file); // Get the file extension
-            if (ext is ".csv" or ".w3strings" or ".xlsx") await OpenFile(file); // Open file if extension is supported
-        }
     }
 
     /// <summary>
@@ -549,7 +562,8 @@ internal partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task ShowRecentDialog()
     {
-        using var recentDialogViewModel = new RecentDialogViewModel(recentFilesService); // Create recent dialog view model
+        using var recentDialogViewModel =
+            new RecentDialogViewModel(recentFilesService); // Create recent dialog view model
         await dialogService.ShowDialogAsync(this, recentDialogViewModel); // Show the recent files dialog
     }
 
