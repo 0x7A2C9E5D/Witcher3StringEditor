@@ -11,6 +11,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.ViewModels"
     xmlns:m="clr-namespace:Witcher3StringEditor.Models"
+    xmlns:dd="clr-namespace:iNKORE.UI.WPF.DragDrop;assembly=iNKORE.UI.WPF"
     Title="{I18N {x:Static l:LangKeys.AppTitle}}"
     Width="1200"
     Height="800"
@@ -295,7 +296,8 @@
             RowHeight="30"
             SelectionMode="Extended"
             ShowRowHeader="True"
-            GridPasteOption="None" SortColumnsChanged="SfDataGrid_OnSortColumnsChanged">
+            GridPasteOption="None" SortColumnsChanged="SfDataGrid_OnSortColumnsChanged"
+            dd:DragDrop.DragHandler="{Binding}" dd:DragDrop.IsDropTarget="True">
             <sf:SfDataGrid.Resources>
                 <ResourceDictionary>
                     <!-- Custom style for row header cells to display row numbers -->
