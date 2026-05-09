@@ -11,8 +11,9 @@
         xmlns:m="clr-namespace:Witcher3StringEditor.Dialogs.Models"
         xmlns:di="clr-namespace:Witcher3StringEditor.Dictionary;assembly=Witcher3StringEditor.Dictionary"
         xmlns:t="clr-namespace:Witcher3StringEditor.Dialogs.TemplateSelectors"
-        xmlns:b="clr-namespace:Witcher3StringEditor.Dialogs.Behaviors"
         xmlns:c="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
+        xmlns:b1="clr-namespace:Witcher3StringEditor.Dialogs.Behaviors"
+        xmlns:b2="clr-namespace:Witcher3StringEditor.Shared.Behaviors;assembly=Witcher3StringEditor.Shared"
         d:DataContext="{d:DesignInstance Type=vm:DictionaryManagerDialogViewModel}"
         Title="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}"
         ui:WindowHelper.UseModernWindowStyle="True"
@@ -108,7 +109,7 @@
                   BorderThickness="1" ItemTemplateSelector="{StaticResource DictionaryTreeTemplateSelector}"
                   ItemsSource="{Binding DictionaryGroups}">
             <i:Interaction.Behaviors>
-                <b:DictionaryTreeBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
+                <b1:DictionaryTreeBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
         </TreeView>
         <sf:SfDataGrid x:Name="SfDataGrid" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0"
@@ -142,8 +143,8 @@
                 <sf:GridTextColumn MappingName="Value" HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}" />
             </sf:SfDataGrid.Columns>
             <i:Interaction.Behaviors>
-                <b:SfDataGridQueryRowHeightBehavior />
-                <b:SfDataGridSizeChangedBehavior />
+                <b2:SfDataGridQueryRowHeightBehavior />
+                <b2:SfDataGridSizeChangedBehavior />
             </i:Interaction.Behaviors>
         </sf:SfDataGrid>
         <sf:SfDataPager x:Name="SfDataPager" Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center"
