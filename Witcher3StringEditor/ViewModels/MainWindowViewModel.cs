@@ -158,7 +158,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     {
         try
         {
-            var dropData = dropInfo.Data as string[]; // Get the dropped data
+            if (dropInfo.Data is not IDataObject data) return; // Check if data is null
+            var dropData = data.GetData(DataFormats.FileDrop) as string[]; // Get the file drop data
             var file = dropData?.FirstOrDefault(); // Get the first file
             if (file is null) return; // Check if file is null
             var ext = Path.GetExtension(file); // Get the file extension
