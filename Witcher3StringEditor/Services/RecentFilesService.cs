@@ -5,9 +5,9 @@ using Witcher3StringEditor.Models;
 
 namespace Witcher3StringEditor.Services;
 
-internal class RecentFilesService(IAppSettings appSettings, int maxRecentItems = 20) : IRecentFilesService
+internal class RecentFilesService(ObservableCollection<IRecentItem> recentItems) : IRecentFilesService
 {
-    public ObservableCollection<IRecentItem> RecentItems => appSettings.RecentItems;
+    public ObservableCollection<IRecentItem> RecentItems { get; } = recentItems;
 
     public void AddOrUpdateRecentFile(string filePath)
     {
@@ -17,57 +17,28 @@ internal class RecentFilesService(IAppSettings appSettings, int maxRecentItems =
             return;
         }
 
-        var recentItems = appSettings.RecentItems;
-        var existingItem = recentItems.FirstOrDefault(x =>
+        var existingItem = RecentItems.FirstOrDefault(x =>
             string.Equals(x.FilePath, filePath, StringComparison.OrdinalIgnoreCase));
 
         if (existingItem != null)
         {
             existingItem.OpenedTime = DateTime.Now;
-            recentItems.Remove(existingItem);
-            recentItems.Insert(0, existingItem);
             Log.Debug("Updated recent file: {FilePath}", filePath);
         }
         else
         {
-            var newItem = new RecentItem(filePath, DateTime.Now);
-            recentItems.Insert(0, newItem);
+            RecentItems.Add(new RecentItem(filePath, DateTime.Now));
             Log.Information("Added new recent file: {FilePath}", filePath);
         }
-
-        CleanupExcessItems(recentItems);
     }
 
     public bool RemoveRecentFile(IRecentItem recentItem)
     {
-        var removed = appSettings.RecentItems.Remove(recentItem);
+        var removed = RecentItems.Remove(recentItem);
         if (removed)
             Log.Information("Removed recent file: {FilePath}", recentItem.FilePath);
         else
             Log.Error("Failed to remove recent file: {FilePath}", recentItem.FilePath);
         return removed;
-    }
-
-    private void CleanupExcessItems(ObservableCollection<IRecentItem> recentItems)
-    {
-        if (recentItems.Count <= maxRecentItems)
-            return;
-
-        var unmarkedItems = recentItems.Where(x => !x.IsMarked).ToList();
-        var itemsToRemoveCount = recentItems.Count - maxRecentItems;
-
-        if (itemsToRemoveCount <= 0 || itemsToRemoveCount > unmarkedItems.Count)
-            return;
-
-        var itemsToRemove = unmarkedItems
-            .OrderByDescending(x => x.OpenedTime)
-            .Take(itemsToRemoveCount)
-            .ToList();
-
-        foreach (var item in itemsToRemove)
-        {
-            recentItems.Remove(item);
-            Log.Debug("Removed old recent file: {FilePath}", item.FilePath);
-        }
     }
 }
