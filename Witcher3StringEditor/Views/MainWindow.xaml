@@ -331,14 +331,7 @@
                 <!-- Behavior to handle end edit events -->
                 <b:SfDataGridCurrentCellEndEditBehavior />
                 <!-- Behavior to handle file drop events -->
-                <b:FrameworkElementDropFileBehavior Data="{Binding DropFileData, Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
-            <!-- Handle drop event -->
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Drop">
-                    <i:InvokeCommandAction Command="{Binding DropFileCommand}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
             <!-- Define data grid columns -->
             <sf:SfDataGrid.Columns>
                 <!-- String ID column -->
