@@ -297,7 +297,7 @@
             SelectionMode="Extended"
             ShowRowHeader="True"
             GridPasteOption="None" SortColumnsChanged="SfDataGrid_OnSortColumnsChanged"
-            dd:DragDrop.DragHandler="{Binding}" dd:DragDrop.IsDropTarget="True">
+            dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}">
             <sf:SfDataGrid.Resources>
                 <ResourceDictionary>
                     <!-- Custom style for row header cells to display row numbers -->
