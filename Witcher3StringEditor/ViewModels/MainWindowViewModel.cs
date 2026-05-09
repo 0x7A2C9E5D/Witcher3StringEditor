@@ -32,7 +32,6 @@ namespace Witcher3StringEditor.ViewModels;
 /// </summary>
 internal partial class MainWindowViewModel : ObservableObject
 {
-
     // Dependency services
     private readonly IBackupService backupService; // Get backup service
     private readonly ICheckUpdateService checkUpdateService; // Get check update service

@@ -183,6 +183,7 @@ public sealed partial class App : IDisposable
             .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()
             .AddSingleton<IAppDiagnostics, AppDiagnostics>()
+            .AddSingleton<IRecentFilesService, RecentFilesService>()
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());
     }
