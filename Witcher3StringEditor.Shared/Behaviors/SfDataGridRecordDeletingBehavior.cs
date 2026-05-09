@@ -4,7 +4,7 @@ using Microsoft.Xaml.Behaviors;
 using Serilog;
 using Syncfusion.UI.Xaml.Grid;
 
-namespace Witcher3StringEditor.Dialogs.Behaviors;
+namespace Witcher3StringEditor.Shared.Behaviors;
 
 /// <summary>
 ///     An attached behavior for SfDataGrid that handles record deletion confirmation
