@@ -78,13 +78,31 @@ public sealed partial class App : IDisposable
     /// </summary>
     private void InitializeApplication()
     {
-        SetupExceptionHandling(); // Setup global exception handling
         InitializeServices(); // Initialize dependency injection services
         InitializeLogging(); // Setup logging system
+        SetupExceptionHandling(); // Setup global exception handling
+        InitializeCulture(); // Initialize culture
         RegisterSyncfusionLicense(); // Register Syncfusion license for UI components
         ShowMainWindow(); // Show the main window
     }
 
+    /// <summary>
+    ///     Initializes the culture for the application
+    /// </summary>
+    private static void InitializeCulture()
+    {
+        var appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
+        var cultureInfo = appSettings.Language == string.Empty
+            ? Ioc.Default.GetRequiredService<ICultureResolver>().ResolveSupportedCulture()
+            : new CultureInfo(appSettings.Language);
+        if (appSettings.Language == string.Empty)
+            appSettings.Language = cultureInfo.Name;
+        I18NExtension.Culture = cultureInfo;
+    }
+
+    /// <summary>
+    ///     Shows the main window
+    /// </summary>
     private static void ShowMainWindow()
     {
         var window = new MainWindow
