@@ -96,7 +96,7 @@ public sealed class LogDialogViewModel
     /// <param name="sender">The UI collection</param>
     /// <param name="e">The collection change event arguments</param>
     // ReSharper disable once AsyncVoidEventHandlerMethod
-    private async void OnLogEventsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    private void OnLogEventsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         // Only handle Remove actions with valid items
         if (e is not { Action: NotifyCollectionChangedAction.Remove, OldItems: not null }) return;
