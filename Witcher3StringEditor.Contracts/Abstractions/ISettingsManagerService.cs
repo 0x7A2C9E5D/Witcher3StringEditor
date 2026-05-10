@@ -7,13 +7,13 @@ namespace Witcher3StringEditor.Contracts.Abstractions;
 public interface ISettingsManagerService
 {
     /// <summary>
+    ///     Gets the application settings instance
+    /// </summary>
+    IAppSettings AppSettings { get; }
+
+    /// <summary>
     ///     Checks and validates the current application settings
     /// </summary>
     /// <returns>A task that represents the asynchronous operation</returns>
     Task CheckSettings();
-    
-    /// <summary>
-    ///     Gets the application settings instance
-    /// </summary>
-    IAppSettings AppSettings { get; }
 }

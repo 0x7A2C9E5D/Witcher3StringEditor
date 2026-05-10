@@ -13,6 +13,8 @@ namespace Witcher3StringEditor.Services;
 /// </summary>
 internal class ConfigService : IConfigService
 {
+    private readonly string filePath;
+
     /// <summary>
     ///     JSON serializer options
     /// </summary>
@@ -29,8 +31,6 @@ internal class ConfigService : IConfigService
         }
     };
 
-    private readonly string filePath;
-
     /// <summary>
     ///     Provides configuration file saving and loading functionality
     ///     Implements the IConfigService interface to handle serialization and deserialization of settings
@@ -40,12 +40,12 @@ internal class ConfigService : IConfigService
     {
         this.filePath = filePath;
     }
-    
+
     /// <summary>
     ///     Provides configuration file saving and loading functionality
     ///     Implements the IConfigService interface to handle serialization and deserialization of settings
     /// </summary>
-    public ConfigService(): this(AppPaths.ConfigPath)
+    public ConfigService() : this(AppPaths.ConfigPath)
     {
     }
 

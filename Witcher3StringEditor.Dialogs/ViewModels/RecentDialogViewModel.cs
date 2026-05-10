@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -23,6 +24,9 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
         this.recentFilesService = recentFilesService;
         recentFilesService.RecentItems.CollectionChanged += OnRecentItemsOnCollectionChanged;
     }
+
+    public ObservableCollection<IRecentItem> RecentItems =>
+        recentFilesService.RecentItems;
 
     /// <summary>
     ///     Event that is raised when the dialog requests to be closed

@@ -184,7 +184,7 @@ public sealed partial class App : IDisposable
             .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()
             .AddSingleton<IAppDiagnostics, AppDiagnostics>()
-            .AddSingleton<IRecentFilesService, RecentFilesService>(_=> 
+            .AddSingleton<IRecentFilesService, RecentFilesService>(_ =>
                 new RecentFilesService(Ioc.Default.GetRequiredService<IAppSettings>().RecentItems))
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());

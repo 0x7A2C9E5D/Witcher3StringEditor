@@ -16,9 +16,6 @@ namespace Witcher3StringEditor.Services;
 /// </summary>
 internal class SettingsManagerService : ISettingsManagerService
 {
-
-    public IAppSettings AppSettings { get; }
-
     /// <summary>
     ///     Initializes a new instance of the SettingsManagerService class
     /// </summary>
@@ -30,6 +27,8 @@ internal class SettingsManagerService : ISettingsManagerService
             notifyPropertyChanged) // Check if app settings supports property change notifications
             notifyPropertyChanged.PropertyChanged += OnAppSettingsPropertyChanged; // Register property change handler
     }
+
+    public IAppSettings AppSettings { get; }
 
     /// <summary>
     ///     Checks the current application settings and logs information about them
