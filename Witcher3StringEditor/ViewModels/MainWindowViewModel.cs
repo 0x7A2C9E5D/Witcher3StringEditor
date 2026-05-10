@@ -305,7 +305,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             W3StringItems = (await DeserializeW3StringItems(fileName))
                 .OrderBy(x => x.StrId).ToObservableCollection(); // Deserialize file contents
             SetOutputFolder(fileName, folder => OutputFolder = folder); // Set output folder based on file location
-            UpdateRecentItems(fileName); // Update recent items list
+            recentFilesService.AddOrUpdateRecentFile(fileName); // Update recent items list
             SearchText = string.Empty; // Clear search text
         }
         catch (Exception ex)
@@ -354,26 +354,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         Guard.IsNotNull(folder); // Guard against null
         onOutputFolderChanged(folder); // Notify of folder change
         Log.Information("Working directory set to {Folder}.", folder); // Log folder change
-    }
-
-    /// <summary>
-    ///     Updates the recent items list with the specified file name
-    ///     If the file is already in the list, updates its opened time; otherwise, adds it to the list
-    /// </summary>
-    /// <param name="fileName">The file name to add or update in the recent items list</param>
-    private void UpdateRecentItems(string fileName)
-    {
-        var foundItem = AppSettings.RecentItems.FirstOrDefault(x => x.FilePath == fileName); // Find existing item
-        if (foundItem is null) // If item not found
-        {
-            AppSettings.RecentItems.Add(new RecentItem(fileName, DateTime.Now)); // Add new recent item
-            Log.Information("Added {FileName} to recent items.", fileName); // Log addition
-        }
-        else // If item found
-        {
-            foundItem.OpenedTime = DateTime.Now; // Update opened time
-            Log.Information("The last opened time for file {FileName} has been updated.", fileName); // Log update
-        }
     }
 
     /// <summary>
