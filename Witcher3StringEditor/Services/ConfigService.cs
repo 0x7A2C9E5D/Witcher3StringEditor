@@ -39,6 +39,8 @@ internal class ConfigService : IConfigService
     public ConfigService(string filePath)
     {
         this.filePath = filePath;
+        var configDirectory = Directory.GetParent(filePath)!.FullName;
+        Directory.CreateDirectory(configDirectory);
     }
 
     /// <summary>
