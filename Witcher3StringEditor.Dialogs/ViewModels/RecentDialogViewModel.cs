@@ -109,7 +109,7 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
     /// <param name="recentItem">The recent item to remove</param>
     private void TryRemoveRecentItem(IRecentItem recentItem)
     {
-        if (recentFilesService.RecentItems.Remove(recentItem))
+        if (recentFilesService.RemoveRecentFile(recentItem))
             Log.Information("The recent item for file {Path} has been removed.", recentItem.FilePath);
         else
             Log.Error("The recent item for file {Path} could not be removed.", recentItem.FilePath);
