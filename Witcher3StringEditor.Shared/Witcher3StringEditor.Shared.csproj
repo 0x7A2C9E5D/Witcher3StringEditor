@@ -8,10 +8,18 @@
         <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DebugType>embedded</DebugType>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DebugType>embedded</DebugType>
+    </PropertyGroup>
+
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
-        <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1"/>
-        <PackageReference Include="Serilog" Version="4.3.1"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+        <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1" />
+        <PackageReference Include="Serilog" Version="4.3.1" />
         <PackageReference Include="Syncfusion.SfGrid.WPF" Version="33.2.8" />
     </ItemGroup>
 
