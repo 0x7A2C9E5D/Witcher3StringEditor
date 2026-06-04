@@ -36,7 +36,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
 {
     // Dependency services
     private readonly IBackupService backupService; // Get backup service
-    private readonly ICheckUpdateService checkUpdateService; // Get check update service
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDictionaryManager dictionaryManager; // Get dictionary manager
     private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider
@@ -94,8 +93,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
 
     public MainWindowViewModel(IBackupService backupService, IDialogService dialogService,
         IDictionaryManager dictionaryManager, IDictionaryProvider dictionaryProvider, IServiceProvider serviceProvider,
-        ISettingsManagerService settingsManagerService, IW3Serializer w3Serializer, IAppDiagnostics appDiagnostics,
-        ICheckUpdateService checkUpdateService, IRecentFilesService recentFilesService)
+        ISettingsManagerService settingsManagerService, IW3Serializer w3Serializer,
+        IRecentFilesService recentFilesService)
     {
         this.backupService = backupService;
         this.dialogService = dialogService;
@@ -104,7 +103,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         this.serviceProvider = serviceProvider;
         this.settingsManagerService = settingsManagerService;
         this.w3Serializer = w3Serializer;
-        this.checkUpdateService = checkUpdateService;
         this.recentFilesService = recentFilesService;
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
@@ -239,7 +237,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task WindowLoaded()
     {
         await settingsManagerService.CheckSettings(); // Check application settings
-        IsUpdateAvailable = await checkUpdateService.CheckUpdate(); // Check for updates
+        IsUpdateAvailable =
+            await serviceProvider.GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
     }
 
     /// <summary>
