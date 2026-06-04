@@ -34,8 +34,6 @@ namespace Witcher3StringEditor.ViewModels;
 /// </summary>
 internal partial class MainWindowViewModel : ObservableObject, IDropTarget
 {
-    private readonly IAppDiagnostics appDiagnostics; // Get app diagnostics
-
     // Dependency services
     private readonly IBackupService backupService; // Get backup service
     private readonly ICheckUpdateService checkUpdateService; // Get check update service
@@ -106,7 +104,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         this.serviceProvider = serviceProvider;
         this.settingsManagerService = settingsManagerService;
         this.w3Serializer = w3Serializer;
-        this.appDiagnostics = appDiagnostics;
         this.checkUpdateService = checkUpdateService;
         this.recentFilesService = recentFilesService;
         PageSize = AppSettings.PageSize; // Set page size
@@ -241,7 +238,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task WindowLoaded()
     {
-        appDiagnostics.LogStartupInfo(); // Log application startup information
         await settingsManagerService.CheckSettings(); // Check application settings
         IsUpdateAvailable = await checkUpdateService.CheckUpdate(); // Check for updates
     }

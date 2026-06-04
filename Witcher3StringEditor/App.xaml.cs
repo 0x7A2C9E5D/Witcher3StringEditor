@@ -83,7 +83,16 @@ public sealed partial class App : IDisposable
         SetupExceptionHandling(); // Setup global exception handling
         InitializeCulture(); // Initialize culture
         RegisterSyncfusionLicense(); // Register Syncfusion license for UI components
+        LogStartupInfo(); // Log startup information
         ShowMainWindow(); // Show the main window
+    }
+
+    /// <summary>
+    ///     Logs startup information
+    /// </summary>
+    private static void LogStartupInfo()
+    {
+        Ioc.Default.GetRequiredService<IAppDiagnostics>().LogStartupInfo();
     }
 
     /// <summary>
