@@ -6,6 +6,7 @@ using System.Windows;
 using CommandLine;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
@@ -39,8 +40,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDictionaryManager dictionaryManager; // Get dictionary manager
     private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider
+    private readonly ILogAccessService logAccessService; // Get log access service
     private readonly IRecentFilesService recentFilesService; // Get recent files service
-    private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
 
@@ -91,19 +92,24 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private ObservableCollection<W3StringItemModel>? w3StringItems;
 
 
-    public MainWindowViewModel(IBackupService backupService, IDialogService dialogService,
-        IDictionaryManager dictionaryManager, IDictionaryProvider dictionaryProvider, IServiceProvider serviceProvider,
-        ISettingsManagerService settingsManagerService, IW3Serializer w3Serializer,
-        IRecentFilesService recentFilesService)
+    public MainWindowViewModel(
+        IBackupService backupService,
+        IDialogService dialogService,
+        IDictionaryManager dictionaryManager,
+        IDictionaryProvider dictionaryProvider,
+        ILogAccessService logAccessService,
+        IRecentFilesService recentFilesService,
+        ISettingsManagerService settingsManagerService,
+        IW3Serializer w3Serializer)
     {
         this.backupService = backupService;
         this.dialogService = dialogService;
         this.dictionaryManager = dictionaryManager;
         this.dictionaryProvider = dictionaryProvider;
-        this.serviceProvider = serviceProvider;
+        this.logAccessService = logAccessService;
+        this.recentFilesService = recentFilesService;
         this.settingsManagerService = settingsManagerService;
         this.w3Serializer = w3Serializer;
-        this.recentFilesService = recentFilesService;
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
@@ -238,7 +244,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     {
         await settingsManagerService.CheckSettings(); // Check application settings
         IsUpdateAvailable =
-            await serviceProvider.GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
+            await Ioc.Default.GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
     }
 
     /// <summary>
@@ -448,10 +454,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task ShowSaveDialog()
     {
         await dialogService.ShowDialogAsync(this,
-            new SaveDialogViewModel(AppSettings,
-                serviceProvider.GetRequiredService<IW3Serializer>(),
-                W3StringItems!,
-                OutputFolder));
+            new SaveDialogViewModel(AppSettings, w3Serializer, W3StringItems!, OutputFolder));
     }
 
     /// <summary>
@@ -460,9 +463,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task ShowLogDialog()
     {
-        using var logDialogViewModel =
-            new LogDialogViewModel(serviceProvider
-                .GetRequiredService<ILogAccessService>()); // Create log dialog view model
+        using var logDialogViewModel = new LogDialogViewModel(logAccessService); // Create log dialog view model
         await dialogService.ShowDialogAsync<LogDialogViewModel>(this, logDialogViewModel); // Show the log dialog
     }
 
@@ -472,13 +473,13 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task ShowSettingsDialog()
     {
-        var translators = serviceProvider.GetServices<ITranslator>().ToArray(); // Get all available translators
+        var translators = Ioc.Default.GetServices<ITranslator>().ToArray(); // Get all available translators
         var names = translators.Select(x => x.Name.Replace("2", string.Empty)); // Extract translator names
         translators.ForEach(x => x.Cast<IDisposable>().Dispose()); // Dispose of translator instances
         await dialogService.ShowDialogAsync(this,
             new SettingDialogViewModel(AppSettings, dialogService,
-                serviceProvider.GetRequiredService<IExplorerService>(), names,
-                serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures)); // Show the settings dialog
+                Ioc.Default.GetRequiredService<IExplorerService>(), names,
+                Ioc.Default.GetRequiredService<ICultureResolver>().SupportedCultures)); // Show the settings dialog
     }
 
     /// <summary>
@@ -487,7 +488,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(CanPlayGame))]
     private async Task PlayGame()
     {
-        await serviceProvider.GetRequiredService<IPlayGameService>().PlayGame();
+        await Ioc.Default.GetRequiredService<IPlayGameService>().PlayGame();
     }
 
     /// <summary>
@@ -517,7 +518,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(CanOpenWorkingFolder))]
     private void OpenWorkingFolder()
     {
-        serviceProvider.GetRequiredService<IExplorerService>().Open(OutputFolder); // Open the working folder
+        Ioc.Default.GetRequiredService<IExplorerService>().Open(OutputFolder); // Open the working folder
         Log.Information("Working folder opened."); // Log successful opening
     }
 
@@ -527,7 +528,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private void OpenNexusMods()
     {
-        serviceProvider.GetRequiredService<IExplorerService>()
+        Ioc.Default.GetRequiredService<IExplorerService>()
             .Open(AppSettings.NexusModUrl); // Open the NexusMods page
         Log.Information("NexusMods opened."); // Log successful opening
     }
@@ -564,10 +565,10 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         var itemsToUse = PagedSource ?? W3StringItems!; // Use filtered items if available
         var selectedIndex =
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
-        var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
+        var translator = Ioc.Default.GetServices<ITranslator>() // Get the configured translator
             .First(x => x.Name.Contains(AppSettings.Translator));
         var isUseDictionary = AppSettings.Translator == "MicrosoftTranslator";
-        var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
+        var dictionaryService = isUseDictionary ? Ioc.Default.GetRequiredService<IDictionaryService>() : null;
         var translationDialogViewModel = new TranslationDialogViewModel(AppSettings, translator, itemsToUse.ToList(),
             selectedIndex, dictionaryService);
         await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
