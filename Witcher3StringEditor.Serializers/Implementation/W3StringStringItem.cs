@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Witcher3StringEditor.Contracts.Abstractions;
 
-namespace Witcher3StringEditor.Serializers.Internal;
+namespace Witcher3StringEditor.Serializers.Implementation;
 
 /// <summary>
 ///     Represents The Witcher 3 string item with string-based properties

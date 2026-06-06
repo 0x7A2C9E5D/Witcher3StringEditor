@@ -1,7 +1,7 @@
 ﻿using CommandLine;
 using JetBrains.Annotations;
 
-namespace Witcher3StringEditor.Serializers.Internal;
+namespace Witcher3StringEditor.Serializers.Implementation;
 
 /// <summary>
 ///     Represents the command line options for the W3Strings encoder/decoder tool
