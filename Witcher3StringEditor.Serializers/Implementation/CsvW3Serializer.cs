@@ -25,16 +25,16 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
     {
         try
         {
-            await using var fileStream = File.OpenRead(filePath);
-            using var reader = new StreamReader(fileStream);
-            var items = new List<IW3StringItem>();
-            while (!reader.EndOfStream)
+            await using var fileStream = File.OpenRead(filePath); // Open file stream
+            using var reader = new StreamReader(fileStream); // Create stream reader
+            var items = new List<IW3StringItem>(); // Create list to store items
+            while (!reader.EndOfStream) // Read lines
             {
-                var line = await reader.ReadLineAsync();
-                if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue;
-                var parts = line.Split('|');
-                if (parts.Length != 4) continue;
-                items.Add(new W3StringStringItem
+                var line = await reader.ReadLineAsync(); // Read line
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue; // Skip empty lines and comments
+                var parts = line.Split('|'); // Split line into parts
+                if (parts.Length != 4) continue; // Skip lines with incorrect number of parts
+                items.Add(new W3StringStringItem // Create new string item
                 {
                     StrId = parts[0].Trim(), // Extract string ID
                     KeyHex = parts[1].Trim(), // Extract key hex
@@ -43,7 +43,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
                 });
             }
 
-            return items;
+            return items; // Return list of items
         }
         catch (Exception ex)
         {
