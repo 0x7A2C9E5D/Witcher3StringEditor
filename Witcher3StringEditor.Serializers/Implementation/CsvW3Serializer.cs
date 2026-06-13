@@ -25,20 +25,25 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
     {
         try
         {
-            var lines = await File.ReadAllLinesAsync(filePath);
-            return lines.AsParallel()
-                .Where(line =>
-                    !string.IsNullOrWhiteSpace(line) && !line.StartsWith(';')) // Filter out empty lines and comments
-                .Select(line => new { line, parts = line.Split('|') }) // Split each line into parts
-                .Where(x => x.parts.Length == 4) // Filter out lines with incorrect number of parts
-                .Select(IW3StringItem (x) => new W3StringStringItem
+            await using var fileStream = File.OpenRead(filePath);
+            using var reader = new StreamReader(fileStream);
+            var items = new List<IW3StringItem>();
+            while (!reader.EndOfStream)
+            {
+                var line = await reader.ReadLineAsync();
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue;
+                var parts = line.Split('|');
+                if (parts.Length != 4) continue;
+                items.Add(new W3StringStringItem
                 {
-                    StrId = x.parts[0].Trim(), // Extract string ID
-                    KeyHex = x.parts[1].Trim(), // Extract key hex
-                    KeyName = x.parts[2].Trim(), // Extract key name
-                    Text = x.parts[3].Trim() // Extract text
-                }) // Convert each line to a W3StringStringItem
-                .ToList();
+                    StrId = parts[0].Trim(), // Extract string ID
+                    KeyHex = parts[1].Trim(), // Extract key hex
+                    KeyName = parts[2].Trim(), // Extract key name
+                    Text = parts[3].Trim() // Extract text
+                });
+            }
+
+            return items;
         }
         catch (Exception ex)
         {
