@@ -24,7 +24,7 @@
         <PackageReference Include="GTranslate" Version="2.3.1"/>
         <PackageReference Include="HanumanInstitute.MvvmDialogs.Wpf" Version="2.1.0"/>
         <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1"/>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.9" />
