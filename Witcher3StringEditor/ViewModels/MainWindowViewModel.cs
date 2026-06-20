@@ -6,7 +6,6 @@ using System.Windows;
 using CommandLine;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
@@ -44,6 +43,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IRecentFilesService recentFilesService; // Get recent files service
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
+    private readonly IServiceProvider serviceProvider; // Get service provider
 
     /// <summary>
     ///     Registers a message handler to listen for translator changes and update dictionary support status
@@ -100,6 +100,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         ILogAccessService logAccessService,
         IRecentFilesService recentFilesService,
         ISettingsManagerService settingsManagerService,
+        IServiceProvider serviceProvider,
         IW3Serializer w3Serializer)
     {
         this.backupService = backupService;
@@ -109,6 +110,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         this.logAccessService = logAccessService;
         this.recentFilesService = recentFilesService;
         this.settingsManagerService = settingsManagerService;
+        this.serviceProvider = serviceProvider;
         this.w3Serializer = w3Serializer;
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
@@ -244,7 +246,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     {
         await settingsManagerService.CheckSettings(); // Check application settings
         IsUpdateAvailable =
-            await Ioc.Default.GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
+            await serviceProvider.GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
     }
 
     /// <summary>
@@ -473,13 +475,13 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task ShowSettingsDialog()
     {
-        var translators = Ioc.Default.GetServices<ITranslator>().ToArray(); // Get all available translators
+        var translators = serviceProvider.GetServices<ITranslator>().ToArray(); // Get all available translators
         var names = translators.Select(x => x.Name.Replace("2", string.Empty)); // Extract translator names
         translators.ForEach(x => x.Cast<IDisposable>().Dispose()); // Dispose of translator instances
         await dialogService.ShowDialogAsync(this,
             new SettingDialogViewModel(AppSettings, dialogService,
-                Ioc.Default.GetRequiredService<IExplorerService>(), names,
-                Ioc.Default.GetRequiredService<ICultureResolver>().SupportedCultures)); // Show the settings dialog
+                serviceProvider.GetRequiredService<IExplorerService>(), names,
+                serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures)); // Show the settings dialog
     }
 
     /// <summary>
@@ -488,7 +490,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(CanPlayGame))]
     private async Task PlayGame()
     {
-        await Ioc.Default.GetRequiredService<IPlayGameService>().PlayGame();
+        await serviceProvider.GetRequiredService<IPlayGameService>().PlayGame();
     }
 
     /// <summary>
@@ -518,7 +520,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(CanOpenWorkingFolder))]
     private void OpenWorkingFolder()
     {
-        Ioc.Default.GetRequiredService<IExplorerService>().Open(OutputFolder); // Open the working folder
+        serviceProvider.GetRequiredService<IExplorerService>().Open(OutputFolder); // Open the working folder
         Log.Information("Working folder opened."); // Log successful opening
     }
 
@@ -528,7 +530,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private void OpenNexusMods()
     {
-        Ioc.Default.GetRequiredService<IExplorerService>()
+        serviceProvider.GetRequiredService<IExplorerService>()
             .Open(AppSettings.NexusModUrl); // Open the NexusMods page
         Log.Information("NexusMods opened."); // Log successful opening
     }
@@ -565,10 +567,10 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         var itemsToUse = PagedSource ?? W3StringItems!; // Use filtered items if available
         var selectedIndex =
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
-        var translator = Ioc.Default.GetServices<ITranslator>() // Get the configured translator
+        var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
             .First(x => x.Name.Contains(AppSettings.Translator));
         var isUseDictionary = AppSettings.Translator == "MicrosoftTranslator";
-        var dictionaryService = isUseDictionary ? Ioc.Default.GetRequiredService<IDictionaryService>() : null;
+        var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
         var translationDialogViewModel = new TranslationDialogViewModel(AppSettings, translator, itemsToUse.ToList(),
             selectedIndex, dictionaryService);
         await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
