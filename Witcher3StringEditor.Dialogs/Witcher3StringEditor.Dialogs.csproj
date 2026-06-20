@@ -34,6 +34,9 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Syncfusion.SfGrid.WPF" Version="33.2.13" />
+        <PackageReference Update="Nerdbank.GitVersioning">
+          <Version>3.10.85</Version>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
