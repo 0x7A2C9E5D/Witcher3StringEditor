@@ -28,8 +28,8 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.9" />
-        <PackageReference Include="Serilog" Version="4.3.1"/>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.28.0.143324">
+        <PackageReference Include="Serilog" Version="4.4.0" />
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.29.0.143774">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
