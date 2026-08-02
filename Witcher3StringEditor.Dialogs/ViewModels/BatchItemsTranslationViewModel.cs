@@ -228,7 +228,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
-        var text = DictionaryService?.IsReady == true ? DictionaryService!.Replace(item.Text) : item.Text;
+        var text = DictionaryService?.IsReady == true ? DictionaryService.Replace(item.Text) : item.Text;
 
         try
         {
@@ -295,7 +295,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         if (DictionaryService!.CurrentDictionary !=
             SelectedDictionary) // Check if the current dictionary is different from the selected one
             await DictionaryService
-                .Bind(SelectedDictionary!); // Bind the selected dictionary and update the readiness flag
+                .Bind(SelectedDictionary); // Bind the selected dictionary and update the readiness flag
         Log.Information("The dictionary is ready: {0}.", DictionaryService.IsReady);
     }
 
