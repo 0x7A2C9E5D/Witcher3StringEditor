@@ -35,7 +35,7 @@
         <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1" />
         <PackageReference Include="LinkDotNet.BuildInformation" Version="2.1.5" />
         <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.11" />
-        <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.298">
+        <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.321">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -47,7 +47,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="34.2.3" />
+        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="34.2.4" />
         <PackageReference Include="System.Reactive" Version="7.0.0" />
         <PackageReference Update="Nerdbank.GitVersioning">
           <Version>3.10.91</Version>
