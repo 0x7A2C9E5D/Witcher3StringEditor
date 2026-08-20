@@ -52,7 +52,6 @@
         <Compile Update="Views\TranslationDialog.xaml.cs">
             <SubType>Code</SubType>
         </Compile>
-        <Compile Remove="Models\W3JobModel.cs" />
     </ItemGroup>
 
 </Project>
