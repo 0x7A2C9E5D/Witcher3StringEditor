@@ -209,6 +209,7 @@ public sealed partial class App : IDisposable
             .AddTransient<ITranslator, GoogleTranslator2>()
             .AddTransient<ITranslator, YandexTranslator>()
             .AddSingleton<ITranslatorProvider, TranslatorProvider>()
+            .AddSingleton<IDialogViewModelFactory, DialogViewModelFactory>()
             .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()
             .AddSingleton<IAppDiagnostics, AppDiagnostics>()

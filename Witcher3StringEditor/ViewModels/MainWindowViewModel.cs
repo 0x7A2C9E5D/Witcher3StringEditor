@@ -34,11 +34,8 @@ namespace Witcher3StringEditor.ViewModels;
 internal partial class MainWindowViewModel : ObservableObject, IDropTarget
 {
     // Dependency services
-    private readonly IBackupService backupService; // Get backup service
     private readonly IDialogService dialogService; // Get dialog service
-    private readonly IDictionaryManager dictionaryManager; // Get dictionary manager
-    private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider
-    private readonly ILogAccessService logAccessService; // Get log access service
+    private readonly IDialogViewModelFactory dialogViewModelFactory; // Get dialog view model factory
     private readonly IRecentFilesService recentFilesService; // Get recent files service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
@@ -93,27 +90,21 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
 
 
     public MainWindowViewModel(
-        IBackupService backupService,
         IDialogService dialogService,
-        IDictionaryManager dictionaryManager,
-        IDictionaryProvider dictionaryProvider,
-        ILogAccessService logAccessService,
+        IDialogViewModelFactory dialogViewModelFactory,
         IRecentFilesService recentFilesService,
         ISettingsManagerService settingsManagerService,
         IServiceProvider serviceProvider,
-        IW3Serializer w3Serializer,
-        ITranslatorProvider translatorProvider)
+        ITranslatorProvider translatorProvider,
+        IW3Serializer w3Serializer)
     {
-        this.backupService = backupService;
         this.dialogService = dialogService;
-        this.dictionaryManager = dictionaryManager;
-        this.dictionaryProvider = dictionaryProvider;
-        this.logAccessService = logAccessService;
+        this.dialogViewModelFactory = dialogViewModelFactory;
         this.recentFilesService = recentFilesService;
         this.settingsManagerService = settingsManagerService;
         this.serviceProvider = serviceProvider;
-        this.w3Serializer = w3Serializer;
         this.translatorProvider = translatorProvider;
+        this.w3Serializer = w3Serializer;
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
@@ -367,7 +358,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(HasW3StringItems))]
     private async Task Add()
     {
-        var dialogViewModel = new EditDataDialogViewModel(new W3StringItemModel()); // Create new item view model
+        var dialogViewModel = dialogViewModelFactory.CreateEditDialog(new W3StringItemModel()); // Create new item view model
         if (await dialogService.ShowDialogAsync(this, dialogViewModel) == true // Show add dialog
             && dialogViewModel.Item is not null) // Check if user confirmed
         {
@@ -398,7 +389,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(HasW3StringItems))]
     private async Task Edit(W3StringItemModel selectedItem)
     {
-        var dialogViewModel = new EditDataDialogViewModel(selectedItem); // Create edit dialog view model
+        var dialogViewModel = dialogViewModelFactory.CreateEditDialog(selectedItem); // Create edit dialog view model
         if (await dialogService.ShowDialogAsync(this, // Show edit dialog
                 dialogViewModel) == true && dialogViewModel.Item is not null) // Check if user confirmed changes
         {
@@ -428,7 +419,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         var w3Items = selectedItems
             .OfType<ITrackableW3StringItem>().ToArray(); // Filter and convert to trackable items
         if (w3Items.Length > 0 &&
-            await dialogService.ShowDialogAsync(this, new DeleteDataDialogViewModel(w3Items)) ==
+            await dialogService.ShowDialogAsync(this, dialogViewModelFactory.CreateDeleteDialog(w3Items)) ==
             true) // Show delete confirmation dialog
         {
             foreach (var item in w3Items)
@@ -448,7 +439,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task ShowBackupDialog()
     {
         await dialogService.ShowDialogAsync(this,
-            new BackupDialogViewModel(AppSettings, backupService));
+            dialogViewModelFactory.CreateBackupDialog());
     }
 
     /// <summary>
@@ -458,7 +449,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task ShowSaveDialog()
     {
         await dialogService.ShowDialogAsync(this,
-            new SaveDialogViewModel(AppSettings, w3Serializer, W3StringItems!, OutputFolder));
+            dialogViewModelFactory.CreateSaveDialog(W3StringItems!, OutputFolder));
     }
 
     /// <summary>
@@ -467,7 +458,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task ShowLogDialog()
     {
-        using var logDialogViewModel = new LogDialogViewModel(logAccessService); // Create log dialog view model
+        using var logDialogViewModel = dialogViewModelFactory.CreateLogDialog(); // Create log dialog view model
         await dialogService.ShowDialogAsync<LogDialogViewModel>(this, logDialogViewModel); // Show the log dialog
     }
 
@@ -479,9 +470,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     {
         var names = translatorProvider.GetTranslatorNames(); // Get translator names for the settings dialog
         await dialogService.ShowDialogAsync(this,
-            new SettingDialogViewModel(AppSettings, dialogService,
-                serviceProvider.GetRequiredService<IExplorerService>(), names,
-                serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures)); // Show the settings dialog
+            dialogViewModelFactory.CreateSettingsDialog(names)); // Show the settings dialog
     }
 
     /// <summary>
@@ -500,7 +489,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task ShowAbout()
     {
         await dialogService.ShowDialogAsync(this, // Show about dialog
-            new AboutDialogViewModel(new Dictionary<string, object?> // Create view model with application information
+            dialogViewModelFactory.CreateAboutDialog(new Dictionary<string, object?> // Create view model with application information
             {
                 { "Version", ThisAssembly.AssemblyInformationalVersion }, // Application version
                 { "BuildTime", BuildInformation.BuildAt.ToLocalTime() }, // Build time
@@ -542,7 +531,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task ShowRecentDialog()
     {
         using var recentDialogViewModel =
-            new RecentDialogViewModel(recentFilesService); // Create recent dialog view model
+            dialogViewModelFactory.CreateRecentDialog(); // Create recent dialog view model
         await dialogService.ShowDialogAsync(this, recentDialogViewModel); // Show the recent files dialog
     }
 
@@ -570,8 +559,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         var translator = translatorProvider.GetTranslator(AppSettings.Translator); // Get the configured translator
         var isUseDictionary = AppSettings.Translator == "MicrosoftTranslator";
         var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
-        var translationDialogViewModel = new TranslationDialogViewModel(AppSettings, translator, itemsToUse.ToList(),
-            selectedIndex, dictionaryService);
+        var translationDialogViewModel = dialogViewModelFactory.CreateTranslationDialog(translator,
+            [.. itemsToUse], selectedIndex, dictionaryService);
         await dialogService.ShowDialogAsync(this, translationDialogViewModel); // Show translation dialog
         if (translator is IDisposable disposable) disposable.Dispose(); // Dispose of the translator if it's disposable
     }
@@ -583,8 +572,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task ShowDictionaryDialog()
     {
         await dialogService.ShowDialogAsync(this,
-            new DictionaryManagerDialogViewModel(dictionaryManager, dictionaryProvider,
-                dialogService)); // Show the dictionary dialog
+            dialogViewModelFactory.CreateDictionaryManagerDialog()); // Show the dictionary dialog
     }
 
     /// <summary>
