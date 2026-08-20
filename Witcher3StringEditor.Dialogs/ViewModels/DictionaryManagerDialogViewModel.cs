@@ -60,7 +60,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         Log.Information("Found {Count} dictionaries in total.", found.Count);
         var groups = found.GroupBy(x => x.TargetLanguage);
         foreach (var group in groups)
-            DictionaryGroups.Add(new DictionaryGroup(group.Key, [..group]));
+            DictionaryGroups.Add(new DictionaryGroup(group.Key, [.. group]));
         Log.Information("Grouped dictionaries into {GroupCount} groups based on target language.",
             DictionaryGroups.Count);
     }

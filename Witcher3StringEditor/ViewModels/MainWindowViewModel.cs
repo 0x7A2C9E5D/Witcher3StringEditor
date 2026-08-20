@@ -41,9 +41,9 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IDictionaryProvider dictionaryProvider; // Get dictionary provider
     private readonly ILogAccessService logAccessService; // Get log access service
     private readonly IRecentFilesService recentFilesService; // Get recent files service
+    private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IW3Serializer w3Serializer; // Get serializer service
-    private readonly IServiceProvider serviceProvider; // Get service provider
 
     /// <summary>
     ///     Registers a message handler to listen for translator changes and update dictionary support status
@@ -63,15 +63,15 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private string outputFolder = string.Empty;
 
     /// <summary>
+    ///     Gets or sets the page size
+    /// </summary>
+    [ObservableProperty] private int pageSize;
+
+    /// <summary>
     ///     Gets or sets the source collection for the DataGrid
     /// </summary>
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     private IList<W3StringItemModel>? pagedSource;
-
-    /// <summary>
-    ///     Gets or sets the page size
-    /// </summary>
-    [ObservableProperty] private int pageSize;
 
     /// <summary>
     ///     Gets or sets the current search text used for filtering W3String items
@@ -257,7 +257,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task WindowClosing(CancelEventArgs e)
     {
-        if (W3StringItems?.Any(x=>x.IsModified) == true && // Check if there are any W3String items
+        if (W3StringItems?.Any(x => x.IsModified) == true && // Check if there are any W3String items
             await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
                 MessageTokens.MainWindowClosing)) // Send close request
             e.Cancel = true; // Cancel window closing if requested
