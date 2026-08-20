@@ -112,7 +112,7 @@ public partial class SaveDialogViewModel
             TargetLanguage = TargetLanguage, // Set language
             IgnoreIdSpaceCheck = IsIgnoreIdSpaceCheck // Set ID space check flag
         });
-        Log.Information("Sve result: {Result}.", saveResult); // Log save result
+        Log.Information("Save result: {Result}.", saveResult); // Log save result
         _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(saveResult),
             MessageTokens.Save); // Send result via messaging
         DialogResult = true; // Set dialog result

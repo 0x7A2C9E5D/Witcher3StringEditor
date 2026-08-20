@@ -204,11 +204,11 @@
   <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>เวิร์กบุ๊ก Excel</value>
   </data>
-  <data name="FristRunMessage" xml:space="preserve">
+  <data name="FirstRunMessage" xml:space="preserve">
     <value>(จำเป็น) เมื่อเรียกใช้งานครั้งแรก โปรดตั้งค่าเส้นทางของตัวแปลงรหัส (Encoder Path) ก่อน
 (ไม่บังคับ) ตั้งค่าเส้นทางตัวรันเกม เพื่อเปิดเกมโดยตรงจากโปรแกรม</value>
   </data>
-  <data name="FristRunCaption" xml:space="preserve">
+  <data name="FirstRunCaption" xml:space="preserve">
     <value>คำแนะนำในการตั้งค่าสำหรับการใช้งานครั้งแรก</value>
   </data>
   <data name="MultipleInstanceMessage" xml:space="preserve">

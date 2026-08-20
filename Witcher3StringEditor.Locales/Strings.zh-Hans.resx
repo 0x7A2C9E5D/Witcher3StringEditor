@@ -210,11 +210,11 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excel工作簿</value>
   </data>
-    <data name="FristRunMessage" xml:space="preserve">
+    <data name="FirstRunMessage" xml:space="preserve">
     <value>（必须）首次运行时，请先设置编码器路径。
 （可选）设置游戏可执行程序路径，可在软件内直接启动游戏。</value>
   </data>
-    <data name="FristRunCaption" xml:space="preserve">
+    <data name="FirstRunCaption" xml:space="preserve">
     <value>首次运行设置提示</value>
   </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">

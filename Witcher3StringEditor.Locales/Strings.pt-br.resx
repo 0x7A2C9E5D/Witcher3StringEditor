@@ -99,11 +99,11 @@
   <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Planilha do Excel</value>
   </data>
-  <data name="FristRunMessage" xml:space="preserve">
+  <data name="FirstRunMessage" xml:space="preserve">
     <value>(Obrigatório) Como é a primeira execução, configure o caminho do codificador (w3strings.exe).
 (Opcional) Indique o caminho do jogo para conseguir iniciá-lo por aqui (witcher3.exe).</value>
   </data>
-  <data name="FristRunCaption" xml:space="preserve">
+  <data name="FirstRunCaption" xml:space="preserve">
     <value>Configurações Iniciais</value>
   </data>
   <data name="MultipleInstanceMessage" xml:space="preserve">

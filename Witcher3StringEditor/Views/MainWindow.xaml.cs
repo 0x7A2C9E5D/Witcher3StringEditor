@@ -94,7 +94,7 @@ public partial class MainWindow
             (MessageTokens.MainWindowClosing, () => Strings.AppExitMessage, () => Strings.AppExitCaption,
                 MessageBoxButton.YesNo,
                 MessageBoxResult.No),
-            (MessageTokens.FirstRun, () => Strings.FristRunMessage, () => Strings.FristRunCaption, MessageBoxButton.OK,
+            (MessageTokens.FirstRun, () => Strings.FirstRunMessage, () => Strings.FirstRunCaption, MessageBoxButton.OK,
                 MessageBoxResult.OK),
             (MessageTokens.PathInvalid, () => Strings.PathInvalidMessage,
                 () => Strings.PathInvalidCaption, MessageBoxButton.OK, MessageBoxResult.OK),

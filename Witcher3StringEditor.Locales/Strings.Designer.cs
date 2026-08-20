@@ -476,9 +476,9 @@ namespace Witcher3StringEditor.Locales {
         /// <summary>
         ///   Looks up a localized string similar to First-Run Setup Prompt.
         /// </summary>
-        public static string FristRunCaption {
+        public static string FirstRunCaption {
             get {
-                return ResourceManager.GetString("FristRunCaption", resourceCulture);
+                return ResourceManager.GetString("FirstRunCaption", resourceCulture);
             }
         }
         
@@ -486,9 +486,9 @@ namespace Witcher3StringEditor.Locales {
         ///   Looks up a localized string similar to (Required) When running for the first time, please set the encoder path first.
         ///(Optional) Set the game executable path to launch the game directly in the software..
         /// </summary>
-        public static string FristRunMessage {
+        public static string FirstRunMessage {
             get {
-                return ResourceManager.GetString("FristRunMessage", resourceCulture);
+                return ResourceManager.GetString("FirstRunMessage", resourceCulture);
             }
         }
         

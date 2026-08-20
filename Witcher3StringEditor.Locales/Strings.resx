@@ -210,11 +210,11 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excel Workbook</value>
   </data>
-    <data name="FristRunMessage" xml:space="preserve">
+    <data name="FirstRunMessage" xml:space="preserve">
     <value>(Required) When running for the first time, please set the encoder path first.
 (Optional) Set the game executable path to launch the game directly in the software.</value>
   </data>
-    <data name="FristRunCaption" xml:space="preserve">
+    <data name="FirstRunCaption" xml:space="preserve">
     <value>First-Run Setup Prompt</value>
   </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">

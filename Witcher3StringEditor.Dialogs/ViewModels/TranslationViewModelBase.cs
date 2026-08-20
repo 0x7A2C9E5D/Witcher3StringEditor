@@ -180,7 +180,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
             "GoogleTranslator" => Language.LanguageDictionary.Values.Where(x => // Google supported languages
                 x.SupportedServices.HasFlag(TranslationServices.Google)),
             "YandexTranslator" => Language.LanguageDictionary.Values.Where(x => // Yandex supported languages
-                x.SupportedServices.HasFlag(TranslationServices.Google)),
+                x.SupportedServices.HasFlag(TranslationServices.Yandex)),
             _ => Language.LanguageDictionary.Values // Default to all languages
         };
     }

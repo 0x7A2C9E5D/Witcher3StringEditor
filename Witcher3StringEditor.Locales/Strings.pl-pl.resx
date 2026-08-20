@@ -99,11 +99,11 @@
   <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Skoroszyt Excel</value>
   </data>
-  <data name="FristRunMessage" xml:space="preserve">
+  <data name="FirstRunMessage" xml:space="preserve">
     <value>(Wymagane) Przy pierwszym uruchomieniu ustaw najpierw ścieżkę enkodera.
 (Opcjonalne) Ustaw ścieżkę do pliku wykonywalnego gry, aby uruchamiać grę bezpośrednio z programu.</value>
   </data>
-  <data name="FristRunCaption" xml:space="preserve">
+  <data name="FirstRunCaption" xml:space="preserve">
     <value>Konfiguracja pierwszego uruchomienia</value>
   </data>
   <data name="MultipleInstanceMessage" xml:space="preserve">

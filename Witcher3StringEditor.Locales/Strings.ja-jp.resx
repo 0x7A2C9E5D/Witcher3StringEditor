@@ -210,11 +210,11 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excelワークシート</value>
   </data>
-    <data name="FristRunMessage" xml:space="preserve">
+    <data name="FirstRunMessage" xml:space="preserve">
     <value>（必須）初回実行時は、まずエンコーダーのパスを設定してください。
 （オプション）ゲームの実行ファイルパスを設定すると、ソフトウェア内から直接ゲームを起動できます。</value>
   </data>
-    <data name="FristRunCaption" xml:space="preserve">
+    <data name="FirstRunCaption" xml:space="preserve">
     <value>初回設定</value>
   </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">

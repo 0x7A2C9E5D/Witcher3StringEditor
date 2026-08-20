@@ -210,11 +210,11 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excel-Arbeitsblatt</value>
   </data>
-    <data name="FristRunMessage" xml:space="preserve">
+    <data name="FirstRunMessage" xml:space="preserve">
     <value>(Notwendig) Beim ersten Start muss der Pfad zum String-Encoder angegeben werden. 
 (Optional) Gib den Pfad zu Witcher3 an, um das Spiel direkt zu starten.</value>
   </data>
-    <data name="FristRunCaption" xml:space="preserve">
+    <data name="FirstRunCaption" xml:space="preserve">
     <value>Erste-Schritte Setup Dialog</value>
   </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">
