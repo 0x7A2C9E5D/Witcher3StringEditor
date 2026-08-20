@@ -257,7 +257,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task WindowClosing(CancelEventArgs e)
     {
-        if (W3StringItems?.Any() == true && // Check if there are any W3String items
+        if (W3StringItems?.Any(x=>x.IsModified) == true && // Check if there are any W3String items
             await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
                 MessageTokens.MainWindowClosing)) // Send close request
             e.Cancel = true; // Cancel window closing if requested
