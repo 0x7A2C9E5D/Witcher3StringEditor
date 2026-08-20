@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using iNKORE.UI.WPF.Modern;
@@ -11,7 +10,6 @@ using Syncfusion.UI.Xaml.Grid;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
-using Witcher3StringEditor.ViewModels;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace Witcher3StringEditor.Views;
