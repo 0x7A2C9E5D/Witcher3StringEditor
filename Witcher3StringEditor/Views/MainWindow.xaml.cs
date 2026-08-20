@@ -30,7 +30,6 @@ public partial class MainWindow
         InitializeComponent(); // Initialize the UI components
         SetupSearchHelper(); // Set up the search helper functionality
         RegisterMessageHandlers(); // Register message handlers for inter-component communication
-        DataContext = Ioc.Default.GetService<MainWindowViewModel>(); // Set the data context to the main view model
     }
 
     /// <summary>
