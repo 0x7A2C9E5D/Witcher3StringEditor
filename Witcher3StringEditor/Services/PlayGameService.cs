@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using CommunityToolkit.Diagnostics;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 
@@ -36,7 +35,6 @@ internal class PlayGameService(IAppSettings appSettings) : IPlayGameService
             process.BeginErrorReadLine(); // Begin reading error output
             process.BeginOutputReadLine(); // Begin reading standard output
             await process.WaitForExitAsync(); // Wait for process to exit
-            Guard.IsEqualTo(process.ExitCode, 0); // Ensure exit code is 0
             Log.Information("Game process exited with code {ExitCode}.", process.ExitCode); // Log exit code
         }
         catch (Exception ex)
