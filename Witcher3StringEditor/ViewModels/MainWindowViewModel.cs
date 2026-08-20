@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using iNKORE.UI.WPF.DragDrop;
@@ -43,6 +42,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IRecentFilesService recentFilesService; // Get recent files service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
+    private readonly ITranslatorProvider translatorProvider; // Get translator provider
     private readonly IW3Serializer w3Serializer; // Get serializer service
 
     /// <summary>
@@ -101,7 +101,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         IRecentFilesService recentFilesService,
         ISettingsManagerService settingsManagerService,
         IServiceProvider serviceProvider,
-        IW3Serializer w3Serializer)
+        IW3Serializer w3Serializer,
+        ITranslatorProvider translatorProvider)
     {
         this.backupService = backupService;
         this.dialogService = dialogService;
@@ -112,6 +113,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         this.settingsManagerService = settingsManagerService;
         this.serviceProvider = serviceProvider;
         this.w3Serializer = w3Serializer;
+        this.translatorProvider = translatorProvider;
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
@@ -475,9 +477,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task ShowSettingsDialog()
     {
-        var translators = serviceProvider.GetServices<ITranslator>().ToArray(); // Get all available translators
-        var names = translators.Select(x => x.Name.Replace("2", string.Empty)); // Extract translator names
-        translators.ForEach(x => x.Cast<IDisposable>().Dispose()); // Dispose of translator instances
+        var names = translatorProvider.GetTranslatorNames(); // Get translator names for the settings dialog
         await dialogService.ShowDialogAsync(this,
             new SettingDialogViewModel(AppSettings, dialogService,
                 serviceProvider.GetRequiredService<IExplorerService>(), names,
@@ -567,8 +567,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         var itemsToUse = PagedSource ?? W3StringItems!; // Use filtered items if available
         var selectedIndex =
             selectedItem is not null ? itemsToUse.IndexOf(selectedItem) : 0; // Get the index of the selected item
-        var translator = serviceProvider.GetServices<ITranslator>() // Get the configured translator
-            .First(x => x.Name.Contains(AppSettings.Translator));
+        var translator = translatorProvider.GetTranslator(AppSettings.Translator); // Get the configured translator
         var isUseDictionary = AppSettings.Translator == "MicrosoftTranslator";
         var dictionaryService = isUseDictionary ? serviceProvider.GetRequiredService<IDictionaryService>() : null;
         var translationDialogViewModel = new TranslationDialogViewModel(AppSettings, translator, itemsToUse.ToList(),
