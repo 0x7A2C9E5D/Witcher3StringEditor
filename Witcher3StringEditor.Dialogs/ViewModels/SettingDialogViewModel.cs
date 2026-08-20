@@ -113,7 +113,7 @@ public partial class SettingDialogViewModel(
     ///     Deletes old log files
     /// </summary>
     [RelayCommand]
-    private void DeleteOldLogs()
+    private static void DeleteOldLogs()
     {
         var files = Directory.GetFiles(AppPaths.LogDirectory); // Get all log files in the log folder.
         if (files.Length == 1) // If there is only one log file, do nothing.
@@ -151,7 +151,7 @@ public partial class SettingDialogViewModel(
     ///     Collects the log files
     /// </summary>
     [RelayCommand]
-    private void CollectLogs()
+    private static void CollectLogs()
     {
         var tempFolder =
             Directory.CreateTempSubdirectory().FullName; // Create a temporary folder.

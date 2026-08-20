@@ -87,10 +87,12 @@ public class AcDynamicDictionaryReplacer(IDictionaryProvider provider) : IDynami
 
         matcher.ParseText(text, allHits.Add); // Find all hits
 
-        return allHits
-            .OrderBy(x => x.Begin)
-            .ThenByDescending(x => x.Length)
-            .ToList(); // Sort hits
+        return
+        [
+            .. allHits
+                .OrderBy(x => x.Begin)
+                .ThenByDescending(x => x.Length)
+        ]; // Sort hits
     }
 
     /// <summary>

@@ -118,10 +118,11 @@ public partial class MainWindow
             (_, m) =>
             {
                 // Reply with the current data grid paged source
-                m.Reply(((PagedCollectionView)SfDataGrid.ItemsSource)
+                m.Reply([
+                    .. ((PagedCollectionView)SfDataGrid.ItemsSource)
                     .GetInternalList()
                     .Cast<W3StringItemModel>()
-                    .ToList());
+                ]);
             }); // Request data grid paged source
     }
 
