@@ -200,7 +200,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<ILogAccessService, LogAccessService>()
             .AddSingleton<IDictionaryManager, DictionaryManager>()
             .AddSingleton<IDictionaryProvider, DictionaryProvider>()
-            .AddScoped<IExplorerService, ExplorerService>()
+            .AddSingleton<IExplorerService, ExplorerService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
             .AddTransient<ICultureMatcher, CultureMatcher>()

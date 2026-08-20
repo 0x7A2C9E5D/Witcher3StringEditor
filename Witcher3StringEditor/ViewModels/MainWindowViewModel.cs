@@ -36,6 +36,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     // Dependency services
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDialogViewModelFactory dialogViewModelFactory; // Get dialog view model factory
+    private readonly IExplorerService explorerService; // Get explorer service
     private readonly IRecentFilesService recentFilesService; // Get recent files service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
@@ -92,6 +93,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     public MainWindowViewModel(
         IDialogService dialogService,
         IDialogViewModelFactory dialogViewModelFactory,
+        IExplorerService explorerService,
         IRecentFilesService recentFilesService,
         ISettingsManagerService settingsManagerService,
         IServiceProvider serviceProvider,
@@ -100,6 +102,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     {
         this.dialogService = dialogService;
         this.dialogViewModelFactory = dialogViewModelFactory;
+        this.explorerService = explorerService;
         this.recentFilesService = recentFilesService;
         this.settingsManagerService = settingsManagerService;
         this.serviceProvider = serviceProvider;
@@ -513,10 +516,9 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     ///     Opens the working folder in Windows Explorer
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanOpenWorkingFolder))]
-    private async Task OpenWorkingFolder()
+    private void OpenWorkingFolder()
     {
-        await using var scope = serviceProvider.CreateAsyncScope();
-        scope.ServiceProvider.GetRequiredService<IExplorerService>().Open(OutputFolder); // Open the working folder
+        explorerService.Open(OutputFolder); // Open the working folder
         Log.Information("Working folder opened."); // Log successful opening
     }
 
@@ -524,11 +526,9 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     ///     Opens the NexusMods page in the default browser
     /// </summary>
     [RelayCommand]
-    private async Task OpenNexusMods()
+    private void OpenNexusMods()
     {
-        await using var scope = serviceProvider.CreateAsyncScope();
-        scope.ServiceProvider.GetRequiredService<IExplorerService>()
-            .Open(AppSettings.NexusModUrl); // Open the NexusMods page
+        explorerService.Open(AppSettings.NexusModUrl); // Open the NexusMods page
         Log.Information("NexusMods opened."); // Log successful opening
     }
 
