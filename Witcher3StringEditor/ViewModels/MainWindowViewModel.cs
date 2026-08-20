@@ -238,8 +238,9 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task WindowLoaded()
     {
         await settingsManagerService.CheckSettings(); // Check application settings
-        IsUpdateAvailable =
-            await serviceProvider.GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
+        await using var scope = serviceProvider.CreateAsyncScope(); // Create a new scope
+        IsUpdateAvailable = await scope.ServiceProvider
+            .GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
     }
 
     /// <summary>
@@ -358,7 +359,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(HasW3StringItems))]
     private async Task Add()
     {
-        var dialogViewModel = dialogViewModelFactory.CreateEditDialog(new W3StringItemModel()); // Create new item view model
+        var dialogViewModel =
+            dialogViewModelFactory.CreateEditDialog(new W3StringItemModel()); // Create new item view model
         if (await dialogService.ShowDialogAsync(this, dialogViewModel) == true // Show add dialog
             && dialogViewModel.Item is not null) // Check if user confirmed
         {
@@ -479,7 +481,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(CanPlayGame))]
     private async Task PlayGame()
     {
-        await serviceProvider.GetRequiredService<IPlayGameService>().PlayGame();
+        await using var scope = serviceProvider.CreateAsyncScope();
+        await scope.ServiceProvider.GetRequiredService<IPlayGameService>().PlayGame();
     }
 
     /// <summary>
@@ -489,27 +492,31 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task ShowAbout()
     {
         await dialogService.ShowDialogAsync(this, // Show about dialog
-            dialogViewModelFactory.CreateAboutDialog(new Dictionary<string, object?> // Create view model with application information
-            {
-                { "Version", ThisAssembly.AssemblyInformationalVersion }, // Application version
-                { "BuildTime", BuildInformation.BuildAt.ToLocalTime() }, // Build time
-                { "OS", $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})" }, // OS information
-                { "Runtime", RuntimeInformation.FrameworkDescription }, // Runtime information
+            dialogViewModelFactory.CreateAboutDialog(
+                new Dictionary<string, object?> // Create view model with application information
                 {
-                    "Package", DependencyContext.Default?
-                        .RuntimeLibraries.Where(static x => x.Type == "package")
-                        .OrderBy(x => x.Name)
-                }
-            }));
+                    { "Version", ThisAssembly.AssemblyInformationalVersion }, // Application version
+                    { "BuildTime", BuildInformation.BuildAt.ToLocalTime() }, // Build time
+                    {
+                        "OS", $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})"
+                    }, // OS information
+                    { "Runtime", RuntimeInformation.FrameworkDescription }, // Runtime information
+                    {
+                        "Package", DependencyContext.Default?
+                            .RuntimeLibraries.Where(static x => x.Type == "package")
+                            .OrderBy(x => x.Name)
+                    }
+                }));
     }
 
     /// <summary>
     ///     Opens the working folder in Windows Explorer
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanOpenWorkingFolder))]
-    private void OpenWorkingFolder()
+    private async Task OpenWorkingFolder()
     {
-        serviceProvider.GetRequiredService<IExplorerService>().Open(OutputFolder); // Open the working folder
+        await using var scope = serviceProvider.CreateAsyncScope();
+        scope.ServiceProvider.GetRequiredService<IExplorerService>().Open(OutputFolder); // Open the working folder
         Log.Information("Working folder opened."); // Log successful opening
     }
 
@@ -517,9 +524,10 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     ///     Opens the NexusMods page in the default browser
     /// </summary>
     [RelayCommand]
-    private void OpenNexusMods()
+    private async Task OpenNexusMods()
     {
-        serviceProvider.GetRequiredService<IExplorerService>()
+        await using var scope = serviceProvider.CreateAsyncScope();
+        scope.ServiceProvider.GetRequiredService<IExplorerService>()
             .Open(AppSettings.NexusModUrl); // Open the NexusMods page
         Log.Information("NexusMods opened."); // Log successful opening
     }
