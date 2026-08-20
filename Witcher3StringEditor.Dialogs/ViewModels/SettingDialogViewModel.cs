@@ -10,6 +10,7 @@ using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Miscellaneous;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -34,14 +35,6 @@ public partial class SettingDialogViewModel(
     ///     Gets the application settings service
     /// </summary>
     public IAppSettings AppSettings { get; } = appSettings;
-
-#if DEBUG
-    private readonly string logFolder = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Witcher3StringEditor_Debug", "Logs");
-#else
-    private readonly string logFolder = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Witcher3StringEditor", "Logs");
-#endif
 
     /// <summary>
     ///     Gets the collection of available translators
@@ -112,7 +105,7 @@ public partial class SettingDialogViewModel(
     [RelayCommand]
     private void OpenLogFolder()
     {
-        explorerService.Open(logFolder); // Open the log folder.
+        explorerService.Open(AppPaths.LogDirectory); // Open the log folder.
         Log.Information("Opened log folder."); // Log that the log folder has been opened.
     }
 
@@ -122,7 +115,7 @@ public partial class SettingDialogViewModel(
     [RelayCommand]
     private void DeleteOldLogs()
     {
-        var files = Directory.GetFiles(logFolder); // Get all log files in the log folder.
+        var files = Directory.GetFiles(AppPaths.LogDirectory); // Get all log files in the log folder.
         if (files.Length == 1) // If there is only one log file, do nothing.
         {
             Log.Information("There is only one log file."); // Log that there is only one log file.
@@ -164,7 +157,7 @@ public partial class SettingDialogViewModel(
             Directory.CreateTempSubdirectory().FullName; // Create a temporary folder.
 
         // Copy all log files to the temporary folder.
-        var files = Directory.GetFiles(logFolder);
+        var files = Directory.GetFiles(AppPaths.LogDirectory);
         foreach (var file in files)
         {
             var destFileName =
