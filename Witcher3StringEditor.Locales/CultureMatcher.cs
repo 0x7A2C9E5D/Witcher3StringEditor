@@ -21,11 +21,17 @@ public class CultureMatcher : ICultureMatcher
             .Where(x => x.Name == targetCulture.Name).ToArray();
         if (bestMatches.Length != 0) return bestMatches;
         var targetParentName = targetCulture.Parent.Name;
-        bestMatches = availableCultures
-            .Where(x => x.Name == targetParentName).ToArray();
+        bestMatches =
+        [
+            .. availableCultures
+                .Where(x => x.Name == targetParentName)
+        ];
         if (bestMatches.Length != 0) return bestMatches;
-        bestMatches = availableCultures
-            .Where(x => x.Parent.Name == targetParentName).ToArray();
+        bestMatches =
+        [
+            .. availableCultures
+                .Where(x => x.Parent.Name == targetParentName)
+        ];
         return bestMatches.Length != 0 ? bestMatches : [];
     }
 }
