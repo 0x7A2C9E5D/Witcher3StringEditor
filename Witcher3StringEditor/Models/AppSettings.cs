@@ -75,7 +75,7 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     [JsonConstructor]
     public AppSettings(string w3StringsPath, string gameExePath, W3FileType preferredW3FileType,
         W3Language preferredLanguage, ObservableCollection<IBackupItem> backupItems,
-        ObservableCollection<IRecentItem> recentItems)
+        ObservableCollection<IRecentFileEntry> recentItems)
     {
         GameExePath = gameExePath;
         W3StringsPath = w3StringsPath;
@@ -96,7 +96,7 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     Gets the collection of recently opened items
     ///     This collection supports data binding through the ObservableObject base class
     /// </summary>
-    public ObservableCollection<IRecentItem> RecentItems { get; } = [];
+    public ObservableCollection<IRecentFileEntry> RecentItems { get; } = [];
 
     /// <summary>
     ///     Gets the collection of backup items

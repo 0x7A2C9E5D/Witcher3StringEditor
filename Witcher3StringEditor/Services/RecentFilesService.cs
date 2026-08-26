@@ -5,9 +5,9 @@ using Witcher3StringEditor.Models;
 
 namespace Witcher3StringEditor.Services;
 
-internal class RecentFilesService(ObservableCollection<IRecentItem> recentItems) : IRecentFilesService
+internal class RecentFilesService(ObservableCollection<IRecentFileEntry> recentItems) : IRecentFilesService
 {
-    public ObservableCollection<IRecentItem> RecentItems { get; } = recentItems;
+    public ObservableCollection<IRecentFileEntry> RecentItems { get; } = recentItems;
 
     public void AddOrUpdateRecentFile(string filePath)
     {
@@ -32,13 +32,13 @@ internal class RecentFilesService(ObservableCollection<IRecentItem> recentItems)
         }
     }
 
-    public bool RemoveRecentFile(IRecentItem recentItem)
+    public bool RemoveRecentFile(IRecentFileEntry recentFileEntry)
     {
-        var removed = RecentItems.Remove(recentItem);
+        var removed = RecentItems.Remove(recentFileEntry);
         if (removed)
-            Log.Information("Removed recent file: {FilePath}", recentItem.FilePath);
+            Log.Information("Removed recent file: {FilePath}", recentFileEntry.FilePath);
         else
-            Log.Error("Failed to remove recent file: {FilePath}", recentItem.FilePath);
+            Log.Error("Failed to remove recent file: {FilePath}", recentFileEntry.FilePath);
         return removed;
     }
 }

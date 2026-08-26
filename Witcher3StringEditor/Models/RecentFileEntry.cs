@@ -5,10 +5,10 @@ namespace Witcher3StringEditor.Models;
 
 /// <summary>
 ///     Represents a recently opened file entry
-///     Implements the IRecentItem interface and provides observable properties for data binding
+///     Implements the IRecentFileEntry interface and provides observable properties for data binding
 ///     This class stores metadata about a recently opened file including its path and opening time
 /// </summary>
-internal partial class RecentFileEntry : ObservableObject, IRecentItem
+internal partial class RecentFileEntry : ObservableObject, IRecentFileEntry
 {
     /// <summary>
     ///     Gets or sets the file path of the recently opened item

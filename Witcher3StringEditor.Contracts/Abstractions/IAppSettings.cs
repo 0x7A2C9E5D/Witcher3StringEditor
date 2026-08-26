@@ -41,7 +41,7 @@ public interface IAppSettings
     /// <summary>
     ///     Gets the collection of recently opened items
     /// </summary>
-    public ObservableCollection<IRecentItem> RecentItems { get; }
+    public ObservableCollection<IRecentFileEntry> RecentItems { get; }
 
     /// <summary>
     ///     Gets the collection of backup items

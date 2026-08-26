@@ -6,7 +6,7 @@ namespace Witcher3StringEditor.Contracts.Abstractions;
 ///     Defines a contract for recent item information
 ///     Represents metadata about a recently opened file including its path and opening time
 /// </summary>
-public interface IRecentItem
+public interface IRecentFileEntry
 {
     /// <summary>
     ///     Gets the file path of the recently opened item

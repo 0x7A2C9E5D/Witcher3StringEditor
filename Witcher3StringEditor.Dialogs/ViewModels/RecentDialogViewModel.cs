@@ -25,7 +25,7 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
         recentFilesService.RecentItems.CollectionChanged += OnRecentItemsOnCollectionChanged;
     }
 
-    public ObservableCollection<IRecentItem> RecentItems =>
+    public ObservableCollection<IRecentFileEntry> RecentItems =>
         recentFilesService.RecentItems;
 
     /// <summary>
@@ -68,25 +68,25 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
     ///     Opens a recent file
     ///     Checks if the file exists and handles accordingly
     /// </summary>
-    /// <param name="recentItem">The recent item to open</param>
+    /// <param name="recentFileEntry">The recent item to open</param>
     [RelayCommand]
-    private async Task Open(IRecentItem recentItem)
+    private async Task Open(IRecentFileEntry recentFileEntry)
     {
-        if (!File.Exists(recentItem.FilePath)) // Check if file exists
-            await HandleMissingFile(recentItem); // Handle missing file
+        if (!File.Exists(recentFileEntry.FilePath)) // Check if file exists
+            await HandleMissingFile(recentFileEntry); // Handle missing file
         else
-            HandleExistingFile(recentItem); // Handle existing file
+            HandleExistingFile(recentFileEntry); // Handle existing file
     }
 
     /// <summary>
     ///     Handles opening an existing file
     ///     Closes the dialog and sends a message to open the file
     /// </summary>
-    /// <param name="recentItem">The recent item to open</param>
-    private void HandleExistingFile(IRecentItem recentItem)
+    /// <param name="recentFileEntry">The recent item to open</param>
+    private void HandleExistingFile(IRecentFileEntry recentFileEntry)
     {
         RequestClose?.Invoke(this, EventArgs.Empty);
-        _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<string, bool>(recentItem.FilePath),
+        _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<string, bool>(recentFileEntry.FilePath),
             MessageTokens.RecentFileOpened);
     }
 
@@ -94,25 +94,25 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
     ///     Handles the case when a recent file is missing
     ///     Notifies the user and removes the recent item if confirmed
     /// </summary>
-    /// <param name="recentItem">The recent item that is missing</param>
-    private async Task HandleMissingFile(IRecentItem recentItem)
+    /// <param name="recentFileEntry">The recent item that is missing</param>
+    private async Task HandleMissingFile(IRecentFileEntry recentFileEntry)
     {
-        LogMissingFile(recentItem.FilePath); // Log missing file
-        if (await NotifyFileNotFound(recentItem.FilePath)) // If user confirms
-            TryRemoveRecentItem(recentItem); // Try to remove the recent item
+        LogMissingFile(recentFileEntry.FilePath); // Log missing file
+        if (await NotifyFileNotFound(recentFileEntry.FilePath)) // If user confirms
+            TryRemoveRecentItem(recentFileEntry); // Try to remove the recent item
     }
 
     /// <summary>
     ///     Attempts to remove a recent item from the collection
     ///     Logs the result of the operation
     /// </summary>
-    /// <param name="recentItem">The recent item to remove</param>
-    private void TryRemoveRecentItem(IRecentItem recentItem)
+    /// <param name="recentFileEntry">The recent item to remove</param>
+    private void TryRemoveRecentItem(IRecentFileEntry recentFileEntry)
     {
-        if (recentFilesService.RemoveRecentFile(recentItem))
-            Log.Information("The recent item for file {Path} has been removed.", recentItem.FilePath);
+        if (recentFilesService.RemoveRecentFile(recentFileEntry))
+            Log.Information("The recent item for file {Path} has been removed.", recentFileEntry.FilePath);
         else
-            Log.Error("The recent item for file {Path} could not be removed.", recentItem.FilePath);
+            Log.Error("The recent item for file {Path} could not be removed.", recentFileEntry.FilePath);
     }
 
     /// <summary>
