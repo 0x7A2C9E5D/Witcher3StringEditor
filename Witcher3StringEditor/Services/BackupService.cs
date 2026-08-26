@@ -24,7 +24,7 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
         try
         {
             var hash = await ValidateAndGetHash(filePath); // Validate file and compute hash
-            var backupItem = new BackupItem // Create new backup item
+            var backupItem = new BackupEntry // Create new backup item
             {
                 FileName = Path.GetFileName(filePath), // Set file name
                 Hash = hash, // Set file hash
@@ -107,7 +107,7 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
     /// </summary>
     /// <param name="backupItem">The backup item to check for duplicates</param>
     /// <returns>True if a duplicate backup exists, false otherwise</returns>
-    private bool IsDuplicateBackup(BackupItem backupItem)
+    private bool IsDuplicateBackup(BackupEntry backupItem)
     {
         return appSettings.BackupItems.Any(x => // Check if any existing backup item matches
             x.Hash == backupItem.Hash && // Same hash
@@ -121,7 +121,7 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
     /// </summary>
     /// <param name="backupItem">The backup item to execute the backup for</param>
     /// <returns>True if the backup was executed successfully</returns>
-    private bool ExecuteBackup(BackupItem backupItem)
+    private bool ExecuteBackup(BackupEntry backupItem)
     {
         File.Copy(backupItem.OrginPath, backupItem.BackupPath); // Copy file to back up location
         appSettings.BackupItems.Add(backupItem); // Add backup item to collection

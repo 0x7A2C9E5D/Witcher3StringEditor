@@ -27,7 +27,7 @@ internal class RecentFilesService(ObservableCollection<IRecentItem> recentItems)
         }
         else
         {
-            RecentItems.Add(new RecentItem(filePath, DateTime.Now));
+            RecentItems.Add(new RecentFileEntry(filePath, DateTime.Now));
             Log.Information("Added new recent file: {FilePath}", filePath);
         }
     }

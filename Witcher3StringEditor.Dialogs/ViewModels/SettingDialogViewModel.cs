@@ -26,7 +26,7 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public partial class SettingDialogViewModel(
     IAppSettings appSettings,
     IDialogService dialogService,
-    IExplorerService explorerService,
+    IShellOpenService shellOpenService,
     IEnumerable<string> translators,
     IEnumerable<CultureInfo> supportedCultures)
     : ObservableObject, IModalDialogViewModel
@@ -105,7 +105,7 @@ public partial class SettingDialogViewModel(
     [RelayCommand]
     private void OpenLogFolder()
     {
-        explorerService.Open(AppPaths.LogDirectory); // Open the log folder.
+        shellOpenService.Open(AppPaths.LogDirectory); // Open the log folder.
         Log.Information("Opened log folder."); // Log that the log folder has been opened.
     }
 

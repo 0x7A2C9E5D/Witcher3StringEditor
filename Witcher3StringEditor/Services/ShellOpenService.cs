@@ -5,9 +5,9 @@ namespace Witcher3StringEditor.Services;
 
 /// <summary>
 ///     Provides functionality to open paths in Windows Explorer
-///     Implements the IExplorerService interface to handle opening file system paths
+///     Implements the IShellOpenService interface to handle opening file system paths
 /// </summary>
-internal class ExplorerService : IExplorerService
+internal class ShellOpenService : IShellOpenService
 {
     /// <summary>
     ///     Opens the specified path in Windows Explorer

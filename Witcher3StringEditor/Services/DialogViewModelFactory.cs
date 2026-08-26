@@ -61,7 +61,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
         return new SettingDialogViewModel(
             serviceProvider.GetRequiredService<IAppSettings>(),
             serviceProvider.GetRequiredService<IDialogService>(),
-            serviceProvider.GetRequiredService<IExplorerService>(),
+            serviceProvider.GetRequiredService<IShellOpenService>(),
             translatorNames,
             serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures);
     }

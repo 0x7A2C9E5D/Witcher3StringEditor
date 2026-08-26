@@ -36,7 +36,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     // Dependency services
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDialogViewModelFactory dialogViewModelFactory; // Get dialog view model factory
-    private readonly IExplorerService explorerService; // Get explorer service
+    private readonly IShellOpenService shellOpenService; // Get explorer service
     private readonly IRecentFilesService recentFilesService; // Get recent files service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
@@ -93,7 +93,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     public MainWindowViewModel(
         IDialogService dialogService,
         IDialogViewModelFactory dialogViewModelFactory,
-        IExplorerService explorerService,
+        IShellOpenService shellOpenService,
         IRecentFilesService recentFilesService,
         ISettingsManagerService settingsManagerService,
         IServiceProvider serviceProvider,
@@ -102,7 +102,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     {
         this.dialogService = dialogService;
         this.dialogViewModelFactory = dialogViewModelFactory;
-        this.explorerService = explorerService;
+        this.shellOpenService = shellOpenService;
         this.recentFilesService = recentFilesService;
         this.settingsManagerService = settingsManagerService;
         this.serviceProvider = serviceProvider;
@@ -518,7 +518,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(CanOpenWorkingFolder))]
     private void OpenWorkingFolder()
     {
-        explorerService.Open(OutputFolder); // Open the working folder
+        shellOpenService.Open(OutputFolder); // Open the working folder
         Log.Information("Working folder opened."); // Log successful opening
     }
 
@@ -528,7 +528,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private void OpenNexusMods()
     {
-        explorerService.Open(AppSettings.NexusModUrl); // Open the NexusMods page
+        shellOpenService.Open(AppSettings.NexusModUrl); // Open the NexusMods page
         Log.Information("NexusMods opened."); // Log successful opening
     }
 

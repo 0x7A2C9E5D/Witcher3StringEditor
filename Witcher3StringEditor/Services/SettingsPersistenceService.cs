@@ -9,9 +9,9 @@ namespace Witcher3StringEditor.Services;
 
 /// <summary>
 ///     Provides configuration file saving and loading functionality
-///     Implements the IConfigService interface to handle serialization and deserialization of settings
+///     Implements the ISettingsPersistenceService interface to handle serialization and deserialization of settings
 /// </summary>
-internal class ConfigService : IConfigService
+internal class SettingsPersistenceService : ISettingsPersistenceService
 {
     private readonly string filePath;
 
@@ -24,8 +24,8 @@ internal class ConfigService : IConfigService
         Converters =
         {
             new JsonStringEnumConverter(),
-            new InterfaceJsonConverter<IRecentItem, RecentItem>(),
-            new InterfaceJsonConverter<IBackupItem, BackupItem>(),
+            new InterfaceJsonConverter<IRecentItem, RecentFileEntry>(),
+            new InterfaceJsonConverter<IBackupItem, BackupEntry>(),
             new ObservableCollectionJsonConverter<IBackupItem>(),
             new ObservableCollectionJsonConverter<IRecentItem>()
         }
@@ -33,10 +33,10 @@ internal class ConfigService : IConfigService
 
     /// <summary>
     ///     Provides configuration file saving and loading functionality
-    ///     Implements the IConfigService interface to handle serialization and deserialization of settings
+    ///     Implements the ISettingsPersistenceService interface to handle serialization and deserialization of settings
     /// </summary>
     /// <param name="filePath">The path to the configuration file</param>
-    public ConfigService(string filePath)
+    public SettingsPersistenceService(string filePath)
     {
         this.filePath = filePath;
         var configDirectory = Directory.GetParent(filePath)!.FullName;
@@ -45,9 +45,9 @@ internal class ConfigService : IConfigService
 
     /// <summary>
     ///     Provides configuration file saving and loading functionality
-    ///     Implements the IConfigService interface to handle serialization and deserialization of settings
+    ///     Implements the ISettingsPersistenceService interface to handle serialization and deserialization of settings
     /// </summary>
-    public ConfigService() : this(AppPaths.ConfigPath)
+    public SettingsPersistenceService() : this(AppPaths.ConfigPath)
     {
     }
 

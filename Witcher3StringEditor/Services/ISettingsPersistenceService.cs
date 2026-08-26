@@ -4,7 +4,7 @@
 ///     Defines a contract for configuration file saving and loading operations
 ///     Provides methods to save and load settings to and from configuration files
 /// </summary>
-internal interface IConfigService
+internal interface ISettingsPersistenceService
 {
     /// <summary>
     ///     Saves the specified settings to a configuration file

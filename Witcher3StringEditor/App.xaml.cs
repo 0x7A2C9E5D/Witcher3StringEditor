@@ -186,9 +186,9 @@ public sealed partial class App : IDisposable
         Ioc.Default.ConfigureServices(new ServiceCollection()
             .AddLogging(builder => builder.AddSerilog())
             .AddSingleton<IViewLocator, StrongViewLocator>(_ => CreatStrongViewLocator())
-            .AddSingleton<IConfigService, ConfigService>()
+            .AddSingleton<ISettingsPersistenceService, SettingsPersistenceService>()
             .AddSingleton<IAppSettings, AppSettings>(_ => Ioc.Default
-                .GetRequiredService<IConfigService>().Load<AppSettings>())
+                .GetRequiredService<ISettingsPersistenceService>().Load<AppSettings>())
             .AddSingleton<ICultureResolver, CultureResolver>()
             .AddSingleton<IBackupService, BackupService>()
             .AddSingleton<ICsvW3Serializer, CsvW3Serializer>()
@@ -200,7 +200,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<ILogAccessService, LogAccessService>()
             .AddSingleton<IDictionaryManager, DictionaryManager>()
             .AddSingleton<IDictionaryProvider, DictionaryProvider>()
-            .AddSingleton<IExplorerService, ExplorerService>()
+            .AddSingleton<IShellOpenService, ShellOpenService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
             .AddTransient<ICultureMatcher, CultureMatcher>()
@@ -261,7 +261,7 @@ public sealed partial class App : IDisposable
     private static void SaveAppSettings()
     {
         var appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
-        var configService = Ioc.Default.GetRequiredService<IConfigService>();
+        var configService = Ioc.Default.GetRequiredService<ISettingsPersistenceService>();
         configService.Save(appSettings);
     }
 

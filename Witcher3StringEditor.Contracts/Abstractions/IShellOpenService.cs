@@ -4,7 +4,7 @@
 ///     Defines a contract for opening paths in Windows Explorer
 ///     Provides a method to open file system paths using the system's default file explorer
 /// </summary>
-public interface IExplorerService
+public interface IShellOpenService
 {
     /// <summary>
     ///     Opens the specified path in Windows Explorer
