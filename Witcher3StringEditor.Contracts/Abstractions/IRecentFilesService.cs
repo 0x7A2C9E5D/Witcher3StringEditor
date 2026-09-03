@@ -8,5 +8,5 @@ public interface IRecentFilesService
 
     void AddOrUpdateRecentFile(string filePath);
 
-    bool RemoveRecentFile(IRecentFileEntry recentFileEntry);
+    void RemoveRecentFile(IRecentFileEntry recentFileEntry);
 }

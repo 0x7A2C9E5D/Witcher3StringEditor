@@ -91,7 +91,7 @@ public class DictionaryManager : IDictionaryManager
     private List<DictionaryInfo> FindDuplicates(string filePath)
     {
         var fileName = Path.GetFileName(filePath);
-        return dictionaries.Where(x => Path.GetFileName(x.Path) == fileName).ToList();
+        return [.. dictionaries.Where(x => Path.GetFileName(x.Path) == fileName)];
     }
 
     /// <summary>

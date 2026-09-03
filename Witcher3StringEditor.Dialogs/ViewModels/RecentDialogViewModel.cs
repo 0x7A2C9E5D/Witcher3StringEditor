@@ -2,7 +2,6 @@
 using System.IO;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
@@ -17,18 +16,9 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 ///     Manages the display and interaction with recently opened files
 ///     Implements IModalDialogViewModel for dialog result handling and ICloseable for close notifications
 /// </summary>
-public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalDialogViewModel, ICloseable
+public sealed partial class RecentDialogViewModel(IRecentFilesService recentFilesService, IDialogService dialogService)
+    : DisposableViewModel, IModalDialogViewModel, ICloseable
 {
-    private readonly IDialogService dialogService;
-
-    private readonly IRecentFilesService recentFilesService;
-
-    public RecentDialogViewModel(IRecentFilesService recentFilesService, IDialogService dialogService)
-    {
-        this.recentFilesService = recentFilesService;
-        this.dialogService = dialogService;
-    }
-
     public ObservableCollection<IRecentFileEntry> RecentItems =>
         recentFilesService.RecentItems;
 

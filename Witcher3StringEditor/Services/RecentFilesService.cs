@@ -32,13 +32,12 @@ internal class RecentFilesService(ObservableCollection<IRecentFileEntry> recentI
         }
     }
 
-    public bool RemoveRecentFile(IRecentFileEntry recentFileEntry)
+    public void RemoveRecentFile(IRecentFileEntry recentFileEntry)
     {
         var removed = RecentItems.Remove(recentFileEntry);
         if (removed)
             Log.Information("Removed recent file: {FilePath}", recentFileEntry.FilePath);
         else
             Log.Warning("Failed to remove recent file: {FilePath}", recentFileEntry.FilePath);
-        return removed;
     }
 }
