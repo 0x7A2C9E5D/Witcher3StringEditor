@@ -9,7 +9,7 @@ namespace Witcher3StringEditor.Models;
 ///     Implements the ITrackableW3StringItem interface and provides observable properties for data binding
 ///     This class extends the basic The Witcher 3 string item with tracking capabilities and cloning functionality
 /// </summary>
-public partial class W3StringItemModel : ObservableObject, ITrackableW3StringItem
+public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
 {
     /// <summary>
     ///     Gets or sets the hexadecimal key of The Witcher 3 string item
@@ -46,10 +46,10 @@ public partial class W3StringItemModel : ObservableObject, ITrackableW3StringIte
     [ObservableProperty] private string text = string.Empty;
 
     /// <summary>
-    ///     Initializes a new instance of the W3StringItemModel class by copying values from another IW3StringItem
+    ///     Initializes a new instance of the W3StringItem class by copying values from another IW3StringItem
     /// </summary>
     /// <param name="iw3StringItem">The source IW3StringItem to copy values from</param>
-    public W3StringItemModel(IW3StringItem iw3StringItem)
+    public W3StringItem(IW3StringItem iw3StringItem)
     {
         StrId = iw3StringItem.StrId;
         KeyHex = iw3StringItem.KeyHex;
@@ -59,10 +59,10 @@ public partial class W3StringItemModel : ObservableObject, ITrackableW3StringIte
     }
 
     /// <summary>
-    ///     Initializes a new instance of the W3StringItemModel class
-    ///     Creates an empty W3StringItemModel with default values
+    ///     Initializes a new instance of the W3StringItem class
+    ///     Creates an empty W3StringItem with default values
     /// </summary>
-    public W3StringItemModel()
+    public W3StringItem()
     {
     }
 
@@ -78,7 +78,7 @@ public partial class W3StringItemModel : ObservableObject, ITrackableW3StringIte
     public Guid TrackingId { get; } = Guid.NewGuid();
 
     /// <summary>
-    ///     Creates a shallow copy of the current W3StringItemModel
+    ///     Creates a shallow copy of the current W3StringItem
     /// </summary>
     /// <returns>A shallow copy of the current object</returns>
     public object Clone()

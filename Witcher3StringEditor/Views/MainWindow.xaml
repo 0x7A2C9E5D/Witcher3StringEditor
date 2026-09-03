@@ -364,7 +364,7 @@
                 <sf:GridTemplateColumn MappingName="IsModified" HeaderText="Reset" Width="100" MinimumWidth="50"
                                        AllowFocus="False">
                     <sf:GridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="m:W3StringItemModel">
+                        <DataTemplate DataType="m:W3StringItem">
                             <Button HorizontalAlignment="Center" VerticalAlignment="Center"
                                     Command="{Binding ResetTextCommand}">
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Undo}" />

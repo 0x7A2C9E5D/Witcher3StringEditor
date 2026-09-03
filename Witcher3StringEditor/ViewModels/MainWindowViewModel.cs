@@ -70,7 +70,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     ///     Gets or sets the source collection for the DataGrid
     /// </summary>
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
-    private IList<W3StringItemModel>? pagedSource;
+    private IList<W3StringItem>? pagedSource;
 
     /// <summary>
     ///     Gets or sets the current search text used for filtering W3String items
@@ -88,7 +88,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [NotifyCanExecuteChangedFor(nameof(MergeDataCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShowSaveDialogCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
-    private ObservableCollection<W3StringItemModel>? w3StringItems;
+    private ObservableCollection<W3StringItem>? w3StringItems;
 
 
     public MainWindowViewModel(
@@ -216,7 +216,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     private void RegisterSearchMessageHandlers()
     {
-        WeakReferenceMessenger.Default.Register<MainWindowViewModel, List<W3StringItemModel>, string>(
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, List<W3StringItem>, string>(
             this,
             MessageTokens.DataGridPagedSourceChanged,
             (_, m) => { PagedSource = m; });
@@ -323,10 +323,10 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     ///     A task that represents the asynchronous operation. The task result contains the deserialized The Witcher 3
     ///     string items
     /// </returns>
-    private async Task<ObservableCollection<W3StringItemModel>> DeserializeW3StringItems(string fileName)
+    private async Task<ObservableCollection<W3StringItem>> DeserializeW3StringItems(string fileName)
     {
         var deserializedItems = await w3Serializer.Deserialize(fileName); // Deserialize file contents
-        return deserializedItems.Select(x => new W3StringItemModel(x))
+        return deserializedItems.Select(x => new W3StringItem(x))
             .ToObservableCollection(); // Convert to observable collection
     }
 
@@ -360,11 +360,11 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task Add()
     {
         var dialogViewModel =
-            dialogViewModelFactory.CreateEditDialog(new W3StringItemModel()); // Create new item view model
+            dialogViewModelFactory.CreateEditDialog(new W3StringItem()); // Create new item view model
         if (await dialogService.ShowDialogAsync(this, dialogViewModel) == true // Show add dialog
             && dialogViewModel.Item is not null) // Check if user confirmed
         {
-            W3StringItems!.Add(dialogViewModel.Item.Cast<W3StringItemModel>()); // Add new item to collection
+            W3StringItems!.Add(dialogViewModel.Item.Cast<W3StringItem>()); // Add new item to collection
             await RequestDataGridPagedSource(); // Request updated paged source
             Log.Information("W3String item added: {StrId}.", dialogViewModel.Item.StrId); // Log successful addition
         }
@@ -376,7 +376,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task RequestDataGridPagedSource()
     {
         await Task.Delay(100); // Delay to allow time for the collection to update
-        PagedSource = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<List<W3StringItemModel>>(),
+        PagedSource = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<List<W3StringItem>>(),
             MessageTokens.RequestDataGridPagedSource); // Send request for updated paged source
     }
 
@@ -385,7 +385,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     /// <param name="selectedItem">The item to edit</param>
     [RelayCommand(CanExecute = nameof(HasW3StringItems))]
-    private async Task Edit(W3StringItemModel selectedItem)
+    private async Task Edit(W3StringItem selectedItem)
     {
         var dialogViewModel = dialogViewModelFactory.CreateEditDialog(selectedItem); // Create edit dialog view model
         if (await dialogService.ShowDialogAsync(this, // Show edit dialog
@@ -418,7 +418,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         {
             foreach (var item in w3Items)
             {
-                var stringItem = item.Cast<W3StringItemModel>(); // Cast to string item model
+                var stringItem = item.Cast<W3StringItem>(); // Cast to string item model
                 W3StringItems!.Remove(stringItem); // Remove from main collection
             }
 

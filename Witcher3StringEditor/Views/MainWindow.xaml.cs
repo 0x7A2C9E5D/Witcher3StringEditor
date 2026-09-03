@@ -81,7 +81,7 @@ public partial class MainWindow
     /// </summary>
     private void RegisterDataGridSourceHandler()
     {
-        WeakReferenceMessenger.Default.Register<MainWindow, AsyncRequestMessage<List<W3StringItemModel>>, string>(
+        WeakReferenceMessenger.Default.Register<MainWindow, AsyncRequestMessage<List<W3StringItem>>, string>(
             this,
             MessageTokens.RequestDataGridPagedSource,
             (_, m) =>
@@ -90,7 +90,7 @@ public partial class MainWindow
                 m.Reply([
                     .. ((PagedCollectionView)SfDataGrid.ItemsSource)
                     .GetInternalList()
-                    .Cast<W3StringItemModel>()
+                    .Cast<W3StringItem>()
                 ]);
             }); // Request data grid paged source
     }
@@ -211,8 +211,8 @@ public partial class MainWindow
     {
         await Task.Delay(100);
         var items = ((PagedCollectionView)SfDataGrid.ItemsSource)
-            .GetInternalList().Cast<W3StringItemModel>()
-            .ToList(); // Get the internal list and cast to W3StringItemModel
+            .GetInternalList().Cast<W3StringItem>()
+            .ToList(); // Get the internal list and cast to W3StringItem
         WeakReferenceMessenger.Default.Send(items,
             MessageTokens.DataGridPagedSourceChanged); // Send the list to the message bus
     }

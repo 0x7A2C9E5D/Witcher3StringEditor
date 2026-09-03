@@ -8,23 +8,23 @@ namespace Witcher3StringEditor.Serializers.Implementation;
 ///     Implements the IW3StringItem interface to provide a concrete implementation for The Witcher 3 string data
 ///     This record is used internally for serialization and deserialization operations
 /// </summary>
-internal record W3StringStringItem : IW3StringItem
+internal record W3StringItem : IW3StringItem
 {
     /// <summary>
-    ///     Initializes a new instance of the W3StringStringItem record
-    ///     Creates an empty W3StringStringItem with default values
+    ///     Initializes a new instance of the W3StringItem record
+    ///     Creates an empty W3StringItem with default values
     /// </summary>
-    public W3StringStringItem()
+    public W3StringItem()
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the W3StringStringItem record by copying values from another IW3StringItem
-    ///     This constructor provides a way to create a W3StringStringItem from any implementation of IW3StringItem
+    ///     Initializes a new instance of the W3StringItem record by copying values from another IW3StringItem
+    ///     This constructor provides a way to create a W3StringItem from any implementation of IW3StringItem
     /// </summary>
     /// <param name="iw3StringItem">The source IW3StringItem to copy values from</param>
     [UsedImplicitly]
-    public W3StringStringItem(IW3StringItem iw3StringItem)
+    public W3StringItem(IW3StringItem iw3StringItem)
     {
         StrId = iw3StringItem.StrId;
         KeyHex = iw3StringItem.KeyHex;

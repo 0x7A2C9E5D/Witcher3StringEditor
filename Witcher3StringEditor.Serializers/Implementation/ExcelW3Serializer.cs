@@ -29,7 +29,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
                 using var excelEngine = new ExcelEngine(); // Auto-cleanup engine
                 var worksheet = excelEngine.Excel.Workbooks.Open(filePath).Worksheets[0]; // Get 1st sheet
                 var usedRange = worksheet.UsedRange; // Get data range
-                return worksheet.ExportData<W3StringStringItem>(1, 1, usedRange.LastRow,
+                return worksheet.ExportData<W3StringItem>(1, 1, usedRange.LastRow,
                     usedRange.LastColumn); // Export data
             }).ConfigureAwait(false);
         }

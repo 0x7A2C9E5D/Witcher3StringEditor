@@ -34,7 +34,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue; // Skip empty lines and comments
                 var parts = line.Split('|'); // Split line into parts
                 if (parts.Length != 4) continue; // Skip lines with incorrect number of parts
-                items.Add(new W3StringStringItem // Create new string item
+                items.Add(new W3StringItem // Create new string item
                 {
                     StrId = parts[0].Trim(), // Extract string ID
                     KeyHex = parts[1].Trim(), // Extract key hex
