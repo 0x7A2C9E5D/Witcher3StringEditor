@@ -53,7 +53,7 @@ public class W3StringsSerializer(
         {
             var tempDirectory = Path.GetDirectoryName(tempFilePath)!; // Get the directory of the temporary file
             Directory.Delete(tempDirectory, true); // Delete the temporary directory
-            Log.Information("Temporary directory deleted: {Directory}",
+            Log.Debug("Temporary directory deleted: {Directory}",
                 tempDirectory); // Delete the temporary directory
         }
     }
@@ -111,7 +111,7 @@ public class W3StringsSerializer(
         finally
         {
             Directory.Delete(tempDirectory, true); // Delete the temporary directory
-            Log.Information("Temporary directory deleted: {Directory}",
+            Log.Debug("Temporary directory deleted: {Directory}",
                 tempDirectory); // Delete the temporary directory
         }
     }
@@ -214,9 +214,9 @@ public class W3StringsSerializer(
     /// <param name="e">The DataReceivedEventArgs instance containing the event data</param>
     private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
     {
-        // Log error data if it's not null or whitespace
+        // The encoder reports problems on stderr; treat these as warnings rather than application errors
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Error("Error: {Data}.", e.Data);
+            Log.Warning("External encoder error output: {Data}.", e.Data);
     }
 
     /// <summary>
@@ -227,8 +227,8 @@ public class W3StringsSerializer(
     /// <param name="e">The DataReceivedEventArgs instance containing the event data</param>
     private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
     {
-        // Log output data if it's not null or whitespace
+        // Standard output of the encoder is diagnostic detail only
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Information("Output: {Data}.", e.Data);
+            Log.Debug("External encoder output: {Data}.", e.Data);
     }
 }

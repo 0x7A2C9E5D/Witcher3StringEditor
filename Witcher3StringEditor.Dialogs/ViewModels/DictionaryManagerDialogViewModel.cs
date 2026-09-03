@@ -57,12 +57,12 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         this.dictionaryManager = dictionaryManager;
         this.dictionaryProvider = dictionaryProvider;
         var found = dictionaryManager.Find(null).ToList();
-        Log.Information("Found {Count} dictionaries in total.", found.Count);
         var groups = found.GroupBy(x => x.TargetLanguage);
         foreach (var group in groups)
             DictionaryGroups.Add(new DictionaryGroup(group.Key, [.. group]));
-        Log.Information("Grouped dictionaries into {GroupCount} groups based on target language.",
-            DictionaryGroups.Count);
+        Log.Information(
+            "Dictionary manager dialog opened: {Count} dictionary(ies) in {GroupCount} language group(s).",
+            found.Count, DictionaryGroups.Count);
     }
 
     /// <summary>
@@ -153,8 +153,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
                 group.Dictionaries.FirstOrDefault(d => d.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
             if (existingEntry is null) continue;
             group.Dictionaries.Remove(existingEntry);
-            Log.Information("Removed duplicate dictionary with same path from {OldLanguage}: {Path}",
-                group.TargetLanguage.EnglishName, path);
 
             // If the group is now empty, remove the group itself
             if (group.Dictionaries.Count == 0) DictionaryGroups.Remove(group);
@@ -175,15 +173,11 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         {
             // Create a new group for this language
             DictionaryGroups.Add(new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]));
-            Log.Information("Created new group for {Language} and added dictionary: {Path}",
-                dictionaryInfo.TargetLanguage.EnglishName, dictionaryInfo.Path);
         }
         else
         {
             // Add to existing group
             targetGroup.Dictionaries.Add(dictionaryInfo);
-            Log.Information("Added dictionary to existing group {Language}: {Path}",
-                dictionaryInfo.TargetLanguage.EnglishName, dictionaryInfo.Path);
         }
     }
 

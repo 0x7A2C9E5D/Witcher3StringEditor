@@ -118,8 +118,7 @@ public partial class SettingDialogViewModel(
         var files = Directory.GetFiles(AppPaths.LogDirectory); // Get all log files in the log folder.
         if (files.Length == 1) // If there is only one log file, do nothing.
         {
-            Log.Information("There is only one log file."); // Log that there is only one log file.
-            Log.Information("No need to clean."); // Log that there is no need to clean.
+            Log.Information("No log cleanup needed: only one log file exists."); // Log that only one log file exists
             WeakReferenceMessenger.Default.Send(string.Empty,
                 MessageTokens.LogsNoNeedToClean); // Send a message to the main window.
             return;

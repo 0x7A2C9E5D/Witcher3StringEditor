@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using iNKORE.UI.WPF.Modern.Controls;
-using Serilog;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
@@ -64,7 +63,6 @@ public partial class RecentDialog
         // Check if the query text is empty or null
         if (string.IsNullOrWhiteSpace(args.QueryText)) return;
         SfDataGrid.SearchHelper.Search(args.QueryText); // Perform a search in the data grid
-        Log.Information("Search query submitted: {QueryText}", args.QueryText); // Log the search query
     }
 
     /// <summary>

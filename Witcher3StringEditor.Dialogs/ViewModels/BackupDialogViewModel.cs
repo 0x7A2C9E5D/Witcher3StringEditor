@@ -53,14 +53,11 @@ public partial class BackupDialogViewModel(
     /// <param name="backupItem">The backup item to restore</param>
     private async Task HandleExistingBackupFile(IBackupItem backupItem)
     {
-        // Send a confirmation request
-        if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), MessageTokens.BackupRestore))
-        {
-            Log.Information("The restoration of file {Path} has been approved.", backupItem.OrginPath); // Log approval
-            if (!backupService.Restore(backupItem)) // Attempt restoration
-                _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                    MessageTokens.OperationFailed); // Notify if failed
-        }
+        // Send a confirmation request and restore the backup if approved
+        if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), MessageTokens.BackupRestore) &&
+            !backupService.Restore(backupItem)) // Attempt restoration
+            _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                MessageTokens.OperationFailed); // Notify if failed
     }
 
     /// <summary>
@@ -70,7 +67,7 @@ public partial class BackupDialogViewModel(
     /// <param name="backupItem">The backup item with the missing file</param>
     private async Task HandleMissingBackupFile(IBackupItem backupItem)
     {
-        Log.Error("The backup file {Path} does no exist.", backupItem.BackupPath); // Log error
+        Log.Warning("The backup file {Path} does not exist.", backupItem.BackupPath); // Log warning
         if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), MessageTokens.BackupFileNoFound))
             backupService.Delete(backupItem); // Delete the backup item if confirmed
     }
@@ -82,13 +79,10 @@ public partial class BackupDialogViewModel(
     [RelayCommand]
     private async Task Delete(IBackupItem backupItem)
     {
+        // Confirm deletion and delete the backup if approved
         if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.BackupDelete)) // Confirm deletion
-        {
-            Log.Information("The deletion of file {Path} has been approved.", backupItem.BackupPath); // Log approval
-            if (!backupService.Delete(backupItem)) // Attempt deletion
-                _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), // Notify if failed
-                    MessageTokens.OperationFailed);
-        }
+                MessageTokens.BackupDelete) && !backupService.Delete(backupItem)) // Attempt deletion
+            _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), // Notify if failed
+                MessageTokens.OperationFailed);
     }
 }

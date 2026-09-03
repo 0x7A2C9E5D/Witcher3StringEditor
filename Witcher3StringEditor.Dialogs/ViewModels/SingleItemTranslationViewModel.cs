@@ -56,7 +56,6 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
         int index) : base(appSettings, translator, w3StringItems)
     {
         CurrentItemIndex = index;
-        Log.Information("Initializing SingleItemTranslationViewModel."); // Log initialization
     }
 
     /// <summary>
@@ -124,18 +123,14 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
                 CancellationTokenSource?.Dispose(); // Dispose of the cancellation token source
                 CancellationTokenSource = new CancellationTokenSource(); // Create a new cancellation token source
                 CurrentTranslateItemModel.TranslatedText = string.Empty; // Clear the translation text
-                Log.Information("Starting translation."); // Log start of translation
+                Log.Debug("Starting translation of item {ItemId}.", CurrentTranslateItemModel.Id);
                 var (success, translation) = await ExecuteTranslationTask(CurrentTranslateItemModel.Text,
                     ToLanguage, FormLanguage, CancellationTokenSource);
                 if (success) // Check if translation was successful
                 {
                     Guard.IsNotNullOrWhiteSpace(translation); // Check if translation result is not empty
                     CurrentTranslateItemModel.TranslatedText = translation; // Set the translation text
-                    Log.Information("Translation completed."); // Log completion of translation
-                }
-                else
-                {
-                    Log.Error("Translation operation was cancelled."); // Log cancellation of translation
+                    Log.Debug("Translation completed for item {ItemId}.", CurrentTranslateItemModel.Id);
                 }
             }
             else
@@ -152,7 +147,9 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
                 new ValueChangedMessage<string>(string.Format(CultureInfo.InvariantCulture, errorMessage,
                     Translator.Name, ex.Message)), // Send error message
                 "TranslateError");
-            Log.Error(ex, errorMessage, Translator.Name, ex.Message); // Log error
+            Log.Error(ex,
+                "The translator {TranslatorName} returned an error while translating item {ItemId}.",
+                Translator.Name, CurrentTranslateItemModel?.Id); // Log error with the failing item context
         }
         finally
         {
@@ -216,7 +213,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
                     MessageTokens.TranslatedTextNoSaved))
                 SaveTranslation(); // Save the translation if confirmed
             CurrentItemIndex += direction; // Move to the next/previous item
-            Log.Information("Translator {TranslatorName} moved to {Direction} item (new index: {NewIndex})",
+            Log.Debug("Translator {TranslatorName} moved to {Direction} item (new index: {NewIndex})",
                 Translator.Name, direction > 0 ? "next" : "previous", CurrentItemIndex); // Log navigation
         }
         catch (Exception ex)

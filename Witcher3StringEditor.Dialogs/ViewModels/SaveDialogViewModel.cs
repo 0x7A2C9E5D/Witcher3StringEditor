@@ -93,15 +93,14 @@ public partial class SaveDialogViewModel
     [RelayCommand]
     private async Task Save()
     {
-        Log.Information("Target filetype: {FileType}.", TargetFileType); // Log target file type
-        Log.Information("Target language: {Language}.", TargetLanguage); // Log target language
-        Log.Information("Output directory: {Directory}.", OutputDirectory); // Log output directory
+        Log.Information("Saving {Count} item(s) to {Directory} as {FileType} ({Language}).",
+            w3StringItems.Count, OutputDirectory, TargetFileType, TargetLanguage);
         if (TargetFileType == W3FileType.W3Strings)
         {
             if (IsIgnoreIdSpaceCheck)
-                Log.Information("Ignore ID space check."); // Log ignore ID space check
+                Log.Information("ID space check is ignored."); // Log ignore ID space check
             else
-                Log.Information("ID space: {IdSpace}", IdSpace);
+                Log.Information("Expected ID space: {IdSpace}.", IdSpace);
         }
 
         var saveResult = await serializer.Serialize(w3StringItems, new W3SerializationContext // Serialize items
@@ -112,7 +111,10 @@ public partial class SaveDialogViewModel
             TargetLanguage = TargetLanguage, // Set language
             IgnoreIdSpaceCheck = IsIgnoreIdSpaceCheck // Set ID space check flag
         });
-        Log.Information("Save result: {Result}.", saveResult); // Log save result
+        if (saveResult)
+            Log.Information("Save completed successfully.");
+        else
+            Log.Warning("Save failed, see the serializer error log above for details.");
         _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(saveResult),
             MessageTokens.Save); // Send result via messaging
         DialogResult = true; // Set dialog result

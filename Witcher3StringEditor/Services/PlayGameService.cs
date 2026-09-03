@@ -50,9 +50,9 @@ internal class PlayGameService(IAppSettings appSettings) : IPlayGameService
     /// <param name="e">A DataReceivedEventArgs that contains the event data</param>
     private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
     {
-        // Log any error output from the game process
+        // Game stderr is not an application error; keep it at debug level for diagnostics
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Error("Error: {Data}.", e.Data);
+            Log.Debug("Game process error output: {Data}.", e.Data);
     }
 
     /// <summary>
@@ -62,8 +62,8 @@ internal class PlayGameService(IAppSettings appSettings) : IPlayGameService
     /// <param name="e">A DataReceivedEventArgs that contains the event data</param>
     private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
     {
-        // Log any standard output from the game process
+        // Standard output is read only to drain the pipe and avoid blocking the game process
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Information("Output: {Data}.", e.Data);
+            Log.Debug("Game process output: {Data}.", e.Data);
     }
 }

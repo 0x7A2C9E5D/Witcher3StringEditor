@@ -324,7 +324,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </returns>
     private async Task<ObservableCollection<W3StringItemModel>> DeserializeW3StringItems(string fileName)
     {
-        Log.Information("The file {FileName} is being opened...", fileName); // Log file opening
         var deserializedItems = await w3Serializer.Deserialize(fileName); // Deserialize file contents
         return deserializedItems.Select(x => new W3StringItemModel(x))
             .ToObservableCollection(); // Convert to observable collection
@@ -353,7 +352,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         var folder = Path.GetDirectoryName(fileName); // Extract directory from file name
         Guard.IsNotNull(folder); // Guard against null
         onOutputFolderChanged(folder); // Notify of folder change
-        Log.Information("Working directory set to {Folder}.", folder); // Log folder change
     }
 
     /// <summary>
@@ -369,11 +367,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         {
             W3StringItems!.Add(dialogViewModel.Item.Cast<W3StringItemModel>()); // Add new item to collection
             await RequestDataGridPagedSource(); // Request updated paged source
-            Log.Information("New W3Item added."); // Log successful addition
-        }
-        else
-        {
-            Log.Information("The W3Item has not been added."); // Log canceled addition
+            Log.Information("W3String item added: {StrId}.", dialogViewModel.Item.StrId); // Log successful addition
         }
     }
 
@@ -406,11 +400,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             W3StringItems[index].KeyHex = dialogViewModel.Item.KeyHex;
             W3StringItems[index].KeyName = dialogViewModel.Item.KeyName;
             W3StringItems[index].Text = dialogViewModel.Item.Text;
-            Log.Information("The W3Item has been updated."); // Log successful update
-        }
-        else
-        {
-            Log.Information("The W3Item has not been updated."); // Log canceled update
+            Log.Information("W3String item updated: {StrId}.", dialogViewModel.Item.StrId); // Log successful update
         }
     }
 
@@ -433,6 +423,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
                 W3StringItems!.Remove(stringItem); // Remove from main collection
             }
 
+            Log.Information("Deleted {Count} W3String item(s).", w3Items.Length);
             await RequestDataGridPagedSource(); // Request updated paged source
         }
     }
@@ -519,7 +510,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private void OpenWorkingFolder()
     {
         shellOpenService.Open(OutputFolder); // Open the working folder
-        Log.Information("Working folder opened."); // Log successful opening
     }
 
     /// <summary>
@@ -529,7 +519,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private void OpenNexusMods()
     {
         shellOpenService.Open(AppSettings.NexusModUrl); // Open the NexusMods page
-        Log.Information("NexusMods opened."); // Log successful opening
     }
 
     /// <summary>
@@ -598,38 +587,48 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand(CanExecute = nameof(CanMergeData))]
     private async Task MergeData()
     {
-        // Show open file dialog
-        using var storageFile = await dialogService.ShowOpenFileDialogAsync(this, new OpenFileDialogSettings
+        try
         {
-            Filters =
-            [
-                new FileFilter(Strings.FileFormatSupported, [".csv", ".xlsx", ".w3strings"]),
-                new FileFilter(Strings.FileFormatTextFile, ".csv"),
-                new FileFilter(Strings.FileFormatExcelWorkbook, ".xlsx"),
-                new FileFilter(Strings.FileFormatWitcher3StringsFile, ".w3strings")
-            ]
-        });
-        if (storageFile is not null &&
-            Path.GetExtension(storageFile.LocalPath) is ".csv" or ".w3strings"
-                or ".xlsx" &&
-            await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.MergeDataConfirm))
+            // Show open file dialog
+            using var storageFile = await dialogService.ShowOpenFileDialogAsync(this, new OpenFileDialogSettings
+            {
+                Filters =
+                [
+                    new FileFilter(Strings.FileFormatSupported, [".csv", ".xlsx", ".w3strings"]),
+                    new FileFilter(Strings.FileFormatTextFile, ".csv"),
+                    new FileFilter(Strings.FileFormatExcelWorkbook, ".xlsx"),
+                    new FileFilter(Strings.FileFormatWitcher3StringsFile, ".w3strings")
+                ]
+            });
+            if (storageFile is not null &&
+                Path.GetExtension(storageFile.LocalPath) is ".csv" or ".w3strings"
+                    or ".xlsx" &&
+                await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
+                    MessageTokens.MergeDataConfirm))
+            {
+                // Deserialize the file
+                var mergeData =
+                    await w3Serializer.Deserialize(storageFile.LocalPath);
+
+                // Join the two collections
+                var matchedPairs = W3StringItems!.Join(
+                    mergeData,
+                    oldItem => oldItem.StrId,
+                    newItem => newItem.StrId,
+                    (oldItem, newItem) => new { oldItem, newItem }
+                ).ToArray();
+
+                // Update the text of the old items
+                foreach (var pair in matchedPairs)
+                    pair.oldItem.Text = pair.newItem.Text;
+
+                Log.Information("Merged {MatchedCount} item(s) from {SourceFile}.",
+                    matchedPairs.Length, storageFile.LocalPath);
+            }
+        }
+        catch (Exception ex)
         {
-            // Deserialize the file
-            var mergeData =
-                await w3Serializer.Deserialize(storageFile.LocalPath);
-
-            // Join the two collections
-            var matchedPairs = W3StringItems!.Join(
-                mergeData,
-                oldItem => oldItem.StrId,
-                newItem => newItem.StrId,
-                (oldItem, newItem) => new { oldItem, newItem }
-            );
-
-            // Update the text of the old items
-            foreach (var pair in matchedPairs)
-                pair.oldItem.Text = pair.newItem.Text;
+            Log.Error(ex, "Failed to merge data.");
         }
     }
 }

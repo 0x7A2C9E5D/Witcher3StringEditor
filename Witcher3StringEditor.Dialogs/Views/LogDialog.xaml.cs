@@ -1,5 +1,4 @@
 ﻿using iNKORE.UI.WPF.Modern.Controls;
-using Serilog;
 
 namespace Witcher3StringEditor.Dialogs.Views;
 
@@ -40,7 +39,6 @@ public partial class LogDialog
     {
         if (string.IsNullOrWhiteSpace(args.QueryText)) return;
         SfDataGrid.SearchHelper.Search(args.QueryText);
-        Log.Information("Search query submitted: {QueryText}", args.QueryText);
     }
 
     /// <summary>

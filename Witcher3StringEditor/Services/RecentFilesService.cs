@@ -38,7 +38,7 @@ internal class RecentFilesService(ObservableCollection<IRecentFileEntry> recentI
         if (removed)
             Log.Information("Removed recent file: {FilePath}", recentFileEntry.FilePath);
         else
-            Log.Error("Failed to remove recent file: {FilePath}", recentFileEntry.FilePath);
+            Log.Warning("Failed to remove recent file: {FilePath}", recentFileEntry.FilePath);
         return removed;
     }
 }

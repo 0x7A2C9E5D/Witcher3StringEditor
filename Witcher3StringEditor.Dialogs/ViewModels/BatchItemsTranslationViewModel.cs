@@ -73,7 +73,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     {
         StartIndex = startIndex; // Set start index
         EndIndex = MaxValue = W3StringItems.Count; // Set end index and maximum value
-        Log.Information("Initializing BatchItemsTranslationViewModel."); // Log initialization
     }
 
     /// <summary>
@@ -130,16 +129,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     }
 
     /// <summary>
-    ///     Called when the IsBusy property changes
-    ///     Logs the busy state change
-    /// </summary>
-    /// <param name="value">The new busy state value</param>
-    partial void OnIsBusyChanged(bool value)
-    {
-        Log.Information("The batch translation is in progress: {0}.", value);
-    }
-
-    /// <summary>
     ///     Starts the batch translation process
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanStart))]
@@ -167,6 +156,8 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         CancellationTokenSource = new CancellationTokenSource(); // Create a new cancellation token source
         await ProcessTranslationItems(W3StringItems.Skip(StartIndex - 1).Take(PendingCount), // Process selected items
             ToLanguage, FormLanguage, CancellationTokenSource.Token);
+        Log.Information("Batch translation finished. Succeeded: {SuccessCount}, Failed: {FailureCount}.",
+            SuccessCount, FailureCount); // Log the batch result summary
     }
 
     /// <summary>
@@ -208,7 +199,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         }
         catch (OperationCanceledException ex)
         {
-            Log.Warning(ex, "Batch translation cancelled.");
+            Log.Warning(ex, "Batch translation was cancelled by the user.");
         }
     }
 
@@ -250,7 +241,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            Log.Error(ex, "Translation failed: {Text}", GetLogSafeTextSnippet(text));
+            Log.Warning(ex, "Translation failed: {Text}", GetLogSafeTextSnippet(text));
             return false;
         }
     }
@@ -296,7 +287,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             SelectedDictionary) // Check if the current dictionary is different from the selected one
             await DictionaryService
                 .Bind(SelectedDictionary); // Bind the selected dictionary and update the readiness flag
-        Log.Information("The dictionary is ready: {0}.", DictionaryService.IsReady);
+        Log.Information("Dictionary readiness after binding: {IsReady}.", DictionaryService.IsReady);
     }
 
     /// <summary>
@@ -315,7 +306,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="translatorName">The name of the translator that returned empty data</param>
     private static void LogEmptyTranslationResult(string translatorName)
     {
-        Log.Error("The translator: {Name} returned empty data.",
+        Log.Warning("The translator: {Name} returned empty data.",
             translatorName);
     }
 

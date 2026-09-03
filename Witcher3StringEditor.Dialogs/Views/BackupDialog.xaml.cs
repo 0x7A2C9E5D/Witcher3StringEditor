@@ -1,10 +1,7 @@
-﻿// ... existing code ...
-
-using System.Windows;
+﻿using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using iNKORE.UI.WPF.Modern.Controls;
-using Serilog;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
@@ -105,7 +102,6 @@ public partial class BackupDialog
     {
         if (string.IsNullOrWhiteSpace(args.QueryText)) return;
         SfDataGrid.SearchHelper.Search(args.QueryText);
-        Log.Information("Search query submitted: {QueryText}", args.QueryText);
     }
 
     /// <summary>

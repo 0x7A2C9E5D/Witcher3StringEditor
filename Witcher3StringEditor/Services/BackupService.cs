@@ -34,7 +34,11 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
                 BackupTime = DateTime.Now // Set backup time
             };
             Directory.CreateDirectory(AppPaths.BackupDirectory); // Ensure backup directory exists
-            return IsDuplicateBackup(backupItem) || ExecuteBackup(backupItem); // Check for duplicates or execute backup
+            if (!IsDuplicateBackup(backupItem)) return ExecuteBackup(backupItem); // Execute backup
+            // Check for duplicates
+            Log.Debug("Backup skipped, an identical backup already exists: {Path}.", filePath);
+            return true;
+
         }
         catch (Exception ex)
         {

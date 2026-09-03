@@ -1,3 +1,4 @@
+using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
@@ -28,17 +29,20 @@ public class W3SerializerCoordinator(
     {
         // Determine the appropriate deserializer based on the file extension
         // Convert the extension to lowercase for case-insensitive comparison
-        return Path.GetExtension(filePath).ToLowerInvariant() switch
+        var items = await (Path.GetExtension(filePath).ToLowerInvariant() switch
         {
             // For CSV files, use the CSV serializer
-            ".csv" => await csvW3Serializer.Deserialize(filePath),
+            ".csv" => csvW3Serializer.Deserialize(filePath),
             // For Excel files, use the Excel serializer
-            ".xlsx" => await excelW3Serializer.Deserialize(filePath),
+            ".xlsx" => excelW3Serializer.Deserialize(filePath),
             // For W3Strings files, use the W3Strings serializer
-            ".w3strings" => await w3StringsSerializer.Deserialize(filePath),
+            ".w3strings" => w3StringsSerializer.Deserialize(filePath),
             // Throw an exception for unsupported file formats
             _ => throw new NotSupportedException($"File format not supported: {filePath}")
-        };
+        });
+
+        Log.Information("Deserialized {Count} item(s) from {Path}.", items.Count, filePath);
+        return items;
     }
 
     /// <summary>
@@ -55,16 +59,21 @@ public class W3SerializerCoordinator(
     public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
     {
         // Determine the appropriate serializer based on the target file type
-        return context.TargetFileType switch
+        var succeeded = await (context.TargetFileType switch
         {
             // For CSV file type, use the CSV serializer
-            W3FileType.Csv => await csvW3Serializer.Serialize(w3StringItems, context),
+            W3FileType.Csv => csvW3Serializer.Serialize(w3StringItems, context),
             // For Excel file type, use the Excel serializer
-            W3FileType.Excel => await excelW3Serializer.Serialize(w3StringItems, context),
+            W3FileType.Excel => excelW3Serializer.Serialize(w3StringItems, context),
             // For W3Strings file type, use the W3Strings serializer
-            W3FileType.W3Strings => await w3StringsSerializer.Serialize(w3StringItems, context),
+            W3FileType.W3Strings => w3StringsSerializer.Serialize(w3StringItems, context),
             // Throw an exception for unsupported file types
             _ => throw new NotSupportedException($"File type not supported: {context.TargetFileType}")
-        };
+        });
+
+        if (succeeded)
+            Log.Information("Serialized {Count} item(s) as {FileType} to {Directory}.", w3StringItems.Count,
+                context.TargetFileType, context.OutputDirectory);
+        return succeeded;
     }
 }

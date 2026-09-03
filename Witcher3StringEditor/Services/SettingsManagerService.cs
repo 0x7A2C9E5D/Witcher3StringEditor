@@ -37,7 +37,6 @@ internal class SettingsManagerService : ISettingsManagerService
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task CheckSettings()
     {
-        Log.Information("Checking whether the settings are correct."); //Log checking message
         if (await CheckRequiredSettings()) return; // Check required settings
         var hasErrors = false; // Create a flag to indicate whether there are errors
         hasErrors |= !ValidateW3StringsPath(AppSettings); // Validate W3Strings path
@@ -112,11 +111,10 @@ internal class SettingsManagerService : ISettingsManagerService
     /// <param name="appSettings">The application settings instance</param>
     private static void LogAdditionalSettings(IAppSettings appSettings)
     {
-        Log.Information("The preferred filetype is {Filetype}",
-            appSettings.PreferredW3FileType); // Log preferred filetype
-        Log.Information("The preferred language is {Language}",
-            appSettings.PreferredLanguage); // Log preferred language
-        Log.Information("Current translator is {Translator}.", appSettings.Translator); // Log current translator
+        Log.Information(
+            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Translator: {Translator}.",
+            appSettings.PreferredW3FileType, appSettings.PreferredLanguage,
+            appSettings.Translator); // Log the relevant settings in a single entry
     }
 
     /// <summary>

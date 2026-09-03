@@ -39,7 +39,7 @@ public partial class MainWindow
         // Subscribe to theme change events and log the new theme
         ThemeManager.Current.ActualApplicationThemeChanged += (_, _) =>
         {
-            Log.Information("Theme changed to {Theme}", ThemeManager.Current.ActualApplicationTheme);
+            Log.Debug("Theme changed to {Theme}", ThemeManager.Current.ActualApplicationTheme);
         };
     }
 
@@ -75,7 +75,7 @@ public partial class MainWindow
             (_, m) =>
             {
                 SfDataPager.PageSize = m.Value; // Update the data pager's page size
-                Log.Information("Page size changed to {PageSize}", m.Value); // Log the new page size
+                Log.Debug("Page size changed to {PageSize}", m.Value); // Log the new page size
             });
     }
 
@@ -166,7 +166,6 @@ public partial class MainWindow
                 return; // Ensure there's data to search before proceeding
             SfDataGrid.SearchHelper.Search(args.QueryText); // Perform the search and collect results
             await NotifyDataGridSourceChanged(); // Notify data grid source changed
-            Log.Information("Search query submitted: {QueryText}", args.QueryText); // Log the search query
         }
         catch (Exception ex)
         {
@@ -187,7 +186,6 @@ public partial class MainWindow
             if (!string.IsNullOrWhiteSpace(sender.Text)) return; // Return if search text is not empty
             SfDataGrid.SearchHelper.ClearSearch(); // Clear the search helper results
             await NotifyDataGridSourceChanged(); // Notify data grid source changed
-            Log.Information("Search query cleared."); // Log the search query cleared
         }
         catch (Exception e)
         {
@@ -259,7 +257,6 @@ public partial class MainWindow
         try
         {
             await NotifyDataGridSourceChanged(); // Notify data grid source changed
-            Log.Information("Sorting columns changed."); // Log the change
         }
         catch (Exception ex)
         {

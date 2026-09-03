@@ -66,8 +66,8 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
         this.appSettings = appSettings;
         this.w3StringItems = w3StringItems;
         this.dictionaryService = dictionaryService;
-        Log.Information("Total items to translate: {Count}.", this.w3StringItems.Count); // Log the number of items
-        Log.Information("Starting index: {Index}.", index); // Log the starting index
+        Log.Information("Translation dialog opened: {Count} item(s) to translate, starting at index {Index}.",
+            this.w3StringItems.Count, index);
         CurrentViewModel =
             new SingleItemTranslationViewModel(appSettings, translator, this.w3StringItems,
                 index); // Initialize the current view model
@@ -107,10 +107,6 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
                     : Strings.TranslateDialogTitle;
                 Log.Information("Switched translation mode to {Mode}", // Log the mode switch
                     CurrentViewModel is BatchItemsTranslationViewModel ? "batch" : "single");
-            }
-            else
-            {
-                Log.Information("Translation mode switch cancelled."); // Log if switch is canceled
             }
         }
         catch (Exception ex)
