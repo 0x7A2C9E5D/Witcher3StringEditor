@@ -29,11 +29,11 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="34.2.6" />
+        <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="34.2.5"/>
         <PackageReference Include="System.Linq.AsyncEnumerable" Version="10.0.11"/>
         <PackageReference Include="ZString" Version="2.6.0"/>
         <PackageReference Update="Nerdbank.GitVersioning">
-            <Version>3.10.94</Version>
+            <Version>3.10.91</Version>
         </PackageReference>
     </ItemGroup>
 
