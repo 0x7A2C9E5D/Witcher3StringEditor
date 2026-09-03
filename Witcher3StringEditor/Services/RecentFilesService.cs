@@ -5,10 +5,21 @@ using Witcher3StringEditor.Models;
 
 namespace Witcher3StringEditor.Services;
 
+/// <summary>
+///     Provides access to the recent files
+/// </summary>
+/// <param name="recentItems"></param>
 internal class RecentFilesService(ObservableCollection<IRecentFileEntry> recentItems) : IRecentFilesService
 {
+    /// <summary>
+    ///     Gets the collection of recent files
+    /// </summary>
     public ObservableCollection<IRecentFileEntry> RecentItems { get; } = recentItems;
 
+    /// <summary>
+    ///     Adds or updates the specified file path in the recent files list
+    /// </summary>
+    /// <param name="filePath"></param>
     public void AddOrUpdateRecentFile(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
@@ -32,6 +43,10 @@ internal class RecentFilesService(ObservableCollection<IRecentFileEntry> recentI
         }
     }
 
+    /// <summary>
+    ///     Removes the specified file path from the recent files list
+    /// </summary>
+    /// <param name="recentFileEntry"></param>
     public void RemoveRecentFile(IRecentFileEntry recentFileEntry)
     {
         var removed = RecentItems.Remove(recentFileEntry);

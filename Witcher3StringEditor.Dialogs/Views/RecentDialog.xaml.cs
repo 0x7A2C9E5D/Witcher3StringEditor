@@ -24,7 +24,10 @@ public partial class RecentDialog
         SetupSearchHelper(); // Setup search helper
         RegisterMessageHandler(); // Register message handler
     }
-
+    
+    /// <summary>
+    ///     Registers the message handler for the recent dialog
+    /// </summary>
     private void RegisterMessageHandler()
     {
         WeakReferenceMessenger.Default.Register<RecentDialog, AsyncRequestMessage<bool>, string>(

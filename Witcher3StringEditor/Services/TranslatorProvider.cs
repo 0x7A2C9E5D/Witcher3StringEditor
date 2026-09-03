@@ -11,7 +11,10 @@ namespace Witcher3StringEditor.Services;
 /// <param name="serviceProvider">The service provider used to resolve translators</param>
 internal sealed class TranslatorProvider(IServiceProvider serviceProvider) : ITranslatorProvider
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     Gets the display names of all registered translators
+    /// </summary>
+    /// <returns></returns>
     public IReadOnlyList<string> GetTranslatorNames()
     {
         var translators = serviceProvider.GetServices<ITranslator>().ToArray(); // Resolve all translators
@@ -28,7 +31,11 @@ internal sealed class TranslatorProvider(IServiceProvider serviceProvider) : ITr
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     Resolves the translator instance matching the specified settings name
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     public ITranslator GetTranslator(string name)
     {
         return serviceProvider.GetServices<ITranslator>() // Resolve all translators

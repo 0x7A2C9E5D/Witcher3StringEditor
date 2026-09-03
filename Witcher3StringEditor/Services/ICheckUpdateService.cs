@@ -13,5 +13,5 @@ internal interface ICheckUpdateService
     ///     A task that represents the asynchronous operation. The task result contains true if an update is available,
     ///     false otherwise
     /// </returns>
-    public Task<bool> CheckUpdate();
+    Task<bool> CheckUpdate();
 }

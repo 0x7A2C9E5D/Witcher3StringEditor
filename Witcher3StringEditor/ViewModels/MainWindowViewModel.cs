@@ -91,6 +91,17 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private ObservableCollection<W3StringItem>? w3StringItems;
 
 
+    /// <summary>
+    ///     Initializes a new instance of the MainWindowViewModel class
+    /// </summary>
+    /// <param name="dialogService"></param>
+    /// <param name="dialogViewModelFactory"></param>
+    /// <param name="shellOpenService"></param>
+    /// <param name="recentFilesService"></param>
+    /// <param name="settingsManagerService"></param>
+    /// <param name="serviceProvider"></param>
+    /// <param name="translatorProvider"></param>
+    /// <param name="w3Serializer"></param>
     public MainWindowViewModel(
         IDialogService dialogService,
         IDialogViewModelFactory dialogViewModelFactory,

@@ -195,6 +195,11 @@ public partial class MainWindow
                 : ApplicationTheme.Light;
     }
 
+    /// <summary>
+    ///     Handles the SortColumnsChanged event of the data grid
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void SfDataGrid_OnSortColumnsChanged(object? sender, GridSortColumnsChangedEventArgs e)
     {
         try
@@ -207,6 +212,9 @@ public partial class MainWindow
         }
     }
 
+    /// <summary>
+    ///     Notifies the data grid source changed
+    /// </summary>
     private async Task NotifyDataGridSourceChanged()
     {
         await Task.Delay(100);

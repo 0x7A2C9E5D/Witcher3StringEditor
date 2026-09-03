@@ -10,5 +10,5 @@ internal interface IPlayGameService
     ///     Starts the game process
     /// </summary>
     /// <returns>A task that represents the asynchronous operation</returns>
-    public Task PlayGame();
+    Task PlayGame();
 }

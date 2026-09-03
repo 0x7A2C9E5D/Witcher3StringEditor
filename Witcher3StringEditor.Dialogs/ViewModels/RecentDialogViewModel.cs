@@ -19,6 +19,9 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public sealed partial class RecentDialogViewModel(IRecentFilesService recentFilesService, IDialogService dialogService)
     : DisposableViewModel, IModalDialogViewModel, ICloseable
 {
+    /// <summary>
+    ///     Gets the collection of recent items to display in the UI
+    /// </summary>
     public ObservableCollection<IRecentFileEntry> RecentItems =>
         recentFilesService.RecentItems;
 

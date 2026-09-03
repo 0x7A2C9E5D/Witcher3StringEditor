@@ -6,11 +6,19 @@ using Witcher3StringEditor.Miscellaneous;
 
 namespace Witcher3StringEditor.Services;
 
+/// <summary>
+///     Provides application diagnostics functionality
+/// </summary>
+/// <param name="appSettings"></param>
+/// <param name="cultureResolver"></param>
 internal class AppDiagnostics(
     IAppSettings appSettings,
     ICultureResolver cultureResolver)
     : IAppDiagnostics
 {
+    /// <summary>
+    ///     Logs information about the application startup
+    /// </summary>
     public void LogStartupInfo()
     {
         LogApplicationInfo();
@@ -18,6 +26,9 @@ internal class AppDiagnostics(
         LogLocalizationInfo();
     }
 
+    /// <summary>
+    ///     Logs information about the application
+    /// </summary>
     private static void LogApplicationInfo()
     {
         Log.Information("Application started.");
@@ -25,6 +36,9 @@ internal class AppDiagnostics(
         Log.Information("Is Debug: {IsDebug}", !BuildInformation.IsReleaseBuild);
     }
 
+    /// <summary>
+    ///     Logs information about the environment
+    /// </summary>
     private static void LogEnvironmentInfo()
     {
         Log.Information("OS Version: {Version}",
@@ -34,6 +48,9 @@ internal class AppDiagnostics(
         Log.Information("AppData Folder: {Folder}", AppPaths.AppDataDirectory);
     }
 
+    /// <summary>
+    ///     Logs information about the localization
+    /// </summary>
     private void LogLocalizationInfo()
     {
         var supportedCultures = cultureResolver.SupportedCultures;
