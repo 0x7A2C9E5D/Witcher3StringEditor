@@ -8,7 +8,7 @@ namespace Witcher3StringEditor.Models;
 ///     Implements the IRecentFileEntry interface and provides observable properties for data binding
 ///     This class stores metadata about a recently opened file including its path and opening time
 /// </summary>
-internal partial class RecentFileEntry : ObservableObject, IRecentFileEntry
+internal partial class RecentItem : ObservableObject, IRecentFileEntry
 {
     /// <summary>
     ///     Gets or sets the file path of the recently opened item
@@ -29,12 +29,12 @@ internal partial class RecentFileEntry : ObservableObject, IRecentFileEntry
     [ObservableProperty] private DateTime openedTime;
 
     /// <summary>
-    ///     Initializes a new instance of the RecentFileEntry class with specified values
+    ///     Initializes a new instance of the RecentItem class with specified values
     /// </summary>
     /// <param name="filePath">The file path of the recently opened item</param>
     /// <param name="openedTime">The time when the item was opened</param>
     /// <param name="isMarked">A value indicating whether the item is marked (default is false)</param>
-    public RecentFileEntry(string filePath, DateTime openedTime, bool isMarked = false)
+    public RecentItem(string filePath, DateTime openedTime, bool isMarked = false)
     {
         IsMarked = isMarked;
         FilePath = filePath;

@@ -7,7 +7,7 @@ namespace Witcher3StringEditor.Models;
 ///     Implements the IBackupItem interface to provide concrete backup item information
 ///     This record stores metadata about a backed up file including its location, hash, and backup time
 /// </summary>
-internal record BackupEntry : IBackupItem
+internal record BackupItem : IBackupItem
 {
     /// <summary>
     ///     Gets the name of the backed up file

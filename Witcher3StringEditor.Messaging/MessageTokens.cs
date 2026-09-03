@@ -49,5 +49,5 @@ public static class MessageTokens
     /// <summary>
     ///     Token for messages indicating that a recent file entry has been changed
     /// </summary>
-    public const string RecentFileEntry = "RecentFileEntry";
+    public const string RecentItem = "RecentItem";
 }

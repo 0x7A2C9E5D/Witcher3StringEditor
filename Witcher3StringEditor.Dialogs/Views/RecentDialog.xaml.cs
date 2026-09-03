@@ -28,7 +28,7 @@ public partial class RecentDialog
     private void RegisterMessageHandler()
     {
         WeakReferenceMessenger.Default.Register<RecentDialog, AsyncRequestMessage<bool>, string>(
-            this, MessageTokens.RecentFileEntry, (_, m) =>
+            this, MessageTokens.RecentItem, (_, m) =>
             {
                 m.Reply(MessageBox.Show(Strings.RecordDeletingMessgae,
                     Strings.RecordDeletingCaption,
