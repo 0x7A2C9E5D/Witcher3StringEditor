@@ -9,9 +9,6 @@ public enum MessageBoxIcon
     /// <summary>Neutral information.</summary>
     Information,
 
-    /// <summary>Something succeeded but the user should notice it.</summary>
-    Success,
-
     /// <summary>Something is off, but the flow can continue.</summary>
     Warning,
 
