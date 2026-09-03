@@ -1,4 +1,10 @@
-﻿using iNKORE.UI.WPF.Modern.Controls;
+﻿using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using iNKORE.UI.WPF.Modern.Controls;
+using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Messaging;
+using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace Witcher3StringEditor.Dialogs.Views;
 
@@ -16,6 +22,19 @@ public partial class RecentDialog
     {
         InitializeComponent(); // Initialize the UI components
         SetupSearchHelper(); // Setup search helper
+        RegisterMessageHandler(); // Register message handler
+    }
+
+    private void RegisterMessageHandler()
+    {
+        WeakReferenceMessenger.Default.Register<RecentDialog, AsyncRequestMessage<bool>, string>(
+            this, MessageTokens.RecentFileEntry, (_, m) =>
+            {
+                m.Reply(MessageBox.Show(Strings.RecordDeletingMessgae,
+                    Strings.RecordDeletingCaption,
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning) == MessageBoxResult.Yes);
+            });
     }
 
     /// <summary>

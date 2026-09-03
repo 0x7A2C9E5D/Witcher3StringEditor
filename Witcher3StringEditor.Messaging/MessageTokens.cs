@@ -45,4 +45,9 @@ public static class MessageTokens
     ///     Token for messages indicating that a request for data grid paged source has been made
     /// </summary>
     public const string RequestDataGridPagedSource = "RequestDataGridPagedSource";
+
+    /// <summary>
+    ///     Token for messages indicating that a recent file entry has been changed
+    /// </summary>
+    public const string RecentFileEntry = "RecentFileEntry";
 }
