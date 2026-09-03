@@ -4,9 +4,12 @@ using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Services;
 
@@ -16,13 +19,17 @@ namespace Witcher3StringEditor.Services;
 /// </summary>
 internal class SettingsManagerService : ISettingsManagerService
 {
+    private readonly IDialogService dialogService;
+
     /// <summary>
     ///     Initializes a new instance of the SettingsManagerService class
     /// </summary>
     /// <param name="appSettings">The application settings instance</param>
-    public SettingsManagerService(IAppSettings appSettings)
+    /// <param name="dialogService">The dialog service used to inform the user about invalid settings</param>
+    public SettingsManagerService(IAppSettings appSettings, IDialogService dialogService)
     {
         AppSettings = appSettings; // Store the app settings instance
+        this.dialogService = dialogService; // Store the dialog service
         if (AppSettings is INotifyPropertyChanged
             notifyPropertyChanged) // Check if app settings supports property change notifications
             notifyPropertyChanged.PropertyChanged += OnAppSettingsPropertyChanged; // Register property change handler
@@ -35,27 +42,27 @@ internal class SettingsManagerService : ISettingsManagerService
     ///     If required settings are missing, sends a message to trigger the first run setup
     /// </summary>
     /// <returns>A task that represents the asynchronous operation</returns>
-    public async Task CheckSettings()
+    public async Task CheckSettings(INotifyPropertyChanged dialogOwner)
     {
-        if (await CheckRequiredSettings()) return; // Check required settings
+        if (await CheckRequiredSettings(dialogOwner)) return; // Check required settings
         var hasErrors = false; // Create a flag to indicate whether there are errors
         hasErrors |= !ValidateW3StringsPath(AppSettings); // Validate W3Strings path
         hasErrors |= !ValidateGameExePath(AppSettings); // Validate game executable path
         LogAdditionalSettings(AppSettings); // Log additional settings
-        await HandleValidationResult(hasErrors); // Handle validation result
+        await HandleValidationResult(dialogOwner, hasErrors); // Handle validation result
     }
 
     /// <summary>
     ///     Checks if required settings are present and triggers first run if not
     /// </summary>
     /// <returns>True if first run setup was triggered, otherwise false</returns>
-    private async Task<bool> CheckRequiredSettings()
+    private async Task<bool> CheckRequiredSettings(INotifyPropertyChanged dialogOwner)
     {
         if (!string.IsNullOrWhiteSpace(AppSettings.W3StringsPath)) return false; // Check if W3Strings path is set
         Log.Error(
             "Settings are incorrect or initial setup is incomplete."); // Log settings incorrect or incomplete message
-        _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-            MessageTokens.FirstRun); // Trigger first run setup
+        await dialogService.MessageBoxNotifyAsync(dialogOwner, Strings.FirstRunMessage, Strings.FirstRunCaption,
+            MessageBoxIcon.Warning); // Tell the user that the initial setup is incomplete
         return true; // Return true if first run was triggered
     }
 
@@ -120,12 +127,13 @@ internal class SettingsManagerService : ISettingsManagerService
     /// <summary>
     ///     Handles the result of settings validation
     /// </summary>
+    /// <param name="dialogOwner"></param>
     /// <param name="hasErrors">Whether validation found errors</param>
-    private static async Task HandleValidationResult(bool hasErrors)
+    private async Task HandleValidationResult(INotifyPropertyChanged dialogOwner, bool hasErrors)
     {
         if (hasErrors) // If there are errors
-            _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.PathInvalid); // Trigger path invalid message
+            await dialogService.MessageBoxNotifyAsync(dialogOwner, Strings.PathInvalidMessage,
+                Strings.PathInvalidCaption, MessageBoxIcon.Error); // Tell the user that a path is invalid
         else
             Log.Information("Settings are correct."); // Log settings correct message
     }

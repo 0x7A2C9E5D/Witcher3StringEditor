@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Witcher3StringEditor.Contracts.Abstractions;
 
 /// <summary>
@@ -12,8 +14,11 @@ public interface ISettingsManagerService
     IAppSettings AppSettings { get; }
 
     /// <summary>
-    ///     Checks and validates the current application settings
+    ///     Checks and validates the current application settings, informing the user about anything that is missing
     /// </summary>
+    /// <param name="dialogOwner">
+    ///     The view model owning the window the notifications are shown on top of
+    /// </param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    Task CheckSettings();
+    Task CheckSettings(INotifyPropertyChanged dialogOwner);
 }

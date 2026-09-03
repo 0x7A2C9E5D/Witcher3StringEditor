@@ -2,10 +2,13 @@
 using System.IO;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -16,11 +19,14 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 /// </summary>
 public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalDialogViewModel, ICloseable
 {
+    private readonly IDialogService dialogService;
+
     private readonly IRecentFilesService recentFilesService;
 
-    public RecentDialogViewModel(IRecentFilesService recentFilesService)
+    public RecentDialogViewModel(IRecentFilesService recentFilesService, IDialogService dialogService)
     {
         this.recentFilesService = recentFilesService;
+        this.dialogService = dialogService;
     }
 
     public ObservableCollection<IRecentFileEntry> RecentItems =>
@@ -71,19 +77,18 @@ public sealed partial class RecentDialogViewModel : DisposableViewModel, IModalD
     private async Task HandleMissingFile(IRecentFileEntry recentFileEntry)
     {
         LogMissingFile(recentFileEntry.FilePath); // Log missing file
-        if (await NotifyFileNotFound(recentFileEntry.FilePath)) // If user confirms
+        if (await NotifyFileNotFound()) // If user confirms
             recentFilesService.RemoveRecentFile(recentFileEntry); // Remove the recent item (logged by the service)
     }
 
     /// <summary>
     ///     Notifies the user that a file was not found
     /// </summary>
-    /// <param name="filePath">The path of the file that was not found</param>
     /// <returns>True if the user confirmed the notification, false otherwise</returns>
-    private static async Task<bool> NotifyFileNotFound(string filePath)
+    private async Task<bool> NotifyFileNotFound()
     {
-        return await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<string, bool>(filePath),
-            MessageTokens.OpenedFileNoFound);
+        return await dialogService.MessageBoxConfirmAsync(this, Strings.FileOpenedNoFoundMessage,
+            Strings.FileOpenedNoFoundCaption, MessageBoxIcon.Warning);
     }
 
     /// <summary>

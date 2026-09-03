@@ -20,7 +20,6 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     WindowChrome.IsHitTestVisibleInChrome="True"
     WindowStartupLocation="CenterOwner"
-    Closed="SettingsDialog_OnClosed"
     mc:Ignorable="d">
     <!-- 
         Window resources containing data providers, styles and converters

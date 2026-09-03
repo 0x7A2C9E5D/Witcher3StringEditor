@@ -3,14 +3,13 @@ using System.IO;
 using System.IO.Compression;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Miscellaneous;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -113,14 +112,14 @@ public partial class SettingDialogViewModel(
     ///     Deletes old log files
     /// </summary>
     [RelayCommand]
-    private static void DeleteOldLogs()
+    private async Task DeleteOldLogs()
     {
         var files = Directory.GetFiles(AppPaths.LogDirectory); // Get all log files in the log folder.
         if (files.Length == 1) // If there is only one log file, do nothing.
         {
             Log.Information("No log cleanup needed: only one log file exists."); // Log that only one log file exists
-            WeakReferenceMessenger.Default.Send(string.Empty,
-                MessageTokens.LogsNoNeedToClean); // Send a message to the main window.
+            await dialogService.MessageBoxNotifyAsync(this, Strings.LogsNoNeedToCleanMessage,
+                Strings.LogCleanupCaption); // Tell the user that there is nothing to clean up.
             return;
         }
 
@@ -142,15 +141,15 @@ public partial class SettingDialogViewModel(
             }
 
         Log.Information("Deleted {Count} log files.", deletedFilesCount); // Log the number of deleted log files.
-        WeakReferenceMessenger.Default.Send(string.Empty,
-            MessageTokens.LogsCleaned); // Send a message to the main window.
+        await dialogService.MessageBoxNotifyAsync(this, Strings.LogsCleanedMessage,
+            Strings.LogCleanupCaption); // Tell the user that the log files have been cleaned.
     }
 
     /// <summary>
     ///     Collects the log files
     /// </summary>
     [RelayCommand]
-    private static void CollectLogs()
+    private async Task CollectLogs()
     {
         var tempFolder =
             Directory.CreateTempSubdirectory().FullName; // Create a temporary folder.
@@ -172,8 +171,8 @@ public partial class SettingDialogViewModel(
             archiveFileName);
 
         Directory.Delete(tempFolder, true); // Delete the temporary folder.
-        WeakReferenceMessenger.Default.Send(string.Empty,
-            MessageTokens.LogsCollected); // Send a message to the main window.
+        await dialogService.MessageBoxNotifyAsync(this, Strings.LogFilesCollectedMessage,
+            Strings.LogFilesCollectedCaption); // Tell the user where the archive has been created.
         Log.Information("Created zip file: {Path}.", archiveFileName); // Log the creation.
     }
 }

@@ -36,6 +36,11 @@ public class DictionaryService(
         dictionaryManager.Remove(dictionary);
     }
 
+    public bool ContainsDuplicate(string filePath)
+    {
+        return dictionaryManager.ContainsDuplicate(filePath);
+    }
+
     public IEnumerable<DictionaryInfo> Find(CultureInfo? language)
     {
         return dictionaryManager.Find(language);

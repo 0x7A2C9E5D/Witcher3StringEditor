@@ -36,7 +36,8 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     {
         return new BackupDialogViewModel(
             serviceProvider.GetRequiredService<IAppSettings>(),
-            serviceProvider.GetRequiredService<IBackupService>());
+            serviceProvider.GetRequiredService<IBackupService>(),
+            serviceProvider.GetRequiredService<IDialogService>());
     }
 
     /// <inheritdoc />
@@ -45,6 +46,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
         return new SaveDialogViewModel(
             serviceProvider.GetRequiredService<IAppSettings>(),
             serviceProvider.GetRequiredService<IW3Serializer>(),
+            serviceProvider.GetRequiredService<IDialogService>(),
             items,
             outputDirectory);
     }
@@ -75,7 +77,9 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     /// <inheritdoc />
     public RecentDialogViewModel CreateRecentDialog()
     {
-        return new RecentDialogViewModel(serviceProvider.GetRequiredService<IRecentFilesService>());
+        return new RecentDialogViewModel(
+            serviceProvider.GetRequiredService<IRecentFilesService>(),
+            serviceProvider.GetRequiredService<IDialogService>());
     }
 
     /// <inheritdoc />
@@ -87,6 +91,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
             translator,
             items,
             index,
+            serviceProvider.GetRequiredService<IDialogService>(),
             dictionaryService);
     }
 

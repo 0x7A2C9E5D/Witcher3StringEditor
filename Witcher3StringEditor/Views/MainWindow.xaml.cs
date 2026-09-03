@@ -7,10 +7,8 @@ using iNKORE.UI.WPF.Modern.Controls.Primitives;
 using Serilog;
 using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
-using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
-using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace Witcher3StringEditor.Views;
 
@@ -59,8 +57,7 @@ public partial class MainWindow
     /// </summary>
     private void RegisterMessageHandlers()
     {
-        RegisterAsyncRequestMessageHandlers(); // Register async request message handlers
-        RegisterFileOpenedMessageHandlers(); // Register file opened message handlers
+        RegisterDataGridSourceHandler(); // Register the data grid paged source handler
         RegisterPageSizeChangedHandler(); // Register page size change message handler
         RegisterThemeChangedHandler(); // Register handler for theme change notifications
     }
@@ -80,38 +77,10 @@ public partial class MainWindow
     }
 
     /// <summary>
-    ///     Registers message handlers for asynchronous request messages
-    ///     Handles messages for main window closing and first run scenarios
+    ///     Registers the handler replying with the current data grid paged source
     /// </summary>
-    private void RegisterAsyncRequestMessageHandlers()
+    private void RegisterDataGridSourceHandler()
     {
-        // Define message handlers for different scenarios
-        var requestMessageHandlers = new (string, Func<string>, Func<string>, MessageBoxButton, MessageBoxResult)[]
-        {
-            (MessageTokens.MainWindowClosing, () => Strings.AppExitMessage, () => Strings.AppExitCaption,
-                MessageBoxButton.YesNo,
-                MessageBoxResult.No),
-            (MessageTokens.FirstRun, () => Strings.FirstRunMessage, () => Strings.FirstRunCaption, MessageBoxButton.OK,
-                MessageBoxResult.OK),
-            (MessageTokens.PathInvalid, () => Strings.PathInvalidMessage,
-                () => Strings.PathInvalidCaption, MessageBoxButton.OK, MessageBoxResult.OK),
-            (MessageTokens.MergeDataConfirm, () => Strings.MergeDataConfirmMessage,
-                () => Strings.MergeDataConfirmCaption, MessageBoxButton.YesNo, MessageBoxResult.Yes)
-        };
-        // Register handlers for each scenario
-        foreach (var (token, message, caption, button, excepted) in requestMessageHandlers)
-            WeakReferenceMessenger.Default.Register<MainWindow, AsyncRequestMessage<bool>, string>(
-                this,
-                token,
-                (_, m) =>
-                {
-                    // Show a message box and reply with the user's choice
-                    m.Reply(MessageBox.Show(message(),
-                        caption(),
-                        button,
-                        MessageBoxImage.Question) == excepted);
-                });
-
         WeakReferenceMessenger.Default.Register<MainWindow, AsyncRequestMessage<List<W3StringItemModel>>, string>(
             this,
             MessageTokens.RequestDataGridPagedSource,
@@ -124,32 +93,6 @@ public partial class MainWindow
                     .Cast<W3StringItemModel>()
                 ]);
             }); // Request data grid paged source
-    }
-
-    /// <summary>
-    ///     Registers message handlers for file open requests
-    ///     Handles messages for reopening files and handling missing files
-    /// </summary>
-    private void RegisterFileOpenedMessageHandlers()
-    {
-        // Define message handlers for file operations
-        var messageHandlers = new (string, Func<string>, Func<string>)[]
-        {
-            (MessageTokens.ReOpenFile, () => Strings.ReOpenFileMessage, () => Strings.ReOpenFileCaption),
-            (MessageTokens.OpenedFileNoFound, () => Strings.FileOpenedNoFoundMessage,
-                () => Strings.FileOpenedNoFoundCaption)
-        };
-        // Register handlers for each file operation scenario
-        foreach (var (token, message, caption) in messageHandlers)
-            WeakReferenceMessenger.Default.Register<MainWindow, AsyncRequestMessage<string, bool>, string>(
-                this,
-                token,
-                (_, m) =>
-                {
-                    // Show a message box and reply with the user's choice
-                    m.Reply(MessageBox.Show(message(), caption(), MessageBoxButton.YesNo, MessageBoxImage.Question) ==
-                            MessageBoxResult.Yes);
-                });
     }
 
     /// <summary>

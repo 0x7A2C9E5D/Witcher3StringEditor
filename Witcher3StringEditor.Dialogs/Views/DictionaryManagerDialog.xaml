@@ -20,7 +20,6 @@
         ui:WindowHelper.SystemBackdropType="Mica"
         ui:TitleBar.ExtendViewIntoTitleBar="True"
         WindowChrome.IsHitTestVisibleInChrome="True"
-        Closed="DictionaryDialog_OnClosed"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d" Width="1200" Height="800">
     <Window.Resources>

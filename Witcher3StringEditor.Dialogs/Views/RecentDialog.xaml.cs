@@ -1,10 +1,4 @@
-﻿using System.Windows;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
-using iNKORE.UI.WPF.Modern.Controls;
-using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Messaging;
-using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
+﻿using iNKORE.UI.WPF.Modern.Controls;
 
 namespace Witcher3StringEditor.Dialogs.Views;
 
@@ -16,29 +10,12 @@ public partial class RecentDialog
 {
     /// <summary>
     ///     Initializes a new instance of the RecentDialog class
-    ///     Sets up the UI components, search helper, and message handlers
+    ///     Sets up the UI components and search helper
     /// </summary>
     public RecentDialog()
     {
         InitializeComponent(); // Initialize the UI components
         SetupSearchHelper(); // Setup search helper
-        RegisterMessageHandler(); // Register message handler
-    }
-
-    /// <summary>
-    ///     Registers a message handler for recent item operations
-    ///     Shows a confirmation dialog when a recent item is about to be deleted
-    /// </summary>
-    private void RegisterMessageHandler()
-    {
-        WeakReferenceMessenger.Default.Register<RecentDialog, AsyncRequestMessage<bool>, string>(
-            this, MessageTokens.RecentItem, (_, m) =>
-            {
-                m.Reply(MessageBox.Show(Strings.RecordDeletingMessgae,
-                    Strings.RecordDeletingCaption,
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning) == MessageBoxResult.Yes);
-            });
     }
 
     /// <summary>
@@ -80,13 +57,12 @@ public partial class RecentDialog
 
     /// <summary>
     ///     Handles the closed event of the recent dialog
-    ///     Unregisters message handlers and disposes of resources to prevent memory leaks
+    ///     Disposes of resources to prevent memory leaks
     /// </summary>
     /// <param name="sender">The object that triggered the event</param>
     /// <param name="e">The event arguments</param>
     private void RecentDialog_OnClosed(object? sender, EventArgs e)
     {
-        WeakReferenceMessenger.Default.UnregisterAll(this); // Unregister message handlers
         SfDataGrid.SearchHelper.Dispose(); // Dispose the search helper
         SfDataGrid.Dispose(); // Dispose the data grid
         SfDataPager.Dispose(); // Dispose the data pager

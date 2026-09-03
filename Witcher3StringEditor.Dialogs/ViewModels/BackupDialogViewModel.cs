@@ -1,12 +1,11 @@
 ﻿using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
-using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -17,9 +16,11 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 /// </summary>
 /// <param name="appSettings">Application settings service</param>
 /// <param name="backupService">Backup service for managing backup operations</param>
+/// <param name="dialogService">Dialog service used to inform or question the user</param>
 public partial class BackupDialogViewModel(
     IAppSettings appSettings,
-    IBackupService backupService)
+    IBackupService backupService,
+    IDialogService dialogService)
     : ObservableObject, IModalDialogViewModel
 {
     /// <summary>
@@ -48,27 +49,29 @@ public partial class BackupDialogViewModel(
 
     /// <summary>
     ///     Handles the restoration process for an existing backup file
-    ///     Sends a confirmation request and performs the restoration if approved
+    ///     Asks for confirmation and performs the restoration if approved
     /// </summary>
     /// <param name="backupItem">The backup item to restore</param>
     private async Task HandleExistingBackupFile(IBackupItem backupItem)
     {
-        // Send a confirmation request and restore the backup if approved
-        if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), MessageTokens.BackupRestore) &&
+        // Ask for confirmation and restore the backup if approved
+        if (await dialogService.MessageBoxConfirmAsync(this, Strings.BackupRestoreMessage,
+                Strings.BackupRestoreCaption) &&
             !backupService.Restore(backupItem)) // Attempt restoration
-            _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.OperationFailed); // Notify if failed
+            await dialogService.MessageBoxNotifyAsync(this, Strings.OperationFailureMessage,
+                Strings.OperationResultCaption, MessageBoxIcon.Warning); // Notify if failed
     }
 
     /// <summary>
     ///     Handles the case when a backup file is missing
-    ///     Sends an error notification and deletes the backup item if confirmed
+    ///     Notifies the user and deletes the backup item if confirmed
     /// </summary>
     /// <param name="backupItem">The backup item with the missing file</param>
     private async Task HandleMissingBackupFile(IBackupItem backupItem)
     {
         Log.Warning("The backup file {Path} does not exist.", backupItem.BackupPath); // Log warning
-        if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), MessageTokens.BackupFileNoFound))
+        if (await dialogService.MessageBoxConfirmAsync(this, Strings.BackupFileNoFoundMessage,
+                Strings.BackupFileNoFoundCaption))
             backupService.Delete(backupItem); // Delete the backup item if confirmed
     }
 
@@ -80,9 +83,9 @@ public partial class BackupDialogViewModel(
     private async Task Delete(IBackupItem backupItem)
     {
         // Confirm deletion and delete the backup if approved
-        if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.BackupDelete) && !backupService.Delete(backupItem)) // Attempt deletion
-            _ = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), // Notify if failed
-                MessageTokens.OperationFailed);
+        if (await dialogService.MessageBoxConfirmAsync(this, Strings.BackupDeleteMessage,
+                Strings.BackupDeleteCaption) && !backupService.Delete(backupItem)) // Attempt deletion
+            await dialogService.MessageBoxNotifyAsync(this, Strings.OperationFailureMessage,
+                Strings.OperationResultCaption, MessageBoxIcon.Warning); // Notify if failed
     }
 }

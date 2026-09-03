@@ -1,10 +1,7 @@
 ﻿using System.Globalization;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using Serilog;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Miscellaneous;
 
 namespace Witcher3StringEditor.Dictionary.Implementation;
@@ -40,10 +37,19 @@ public class DictionaryManager : IDictionaryManager
     /// <returns></returns>
     public async Task<DictionaryInfo?> Import(string filePath)
     {
-        if (!await HandleDuplicateDictionary(filePath))
-            return null;
+        RemoveDuplicates(filePath); // Replace any dictionary stored under the same file name
 
         return await CopyAndRegisterDictionary(filePath);
+    }
+
+    /// <summary>
+    ///     Check whether a dictionary with the same file name is already registered
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    public bool ContainsDuplicate(string filePath)
+    {
+        return FindDuplicates(filePath).Count != 0;
     }
 
     /// <summary>
@@ -78,23 +84,23 @@ public class DictionaryManager : IDictionaryManager
     }
 
     /// <summary>
-    ///     Handle duplicate dictionary
+    ///     Find dictionaries registered under the same file name
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    private async Task<bool> HandleDuplicateDictionary(string filePath)
+    private List<DictionaryInfo> FindDuplicates(string filePath)
     {
-        // Check for duplicate
         var fileName = Path.GetFileName(filePath);
-        var found =
-            dictionaries.Where(x => Path.GetFileName(x.Path) == fileName).ToList();
-        if (found.Count == 0) return true;
+        return dictionaries.Where(x => Path.GetFileName(x.Path) == fileName).ToList();
+    }
 
-        // Ask for overwrite
-        if (!await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.DictionaryOverwriteConfirm)) return false;
-        found.ForEach(x => dictionaries.Remove(x));
-        return true;
+    /// <summary>
+    ///     Removes dictionaries registered under the same file name, so that importing overwrites them
+    /// </summary>
+    /// <param name="filePath"></param>
+    private void RemoveDuplicates(string filePath)
+    {
+        FindDuplicates(filePath).ForEach(x => dictionaries.Remove(x));
     }
 
     /// <summary>

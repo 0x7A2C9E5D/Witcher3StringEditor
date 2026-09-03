@@ -24,6 +24,7 @@ using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Services;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.ViewModels;
 
@@ -240,7 +241,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     private async Task WindowLoaded()
     {
-        await settingsManagerService.CheckSettings(); // Check application settings
+        await settingsManagerService.CheckSettings(this); // Check application settings
         await using var scope = serviceProvider.CreateAsyncScope(); // Create a new scope
         IsUpdateAvailable = await scope.ServiceProvider
             .GetRequiredService<ICheckUpdateService>().CheckUpdate(); // Check for updates
@@ -255,8 +256,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task WindowClosing(CancelEventArgs e)
     {
         if (W3StringItems?.Any(x => x.IsModified) == true && // Check if there are any W3String items
-            await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.MainWindowClosing)) // Send close request
+            !await dialogService.MessageBoxConfirmAsync(this, Strings.AppExitMessage,
+                Strings.AppExitCaption)) // Ask the user before discarding the changes
             e.Cancel = true; // Cancel window closing if requested
     }
 
@@ -301,7 +302,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     {
         try
         {
-            if (!await HandleReOpenFile(fileName)) return; // Handle reopening file logic
+            if (!await HandleReOpenFile()) return; // Handle reopening file logic
             W3StringItems = (await DeserializeW3StringItems(fileName))
                 .OrderBy(x => x.StrId).ToObservableCollection(); // Deserialize file contents
             SetOutputFolder(fileName, folder => OutputFolder = folder); // Set output folder based on file location
@@ -332,14 +333,12 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <summary>
     ///     Handles reopening a file when another file is already open
     /// </summary>
-    /// <param name="fileName">The path to the file to reopen</param>
     /// <returns>True if the file can be reopened, false otherwise</returns>
-    private async Task<bool> HandleReOpenFile(string fileName)
+    private async Task<bool> HandleReOpenFile()
     {
         if (W3StringItems?.Any() != true) return true; // Return true if no items currently loaded
-        return await WeakReferenceMessenger.Default.Send(
-            new AsyncRequestMessage<string, bool>(fileName), // Send reopen file request
-            MessageTokens.ReOpenFile); // Wait for response
+        return await dialogService.MessageBoxConfirmAsync(this, Strings.ReOpenFileMessage,
+            Strings.ReOpenFileCaption); // Ask whether the currently loaded file may be replaced
     }
 
     /// <summary>
@@ -603,8 +602,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".csv" or ".w3strings"
                     or ".xlsx" &&
-                await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                    MessageTokens.MergeDataConfirm))
+                await dialogService.MessageBoxConfirmAsync(this, Strings.MergeDataConfirmMessage,
+                    Strings.MergeDataConfirmCaption)) // Ask before overwriting the loaded data
             {
                 // Deserialize the file
                 var mergeData =

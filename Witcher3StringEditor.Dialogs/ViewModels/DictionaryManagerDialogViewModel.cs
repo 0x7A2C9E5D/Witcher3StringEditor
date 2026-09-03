@@ -3,8 +3,6 @@ using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Serilog;
@@ -12,7 +10,7 @@ using Witcher3StringEditor.Dialogs.Models;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -108,19 +106,26 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             if (storageFile is not null &&
                 Path.GetExtension(storageFile.LocalPath) is ".txt") // If file is a text file
             {
+                if (dictionaryManager.ContainsDuplicate(storageFile.LocalPath) && // The import would overwrite
+                    !await dialogService.MessageBoxConfirmAsync(this,
+                        Strings.DictionaryOverwriteConfirmMessage,
+                        Strings.DictionaryOverwriteConfirmCaption,
+                        MessageBoxIcon.Warning)) return; // Ask before replacing an existing dictionary
+
                 // Try to import the dictionary, if successful, regroup dictionaries to reflect changes
                 var dictionaryInfo =
                     await dictionaryManager.Import(storageFile.LocalPath);
                 if (dictionaryInfo is null) return;
 
                 UpdateOrAddDictionaryToGroups(dictionaryInfo);
-                _ = WeakReferenceMessenger.Default.Send(string.Empty, MessageTokens.DictionaryImported);
+                await dialogService.MessageBoxNotifyAsync(this, Strings.DictionaryImportedMessage,
+                    Strings.DictionaryImportedCaption);
             }
         }
         catch (Exception e)
         {
-            _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.ImportDictionaryFailed);
+            await dialogService.MessageBoxNotifyAsync(this, Strings.ImportDictionaryFailedMessage,
+                Strings.ImportDictionaryFailedCaption, MessageBoxIcon.Error);
             Log.Error(e, "Error loading dictionary: {Path}", storageFile?.LocalPath);
         }
     }
@@ -189,8 +194,8 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     private async Task RemoveDictionary(DictionaryInfo? dictionary)
     {
         if (dictionary is null) return; // If no dictionary is selected, do nothing
-        if (await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(),
-                MessageTokens.RemoveDictionaryConfirm)) // Ask for confirmation before removing the dictionary
+        if (await dialogService.MessageBoxConfirmAsync(this, Strings.RemoveDictionaryConfirmMessage,
+                Strings.RemoveDictionaryConfirmCaption)) // Ask for confirmation before removing the dictionary
         {
             dictionaryManager.Remove(dictionary); // Remove the dictionary
             var found = DictionaryGroups

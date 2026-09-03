@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using GTranslate;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
@@ -10,7 +8,7 @@ using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -30,6 +28,11 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     ///     The dictionary service
     /// </summary>
     private readonly IDictionaryService? dictionaryService;
+
+    /// <summary>
+    ///     The dialog service
+    /// </summary>
+    private readonly IDialogService dialogService;
 
     /// <summary>
     ///     The translation service
@@ -58,19 +61,22 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="index">Starting index for translation</param>
+    /// <param name="dialogService">Dialog service used to inform or question the user</param>
     /// <param name="dictionaryService">Dictionary service</param>
     public TranslationDialogViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int index, IDictionaryService? dictionaryService)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int index, IDialogService dialogService,
+        IDictionaryService? dictionaryService)
     {
         this.translator = translator;
         this.appSettings = appSettings;
         this.w3StringItems = w3StringItems;
+        this.dialogService = dialogService;
         this.dictionaryService = dictionaryService;
         Log.Information("Translation dialog opened: {Count} item(s) to translate, starting at index {Index}.",
             this.w3StringItems.Count, index);
         CurrentViewModel =
             new SingleItemTranslationViewModel(appSettings, translator, this.w3StringItems,
-                index); // Initialize the current view model
+                index, dialogService, this); // Initialize the current view model
     }
 
     /// <summary>
@@ -89,18 +95,19 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
         try
         {
             if (!CurrentViewModel.GetIsBusy() || // Check if not busy
-                await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), // Or user confirms switch
-                    MessageTokens.TranslationModeSwitch))
+                await dialogService.MessageBoxConfirmAsync(this, Strings.TranslationModeSwitchMessage,
+                    Strings.TranslationModeSwitchCaption,
+                    MessageBoxIcon.Warning)) // Or user confirms switch
             {
                 await CleanupCurrentViewModelAsync(); // Clean up current view model
                 await DisposeCurrentViewModelAsync(); // Dispose current view model
                 var formLange = CurrentViewModel.FormLanguage; // Save current source language
                 CurrentViewModel = CurrentViewModel is BatchItemsTranslationViewModel // Switch view model type
                     ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems,
-                        ((BatchItemsTranslationViewModel)CurrentViewModel).StartIndex - 1)
+                        ((BatchItemsTranslationViewModel)CurrentViewModel).StartIndex - 1, dialogService, this)
                     : new BatchItemsTranslationViewModel(appSettings, translator,
                         w3StringItems, ((SingleItemTranslationViewModel)CurrentViewModel).CurrentItemIndex + 1,
-                        dictionaryService);
+                        dialogService, this, dictionaryService);
                 CurrentViewModel.FormLanguage = formLange; // Restore source language
                 Title = CurrentViewModel is BatchItemsTranslationViewModel // Update dialog title
                     ? Strings.BatchTranslateDialogTitle
@@ -178,8 +185,8 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
         if (translateViewModel?.CurrentTranslateItemModel is
                 { IsSaved: false } item // Check if there are unsaved changes
             && !string.IsNullOrWhiteSpace(item.TranslatedText) // And translated text exists
-            && await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), // Confirm with user
-                MessageTokens.TranslatedTextNoSaved))
+            && await dialogService.MessageBoxConfirmAsync(this, Strings.TranslatedTextNoSavedMessage,
+                Strings.TranslatedTextNoSavedCaption, MessageBoxIcon.Warning)) // Confirm with user
         {
             var found = w3StringItems // Find the original item
                 .First(x => x.TrackingId == item.Id);
@@ -196,8 +203,8 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     private async Task<bool> HandleClosingAsync()
     {
         if (!CurrentViewModel.GetIsBusy() || // Allow closing if not busy
-            await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<bool>(), // Or if user confirms
-                MessageTokens.TranslationDialogClosing))
+            await dialogService.MessageBoxConfirmAsync(this, Strings.TranslatorTranslatingMessage,
+                Strings.TranslatorTranslatingCaption, MessageBoxIcon.Warning)) // Or if user confirms
         {
             await CleanupCurrentViewModelAsync(); // Clean up before closing
             return false; // Allow the dialog to close

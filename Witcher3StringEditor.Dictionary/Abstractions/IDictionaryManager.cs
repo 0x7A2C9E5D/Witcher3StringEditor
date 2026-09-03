@@ -8,9 +8,16 @@ namespace Witcher3StringEditor.Dictionary.Abstractions;
 public interface IDictionaryManager
 {
     /// <summary>
-    ///     Imports a dictionary from a file.
+    ///     Imports a dictionary from a file, replacing any dictionary stored under the same file name.
     /// </summary>
     Task<DictionaryInfo?> Import(string filePath);
+
+    /// <summary>
+    ///     Determines whether a dictionary with the same file name is already registered.
+    /// </summary>
+    /// <param name="filePath">The path of the dictionary file being imported.</param>
+    /// <returns><c>true</c> when importing would overwrite an existing dictionary.</returns>
+    bool ContainsDuplicate(string filePath);
 
     /// <summary>
     ///     Removes the specified dictionary.
