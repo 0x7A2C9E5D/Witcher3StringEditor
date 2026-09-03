@@ -24,6 +24,16 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public abstract partial class TranslationViewModelBase : ObservableObject, IAsyncDisposable
 {
     /// <summary>
+    ///     The view model owning the dialog window, used as the owner of the dialogs shown by this instance
+    /// </summary>
+    private protected readonly INotifyPropertyChanged DialogOwner;
+
+    /// <summary>
+    ///     The dialog service used to inform or question the user
+    /// </summary>
+    private protected readonly IDialogService DialogService;
+
+    /// <summary>
     ///     The dictionary service used for managing dictionaries
     /// </summary>
     private protected readonly IDictionaryService? DictionaryService;
@@ -32,16 +42,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     ///     The translation service used for translating text
     /// </summary>
     private protected readonly ITranslator Translator;
-
-    /// <summary>
-    ///     The dialog service used to inform or question the user
-    /// </summary>
-    private protected readonly IDialogService DialogService;
-
-    /// <summary>
-    ///     The view model owning the dialog window, used as the owner of the dialogs shown by this instance
-    /// </summary>
-    private protected readonly INotifyPropertyChanged DialogOwner;
 
     /// <summary>
     ///     The collection of items to translate

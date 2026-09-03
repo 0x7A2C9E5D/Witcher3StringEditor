@@ -37,10 +37,10 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     // Dependency services
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDialogViewModelFactory dialogViewModelFactory; // Get dialog view model factory
-    private readonly IShellOpenService shellOpenService; // Get explorer service
     private readonly IRecentFilesService recentFilesService; // Get recent files service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
+    private readonly IShellOpenService shellOpenService; // Get explorer service
     private readonly ITranslatorProvider translatorProvider; // Get translator provider
     private readonly IW3Serializer w3Serializer; // Get serializer service
 

@@ -25,14 +25,14 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     private readonly IAppSettings appSettings;
 
     /// <summary>
-    ///     The dictionary service
-    /// </summary>
-    private readonly IDictionaryService? dictionaryService;
-
-    /// <summary>
     ///     The dialog service
     /// </summary>
     private readonly IDialogService dialogService;
+
+    /// <summary>
+    ///     The dictionary service
+    /// </summary>
+    private readonly IDictionaryService? dictionaryService;
 
     /// <summary>
     ///     The translation service

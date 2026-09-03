@@ -175,15 +175,11 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         var targetGroup = DictionaryGroups.FirstOrDefault(g => Equals(g.TargetLanguage, dictionaryInfo.TargetLanguage));
 
         if (targetGroup is null)
-        {
             // Create a new group for this language
             DictionaryGroups.Add(new DictionaryGroup(dictionaryInfo.TargetLanguage, [dictionaryInfo]));
-        }
         else
-        {
             // Add to existing group
             targetGroup.Dictionaries.Add(dictionaryInfo);
-        }
     }
 
     /// <summary>

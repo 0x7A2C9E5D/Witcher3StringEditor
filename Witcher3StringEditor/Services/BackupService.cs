@@ -38,7 +38,6 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
             // Check for duplicates
             Log.Debug("Backup skipped, an identical backup already exists: {Path}.", filePath);
             return true;
-
         }
         catch (Exception ex)
         {
