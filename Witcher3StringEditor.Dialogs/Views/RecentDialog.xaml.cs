@@ -36,7 +36,7 @@ public partial class RecentDialog
                     MessageBoxImage.Warning) == MessageBoxResult.Yes);
             });
     }
-
+    
     /// <summary>
     ///     Sets up the search helper for the data grid
     ///     Enables filtering and disables case-sensitive search
