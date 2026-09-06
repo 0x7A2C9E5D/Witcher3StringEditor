@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using CommandLine;
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -316,7 +315,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             if (!await HandleReOpenFile()) return; // Handle reopening file logic
             W3StringItems = (await DeserializeW3StringItems(fileName))
                 .OrderBy(x => x.StrId).ToObservableCollection(); // Deserialize file contents
-            SetOutputFolder(fileName, folder => OutputFolder = folder); // Set output folder based on file location
+            OutputFolder = Path.GetDirectoryName(fileName)!; // Set output folder based on file location
             recentFilesService.AddOrUpdateRecentFile(fileName); // Update recent items list
             SearchText = string.Empty; // Clear search text
         }
@@ -350,18 +349,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         if (W3StringItems?.Any() != true) return true; // Return true if no items currently loaded
         return await dialogService.MessageBoxConfirmAsync(this, Strings.ReOpenFileMessage,
             Strings.ReOpenFileCaption); // Ask whether the currently loaded file may be replaced
-    }
-
-    /// <summary>
-    ///     Sets the output folder based on the specified file name
-    /// </summary>
-    /// <param name="fileName">The file name to extract the directory from</param>
-    /// <param name="onOutputFolderChanged">The action to call when the output folder changes</param>
-    private static void SetOutputFolder(string fileName, Action<string> onOutputFolderChanged)
-    {
-        var folder = Path.GetDirectoryName(fileName); // Extract directory from file name
-        Guard.IsNotNull(folder); // Guard against null
-        onOutputFolderChanged(folder); // Notify of folder change
     }
 
     /// <summary>
