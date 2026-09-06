@@ -17,21 +17,17 @@ public class CultureMatcher : ICultureMatcher
     /// </returns>
     public IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IReadOnlyList<CultureInfo> availableCultures)
     {
-        var bestMatches = availableCultures
-            .Where(x => x.Name == targetCulture.Name).ToArray();
-        if (bestMatches.Length != 0) return bestMatches;
-        var targetParentName = targetCulture.Parent.Name;
-        bestMatches =
-        [
-            .. availableCultures
-                .Where(x => x.Name == targetParentName)
-        ];
-        if (bestMatches.Length != 0) return bestMatches;
-        bestMatches =
-        [
-            .. availableCultures
-                .Where(x => x.Parent.Name == targetParentName)
-        ];
-        return bestMatches.Length != 0 ? bestMatches : [];
+        var parentName = targetCulture.Parent.Name;
+
+        return Find(x => x.Name == targetCulture.Name)
+               ?? Find(x => x.Name == parentName)
+               ?? Find(x => x.Parent.Name == parentName)
+               ?? [];
+
+        IEnumerable<CultureInfo>? Find(Func<CultureInfo, bool> predicate)
+        {
+            var matches = availableCultures.Where(predicate).ToArray();
+            return matches.Length != 0 ? matches : null;
+        }
     }
 }
