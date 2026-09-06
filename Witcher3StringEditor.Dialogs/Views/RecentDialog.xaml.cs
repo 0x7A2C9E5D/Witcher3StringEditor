@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using iNKORE.UI.WPF.Modern.Controls;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Messaging;
 using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
@@ -21,7 +20,6 @@ public partial class RecentDialog
     public RecentDialog()
     {
         InitializeComponent(); // Initialize the UI components
-        SetupSearchHelper(); // Setup search helper
         RegisterMessageHandler(); // Register message handler
     }
     
@@ -40,43 +38,6 @@ public partial class RecentDialog
             });
     }
     
-    /// <summary>
-    ///     Sets up the search helper for the data grid
-    ///     Enables filtering and disables case-sensitive search
-    /// </summary>
-    private void SetupSearchHelper()
-    {
-        SfDataGrid.SearchHelper.AllowFiltering = true; // Enable filtering
-        SfDataGrid.SearchHelper.AllowCaseSensitiveSearch = false; // Disable case-sensitive search
-        SfDataGrid.SearchHelper.CanHighlightSearchText = false; // Disable text highlighting
-    }
-
-    /// <summary>
-    ///     Handles the query submitted event of the search box
-    ///     Performs a search in the data grid based on the entered query text
-    /// </summary>
-    /// <param name="sender">The auto suggest box that triggered the event</param>
-    /// <param name="args">The event arguments containing the query text</param>
-    private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-    {
-        // Check if the query text is empty or null
-        if (string.IsNullOrWhiteSpace(args.QueryText)) return;
-        SfDataGrid.SearchHelper.Search(args.QueryText); // Perform a search in the data grid
-    }
-
-    /// <summary>
-    ///     Handles the text changed event of the search box
-    ///     Clears the search when the text is empty or null
-    /// </summary>
-    /// <param name="sender">The auto suggest box that triggered the event</param>
-    /// <param name="args">The event arguments containing information about the text change</param>
-    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-    {
-        // Check if the text is empty or null
-        if (string.IsNullOrEmpty(sender.Text))
-            SfDataGrid.SearchHelper.ClearSearch(); // Clear the search
-    }
-
     /// <summary>
     ///     Handles the closed event of the recent dialog
     ///     Disposes of resources to prevent memory leaks

@@ -83,11 +83,10 @@
                 Text="{I18N {x:Static l:LangKeys.DictionaryDialogTitle}}" />
             <!-- Search box for filtering backup items -->
             <ui:AutoSuggestBox
+                x:Name="SearchBox"
                 Grid.Column="1"
                 VerticalAlignment="Center"
-                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}"
-                QuerySubmitted="SearchBox_OnQuerySubmitted"
-                TextChanged="SearchBox_TextChanged">
+                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}">
                 <ui:AutoSuggestBox.QueryIcon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Search}" />
                 </ui:AutoSuggestBox.QueryIcon>
@@ -145,6 +144,7 @@
             <i:Interaction.Behaviors>
                 <b2:SfDataGridQueryRowHeightBehavior />
                 <b2:SfDataGridSizeChangedBehavior />
+                <b2:SfDataGridSearchBehavior SearchBox="{Binding ElementName=SearchBox}" />
             </i:Interaction.Behaviors>
         </sf:SfDataGrid>
         <sf:SfDataPager x:Name="SfDataPager" Grid.Row="3" Grid.Column="1" Margin="0,5" HorizontalAlignment="Center"

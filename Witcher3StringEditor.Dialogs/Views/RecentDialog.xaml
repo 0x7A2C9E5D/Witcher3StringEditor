@@ -78,11 +78,10 @@
                 Text="{I18N {x:Static l:LangKeys.RecentDialogTitle}}" />
             <!-- Search box for filtering recent items -->
             <ui:AutoSuggestBox
+                x:Name="SearchBox"
                 Grid.Column="1"
                 VerticalAlignment="Center"
-                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}"
-                QuerySubmitted="SearchBox_QuerySubmitted"
-                TextChanged="SearchBox_TextChanged">
+                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}">
                 <ui:AutoSuggestBox.QueryIcon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Search}" />
                 </ui:AutoSuggestBox.QueryIcon>
@@ -135,6 +134,8 @@
                 <b:SfDataGridSizeChangedBehavior />
                 <!-- Behavior to handle row height queries -->
                 <b:SfDataGridQueryRowHeightBehavior MinHeight="{Binding ElementName=SfDataGrid, Path=RowHeight}" />
+                <!-- Behavior to drive the grid search from the search box -->
+                <b:SfDataGridSearchBehavior SearchBox="{Binding ElementName=SearchBox}" />
                 <!-- Behavior to handle record deletion -->
                 <b:SfDataGridRecordDeletingBehavior />
             </i:Interaction.Behaviors>

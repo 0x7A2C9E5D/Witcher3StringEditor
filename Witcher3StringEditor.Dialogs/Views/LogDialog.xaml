@@ -49,11 +49,10 @@
                 Text="{I18N {x:Static l:LangKeys.LogDialogTitle}}" />
             <!-- Search box for filtering log entries -->
             <ui:AutoSuggestBox
+                x:Name="SearchBox"
                 Grid.Column="1"
                 VerticalAlignment="Center"
-                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}"
-                QuerySubmitted="SearchBox_QuerySubmitted"
-                TextChanged="SearchBox_TextChanged">
+                PlaceholderText="{I18N {x:Static l:LangKeys.SearchBoxPlaceholderText}}">
                 <ui:AutoSuggestBox.QueryIcon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Search}" />
                 </ui:AutoSuggestBox.QueryIcon>
@@ -101,12 +100,14 @@
                     </Style>
                 </ResourceDictionary>
             </sf:SfDataGrid.Resources>
-            <!-- Interaction behaviors for handling grid sizing and row height -->
+            <!-- Interaction behaviors for handling grid sizing, search and row height -->
             <i:Interaction.Behaviors>
                 <!-- Behavior to handle grid size changes -->
                 <b:SfDataGridSizeChangedBehavior />
                 <!-- Behavior to handle row height queries -->
                 <b:SfDataGridQueryRowHeightBehavior MinHeight="{Binding ElementName=SfDataGrid, Path=RowHeight}" />
+                <!-- Behavior to drive the grid search from the search box -->
+                <b:SfDataGridSearchBehavior SearchBox="{Binding ElementName=SearchBox}" />
             </i:Interaction.Behaviors>
             <!-- Data grid columns definition -->
             <sf:SfDataGrid.Columns>
