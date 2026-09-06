@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Globalization;
+﻿using System.Globalization;
 using Witcher3StringEditor.Dictionary.Abstractions;
 
 namespace Witcher3StringEditor.Dictionary.Implementation;
@@ -164,24 +163,28 @@ public class DictionaryProvider : IDictionaryProvider
     /// </summary>
     private static Dictionary<string, string> ParseEntries(IEnumerable<string> lines)
     {
-        var entries =
-            new ConcurrentDictionary<string, string>(StringComparer
-                .OrdinalIgnoreCase); // Use ConcurrentDictionary for parallel processing
+        var entries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        lines.AsParallel() // Process lines in parallel
-            .Select(line => line.Trim()) // Trim lines
-            .Where(trimmedLine =>
-                !string.IsNullOrEmpty(trimmedLine) &&
-                !trimmedLine.StartsWith(CommentPrefix,
-                    StringComparison.InvariantCulture)) // Skip empty lines and comments
-            .Select(trimmedLine => trimmedLine.Split(Separator, 2)) // Split into key and value
-            .Where(parts => parts.Length == 2) // Validate format
-            .Select(parts => new { Key = parts[0].Trim(), Value = parts[1].Trim() }) // Create anonymous type
-            .Where(x => !string.IsNullOrEmpty(x.Key) && !string.IsNullOrEmpty(x.Value)) // Skip invalid entries
-            .ForAll(x => entries[x.Key] = x.Value); // Add valid entries to the dictionary
+        foreach (var line in lines)
+        {
+            var trimmedLine = line.Trim(); // Trim line for accurate processing
 
-        return entries.ToDictionary(x => x.Key, x => x.Value,
-            StringComparer.OrdinalIgnoreCase); // Convert to regular dictionary
+            // Skip empty lines and comments
+            if (string.IsNullOrEmpty(trimmedLine) ||
+                trimmedLine.StartsWith(CommentPrefix, StringComparison.InvariantCulture))
+                continue;
+
+            var parts = trimmedLine.Split(Separator, 2); // Split into key and value
+            if (parts.Length != 2) continue; // Skip lines without the separator
+
+            var key = parts[0].Trim();
+            var value = parts[1].Trim();
+            if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)) continue; // Skip invalid entries
+
+            entries[key] = value; // Later duplicate keys overwrite earlier ones
+        }
+
+        return entries;
     }
 
     /// <summary>
