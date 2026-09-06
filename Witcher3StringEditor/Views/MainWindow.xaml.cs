@@ -29,19 +29,6 @@ public partial class MainWindow
     }
 
     /// <summary>
-    ///     Registers a handler for theme change events
-    ///     Logs the theme change when it occurs
-    /// </summary>
-    private static void RegisterThemeChangedHandler()
-    {
-        // Subscribe to theme change events and log the new theme
-        ThemeManager.Current.ActualApplicationThemeChanged += (_, _) =>
-        {
-            Log.Debug("Theme changed to {Theme}", ThemeManager.Current.ActualApplicationTheme);
-        };
-    }
-
-    /// <summary>
     ///     Sets up the search helper for the data grid
     ///     Configures filtering and case sensitivity options
     /// </summary>
@@ -59,7 +46,6 @@ public partial class MainWindow
     {
         RegisterDataGridSourceHandler(); // Register the data grid paged source handler
         RegisterPageSizeChangedHandler(); // Register page size change message handler
-        RegisterThemeChangedHandler(); // Register handler for theme change notifications
     }
 
     /// <summary>
