@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Globalization;
+﻿using System.Globalization;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -56,11 +55,10 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="index">Initial index of the item to translate</param>
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
-    /// <param name="dialogOwner">The view model owning the dialog window</param>
     public SingleItemTranslationViewModel(IAppSettings appSettings, ITranslator translator,
         IReadOnlyList<ITrackableW3StringItem> w3StringItems,
-        int index, IDialogService dialogService, INotifyPropertyChanged dialogOwner)
-        : base(appSettings, translator, w3StringItems, dialogService, dialogOwner)
+        int index, IDialogService dialogService)
+        : base(appSettings, translator, w3StringItems, dialogService)
     {
         CurrentItemIndex = index;
     }
@@ -143,14 +141,14 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
             else
             {
                 // Tell the user that the item has already been translated
-                await DialogService.MessageBoxNotifyAsync(DialogOwner, Strings.TranslationNotEmptyMessage,
+                await DialogService.MessageBoxNotifyAsync(this, Strings.TranslationNotEmptyMessage,
                     Strings.TranslationNotEmptyCaption, MessageBoxIcon.Warning);
             }
         }
         catch (Exception ex)
         {
             const string errorMessage = "The translator: {0} returned an error. Exception: {1}";
-            await DialogService.MessageBoxNotifyAsync(DialogOwner,
+            await DialogService.MessageBoxNotifyAsync(this,
                 string.Format(CultureInfo.InvariantCulture, errorMessage, Translator.Name, ex.Message),
                 Strings.TranslateErrorCaption, MessageBoxIcon.Warning);
             Log.Error(ex,
@@ -193,7 +191,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
                     ?.TranslatedText)) // Check if translation text is not empty
                 SaveTranslation(); // Save translation
             else
-                await DialogService.MessageBoxNotifyAsync(DialogOwner, Strings.TranslatedTextInvalidMessage,
+                await DialogService.MessageBoxNotifyAsync(this, Strings.TranslatedTextInvalidMessage,
                     Strings.TranslatedTextInvalidCaption,
                     MessageBoxIcon.Warning); // Tell the user that there is nothing to save
         }
@@ -214,7 +212,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
         {
             if (CurrentTranslateItemModel is { IsSaved: false } // Check if current translation is unsaved
                 && !string.IsNullOrWhiteSpace(CurrentTranslateItemModel.TranslatedText) // And has text content
-                && await DialogService.MessageBoxConfirmAsync(DialogOwner, // Ask user to confirm save
+                && await DialogService.MessageBoxConfirmAsync(this, // Ask user to confirm save
                     Strings.TranslatedTextNoSavedMessage,
                     Strings.TranslatedTextNoSavedCaption, MessageBoxIcon.Warning))
                 SaveTranslation(); // Save the translation if confirmed

@@ -76,7 +76,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
             this.w3StringItems.Count, index);
         CurrentViewModel =
             new SingleItemTranslationViewModel(appSettings, translator, this.w3StringItems,
-                index, dialogService, this); // Initialize the current view model
+                index, dialogService); // Initialize the current view model
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
                 var formLange = CurrentViewModel.FormLanguage; // Save current source language
                 CurrentViewModel = CurrentViewModel is BatchItemsTranslationViewModel // Switch view model type
                     ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems,
-                        ((BatchItemsTranslationViewModel)CurrentViewModel).StartIndex - 1, dialogService, this)
+                        ((BatchItemsTranslationViewModel)CurrentViewModel).StartIndex - 1, dialogService)
                     : new BatchItemsTranslationViewModel(appSettings, translator,
                         w3StringItems, ((SingleItemTranslationViewModel)CurrentViewModel).CurrentItemIndex + 1,
                         dialogService, this, dictionaryService);

@@ -74,7 +74,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex,
         IDialogService dialogService, INotifyPropertyChanged dialogOwner,
         IDictionaryService? dictionaryService = null) : base(appSettings, translator,
-        w3StringItems, dialogService, dialogOwner, dictionaryService)
+        w3StringItems, dialogService, dictionaryService)
     {
         StartIndex = startIndex; // Set start index
         EndIndex = MaxValue = W3StringItems.Count; // Set end index and maximum value

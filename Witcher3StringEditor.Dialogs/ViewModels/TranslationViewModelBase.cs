@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
@@ -22,11 +21,6 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 /// </summary>
 public abstract partial class TranslationViewModelBase : ObservableObject, IAsyncDisposable
 {
-    /// <summary>
-    ///     The view model owning the dialog window, used as the owner of the dialogs shown by this instance
-    /// </summary>
-    private protected readonly INotifyPropertyChanged DialogOwner;
-
     /// <summary>
     ///     The dialog service used to inform or question the user
     /// </summary>
@@ -84,15 +78,12 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="translator">Translation service</param>
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
-    /// <param name="dialogOwner">The view model owning the dialog window</param>
     /// <param name="dictionaryService">Dictionary service</param>
     protected TranslationViewModelBase(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDialogService dialogService,
-        INotifyPropertyChanged dialogOwner, IDictionaryService? dictionaryService = null)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDialogService dialogService, IDictionaryService? dictionaryService = null)
     {
         Translator = translator; // Initialize the translator
         DialogService = dialogService; // Initialize the dialog service
-        DialogOwner = dialogOwner; // Initialize the owner of the dialogs shown by this instance
         DictionaryService = dictionaryService; // Initialize the dictionary service (optional)
         W3StringItems = w3StringItems; // Initialize the collection of items to translate
         Languages = GetSupportedLanguages(
