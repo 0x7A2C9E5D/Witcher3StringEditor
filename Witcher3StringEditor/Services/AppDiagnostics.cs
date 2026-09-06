@@ -33,7 +33,7 @@ internal class AppDiagnostics(
     {
         Log.Information("Application started.");
         Log.Information("Application Version: {Version}", ThisAssembly.AssemblyFileVersion);
-        Log.Information("Is Debug: {IsDebug}", !BuildInformation.IsReleaseBuild);
+        Log.Information("Is Debug: {IsDebug}", DebugHelper.IsDebug);
     }
 
     /// <summary>
