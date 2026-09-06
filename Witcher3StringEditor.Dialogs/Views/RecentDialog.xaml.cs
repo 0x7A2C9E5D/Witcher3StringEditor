@@ -22,7 +22,7 @@ public partial class RecentDialog
         InitializeComponent(); // Initialize the UI components
         RegisterMessageHandler(); // Register message handler
     }
-    
+
     /// <summary>
     ///     Registers the message handler for the recent dialog
     /// </summary>
@@ -36,18 +36,5 @@ public partial class RecentDialog
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning) == MessageBoxResult.Yes);
             });
-    }
-    
-    /// <summary>
-    ///     Handles the closed event of the recent dialog
-    ///     Disposes of resources to prevent memory leaks
-    /// </summary>
-    /// <param name="sender">The object that triggered the event</param>
-    /// <param name="e">The event arguments</param>
-    private void RecentDialog_OnClosed(object? sender, EventArgs e)
-    {
-        SfDataGrid.SearchHelper.Dispose(); // Dispose the search helper
-        SfDataGrid.Dispose(); // Dispose the data grid
-        SfDataPager.Dispose(); // Dispose the data pager
     }
 }

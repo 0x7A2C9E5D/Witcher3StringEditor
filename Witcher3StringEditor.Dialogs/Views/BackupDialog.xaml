@@ -17,7 +17,6 @@
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
-    Closed="BackupDialog_OnClosed"
     WindowChrome.IsHitTestVisibleInChrome="True"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
@@ -107,6 +106,8 @@
                 <b:SfDataGridQueryRowHeightBehavior MinHeight="{Binding ElementName=SfDataGrid, Path=RowHeight}" />
                 <!-- Behavior to drive the grid search from the search box -->
                 <b:SfDataGridSearchBehavior SearchBox="{Binding ElementName=SearchBox}" />
+                <!-- Behavior to dispose the grid when the window closes -->
+                <b:SfDataGridDisposeOnCloseBehavior />
             </i:Interaction.Behaviors>
             <!-- Data grid columns definition -->
             <sf:SfDataGrid.Columns>
@@ -194,6 +195,12 @@
             HorizontalAlignment="Center"
             NumericButtonCount="10"
             PageSize="15"
-            Source="{Binding AppSettings.BackupItems}" />
+            Source="{Binding AppSettings.BackupItems}">
+            <!-- Interaction behaviors for handling pager operations -->
+            <i:Interaction.Behaviors>
+                <!-- Behavior to dispose the pager when the window closes -->
+                <b:SfDataPagerDisposeOnCloseBehavior />
+            </i:Interaction.Behaviors>
+        </sf:SfDataPager>
     </Grid>
 </Window>

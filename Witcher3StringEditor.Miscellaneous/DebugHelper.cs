@@ -5,7 +5,6 @@
 /// </summary>
 public static class DebugHelper
 {
-    
     /// <summary>
     ///     Indicates whether the application is running in debug mode.
     /// </summary>

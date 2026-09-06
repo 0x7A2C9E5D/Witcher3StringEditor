@@ -18,7 +18,6 @@
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
-    Closed="RecentDialog_OnClosed"
     WindowChrome.IsHitTestVisibleInChrome="True"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
@@ -138,6 +137,8 @@
                 <b:SfDataGridSearchBehavior SearchBox="{Binding ElementName=SearchBox}" />
                 <!-- Behavior to handle record deletion -->
                 <b:SfDataGridRecordDeletingBehavior />
+                <!-- Behavior to dispose the grid when the window closes -->
+                <b:SfDataGridDisposeOnCloseBehavior />
             </i:Interaction.Behaviors>
             <!-- Data grid columns definition -->
             <sf:SfDataGrid.Columns>
@@ -207,6 +208,12 @@
             NumericButtonCount="10"
             PageSize="30"
             Source="{Binding 
-            RecentItems}" />
+            RecentItems}">
+            <!-- Interaction behaviors for handling pager operations -->
+            <i:Interaction.Behaviors>
+                <!-- Behavior to dispose the pager when the window closes -->
+                <b:SfDataPagerDisposeOnCloseBehavior />
+            </i:Interaction.Behaviors>
+        </sf:SfDataPager>
     </Grid>
 </Window>

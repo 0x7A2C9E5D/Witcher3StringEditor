@@ -14,7 +14,6 @@
     Title="{I18N {x:Static l:LangKeys.DeleteDialogTitle}}"
     Width="1200"
     Height="800"
-    Closed="DeleteDataDialog_OnClosed"
     d:DataContext="{d:DesignInstance Type=vm:DeleteDataDialogViewModel}"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.SystemBackdropType="Mica"
@@ -98,6 +97,8 @@
                     <b:SfDataGridSizeChangedBehavior />
                     <!-- Behavior to handle row height queries -->
                     <b:SfDataGridQueryRowHeightBehavior MinHeight="{Binding RowHeight, ElementName=SfDataGrid}" />
+                    <!-- Behavior to dispose the grid when the window closes -->
+                    <b:SfDataGridDisposeOnCloseBehavior />
                 </i:Interaction.Behaviors>
                 <!-- Data grid columns definition -->
                 <sf:SfDataGrid.Columns>

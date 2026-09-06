@@ -11,7 +11,6 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
     Title="{I18N {x:Static l:LangKeys.LogDialogTitle}}"
-    Closed="LogDialog_OnClosed"
     Width="1200"
     Height="800"
     d:DataContext="{d:DesignInstance Type=vm:LogDialogViewModel}"
@@ -108,6 +107,8 @@
                 <b:SfDataGridQueryRowHeightBehavior MinHeight="{Binding ElementName=SfDataGrid, Path=RowHeight}" />
                 <!-- Behavior to drive the grid search from the search box -->
                 <b:SfDataGridSearchBehavior SearchBox="{Binding ElementName=SearchBox}" />
+                <!-- Behavior to dispose the grid when the window closes -->
+                <b:SfDataGridDisposeOnCloseBehavior />
             </i:Interaction.Behaviors>
             <!-- Data grid columns definition -->
             <sf:SfDataGrid.Columns>
@@ -143,6 +144,12 @@
             HorizontalAlignment="Center"
             NumericButtonCount="10"
             PageSize="30"
-            Source="{Binding LogEvents}" />
+            Source="{Binding LogEvents}">
+            <!-- Interaction behaviors for handling pager operations -->
+            <i:Interaction.Behaviors>
+                <!-- Behavior to dispose the pager when the window closes -->
+                <b:SfDataPagerDisposeOnCloseBehavior />
+            </i:Interaction.Behaviors>
+        </sf:SfDataPager>
     </Grid>
 </Window>

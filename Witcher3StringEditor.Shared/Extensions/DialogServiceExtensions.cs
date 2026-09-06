@@ -49,7 +49,7 @@ public static class DialogServiceExtensions
     {
         return Task.FromResult(Show(service, owner, content, title, MessageBoxButton.OK, severity));
     }
-    
+
     /// <summary>
     ///     Shows a confirmation dialog that the user can choose to confirm or cancel.
     /// </summary>
@@ -98,7 +98,7 @@ public static class DialogServiceExtensions
     }
 
     /// <summary>
-    ///     Maps the <see cref="MessageBoxIcon"/> to the <see cref="MessageBoxImage"/>
+    ///     Maps the <see cref="MessageBoxIcon" /> to the <see cref="MessageBoxImage" />
     /// </summary>
     /// <param name="icon"></param>
     /// <returns></returns>
