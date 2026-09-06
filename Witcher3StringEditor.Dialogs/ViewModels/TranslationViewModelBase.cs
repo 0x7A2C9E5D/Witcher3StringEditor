@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GTranslate;
 using GTranslate.Translators;
@@ -206,9 +205,8 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <returns>The preferred language</returns>
     private static Language GetPreferredLanguage(IAppSettings appSettings)
     {
-        var description = typeof(W3Language).GetField(appSettings.PreferredLanguage.ToString())!
-            .GetCustomAttribute<DescriptionAttribute>()!.Description; // Get language description
-        return description == "es-MX" ? new Language("es") : new Language(description); // Return preferred language
+        var cultureCode = appSettings.PreferredLanguage.GetCultureCode(); // Get culture code for preferred language
+        return cultureCode == "es-MX" ? new Language("es") : new Language(cultureCode); // Return preferred language
     }
 
     /// <summary>

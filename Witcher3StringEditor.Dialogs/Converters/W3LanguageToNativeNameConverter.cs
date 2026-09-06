@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Globalization;
-using System.Reflection;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using Witcher3StringEditor.Contracts;
@@ -9,8 +7,7 @@ namespace Witcher3StringEditor.Dialogs.Converters;
 
 /// <summary>
 ///     A value converter that converts W3Language enum values to their corresponding native language names
-///     Uses reflection to retrieve the DescriptionAttribute from the enum value and creates a CultureInfo
-///     to get the native name of the language
+///     Uses the W3Language culture helpers to retrieve the native name of the language
 /// </summary>
 public class W3LanguageToNativeNameConverter : IValueConverter
 {
@@ -27,11 +24,8 @@ public class W3LanguageToNativeNameConverter : IValueConverter
         // Check if the value is a valid W3Language enum, if not return UnsetValue
         if (value is not W3Language language) return DependencyProperty.UnsetValue;
 
-        // Get the field info for the language enum value
-        // Retrieve the DescriptionAttribute from the field
-        // Create a CultureInfo from the description and return its native name
-        return new CultureInfo(typeof(W3Language).GetField(language.ToString())!
-            .GetCustomAttribute<DescriptionAttribute>()!.Description).NativeName;
+        // Get the native name of the language via its associated culture
+        return language.GetCultureInfo().NativeName;
     }
 
     /// <summary>
