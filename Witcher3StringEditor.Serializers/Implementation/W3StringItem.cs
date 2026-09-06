@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Witcher3StringEditor.Contracts.Abstractions;
+﻿using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Serializers.Implementation;
 
@@ -16,21 +15,6 @@ internal record W3StringItem : IW3StringItem
     /// </summary>
     public W3StringItem()
     {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the W3StringItem record by copying values from another IW3StringItem
-    ///     This constructor provides a way to create a W3StringItem from any implementation of IW3StringItem
-    /// </summary>
-    /// <param name="iw3StringItem">The source IW3StringItem to copy values from</param>
-    [UsedImplicitly]
-    public W3StringItem(IW3StringItem iw3StringItem)
-    {
-        StrId = iw3StringItem.StrId;
-        KeyHex = iw3StringItem.KeyHex;
-        KeyName = iw3StringItem.KeyName;
-        OldText = iw3StringItem.OldText;
-        Text = iw3StringItem.Text;
     }
 
     /// <summary>
