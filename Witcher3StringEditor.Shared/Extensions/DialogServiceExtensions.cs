@@ -47,7 +47,7 @@ public static class DialogServiceExtensions
         string title,
         MessageBoxIcon severity = MessageBoxIcon.Information)
     {
-        return Task.FromResult(Show(service, owner, content, title, MessageBoxButton.OK, severity));
+        return Task.FromResult(ShowMessageBox(service, owner, content, title, MessageBoxButton.OK, severity));
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public static class DialogServiceExtensions
         string title,
         MessageBoxIcon severity = MessageBoxIcon.Information)
     {
-        return Task.FromResult(Show(service, owner, content, title, MessageBoxButton.YesNo, severity) ==
+        return Task.FromResult(ShowMessageBox(service, owner, content, title, MessageBoxButton.YesNo, severity) ==
                                MessageBoxResult.Yes);
     }
 
@@ -80,7 +80,7 @@ public static class DialogServiceExtensions
     /// <param name="severity"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    private static MessageBoxResult Show(
+    private static MessageBoxResult ShowMessageBox(
         IDialogService service,
         INotifyPropertyChanged owner,
         string content,
@@ -93,8 +93,8 @@ public static class DialogServiceExtensions
         // The owner is resolved through the dialog manager to keep the box on top of the window
         // that owns the calling view model, matching how the other framework dialogs behave.
         return service.DialogManager.FindViewByViewModel(owner)?.RefObj is not Window ownerWindow
-            ? MessageBox.Show(content, caption, button, MapIcon(severity))
-            : MessageBox.Show(ownerWindow, content, caption, button, MapIcon(severity));
+            ? MessageBox.Show(content, caption, button, ToMessageBoxImage(severity))
+            : MessageBox.Show(ownerWindow, content, caption, button, ToMessageBoxImage(severity));
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public static class DialogServiceExtensions
     /// </summary>
     /// <param name="icon"></param>
     /// <returns></returns>
-    private static MessageBoxImage MapIcon(MessageBoxIcon icon)
+    private static MessageBoxImage ToMessageBoxImage(MessageBoxIcon icon)
     {
         return icon switch
         {
