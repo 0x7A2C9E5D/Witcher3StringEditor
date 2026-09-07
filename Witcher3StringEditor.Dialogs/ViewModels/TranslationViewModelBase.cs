@@ -51,6 +51,8 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     [ObservableProperty] private ILanguage formLanguage;
 
+    private bool isBusy;
+
     /// <summary>
     ///     Gets or sets a value indicating whether the dictionary service is supported
     /// </summary>
@@ -108,6 +110,20 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 
+    /// <summary>
+    ///     Gets or sets a value indicating whether a translation operation is currently in progress
+    ///     Refreshes dependent command states whenever the value changes
+    /// </summary>
+    public bool IsBusy
+    {
+        get => isBusy;
+        set
+        {
+            if (SetProperty(ref isBusy, value))
+                OnIsBusyChanged();
+        }
+    }
+
 
     /// <summary>
     ///     Gets a value indicating whether the translation operation is busy
@@ -122,6 +138,20 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
                 await CancellationTokenSource.CancelAsync();
             CancellationTokenSource.Dispose();
         }
+    }
+
+    /// <summary>
+    ///     Waits for the specified operation to complete or for cancellation to be requested, whichever occurs first
+    /// </summary>
+    /// <typeparam name="TResult">The result type of the operation</typeparam>
+    /// <param name="operation">The operation to wait for</param>
+    /// <param name="cancellationToken">The token used to request cancellation</param>
+    /// <returns>True if the operation completed before cancellation was requested, otherwise false</returns>
+    private protected static async Task<bool> WaitWithCancellationAsync<TResult>(
+        Task<TResult> operation, CancellationToken cancellationToken)
+    {
+        var completedTask = await Task.WhenAny(operation, Task.Delay(Timeout.Infinite, cancellationToken));
+        return completedTask == operation;
     }
 
     /// <summary>
@@ -165,11 +195,11 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     }
 
     /// <summary>
-    ///     Gets a value indicating whether a translation operation is currently in progress
-    ///     Must be implemented by derived classes
+    ///     Called when the IsBusy property changes to refresh the states of commands that depend on it
     /// </summary>
-    /// <returns>True if busy, false otherwise</returns>
-    public abstract bool GetIsBusy();
+    protected virtual void OnIsBusyChanged()
+    {
+    }
 
     /// <summary>
     ///     Gets the collection of supported languages for a specific translator

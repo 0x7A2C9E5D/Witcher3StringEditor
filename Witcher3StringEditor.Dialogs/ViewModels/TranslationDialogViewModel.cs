@@ -94,7 +94,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     {
         try
         {
-            if (!CurrentViewModel.GetIsBusy() || // Check if not busy
+            if (!CurrentViewModel.IsBusy || // Check if not busy
                 await dialogService.MessageBoxConfirmAsync(this, Strings.TranslationModeSwitchMessage,
                     Strings.TranslationModeSwitchCaption,
                     MessageBoxIcon.Warning)) // Or user confirms switch
@@ -202,7 +202,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <returns>True to cancel closing, false to allow closing</returns>
     private async Task<bool> HandleClosingAsync()
     {
-        if (!CurrentViewModel.GetIsBusy() || // Allow closing if not busy
+        if (!CurrentViewModel.IsBusy || // Allow closing if not busy
             await dialogService.MessageBoxConfirmAsync(this, Strings.TranslatorTranslatingMessage,
                 Strings.TranslatorTranslatingCaption, MessageBoxIcon.Warning)) // Or if user confirms
         {

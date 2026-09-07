@@ -38,16 +38,6 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     [ObservableProperty] private TranslateItemModel? currentTranslateItemModel;
 
     /// <summary>
-    ///     Gets or sets a value indicating whether a translation operation is in progress
-    ///     Notifies CanExecute changes for Previous, Next, and Save commands when this value changes
-    /// </summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PreviousCommand))]
-    [NotifyCanExecuteChangedFor(nameof(NextCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-    private bool isBusy;
-
-    /// <summary>
     ///     Initializes a new instance of the SingleItemTranslationViewModel class
     /// </summary>
     /// <param name="appSettings">Application settings service</param>
@@ -82,12 +72,16 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     private bool CanNext => CurrentItemIndex < W3StringItems.Count - 1 && !IsBusy;
 
     /// <summary>
-    ///     Gets a value indicating whether a translation operation is currently in progress
+    ///     Called when the IsBusy property changes
+    ///     Refreshes the states of the commands that depend on the busy flag and notifies other components
     /// </summary>
-    /// <returns>True if busy, false otherwise</returns>
-    public override bool GetIsBusy()
+    protected override void OnIsBusyChanged()
     {
-        return IsBusy;
+        PreviousCommand.NotifyCanExecuteChanged(); // Refresh command states
+        NextCommand.NotifyCanExecuteChanged();
+        SaveCommand.NotifyCanExecuteChanged();
+        _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(IsBusy),
+            MessageTokens.TranslatorIsBusy); // Notify other components of the busy state change
     }
 
     /// <summary>
@@ -99,16 +93,6 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     {
         var selectedItem = W3StringItems[value];
         CurrentTranslateItemModel = new TranslateItemModel { Id = selectedItem.TrackingId, Text = selectedItem.Text };
-    }
-
-    /// <summary>
-    ///     Called when the IsBusy property changes
-    ///     Sends a message to notify other components of the busy state change
-    /// </summary>
-    /// <param name="value">The new busy state value</param>
-    partial void OnIsBusyChanged(bool value)
-    {
-        _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(value), MessageTokens.TranslatorIsBusy);
     }
 
     /// <summary>
@@ -170,11 +154,8 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
         ILanguage toLanguage, ILanguage formLanguage, CancellationTokenSource cancellationTokenSource)
     {
         var translateTask = Translator.TranslateAsync(text, toLanguage, formLanguage); // Start translation
-        var completedTask = await Task.WhenAny( // Wait for first task to complete
-            translateTask, // Translation task
-            Task.Delay(Timeout.Infinite, cancellationTokenSource.Token) // Cancellation task
-        );
-        return !completedTask.IsCanceled
+        return await WaitWithCancellationAsync( // Wait for completion or cancellation
+            translateTask, cancellationTokenSource.Token)
             ? (true, (await translateTask).Translation)
             : (false, string.Empty); // Return result or failure
     }

@@ -33,13 +33,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     [ObservableProperty] private int failureCount;
 
     /// <summary>
-    ///     Gets or sets a value indicating whether a translation operation is in progress
-    ///     Notifies CanExecute changes for the Cancel command when this value changes
-    /// </summary>
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
-    private bool isBusy;
-
-    /// <summary>
     ///     Gets or sets the maximum value for indices (typically the total item count)
     /// </summary>
     [ObservableProperty] private int maxValue;
@@ -91,12 +84,12 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     private bool CanStart => !IsBusy;
 
     /// <summary>
-    ///     Gets a value indicating whether a translation operation is currently in progress
+    ///     Called when the IsBusy property changes
+    ///     Refreshes the state of the Cancel command, which depends on the busy flag
     /// </summary>
-    /// <returns>True if busy, false otherwise</returns>
-    public override bool GetIsBusy()
+    protected override void OnIsBusyChanged()
     {
-        return IsBusy;
+        CancelCommand.NotifyCanExecuteChanged(); // Refresh the cancel command state
     }
 
     /// <summary>
@@ -229,11 +222,9 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             if (string.IsNullOrWhiteSpace(text))
                 return false;
 
-            // Start the translation task and a cancellation task, and wait for either to complete
+            // Start the translation task and wait for it to complete or for cancellation to be requested
             var translateTask = TranslateItem(Translator, text, toLanguage, fromLanguage);
-            var cancelTask = Task.Delay(Timeout.Infinite, cancellationToken);
-            var completed = await Task.WhenAny(translateTask, cancelTask);
-            if (completed == cancelTask)
+            if (!await WaitWithCancellationAsync(translateTask, cancellationToken))
                 throw new OperationCanceledException();
 
             var (success, translation) = await translateTask;
