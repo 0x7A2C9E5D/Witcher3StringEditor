@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GTranslate;
 using GTranslate.Translators;
@@ -68,11 +67,10 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="w3StringItems">Collection of items to translate</param>
     /// <param name="startIndex">Initial start index for translation</param>
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
-    /// <param name="dialogOwner">The view model owning the dialog window</param>
     /// <param name="dictionaryService">Dictionary service</param>
     public BatchItemsTranslationViewModel(IAppSettings appSettings, ITranslator translator,
         IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex,
-        IDialogService dialogService, INotifyPropertyChanged dialogOwner,
+        IDialogService dialogService,
         IDictionaryService? dictionaryService = null) : base(appSettings, translator,
         w3StringItems, dialogService, dictionaryService)
     {

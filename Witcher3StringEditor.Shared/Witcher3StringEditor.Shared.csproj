@@ -27,4 +27,8 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Witcher3StringEditor.Contracts\Witcher3StringEditor.Contracts.csproj"/>
+    </ItemGroup>
+
 </Project>

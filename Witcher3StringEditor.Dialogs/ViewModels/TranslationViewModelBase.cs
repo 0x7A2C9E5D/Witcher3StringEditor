@@ -6,11 +6,11 @@ using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Syncfusion.Data.Extensions;
-using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -80,7 +80,8 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
     /// <param name="dictionaryService">Dictionary service</param>
     protected TranslationViewModelBase(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDialogService dialogService, IDictionaryService? dictionaryService = null)
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDialogService dialogService,
+        IDictionaryService? dictionaryService = null)
     {
         Translator = translator; // Initialize the translator
         DialogService = dialogService; // Initialize the dialog service

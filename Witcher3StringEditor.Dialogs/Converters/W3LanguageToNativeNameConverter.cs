@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 using Witcher3StringEditor.Contracts;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.Converters;
 
