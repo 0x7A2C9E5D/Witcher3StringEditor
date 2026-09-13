@@ -21,19 +21,19 @@
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.2"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
-        <PackageReference Include="GTranslate" Version="2.3.1"/>
+        <PackageReference Include="GTranslate" Version="2.4.0" />
         <PackageReference Include="HanumanInstitute.MvvmDialogs.Wpf" Version="2.1.0"/>
         <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1"/>
         <PackageReference Include="JetBrains.Annotations" Version="2026.2.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.11"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.12" />
         <PackageReference Include="Serilog" Version="4.4.0"/>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.33.0.1635">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.34.0.3385">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="34.2.6"/>
+        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="34.2.7" />
         <PackageReference Update="Nerdbank.GitVersioning">
             <Version>3.10.94</Version>
         </PackageReference>
