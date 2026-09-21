@@ -373,7 +373,7 @@
     <data name="Mark" xml:space="preserve">
     <value>标记</value>
   </data>
-    <data name="RecordDeletingMessgae" xml:space="preserve">
+    <data name="RecordDeletingMessage" xml:space="preserve">
     <value>此操作将删除记录且操作无法撤销.是否继续？</value>
   </data>
     <data name="Open" xml:space="preserve">

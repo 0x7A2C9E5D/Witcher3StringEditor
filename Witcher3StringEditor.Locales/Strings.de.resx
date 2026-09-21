@@ -373,7 +373,7 @@
     <data name="Mark" xml:space="preserve">
     <value>Auswählen</value>
   </data>
-    <data name="RecordDeletingMessgae" xml:space="preserve">
+    <data name="RecordDeletingMessage" xml:space="preserve">
     <value>Hiermit werden alle ausgewählten Einträge unwiederbringlich gelöscht. Möchtest Du fortfahren?</value>
   </data>
     <data name="Open" xml:space="preserve">

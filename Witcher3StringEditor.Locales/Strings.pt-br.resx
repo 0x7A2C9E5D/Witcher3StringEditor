@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
@@ -266,7 +266,7 @@
     <data name="Mark" xml:space="preserve">
     <value>Marcar</value>
   </data>
-    <data name="RecordDeletingMessgae" xml:space="preserve">
+    <data name="RecordDeletingMessage" xml:space="preserve">
     <value>Isso vai apagar permanentemente as linhas selecionadas e não dá para reverter. Tem certeza?</value>
   </data>
     <data name="Open" xml:space="preserve">

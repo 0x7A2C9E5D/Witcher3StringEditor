@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
     <!-- 
       Microsoft ResX Schema 
@@ -373,7 +373,7 @@
     <data name="Mark" xml:space="preserve">
     <value>Mark</value>
   </data>
-    <data name="RecordDeletingMessgae" xml:space="preserve">
+    <data name="RecordDeletingMessage" xml:space="preserve">
     <value>This operation will permanently delete the selected record(s) and cannot be undone. Are you sure you want to proceed?</value>
   </data>
     <data name="Open" xml:space="preserve">
