@@ -7,8 +7,8 @@ namespace Witcher3StringEditor.Dialogs.Converters;
 
 /// <summary>
 ///     File existence to visibility converter
-///     Returns Visibility.Collapsed when the path is empty or the file exists (hide the element)
-///     Returns Visibility.Visible when a non-empty path does not exist (show the element)
+///     Returns Visibility.Collapsed when file exists (hide the element)
+///     Returns Visibility.Visible when file does not exist (show the element)
 ///     Used primarily to control display of invalid path indicators in UI
 /// </summary>
 public class FileExistsToCollapsedConverter : IValueConverter
@@ -21,40 +21,26 @@ public class FileExistsToCollapsedConverter : IValueConverter
     /// <param name="parameter">Converter parameter (not used)</param>
     /// <param name="culture">Culture information</param>
     /// <returns>
-    ///     Visibility.Collapsed when the path is null/empty/white-space or the file exists (hide element)
-    ///     Visibility.Visible when a non-empty path does not exist (show element)
+    ///     Visibility.Collapsed when path is null/empty or file exists (hide element)
+    ///     Visibility.Visible when file does not exist (show element)
     /// </returns>
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not string path || string.IsNullOrWhiteSpace(path))
-            return Visibility.Collapsed;
-        if (!IsPlausiblePath(path)) return Visibility.Visible;
-        return File.Exists(path) ? Visibility.Collapsed : Visibility.Visible;
+        if (value is not string path || File.Exists(path)) return Visibility.Collapsed;
+        return Visibility.Visible;
     }
 
     /// <summary>
-    ///     Reverse conversion (not supported)
+    ///     Reverse conversion (not implemented)
     /// </summary>
     /// <param name="value">Visibility value</param>
     /// <param name="targetType">Target type</param>
     /// <param name="parameter">Converter parameter</param>
     /// <param name="culture">Culture information</param>
-    /// <returns>
-    ///     <see cref="Binding.DoNothing" />, because this converter is display-only. Throwing would surface as a
-    ///     runtime binding failure whenever WPF evaluates the reverse direction
-    /// </returns>
+    /// <returns>Throws NotImplementedException as this operation is not supported</returns>
+    /// <exception cref="NotImplementedException">This method is not implemented</exception>
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return Binding.DoNothing;
-    }
-
-    /// <summary>
-    ///     Determines whether a path can plausibly point at an existing file, without touching the file system
-    /// </summary>
-    /// <param name="path">The path to inspect</param>
-    /// <returns>True when the path is rooted and contains no invalid characters</returns>
-    private static bool IsPlausiblePath(string path)
-    {
-        return Path.IsPathFullyQualified(path) && path.IndexOfAny(Path.GetInvalidPathChars()) < 0;
+        throw new NotImplementedException();
     }
 }
