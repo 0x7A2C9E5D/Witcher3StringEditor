@@ -14,8 +14,8 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
     ///     Dependency property for storing the selected item
     /// </summary>
     public static readonly DependencyProperty SelectedItemProperty =
-        DependencyProperty.Register(nameof(SelectedItem), typeof(object), 
-            typeof(DictionaryTreeBehavior), new PropertyMetadata(null));
+        DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(DictionaryTreeBehavior),
+            new PropertyMetadata(null));
 
     /// <summary>
     ///     Gets or sets the selected item
@@ -28,7 +28,7 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
 
     /// <summary>
     ///     Called when the behavior is attached to the AssociatedObject
-    ///     Registers the event handler and seeds the current selection
+    ///     Registers necessary event handlers
     /// </summary>
     protected override void OnAttached()
     {
@@ -37,7 +37,7 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
 
     /// <summary>
     ///     Called when the behavior is detached from the AssociatedObject
-    ///     Unregisters the event handler and clears the residual selection
+    ///     Unregisters event handlers
     /// </summary>
     protected override void OnDetaching()
     {
@@ -46,10 +46,10 @@ internal class DictionaryTreeBehavior : Behavior<TreeView>
 
     /// <summary>
     ///     Handles the SelectedItemChanged event of the TreeView
-    ///     Updates the SelectedItem property when a dictionary is selected
+    ///     Updates the SelectedItem property if the selected value is of type DictionaryInfo
     /// </summary>
     private void AssociatedObject_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-        if (e.NewValue is DictionaryInfo dictionaryInfo) SelectedItem = dictionaryInfo;
+        SelectedItem = e.NewValue is DictionaryInfo ? e.NewValue : null;
     }
 }
