@@ -7,20 +7,13 @@ namespace Witcher3StringEditor.Services;
 ///     Translators are registered as transient: each instance returned by <see cref="GetTranslator" />
 ///     is a fresh instance that the caller must dispose after use
 /// </summary>
-/// <remarks>
-///     Implementations must be safe for concurrent calls. Instances that are resolved but not returned are
-///     disposed by the provider
-/// </remarks>
 internal interface ITranslatorProvider
 {
     /// <summary>
     ///     Gets the display names of all registered translators
     ///     Used by the settings dialog to present the available translator options
     /// </summary>
-    /// <returns>
-    ///     The distinct display names of the registered translators. These are exactly the values accepted by
-    ///     <see cref="GetTranslator" />; matching is case-insensitive and ignores a trailing version number
-    /// </returns>
+    /// <returns>The display names of the registered translators</returns>
     IReadOnlyList<string> GetTranslatorNames();
 
     /// <summary>
@@ -31,6 +24,5 @@ internal interface ITranslatorProvider
     ///     A transient translator instance matching the name
     ///     The caller is responsible for disposing the returned instance
     /// </returns>
-    /// <exception cref="InvalidOperationException">No translator matches <paramref name="name" /></exception>
     ITranslator GetTranslator(string name);
 }
