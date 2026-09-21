@@ -28,16 +28,4 @@ public partial class TranslateItemModel : ObservableObject
     ///     Gets the original text that needs to be translated
     /// </summary>
     public required string Text { get; init; }
-
-    /// <summary>
-    ///     Invalidates the saved state when the translated text changes
-    ///     Without this, editing the text after saving keeps the flag set and the edit is silently discarded when
-    ///     the user navigates to another item
-    /// </summary>
-    /// <param name="value">The new translated text</param>
-    // ReSharper disable once UnusedParameterInPartialMethod
-    partial void OnTranslatedTextChanged(string value)
-    {
-        IsSaved = false;
-    }
 }
