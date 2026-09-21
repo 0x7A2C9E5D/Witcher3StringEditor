@@ -12,13 +12,6 @@ namespace Witcher3StringEditor.Models;
 public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
 {
     /// <summary>
-    ///     The text this item was loaded or cloned with
-    ///     Used as the baseline for <see cref="IsModified" /> and deliberately never cleared, so resetting the text
-    ///     cannot corrupt the modified state and the original text stays available to serializers
-    /// </summary>
-    private readonly string baselineText;
-
-    /// <summary>
     ///     Gets or sets the hexadecimal key of The Witcher 3 string item
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
@@ -34,7 +27,10 @@ public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
     ///     Gets or sets the original text of The Witcher 3 string item
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
-    [ObservableProperty] private string oldText = string.Empty;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsModified))]
+    [NotifyCanExecuteChangedFor(nameof(ResetTextCommand))]
+    private string oldText = string.Empty;
 
     /// <summary>
     ///     Gets or sets the string ID of The Witcher 3 string item
@@ -45,26 +41,21 @@ public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
     /// <summary>
     ///     Gets or sets the current text of The Witcher 3 string item
     ///     This property supports data binding through the ObservableObject base class
+    ///     When this property changes, if OldText is empty, it will be set to the previous Text value
     /// </summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsModified))]
-    [NotifyCanExecuteChangedFor(nameof(ResetTextCommand))]
-    private string text = string.Empty;
+    [ObservableProperty] private string text = string.Empty;
 
     /// <summary>
     ///     Initializes a new instance of the W3StringItem class by copying values from another IW3StringItem
     /// </summary>
     /// <param name="iw3StringItem">The source IW3StringItem to copy values from</param>
-    /// <exception cref="ArgumentNullException"><paramref name="iw3StringItem" /> is null</exception>
     public W3StringItem(IW3StringItem iw3StringItem)
     {
-        ArgumentNullException.ThrowIfNull(iw3StringItem);
         StrId = iw3StringItem.StrId;
         KeyHex = iw3StringItem.KeyHex;
         KeyName = iw3StringItem.KeyName;
         OldText = iw3StringItem.OldText;
         Text = iw3StringItem.Text;
-        baselineText = Text;
     }
 
     /// <summary>
@@ -73,13 +64,12 @@ public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
     /// </summary>
     public W3StringItem()
     {
-        baselineText = Text;
     }
 
     /// <summary>
-    ///     Gets a value indicating whether the Text property differs from the text the item was loaded with
+    ///     Gets a value indicating whether the Text property has been modified from its original value
     /// </summary>
-    public bool IsModified => !string.Equals(Text, baselineText, StringComparison.Ordinal);
+    public bool IsModified => !string.IsNullOrEmpty(OldText);
 
     /// <summary>
     ///     Gets the unique tracking identifier for this item
@@ -88,29 +78,41 @@ public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
     public Guid TrackingId { get; } = Guid.NewGuid();
 
     /// <summary>
-    ///     Creates a copy of the current W3StringItem
+    ///     Creates a shallow copy of the current W3StringItem
     /// </summary>
-    /// <returns>A new instance with the same content and its own tracking identifier</returns>
+    /// <returns>A shallow copy of the current object</returns>
     public object Clone()
     {
-        return new W3StringItem(this);
+        return MemberwiseClone();
+    }
+
+    /// <summary>
+    ///     Called when the Text property is changing
+    ///     If OldText is empty, it sets OldText to the current Text value
+    /// </summary>
+    /// <param name="value">The new value of the Text property</param>
+    // ReSharper disable once UnusedParameterInPartialMethod
+    partial void OnTextChanging(string value)
+    {
+        if (string.IsNullOrWhiteSpace(OldText)) OldText = Text;
     }
 
     /// <summary>
     ///     Determines whether the ResetText command can be executed
     /// </summary>
-    /// <returns>True when the text differs from the text the item was loaded with</returns>
+    /// <returns></returns>
     private bool CanResetText()
     {
         return IsModified;
     }
 
     /// <summary>
-    ///     Resets the Text property to the text the item was loaded with
+    ///     Resets the Text property to the value of OldText and clears OldText
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanResetText))]
     private void ResetText()
     {
-        Text = baselineText;
+        Text = OldText;
+        OldText = string.Empty;
     }
 }
