@@ -112,14 +112,14 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
                 CancellationTokenSource?.Dispose(); // Dispose of the cancellation token source
                 CancellationTokenSource = new CancellationTokenSource(); // Create a new cancellation token source
                 CurrentTranslateItemModel.TranslatedText = string.Empty; // Clear the translation text
-                Log.Debug("Starting translation of item {ItemId}.", CurrentTranslateItemModel.Id);
+                Log.Debug("Starting translation of item {ItemId}", CurrentTranslateItemModel.Id);
                 var (success, translation) = await ExecuteTranslationTask(CurrentTranslateItemModel.Text,
                     ToLanguage, FormLanguage, CancellationTokenSource);
                 if (success) // Check if translation was successful
                 {
                     Guard.IsNotNullOrWhiteSpace(translation); // Check if translation result is not empty
                     CurrentTranslateItemModel.TranslatedText = translation; // Set the translation text
-                    Log.Debug("Translation completed for item {ItemId}.", CurrentTranslateItemModel.Id);
+                    Log.Debug("Translation completed for item {ItemId}", CurrentTranslateItemModel.Id);
                 }
             }
             else
@@ -136,7 +136,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
                 string.Format(CultureInfo.InvariantCulture, errorMessage, Translator.Name, ex.Message),
                 Strings.TranslateErrorCaption, MessageBoxIcon.Warning);
             Log.Error(ex,
-                "The translator {TranslatorName} returned an error while translating item {ItemId}.",
+                "The translator {TranslatorName} returned an error while translating item {ItemId}",
                 Translator.Name, CurrentTranslateItemModel?.Id); // Log error with the failing item context
         }
         finally
@@ -178,7 +178,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to save translation."); // Log error
+            Log.Error(ex, "Failed to save translation"); // Log error
         }
     }
 

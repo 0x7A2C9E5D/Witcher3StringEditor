@@ -71,7 +71,7 @@ public partial class SettingDialogViewModel(
             { Name: "w3strings.exe" }) // If the selected file is w3strings.exe, set the path to the file.
         {
             AppSettings.W3StringsPath = storageFile.LocalPath; // Set the path to the file.
-            Log.Information("Encoder path set to {Path}.", storageFile.LocalPath); // Log the path.
+            Log.Information("Encoder path set to {Path}", storageFile.LocalPath); // Log the path.
         }
     }
 
@@ -94,7 +94,7 @@ public partial class SettingDialogViewModel(
         if (storageFile is { Name: "witcher3.exe" }) // If the selected file is witcher3.exe, set the path to the file.
         {
             AppSettings.GameExePath = storageFile.LocalPath; // Set the path to the file.
-            Log.Information("Game path set to {Path}.", storageFile.LocalPath); // Log the path.
+            Log.Information("Game path set to {Path}", storageFile.LocalPath); // Log the path.
         }
     }
 
@@ -105,7 +105,7 @@ public partial class SettingDialogViewModel(
     private void OpenLogFolder()
     {
         shellOpenService.Open(AppPaths.LogDirectory); // Open the log folder.
-        Log.Information("Opened log folder."); // Log that the log folder has been opened.
+        Log.Information("Opened log folder"); // Log that the log folder has been opened.
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public partial class SettingDialogViewModel(
         var files = Directory.GetFiles(AppPaths.LogDirectory); // Get all log files in the log folder.
         if (files.Length == 1) // If there is only one log file, do nothing.
         {
-            Log.Information("No log cleanup needed: only one log file exists."); // Log that only one log file exists
+            Log.Information("No log cleanup needed: only one log file exists"); // Log that only one log file exists
             await dialogService.MessageBoxNotifyAsync(this, Strings.LogsNoNeedToCleanMessage,
                 Strings.LogCleanupCaption); // Tell the user that there is nothing to clean up.
             return;
@@ -133,14 +133,14 @@ public partial class SettingDialogViewModel(
             {
                 File.Delete(file); // Delete the log file.
                 deletedFilesCount++; // Increment the deleted files count.
-                Log.Information("Deleted log file: {Path}.", file); // Log the deletion.
+                Log.Information("Deleted log file: {Path}", file); // Log the deletion.
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to delete log file: {Path}.", file); // Log the error.
+                Log.Error(ex, "Failed to delete log file: {Path}", file); // Log the error.
             }
 
-        Log.Information("Deleted {Count} log files.", deletedFilesCount); // Log the number of deleted log files.
+        Log.Information("Deleted {Count} log files", deletedFilesCount); // Log the number of deleted log files.
         await dialogService.MessageBoxNotifyAsync(this, Strings.LogsCleanedMessage,
             Strings.LogCleanupCaption); // Tell the user that the log files have been cleaned.
     }
@@ -161,7 +161,7 @@ public partial class SettingDialogViewModel(
             var destFileName =
                 Path.Combine(tempFolder, Path.GetFileName(file)); // Get the destination file name.
             File.Copy(file, destFileName); // Copy the log file.
-            Log.Information("Copied log file: {Path}.", file); // Log the copy.
+            Log.Information("Copied log file: {Path}", file); // Log the copy.
         }
 
         // Create a zip file from the temporary folder.
@@ -173,6 +173,6 @@ public partial class SettingDialogViewModel(
         Directory.Delete(tempFolder, true); // Delete the temporary folder.
         await dialogService.MessageBoxNotifyAsync(this, Strings.LogFilesCollectedMessage,
             Strings.LogFilesCollectedCaption); // Tell the user where the archive has been created.
-        Log.Information("Created zip file: {Path}.", archiveFileName); // Log the creation.
+        Log.Information("Created zip file: {Path}", archiveFileName); // Log the creation.
     }
 }

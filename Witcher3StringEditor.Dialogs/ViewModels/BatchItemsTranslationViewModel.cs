@@ -152,7 +152,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         CancellationTokenSource = new CancellationTokenSource(); // Create a new cancellation token source
         await ProcessTranslationItems(W3StringItems.Skip(StartIndex - 1).Take(PendingCount), // Process selected items
             ToLanguage, FormLanguage, CancellationTokenSource.Token);
-        Log.Information("Batch translation finished. Succeeded: {SuccessCount}, Failed: {FailureCount}.",
+        Log.Information("Batch translation finished. Succeeded: {SuccessCount}, Failed: {FailureCount}",
             SuccessCount, FailureCount); // Log the batch result summary
     }
 
@@ -195,7 +195,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         }
         catch (OperationCanceledException ex)
         {
-            Log.Warning(ex, "Batch translation was cancelled by the user.");
+            Log.Warning(ex, "Batch translation was cancelled by the user");
         }
     }
 
@@ -281,7 +281,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
             SelectedDictionary) // Check if the current dictionary is different from the selected one
             await DictionaryService
                 .Bind(SelectedDictionary); // Bind the selected dictionary and update the readiness flag
-        Log.Information("Dictionary readiness after binding: {IsReady}.", DictionaryService.IsReady);
+        Log.Information("Dictionary readiness after binding: {IsReady}", DictionaryService.IsReady);
     }
 
     /// <summary>
@@ -300,7 +300,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="translatorName">The name of the translator that returned empty data</param>
     private static void LogEmptyTranslationResult(string translatorName)
     {
-        Log.Warning("The translator: {Name} returned empty data.",
+        Log.Warning("The translator: {Name} returned empty data",
             translatorName);
     }
 

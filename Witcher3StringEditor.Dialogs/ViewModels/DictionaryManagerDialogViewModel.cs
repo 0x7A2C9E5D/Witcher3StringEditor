@@ -59,7 +59,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
         foreach (var group in groups)
             DictionaryGroups.Add(new DictionaryGroup(group.Key, [.. group]));
         Log.Information(
-            "Dictionary manager dialog opened: {Count} dictionary(ies) in {GroupCount} language group(s).",
+            "Dictionary manager dialog opened: {Count} dictionary(ies) in {GroupCount} language group(s)",
             found.Count, DictionaryGroups.Count);
     }
 

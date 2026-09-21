@@ -72,7 +72,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
         this.w3StringItems = w3StringItems;
         this.dialogService = dialogService;
         this.dictionaryService = dictionaryService;
-        Log.Information("Translation dialog opened: {Count} item(s) to translate, starting at index {Index}.",
+        Log.Information("Translation dialog opened: {Count} item(s) to translate, starting at index {Index}",
             this.w3StringItems.Count, index);
         CurrentViewModel =
             new SingleItemTranslationViewModel(appSettings, translator, this.w3StringItems,
@@ -191,7 +191,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
             var found = w3StringItems // Find the original item
                 .First(x => x.TrackingId == item.Id);
             found.Text = item.TranslatedText; // Update with translated text
-            Log.Information("Auto-saved unsaved changes."); // Log the auto-save
+            Log.Information("Auto-saved unsaved changes"); // Log the auto-save
         }
     }
 
@@ -210,7 +210,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
             return false; // Allow the dialog to close
         }
 
-        Log.Information("Translation dialog closing cancelled."); // Log if closing is prevented
+        Log.Information("Translation dialog closing cancelled"); // Log if closing is prevented
         return true; // Prevent the dialog from closing
     }
 

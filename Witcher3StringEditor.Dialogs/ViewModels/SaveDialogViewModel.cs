@@ -99,14 +99,14 @@ public partial class SaveDialogViewModel
     [RelayCommand]
     private async Task Save()
     {
-        Log.Information("Saving {Count} item(s) to {Directory} as {FileType} ({Language}).",
+        Log.Information("Saving {Count} item(s) to {Directory} as {FileType} ({Language})",
             w3StringItems.Count, OutputDirectory, TargetFileType, TargetLanguage);
         if (TargetFileType == W3FileType.W3Strings)
         {
             if (IsIgnoreIdSpaceCheck)
-                Log.Information("ID space check is ignored."); // Log ignore ID space check
+                Log.Information("ID space check is ignored"); // Log ignore ID space check
             else
-                Log.Information("Expected ID space: {IdSpace}.", IdSpace);
+                Log.Information("Expected ID space: {IdSpace}", IdSpace);
         }
 
         var saveResult = await serializer.Serialize(w3StringItems, new W3SerializationContext // Serialize items
@@ -118,9 +118,9 @@ public partial class SaveDialogViewModel
             IgnoreIdSpaceCheck = IsIgnoreIdSpaceCheck // Set ID space check flag
         });
         if (saveResult)
-            Log.Information("Save completed successfully.");
+            Log.Information("Save completed successfully");
         else
-            Log.Warning("Save failed, see the serializer error log above for details.");
+            Log.Warning("Save failed, see the serializer error log above for details");
         await dialogService.MessageBoxNotifyAsync(this, saveResult ? Strings.SaveSuccess : Strings.SaveFailure,
             Strings.SaveResult, saveResult ? MessageBoxIcon.Information : MessageBoxIcon.Error); // Report the result
         DialogResult = true; // Set dialog result

@@ -239,7 +239,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     partial void OnFormLanguageChanged(ILanguage value)
     {
         UpdateDictionaryAvailability(); // Update dictionary availability based on the new source language
-        Log.Debug("The source language has been changed to: {Name}.",
+        Log.Debug("The source language has been changed to: {Name}",
             value.Name); // Log the change in source language
     }
 
@@ -268,7 +268,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         AddMatchingDictionaries(matchingDictionaries); // Add matching dictionaries to the collection
 
         Log.Information(
-            "Dictionary availability has been updated. Is supported: {IsSupported}. Found {Count} matching dictionaries for target language: {Language}.",
+            "Dictionary availability has been updated. Is supported: {IsSupported}. Found {Count} matching dictionaries for target language: {Language}",
             IsDictionarySupported, matchingDictionaries.Length,
             ToLanguage.Name); // Log the updated dictionary availability
     }
@@ -301,7 +301,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     partial void OnToLanguageChanged(ILanguage value)
     {
         UpdateDictionaryAvailability(); // Update dictionary availability based on the new target language
-        Log.Debug("The target language has been changed to: {Name}.",
+        Log.Debug("The target language has been changed to: {Name}",
             value.Name); // Log the change in target language
     }
 }

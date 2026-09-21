@@ -90,6 +90,6 @@ public sealed partial class RecentDialogViewModel(IRecentFilesService recentFile
     /// <param name="filePath">The path of the missing file</param>
     private static void LogMissingFile(string filePath)
     {
-        Log.Warning("The file {Path} for the recent item being opened does not exist.", filePath);
+        Log.Warning("The file {Path} for the recent item being opened does not exist", filePath);
     }
 }

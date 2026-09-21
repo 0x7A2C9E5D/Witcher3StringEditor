@@ -69,7 +69,7 @@ public partial class BackupDialogViewModel(
     /// <param name="backupItem">The backup item with the missing file</param>
     private async Task HandleMissingBackupFile(IBackupItem backupItem)
     {
-        Log.Warning("The backup file {Path} does not exist.", backupItem.BackupPath); // Log warning
+        Log.Warning("The backup file {Path} does not exist", backupItem.BackupPath); // Log warning
         if (await dialogService.MessageBoxConfirmAsync(this, Strings.BackupFileNoFoundMessage,
                 Strings.BackupFileNoFoundCaption))
             backupService.Delete(backupItem); // Delete the backup item if confirmed
