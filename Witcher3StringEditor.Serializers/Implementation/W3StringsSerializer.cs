@@ -2,7 +2,6 @@ using System.Diagnostics;
 using CommandLine;
 using CommunityToolkit.Diagnostics;
 using Serilog;
-using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
 
@@ -25,37 +24,37 @@ public class W3StringsSerializer(
     ///     then uses the CSV serializer to read the data
     /// </summary>
     /// <param name="filePath">The path to the W3Strings file to deserialize</param>
-    /// <param name="cancellationToken">A token used to abort the decoding</param>
     /// <returns>
     ///     A task that represents the asynchronous deserialize operation.
     ///     The task result contains the deserialized The Witcher 3 string items, or an empty list if an error occurred
     /// </returns>
-    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath,
-        CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
-        var tempDirectory = Directory.CreateTempSubdirectory().FullName; // Create temporary directory
+        var tempFilePath = CreateTemporaryCopy(filePath); // Create temporary copy of W3Strings file
 
         try
         {
-            // The copy happens inside the try so a failed copy cannot orphan the temporary directory
-            var tempFilePath = CreateTemporaryCopy(filePath, tempDirectory);
             // Execute the external W3Strings decoder tool with the file to decode
-            using var process = ExecuteExternalProcess(appSettings.W3StringsPath,
-                Parser.Default.FormatCommandLine(W3StringsOptions.CreateDecodingOptions(tempFilePath)));
-            await process.WaitForExitAsync(cancellationToken);
+            using var process = await ExecuteExternalProcess(appSettings.W3StringsPath,
+                Parser.Default.FormatCommandLine(new W3StringsOptions
+                {
+                    InputFileToDecode = tempFilePath
+                }));
             Guard.IsEqualTo(process.ExitCode, 0); // Ensure the process completed successfully (exit code 0)
-            return await csvSerializer.Deserialize($"{tempFilePath}.csv", cancellationToken); // Read decoded data
+            return await csvSerializer.Deserialize($"{tempFilePath}.csv"); // CSV serializer for decoded data
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "An error occurred while deserializing W3Strings file: {Path}",
+            Log.Error(ex, "An error occurred while deserializing W3Strings file: {Path}.",
                 filePath); // Log any errors that occur during deserialization
             return []; // Return an empty list in case of errors
         }
         finally
         {
-            DeleteTemporaryDirectory(tempDirectory); // Delete the temporary directory
+            var tempDirectory = Path.GetDirectoryName(tempFilePath)!; // Get the directory of the temporary file
+            Directory.Delete(tempDirectory, true); // Delete the temporary directory
+            Log.Debug("Temporary directory deleted: {Directory}",
+                tempDirectory); // Delete the temporary directory
         }
     }
 
@@ -68,23 +67,20 @@ public class W3StringsSerializer(
     ///     The serialization context containing output directory, target language,
     ///     and other serialization parameters
     /// </param>
-    /// <param name="cancellationToken">A token used to abort the encoding</param>
     /// <returns>
     ///     A task that represents the asynchronous serialize operation.
     ///     The task result indicates whether the serialization was successful
     /// </returns>
-    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
     {
-        ArgumentNullException.ThrowIfNull(w3StringItems);
-        ArgumentNullException.ThrowIfNull(context);
         var tempDirectory =
             Directory.CreateTempSubdirectory().FullName; // Create a temporary directory for intermediate files
 
         try
         {
             var saveLang =
-                GetLanguageName(context.TargetLanguage); // Get the lowercase language name for file naming
+                Enum.GetName(context.TargetLanguage)!
+                    .ToLowerInvariant(); // Get the lowercase name of the target language for file naming
 
             // Create a temporary context with the temp directory as output
             var tempContext = context with
@@ -94,70 +90,43 @@ public class W3StringsSerializer(
 
             // Define paths for temporary CSV and W3Strings files
             var tempCsvPath = Path.Combine(tempDirectory, $"{saveLang}.csv");
+            var tempW3StringsPath = Path.ChangeExtension(tempCsvPath, ".csv.w3strings");
             var outputW3StringsPath =
                 Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings");
-            Guard.IsTrue(await csvSerializer.Serialize(w3StringItems, tempContext,
-                cancellationToken)); // Serialize the items to a temporary CSV file
-            Guard.IsTrue(await StartSerializationProcess(tempContext, tempCsvPath,
-                cancellationToken)); // Encode the temporary CSV file to W3Strings format
-            Guard.IsTrue(await ReplaceFileWithBackup(Path.ChangeExtension(tempCsvPath, ".w3strings"),
+
+            Guard.IsTrue(await csvSerializer.Serialize(w3StringItems,
+                tempContext)); // Serialize the items to a temporary CSV file
+            Guard.IsTrue(await StartSerializationProcess(tempContext,
+                tempCsvPath)); // Encode the temporary CSV file to W3Strings format
+            Guard.IsTrue(await ReplaceFileWithBackup(tempW3StringsPath,
                 outputW3StringsPath)); // Replace the destination file with backup if needed
             return true; // Return true to indicate successful serialization
         }
         catch (Exception ex)
         {
             Log.Error(ex,
-                "An error occurred while serializing W3Strings"); // Log any errors that occur during serialization
+                "An error occurred while serializing W3Strings."); // Log any errors that occur during serialization
             return false; // Return false to indicate serialization failure
         }
         finally
         {
-            DeleteTemporaryDirectory(tempDirectory); // Delete the temporary directory
+            Directory.Delete(tempDirectory, true); // Delete the temporary directory
+            Log.Debug("Temporary directory deleted: {Directory}",
+                tempDirectory); // Delete the temporary directory
         }
     }
 
     /// <summary>
-    ///     Gets the lower-case language name used in the file name
-    /// </summary>
-    /// <param name="language">The target language</param>
-    /// <returns>The lower-case name of the language</returns>
-    /// <exception cref="ArgumentOutOfRangeException">The language value is not defined</exception>
-    private static string GetLanguageName(W3Language language)
-    {
-        return Enum.GetName(language)?.ToLowerInvariant()
-               ?? throw new ArgumentOutOfRangeException(nameof(language), language,
-                   "The target language is not defined.");
-    }
-
-    /// <summary>
-    ///     Creates a temporary copy of the specified file inside the given temporary directory
+    ///     Creates a temporary copy of the specified file in a temporary directory
     /// </summary>
     /// <param name="filePath">The path to the file to be copied</param>
-    /// <param name="tempDirectory">The temporary directory that owns the copy</param>
     /// <returns>The path to the temporary copy of the file</returns>
-    private static string CreateTemporaryCopy(string filePath, string tempDirectory)
+    private static string CreateTemporaryCopy(string filePath)
     {
+        var tempDirectory = Directory.CreateTempSubdirectory().FullName; // Create temporary directory
         var tempFilePath = Path.Combine(tempDirectory, Path.GetFileName(filePath)); // Build temporary file path
         File.Copy(filePath, tempFilePath, true); // Copy file to temporary location
         return tempFilePath; // Return temporary file path
-    }
-
-    /// <summary>
-    ///     Deletes the temporary directory without letting a cleanup failure escape the method
-    /// </summary>
-    /// <param name="tempDirectory">The directory to delete</param>
-    private static void DeleteTemporaryDirectory(string tempDirectory)
-    {
-        try
-        {
-            Directory.Delete(tempDirectory, true);
-            Log.Debug("Temporary directory deleted: {Directory}", tempDirectory);
-        }
-        catch (Exception ex)
-        {
-            // A locked handle (the external tool may still hold one) must not replace the operation result
-            Log.Warning(ex, "Failed to delete the temporary directory: {Directory}", tempDirectory);
-        }
     }
 
     /// <summary>
@@ -169,7 +138,7 @@ public class W3StringsSerializer(
     private async Task<bool> ReplaceFileWithBackup(string sourceFilePath, string destinationFilePath)
     {
         if (File.Exists(destinationFilePath) &&
-            !await backupService.BackupAsync(destinationFilePath)) // Backup existing file before overwrite
+            !await backupService.Backup(destinationFilePath)) // Backup existing file before overwrite
             return false; // Return false if backup creation failed
         File.Copy(sourceFilePath, destinationFilePath, true); // Copy with overwrite
         return true; // Return true to indicate successful replacement
@@ -180,21 +149,19 @@ public class W3StringsSerializer(
     /// </summary>
     /// <param name="context">The serialization context containing serialization parameters</param>
     /// <param name="path">The path to the temporary CSV file to encode</param>
-    /// <param name="cancellationToken">A token used to abort the encoding</param>
     /// <returns>
     ///     A task that represents the asynchronous operation.
     ///     The task result indicates whether the process completed successfully (exit code 0)
     /// </returns>
-    private async Task<bool> StartSerializationProcess(W3SerializationContext context, string path,
-        CancellationToken cancellationToken)
+    private async Task<bool> StartSerializationProcess(W3SerializationContext context, string path)
     {
         // Execute the external W3Strings encoder tool with appropriate arguments based on context
-        // If ignoring ID space check, pass the ignore flag, otherwise pass the expected ID space
-        var options = W3StringsOptions.CreateEncodingOptions(path,
-            context.IgnoreIdSpaceCheck ? null : context.ExpectedIdSpace, context.IgnoreIdSpaceCheck);
-        using var process = ExecuteExternalProcess(appSettings.W3StringsPath,
-            Parser.Default.FormatCommandLine(options));
-        await process.WaitForExitAsync(cancellationToken);
+        // If ignoring ID space check, pass the ignore flag,Otherwise, pass the expected ID space
+        using var process = await ExecuteExternalProcess(appSettings.W3StringsPath, context.IgnoreIdSpaceCheck
+            ? Parser.Default.FormatCommandLine(new W3StringsOptions
+                { InputFileToEncode = path, IgnoreIdSpaceCheck = true })
+            : Parser.Default.FormatCommandLine(new W3StringsOptions
+                { InputFileToEncode = path, ExpectedIdSpace = context.ExpectedIdSpace }));
         return process.ExitCode == 0; // Return true if the process completed successfully (exit code 0)
     }
 
@@ -208,7 +175,7 @@ public class W3StringsSerializer(
     ///     A task that represents the asynchronous operation.
     ///     The task result contains the completed Process object
     /// </returns>
-    private static Process ExecuteExternalProcess(string filename, string arguments)
+    private static async Task<Process> ExecuteExternalProcess(string filename, string arguments)
     {
         // Create a new process with the specified filename and arguments
         var process = new Process
@@ -228,15 +195,20 @@ public class W3StringsSerializer(
         // Attach event handlers for error and output data
         process.ErrorDataReceived += Process_ErrorDataReceived;
         process.OutputDataReceived += Process_OutputDataReceived;
+
         process.Start(); // Start the process
-        process.BeginErrorReadLine(); // Begin reading error output
-        process.BeginOutputReadLine(); // Begin reading standard output
+
+        // Begin asynchronous reading of error and output streams
+        process.BeginErrorReadLine();
+        process.BeginOutputReadLine();
+
+        await process.WaitForExitAsync(); // Wait for the process to exit
         return process; // Return the completed process
     }
 
     /// <summary>
     ///     Handles the ErrorDataReceived event of the external process
-    ///     Logs error output for the process
+    ///     Logs error output from the process
     /// </summary>
     /// <param name="sender">The source of the event</param>
     /// <param name="e">The DataReceivedEventArgs instance containing the event data</param>
@@ -244,7 +216,7 @@ public class W3StringsSerializer(
     {
         // The encoder reports problems on stderr; treat these as warnings rather than application errors
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Warning("External encoder error output: {Data}", e.Data);
+            Log.Warning("External encoder error output: {Data}.", e.Data);
     }
 
     /// <summary>
@@ -257,6 +229,6 @@ public class W3StringsSerializer(
     {
         // Standard output of the encoder is diagnostic detail only
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Debug("External encoder output: {Data}", e.Data);
+            Log.Debug("External encoder output: {Data}.", e.Data);
     }
 }
