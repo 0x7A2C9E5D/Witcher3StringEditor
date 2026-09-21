@@ -6,19 +6,17 @@ using Witcher3StringEditor.Dictionary;
 namespace Witcher3StringEditor.Dialogs.Models;
 
 /// <summary>
-///     A class representing a group of dictionaries that share a target language
+///     A class representing a group of dictionaries
 /// </summary>
-/// <param name="targetLanguage">The target language of the dictionaries in this group</param>
-/// <param name="dictionaries">The dictionaries of this group</param>
 public class DictionaryGroup(CultureInfo targetLanguage, List<DictionaryInfo> dictionaries)
 {
     /// <summary>
-    ///     Gets the target language of the dictionaries in this group
+    ///     Initializes a new instance of the DictionaryGroup class
     /// </summary>
     public CultureInfo TargetLanguage { get; } = targetLanguage;
 
     /// <summary>
-    ///     Gets the dictionaries of this group as an observable collection
+    ///     Initializes a new instance of the DictionaryGroup class
     /// </summary>
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = dictionaries.ToObservableCollection();
 }
