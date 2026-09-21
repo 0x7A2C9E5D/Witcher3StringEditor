@@ -35,9 +35,7 @@ namespace Witcher3StringEditor;
 /// </summary>
 public sealed partial class App : IDisposable
 {
-    private IServiceProvider? appServiceProvider; // The provider owning the registered services
     private bool disposedValue; // Flag to indicate whether the object has been disposed
-    private bool initialized; // Flag to indicate whether InitializeApplication completed
     private ObserverBase<LogEvent>? logObserver; // Observer for log events
     private SingleInstanceManager? singleInstanceManager; // Single instance manager
 
@@ -56,7 +54,6 @@ public sealed partial class App : IDisposable
     /// <param name="e">Startup event arguments</param>
     protected override void OnStartup(StartupEventArgs e)
     {
-        base.OnStartup(e);
         singleInstanceManager = new SingleInstanceManager(DebugHelper.IsDebug);
         // Check if another instance is already running
         if (singleInstanceManager.IsAnotherInstanceRunning())
@@ -81,9 +78,7 @@ public sealed partial class App : IDisposable
     /// </summary>
     private void InitializeApplication()
     {
-        AppPaths.EnsureDirectoriesExist(); // Create the folders the application writes to
         InitializeServices(); // Initialize dependency injection services
-        initialized = true; // Mark the container as ready for the shutdown path
         InitializeLogging(); // Setup logging system
         SetupExceptionHandling(); // Setup global exception handling
         InitializeCulture(); // Initialize culture
@@ -102,37 +97,16 @@ public sealed partial class App : IDisposable
 
     /// <summary>
     ///     Initializes the culture for the application
-    ///     A stale or hand-edited language setting falls back to the resolved supported culture
     /// </summary>
     private static void InitializeCulture()
     {
         var appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
-        var cultureInfo = ResolveCulture(appSettings);
-        if (appSettings.Language != cultureInfo.Name)
-            appSettings.Language = cultureInfo.Name; // Keep the setting in sync with the applied culture
+        var cultureInfo = appSettings.Language == string.Empty
+            ? Ioc.Default.GetRequiredService<ICultureResolver>().ResolveSupportedCulture()
+            : new CultureInfo(appSettings.Language);
+        if (appSettings.Language == string.Empty)
+            appSettings.Language = cultureInfo.Name;
         I18NExtension.Culture = cultureInfo;
-    }
-
-    /// <summary>
-    ///     Resolves the culture to apply at startup
-    /// </summary>
-    /// <param name="appSettings">The application settings</param>
-    /// <returns>The configured culture, or the resolved supported culture when the setting is unusable</returns>
-    private static CultureInfo ResolveCulture(IAppSettings appSettings)
-    {
-        if (string.IsNullOrWhiteSpace(appSettings.Language))
-            return Ioc.Default.GetRequiredService<ICultureResolver>().ResolveSupportedCulture();
-
-        try
-        {
-            return CultureInfo.GetCultureInfo(appSettings.Language);
-        }
-        catch (Exception ex) when (ex is CultureNotFoundException or ArgumentException)
-        {
-            Log.Warning(ex, "The configured language '{Language}' is not supported; using the system culture",
-                appSettings.Language);
-            return Ioc.Default.GetRequiredService<ICultureResolver>().ResolveSupportedCulture();
-        }
     }
 
     /// <summary>
@@ -156,9 +130,8 @@ public sealed partial class App : IDisposable
         // Get log access service from the IoC container
         var logAccessService = Ioc.Default.GetRequiredService<ILogAccessService>();
 
-        // Create observer to forward log events through the messaging system. The service marshals the entries
-        // onto the UI thread because the sink can be invoked from arbitrary background threads
-        logObserver = new AnonymousObserver<LogEvent>(logAccessService.Add);
+        // Create observer to forward log events through the messaging system
+        logObserver = new AnonymousObserver<LogEvent>(logAccessService.Logs.Add);
 
         // Configure Serilog with multiple outputs: file, debug, and observer
         Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(AppPaths.LogDirectory, "log.txt"),
@@ -175,9 +148,7 @@ public sealed partial class App : IDisposable
     {
         // Read the license from embedded resources
         using var stream = Assembly.GetExecutingAssembly()
-                               .GetManifestResourceStream("Witcher3StringEditor.License.txt")
-                           ?? throw new InvalidOperationException(
-                               "The embedded Syncfusion license resource 'Witcher3StringEditor.License.txt' is missing.");
+            .GetManifestResourceStream("Witcher3StringEditor.License.txt")!;
         using var reader = new StreamReader(stream);
         // Register the license with Syncfusion
         SyncfusionLicenseProvider.RegisterLicense(reader.ReadToEnd());
@@ -192,13 +163,9 @@ public sealed partial class App : IDisposable
         // Handle unhandled exceptions on the UI thread
         DispatcherUnhandledException += static (_, e) =>
         {
+            e.Handled = true;
             var exception = e.Exception;
             Log.Error(exception, "Unhandled exception: {ExceptionMessage}", exception.Message);
-            // Unconditionally suppressing the exception would hide UI-thread crashes entirely, so the user is
-            // asked instead: confirm to keep going, cancel to let the process terminate
-            var result = MessageBox.Show(Strings.OperationFailureMessage, Strings.OperationResultCaption,
-                MessageBoxButton.OKCancel, MessageBoxImage.Error);
-            e.Handled = result == MessageBoxResult.OK;
         };
         // Handle unobserved task exceptions (background tasks)
         TaskScheduler.UnobservedTaskException += static (_, e) =>
@@ -213,11 +180,10 @@ public sealed partial class App : IDisposable
     ///     Initializes the dependency injection services
     ///     Registers all services, view models, and other dependencies with the IoC container
     /// </summary>
-    private void InitializeServices()
+    private static void InitializeServices()
     {
-        // Configure the IoC container with all required services. Every registration is a singleton because the
-        // application always resolves through the static root provider
-        appServiceProvider = new ServiceCollection()
+        // Configure the IoC container with all required services
+        Ioc.Default.ConfigureServices(new ServiceCollection()
             .AddLogging(builder => builder.AddSerilog())
             .AddSingleton<IViewLocator, StrongViewLocator>(_ => CreatStrongViewLocator())
             .AddSingleton<ISettingsPersistenceService, SettingsPersistenceService>()
@@ -235,10 +201,10 @@ public sealed partial class App : IDisposable
             .AddSingleton<IDictionaryManager, DictionaryManager>()
             .AddSingleton<IDictionaryProvider, DictionaryProvider>()
             .AddSingleton<IShellOpenService, ShellOpenService>()
-            .AddSingleton<IPlayGameService, PlayGameService>()
-            .AddSingleton<ICheckUpdateService, CheckUpdateService>()
+            .AddScoped<IPlayGameService, PlayGameService>()
+            .AddScoped<ICheckUpdateService, CheckUpdateService>()
             .AddTransient<ICultureMatcher, CultureMatcher>()
-            .AddSingleton<ISettingsManagerService, SettingsManagerService>()
+            .AddTransient<ISettingsManagerService, SettingsManagerService>()
             .AddTransient<ITranslator, MicrosoftTranslator>()
             .AddTransient<ITranslator, GoogleTranslator2>()
             .AddTransient<ITranslator, YandexTranslator>()
@@ -250,8 +216,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IRecentFilesService, RecentFilesService>(_ =>
                 new RecentFilesService(Ioc.Default.GetRequiredService<IAppSettings>().RecentItems))
             .AddTransient<MainWindowViewModel>()
-            .BuildServiceProvider();
-        Ioc.Default.ConfigureServices(appServiceProvider);
+            .BuildServiceProvider());
     }
 
     /// <summary>
@@ -284,13 +249,10 @@ public sealed partial class App : IDisposable
     /// <param name="e">Exit event arguments</param>
     protected override void OnExit(ExitEventArgs e)
     {
-        // OnExit is also raised when startup shut down early (another instance is running) and the container was
-        // never configured, so the save must be guarded by the initialization flag
-        if (initialized) SaveAppSettings(); // Save application settings
-        Log.Information("Application exited"); // Log application exit
+        SaveAppSettings(); // Save application settings
+        Log.Information("Application exited."); // Log application exit
         Log.CloseAndFlush(); // Flush logs
         Dispose(); // Dispose of resources
-        base.OnExit(e);
     }
 
     /// <summary>
@@ -310,10 +272,8 @@ public sealed partial class App : IDisposable
     private void Dispose(bool disposing)
     {
         if (disposedValue) return;
+        if (disposing)
+            logObserver?.Dispose();
         disposedValue = true;
-        if (!disposing) return;
-        logObserver?.Dispose(); // Detach the log observer
-        singleInstanceManager?.Dispose(); // Release the single instance mutex
-        (appServiceProvider as IDisposable)?.Dispose(); // Release the container and its singletons
     }
 }
