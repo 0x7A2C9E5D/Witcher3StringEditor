@@ -136,6 +136,7 @@
                 <!-- Behavior to drive the grid search from the search box -->
                 <b:SfDataGridSearchBehavior SearchBox="{Binding ElementName=SearchBox}" />
                 <!-- Behavior to handle record deletion -->
+                <b:SfDataGridRecordDeletingBehavior />
                 <!-- Behavior to dispose the grid when the window closes -->
                 <b:SfDataGridDisposeOnCloseBehavior />
             </i:Interaction.Behaviors>

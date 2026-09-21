@@ -1,4 +1,11 @@
-﻿namespace Witcher3StringEditor.Dialogs.Views;
+﻿using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Messaging;
+using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
+
+namespace Witcher3StringEditor.Dialogs.Views;
 
 /// <summary>
 ///     Interaction logic for RecentDialog.xaml
@@ -13,5 +20,21 @@ public partial class RecentDialog
     public RecentDialog()
     {
         InitializeComponent(); // Initialize the UI components
+        RegisterMessageHandler(); // Register message handler
+    }
+
+    /// <summary>
+    ///     Registers the message handler for the recent dialog
+    /// </summary>
+    private void RegisterMessageHandler()
+    {
+        WeakReferenceMessenger.Default.Register<RecentDialog, AsyncRequestMessage<bool>, string>(
+            this, MessageTokens.RecentItem, (_, m) =>
+            {
+                m.Reply(MessageBox.Show(Strings.RecordDeletingMessgae,
+                    Strings.RecordDeletingCaption,
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning) == MessageBoxResult.Yes);
+            });
     }
 }
