@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Threading;
 using Microsoft.Xaml.Behaviors;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
@@ -8,7 +7,8 @@ namespace Witcher3StringEditor.Shared.Behaviors;
 
 /// <summary>
 ///     An attached behavior for SfDataGrid that handles grid resizing operations
-///     Resets the row height manager and invalidates the visual container once a resize completed
+///     Resets the row height manager and invalidates the visual container when the grid size changes
+///     This ensures proper layout update when the grid is resized
 /// </summary>
 public class SfDataGridSizeChangedBehavior : Behavior<SfDataGrid>
 {
@@ -32,24 +32,14 @@ public class SfDataGridSizeChangedBehavior : Behavior<SfDataGrid>
 
     /// <summary>
     ///     Handles the SizeChanged event of the SfDataGrid
-    ///     The reset is coalesced onto a single dispatcher callback because SizeChanged fires once per layout
-    ///     pass while a window or splitter is being dragged
+    ///     Resets the row height manager and invalidates the visual container measurement
+    ///     This ensures that the grid properly updates its layout when its size changes
     /// </summary>
     /// <param name="sender">The event sender (SfDataGrid instance)</param>
     /// <param name="e">SizeChanged event arguments containing information about the size change</param>
     private void AssociatedObject_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        _ = AssociatedObject.Dispatcher.BeginInvoke(DispatcherPriority.Background, ResetLayout);
-    }
-
-    /// <summary>
-    ///     Resets the row height manager and invalidates the visual container measurement
-    /// </summary>
-    private void ResetLayout()
-    {
-        var visualContainer = AssociatedObject.GetVisualContainer();
-        if (visualContainer is null) return;
-        visualContainer.RowHeightManager.Reset();
-        visualContainer.InvalidateMeasureInfo();
+        AssociatedObject.GetVisualContainer().RowHeightManager.Reset();
+        AssociatedObject.GetVisualContainer().InvalidateMeasureInfo();
     }
 }
