@@ -10,55 +10,33 @@ namespace Witcher3StringEditor.Models;
 internal record BackupItem : IBackupItem
 {
     /// <summary>
-    ///     Initializes a new instance of the BackupItem record and validates the backup metadata
-    ///     Deserialization and construction both go through this constructor so that a corrupt settings file cannot
-    ///     produce a backup item with a null or empty path
-    /// </summary>
-    /// <param name="fileName">The name of the backed up file</param>
-    /// <param name="hash">The SHA-256 hash of the backed up file as a lower-case hexadecimal string</param>
-    /// <param name="originalPath">The path of the file before it was backed up</param>
-    /// <param name="backupPath">The path where the backup file is stored</param>
-    /// <param name="backupTime">The time when the backup was created</param>
-    /// <exception cref="ArgumentException">
-    ///     <paramref name="fileName" />, <paramref name="hash" />, <paramref name="originalPath" /> or
-    ///     <paramref name="backupPath" /> is null, empty or consists only of white-space
-    /// </exception>
-    public BackupItem(string fileName, string hash, string originalPath, string backupPath, DateTimeOffset backupTime)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(hash);
-        ArgumentException.ThrowIfNullOrWhiteSpace(originalPath);
-        ArgumentException.ThrowIfNullOrWhiteSpace(backupPath);
-        FileName = fileName;
-        Hash = hash;
-        OrginPath = originalPath;
-        BackupPath = backupPath;
-        BackupTime = backupTime;
-    }
-
-    /// <summary>
     ///     Gets the name of the backed up file
+    ///     This property is required during record initialization
     /// </summary>
-    public string FileName { get; init; }
+    public required string FileName { get; init; }
 
     /// <summary>
     ///     Gets the hash of the backed up file
     ///     Used to verify file integrity and detect changes
+    ///     This property is required during record initialization
     /// </summary>
-    public string Hash { get; }
+    public required string Hash { get; init; }
 
     /// <summary>
     ///     Gets the original path of the file before backup
+    ///     This property is required during record initialization
     /// </summary>
-    public string OrginPath { get; }
+    public required string OrginPath { get; init; }
 
     /// <summary>
     ///     Gets the path where the backup file is stored
+    ///     This property is required during record initialization
     /// </summary>
-    public string BackupPath { get; }
+    public required string BackupPath { get; init; }
 
     /// <summary>
     ///     Gets the time when the backup was created
+    ///     This property is required during record initialization
     /// </summary>
-    public DateTimeOffset BackupTime { get; }
+    public required DateTime BackupTime { get; init; }
 }
