@@ -36,12 +36,12 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
             Directory.CreateDirectory(AppPaths.BackupDirectory); // Ensure backup directory exists
             if (!IsDuplicateBackup(backupItem)) return ExecuteBackup(backupItem); // Execute backup
             // Check for duplicates
-            Log.Debug("Backup skipped, an identical backup already exists: {Path}.", filePath);
+            Log.Debug("Backup skipped, an identical backup already exists: {Path}", filePath);
             return true;
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to backup file: {Path}.", filePath); // Log any errors
+            Log.Error(ex, "Failed to backup file: {Path}", filePath); // Log any errors
             return false; // Return false on failure
         }
     }
@@ -60,12 +60,12 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
             Guard.IsNotNullOrWhiteSpace(folder); // Ensure folder path is valid
             Directory.CreateDirectory(folder); // Create directory if it doesn't exist
             File.Copy(backupItem.BackupPath, backupItem.OrginPath, true); // Copy backup to original location
-            Log.Information("Restore backup file: {FileName}.", backupItem.OrginPath); // Log successful restore
+            Log.Information("Restore backup file: {FileName}", backupItem.OrginPath); // Log successful restore
             return true; // Return true on success
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to restore backup item: {Path}.", backupItem.OrginPath); // Log any errors
+            Log.Error(ex, "Failed to restore backup item: {Path}", backupItem.OrginPath); // Log any errors
             return false; // Return false on failure
         }
     }
@@ -82,12 +82,12 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
             if (File.Exists(backupItem.BackupPath)) // Check if backup file exists
                 File.Delete(backupItem.BackupPath); // Delete the backup file
             appSettings.BackupItems.Remove(backupItem); // Remove from backup items collection
-            Log.Information("Delete backup file: {Path}.", backupItem.BackupPath); // Log successful deletion
+            Log.Information("Delete backup file: {Path}", backupItem.BackupPath); // Log successful deletion
             return true; // Return true on success
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to delete backup item: {Path}.", backupItem.BackupPath); // Log any errors
+            Log.Error(ex, "Failed to delete backup item: {Path}", backupItem.BackupPath); // Log any errors
             return false; // Return false on failure
         }
     }
@@ -128,7 +128,7 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
     {
         File.Copy(backupItem.OrginPath, backupItem.BackupPath); // Copy file to back up location
         appSettings.BackupItems.Add(backupItem); // Add backup item to collection
-        Log.Information("Backup file: {Path}.", backupItem.OrginPath); // Log successful backup
+        Log.Information("Backup file: {Path}", backupItem.OrginPath); // Log successful backup
         return true; // Return true on success
     }
 
@@ -149,7 +149,7 @@ internal class BackupService(IAppSettings appSettings) : IBackupService
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to compute SHA256 hash: {Path}.", filePath); // Log any errors
+            Log.Error(ex, "Failed to compute SHA256 hash: {Path}", filePath); // Log any errors
             return string.Empty; // Return empty string on failure
         }
     }

@@ -45,7 +45,7 @@ public class W3StringsSerializer(
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "An error occurred while deserializing W3Strings file: {Path}.",
+            Log.Error(ex, "An error occurred while deserializing W3Strings file: {Path}",
                 filePath); // Log any errors that occur during deserialization
             return []; // Return an empty list in case of errors
         }
@@ -105,7 +105,7 @@ public class W3StringsSerializer(
         catch (Exception ex)
         {
             Log.Error(ex,
-                "An error occurred while serializing W3Strings."); // Log any errors that occur during serialization
+                "An error occurred while serializing W3Strings"); // Log any errors that occur during serialization
             return false; // Return false to indicate serialization failure
         }
         finally
@@ -216,7 +216,7 @@ public class W3StringsSerializer(
     {
         // The encoder reports problems on stderr; treat these as warnings rather than application errors
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Warning("External encoder error output: {Data}.", e.Data);
+            Log.Warning("External encoder error output: {Data}", e.Data);
     }
 
     /// <summary>
@@ -229,6 +229,6 @@ public class W3StringsSerializer(
     {
         // Standard output of the encoder is diagnostic detail only
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Debug("External encoder output: {Data}.", e.Data);
+            Log.Debug("External encoder output: {Data}", e.Data);
     }
 }

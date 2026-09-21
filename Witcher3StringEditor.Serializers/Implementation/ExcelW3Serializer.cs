@@ -35,7 +35,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "An error occurred while deserializing Excel worksheets file: {Path}.",
+            Log.Error(ex, "An error occurred while deserializing Excel worksheets file: {Path}",
                 filePath); // Log error
             return []; // Empty on fail
         }
@@ -68,7 +68,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "An error occurred while serializing the Excel worksheets file."); // Log serialization error
+            Log.Error(ex, "An error occurred while serializing the Excel worksheets file"); // Log serialization error
             return false; // Return failure
         }
     }

@@ -250,7 +250,7 @@ public sealed partial class App : IDisposable
     protected override void OnExit(ExitEventArgs e)
     {
         SaveAppSettings(); // Save application settings
-        Log.Information("Application exited."); // Log application exit
+        Log.Information("Application exited"); // Log application exit
         Log.CloseAndFlush(); // Flush logs
         Dispose(); // Dispose of resources
     }

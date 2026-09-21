@@ -98,7 +98,7 @@ public partial class MainWindow
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error performing search.");
+            Log.Error(ex, "Error performing search");
         }
     }
 
@@ -118,7 +118,7 @@ public partial class MainWindow
         }
         catch (Exception e)
         {
-            Log.Error(e, "Error clearing search."); // Log the error
+            Log.Error(e, "Error clearing search"); // Log the error
         }
     }
 

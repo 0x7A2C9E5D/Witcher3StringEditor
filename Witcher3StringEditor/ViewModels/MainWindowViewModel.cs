@@ -321,7 +321,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to open file: {FileName}.", fileName); // Log any errors during file opening
+            Log.Error(ex, "Failed to open file: {FileName}", fileName); // Log any errors during file opening
         }
     }
 
@@ -364,7 +364,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         {
             W3StringItems!.Add(dialogViewModel.Item.Cast<W3StringItem>()); // Add new item to collection
             await RequestDataGridPagedSource(); // Request updated paged source
-            Log.Information("W3String item added: {StrId}.", dialogViewModel.Item.StrId); // Log successful addition
+            Log.Information("W3String item added: {StrId}", dialogViewModel.Item.StrId); // Log successful addition
         }
     }
 
@@ -397,7 +397,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             W3StringItems[index].KeyHex = dialogViewModel.Item.KeyHex;
             W3StringItems[index].KeyName = dialogViewModel.Item.KeyName;
             W3StringItems[index].Text = dialogViewModel.Item.Text;
-            Log.Information("W3String item updated: {StrId}.", dialogViewModel.Item.StrId); // Log successful update
+            Log.Information("W3String item updated: {StrId}", dialogViewModel.Item.StrId); // Log successful update
         }
     }
 
@@ -420,7 +420,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
                 W3StringItems!.Remove(stringItem); // Remove from main collection
             }
 
-            Log.Information("Deleted {Count} W3String item(s).", w3Items.Length);
+            Log.Information("Deleted {Count} W3String item(s)", w3Items.Length);
             await RequestDataGridPagedSource(); // Request updated paged source
         }
     }
@@ -619,13 +619,13 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
                 foreach (var pair in matchedPairs)
                     pair.oldItem.Text = pair.newItem.Text;
 
-                Log.Information("Merged {MatchedCount} item(s) from {SourceFile}.",
+                Log.Information("Merged {MatchedCount} item(s) from {SourceFile}",
                     matchedPairs.Length, storageFile.LocalPath);
             }
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to merge data.");
+            Log.Error(ex, "Failed to merge data");
         }
     }
 }

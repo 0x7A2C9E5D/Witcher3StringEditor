@@ -35,7 +35,7 @@ internal class CheckUpdateService : ICheckUpdateService
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to check for updates."); // Log any errors
+            Log.Error(ex, "Failed to check for updates"); // Log any errors
             return false; // Return false on failure
         }
     }

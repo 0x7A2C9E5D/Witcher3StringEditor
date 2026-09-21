@@ -41,7 +41,7 @@ public class W3SerializerCoordinator(
             _ => throw new NotSupportedException($"File format not supported: {filePath}")
         });
 
-        Log.Information("Deserialized {Count} item(s) from {Path}.", items.Count, filePath);
+        Log.Information("Deserialized {Count} item(s) from {Path}", items.Count, filePath);
         return items;
     }
 
@@ -72,7 +72,7 @@ public class W3SerializerCoordinator(
         });
 
         if (succeeded)
-            Log.Information("Serialized {Count} item(s) as {FileType} to {Directory}.", w3StringItems.Count,
+            Log.Information("Serialized {Count} item(s) as {FileType} to {Directory}", w3StringItems.Count,
                 context.TargetFileType, context.OutputDirectory);
         return succeeded;
     }

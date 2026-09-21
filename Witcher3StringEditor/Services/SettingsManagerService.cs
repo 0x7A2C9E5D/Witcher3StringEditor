@@ -60,7 +60,7 @@ internal class SettingsManagerService : ISettingsManagerService
     {
         if (!string.IsNullOrWhiteSpace(AppSettings.W3StringsPath)) return false; // Check if W3Strings path is set
         Log.Error(
-            "Settings are incorrect or initial setup is incomplete."); // Log settings incorrect or incomplete message
+            "Settings are incorrect or initial setup is incomplete"); // Log settings incorrect or incomplete message
         await dialogService.MessageBoxNotifyAsync(dialogOwner, Strings.FirstRunMessage, Strings.FirstRunCaption,
             MessageBoxIcon.Warning); // Tell the user that the initial setup is incomplete
         return true; // Return true if first run was triggered
@@ -81,7 +81,7 @@ internal class SettingsManagerService : ISettingsManagerService
             return false; // Return false if file does not exist
         }
 
-        Log.Information("The W3Strings path has been set to {Path}.",
+        Log.Information("The W3Strings path has been set to {Path}",
             appSettings.W3StringsPath); // Log valid w3strings path message
         return true; // Return true if file exists
     }
@@ -103,12 +103,12 @@ internal class SettingsManagerService : ISettingsManagerService
                 return false; // Return false if game executable does not exist
             }
 
-            Log.Information("The game executable path has been set to {Path}.",
+            Log.Information("The game executable path has been set to {Path}",
                 appSettings.GameExePath); // Log valid game executable path message
             return true; // Return true if game executable exists
         }
 
-        Log.Warning("The game executable path is unset."); // Log game executable path unset message
+        Log.Warning("The game executable path is unset"); // Log game executable path unset message
         return true; // Return true if game executable path is unset
     }
 
@@ -119,7 +119,7 @@ internal class SettingsManagerService : ISettingsManagerService
     private static void LogAdditionalSettings(IAppSettings appSettings)
     {
         Log.Information(
-            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Translator: {Translator}.",
+            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Translator: {Translator}",
             appSettings.PreferredW3FileType, appSettings.PreferredLanguage,
             appSettings.Translator); // Log the relevant settings in a single entry
     }
@@ -135,7 +135,7 @@ internal class SettingsManagerService : ISettingsManagerService
             await dialogService.MessageBoxNotifyAsync(dialogOwner, Strings.PathInvalidMessage,
                 Strings.PathInvalidCaption, MessageBoxIcon.Error); // Tell the user that a path is invalid
         else
-            Log.Information("Settings are correct."); // Log settings correct message
+            Log.Information("Settings are correct"); // Log settings correct message
     }
 
     /// <summary>
@@ -191,11 +191,11 @@ internal class SettingsManagerService : ISettingsManagerService
         try
         {
             I18NExtension.Culture = new CultureInfo(language); // Set the new culture
-            Log.Information("Language changed to {Language}.", language); // Log successful language change
+            Log.Information("Language changed to {Language}", language); // Log successful language change
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to change language."); // Log any errors during language change
+            Log.Error(ex, "Failed to change language"); // Log any errors during language change
         }
     }
 }

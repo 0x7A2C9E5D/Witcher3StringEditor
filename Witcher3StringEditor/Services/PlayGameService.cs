@@ -19,7 +19,7 @@ internal class PlayGameService(IAppSettings appSettings) : IPlayGameService
     {
         try
         {
-            Log.Information("Starting the game process."); // Log start of game process
+            Log.Information("Starting the game process"); // Log start of game process
             using var process = new Process(); // Create new process
             process.EnableRaisingEvents = true; // Enable event raising
             process.StartInfo = new ProcessStartInfo // Configure process start info
@@ -35,11 +35,11 @@ internal class PlayGameService(IAppSettings appSettings) : IPlayGameService
             process.BeginErrorReadLine(); // Begin reading error output
             process.BeginOutputReadLine(); // Begin reading standard output
             await process.WaitForExitAsync(); // Wait for process to exit
-            Log.Information("Game process exited with code {ExitCode}.", process.ExitCode); // Log exit code
+            Log.Information("Game process exited with code {ExitCode}", process.ExitCode); // Log exit code
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to start the game process."); // Log any errors
+            Log.Error(ex, "Failed to start the game process"); // Log any errors
         }
     }
 
@@ -52,7 +52,7 @@ internal class PlayGameService(IAppSettings appSettings) : IPlayGameService
     {
         // Game stderr is not an application error; keep it at debug level for diagnostics
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Debug("Game process error output: {Data}.", e.Data);
+            Log.Debug("Game process error output: {Data}", e.Data);
     }
 
     /// <summary>
@@ -64,6 +64,6 @@ internal class PlayGameService(IAppSettings appSettings) : IPlayGameService
     {
         // Standard output is read only to drain the pipe and avoid blocking the game process
         if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Debug("Game process output: {Data}.", e.Data);
+            Log.Debug("Game process output: {Data}", e.Data);
     }
 }

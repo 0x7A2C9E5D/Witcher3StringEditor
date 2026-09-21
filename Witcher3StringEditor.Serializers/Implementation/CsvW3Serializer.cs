@@ -47,7 +47,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "An error occurred while deserializing the CSV file: {Path}.", filePath); // Log errors
+            Log.Error(ex, "An error occurred while deserializing the CSV file: {Path}", filePath); // Log errors
             return []; // Return empty list on error
         }
     }
@@ -79,7 +79,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "An error occurred while serializing the CSV file."); // Log serialization errors
+            Log.Error(ex, "An error occurred while serializing the CSV file"); // Log serialization errors
             return false; // Return failure
         }
     }
