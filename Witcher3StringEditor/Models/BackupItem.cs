@@ -23,7 +23,7 @@ internal record BackupItem : IBackupItem
     ///     <paramref name="fileName" />, <paramref name="hash" />, <paramref name="originalPath" /> or
     ///     <paramref name="backupPath" /> is null, empty or consists only of white-space
     /// </exception>
-    public BackupItem(string fileName, string hash, string originalPath, string backupPath, DateTimeOffset backupTime)
+    public BackupItem(string fileName, string hash, string originalPath, string backupPath, DateTime backupTime)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
         ArgumentException.ThrowIfNullOrWhiteSpace(hash);
@@ -39,7 +39,7 @@ internal record BackupItem : IBackupItem
     /// <summary>
     ///     Gets the name of the backed up file
     /// </summary>
-    public string FileName { get; init; }
+    public string FileName { get; }
 
     /// <summary>
     ///     Gets the hash of the backed up file
@@ -60,5 +60,5 @@ internal record BackupItem : IBackupItem
     /// <summary>
     ///     Gets the time when the backup was created
     /// </summary>
-    public DateTimeOffset BackupTime { get; }
+    public DateTime BackupTime { get; }
 }

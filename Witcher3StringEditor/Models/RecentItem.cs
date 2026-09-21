@@ -36,8 +36,8 @@ internal partial class RecentItem : ObservableObject, IRecentFileEntry
     /// <param name="isMarked">A value indicating whether the item is marked (default is false)</param>
     public RecentItem(string filePath, DateTime openedTime, bool isMarked = false)
     {
-        IsMarked = isMarked;
         FilePath = filePath;
+        IsMarked = isMarked;
         OpenedTime = openedTime;
     }
 }
