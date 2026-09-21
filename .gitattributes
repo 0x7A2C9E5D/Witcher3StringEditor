@@ -21,6 +21,11 @@
 # file extensions to fail to load in VS. An alternative would be to treat
 # these files as binary and thus will always conflict and require user
 # intervention with every merge. To do so, just uncomment the entries below
+#
+# DECISION (documented on purpose): the drivers stay disabled. One command line merge conflict is
+# resolved manually, which is preferred over having to intervene on every conflict of these files.
+# The entries are kept here so the template is not mistaken for an unfinished copy; uncomment them if
+# the team ever prioritises conflict markers over manual resolution.
 ###############################################################################
 #*.sln       merge=binary
 #*.csproj    merge=binary
@@ -36,20 +41,49 @@
 #*.wwaproj   merge=binary
 
 ###############################################################################
-# behavior for image files
+# Explicit binary declarations
 #
-# image files are treated as binary by default.
+# `* text=auto` lets git decide between text and binary with a NUL byte heuristic over the first bytes
+# of the file. A binary file without an early NUL byte can be misclassified as text and have its CR/LF
+# bytes rewritten, silently corrupting it. The known binary types are therefore declared explicitly
+# instead of relying on the heuristic.
 ###############################################################################
-#*.jpg   binary
-#*.png   binary
-#*.gif   binary
+*.jpg     binary
+*.jpeg    binary
+*.png     binary
+*.gif     binary
+*.ico     binary
+*.bmp     binary
+*.tif     binary
+*.tiff    binary
+*.zip     binary
+*.7z      binary
+*.rar     binary
+*.gz      binary
+*.tar     binary
+*.dll     binary
+*.exe     binary
+*.pdb     binary
+*.nupkg   binary
+*.snk     binary
+*.pfx     binary
+*.ttf     binary
+*.otf     binary
+*.woff    binary
+*.woff2   binary
 
 ###############################################################################
 # diff behavior for common document formats
 # 
 # Convert binary document formats to text before diffing them. This feature
-# is only available from the command line. Turn it on by uncommenting the 
+# is only available from the command line. Turn it on by uncommenting the
 # entries below.
+#
+# NOTE: the `astextplain` driver is NOT defined by this repository. It normally ships with msysgit /
+# Visual Studio and still has to be registered before these lines do anything useful:
+#   git config diff.astextplain.textconv astextplain
+# Without it, git errors out or silently falls back to a raw byte diff, so the block stays commented
+# out until the textconv helper is documented and configured for the team.
 ###############################################################################
 #*.doc   diff=astextplain
 #*.DOC   diff=astextplain
