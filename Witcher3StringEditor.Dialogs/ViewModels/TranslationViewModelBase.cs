@@ -22,6 +22,21 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public abstract partial class TranslationViewModelBase : ObservableObject, IAsyncDisposable
 {
     /// <summary>
+    ///     The name of the translator that uses Microsoft translation service
+    /// </summary>
+    private const string MicrosoftTranslatorName = "MicrosoftTranslator";
+
+    /// <summary>
+    ///     The name of the translator that uses Google translation service
+    /// </summary>
+    private const string GoogleTranslatorName = "GoogleTranslator";
+
+    /// <summary>
+    ///     The name of the translator that uses Yandex translation service
+    /// </summary>
+    private const string YandexTranslatorName = "YandexTranslator";
+
+    /// <summary>
     ///     The dialog service used to inform or question the user
     /// </summary>
     private protected readonly IDialogService DialogService;
@@ -106,7 +121,8 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         0);
 
     /// <summary>
-    ///     Updates the availability of the dictionary service
+    ///     Gets the collection of dictionaries available for the currently selected languages, starting with the
+    ///     <see cref="NoneDictionary" /> entry that represents "no dictionary"
     /// </summary>
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 
@@ -163,7 +179,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private bool IsDictionaryAvailable()
     {
         // Dictionary is only supported for Microsoft Translator when the source language is English
-        return Translator.Name == "MicrosoftTranslator" && IsEnglishCulture(FormLanguage);
+        return Translator.Name == MicrosoftTranslatorName && IsEnglishCulture(FormLanguage);
     }
 
     /// <summary>
@@ -210,11 +226,11 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     {
         return translator.Name switch // Return languages based on translator type
         {
-            "MicrosoftTranslator" => Language.LanguageDictionary.Values.Where(x => // Microsoft supported languages
+            MicrosoftTranslatorName => Language.LanguageDictionary.Values.Where(x => // Microsoft supported languages
                 x.SupportedServices.HasFlag(TranslationServices.Microsoft)),
-            "GoogleTranslator" => Language.LanguageDictionary.Values.Where(x => // Google supported languages
+            GoogleTranslatorName => Language.LanguageDictionary.Values.Where(x => // Google supported languages
                 x.SupportedServices.HasFlag(TranslationServices.Google)),
-            "YandexTranslator" => Language.LanguageDictionary.Values.Where(x => // Yandex supported languages
+            YandexTranslatorName => Language.LanguageDictionary.Values.Where(x => // Yandex supported languages
                 x.SupportedServices.HasFlag(TranslationServices.Yandex)),
             _ => Language.LanguageDictionary.Values // Default to all languages
         };
@@ -239,7 +255,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     partial void OnFormLanguageChanged(ILanguage value)
     {
         UpdateDictionaryAvailability(); // Update dictionary availability based on the new source language
-        Log.Debug("The source language has been changed to: {Name}.",
+        Log.Debug("The source language has been changed to: {Name}",
             value.Name); // Log the change in source language
     }
 
@@ -260,15 +276,17 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     private void LoadDictionaries()
     {
+        // The invariant is enforced locally so the method stays safe if it is ever called from somewhere else
+        if (DictionaryService is null) return;
         ResetDictionaries(); // Initialize the dictionary collection
         var targetLanguage =
             CultureInfo.GetCultureInfo(ToLanguage.ISO6391); // Get the culture info for the target language
         var matchingDictionaries =
-            DictionaryService!.Find(targetLanguage).ToArray(); // Find matching dictionaries for the target language
+            DictionaryService.Find(targetLanguage).ToArray(); // Find matching dictionaries for the target language
         AddMatchingDictionaries(matchingDictionaries); // Add matching dictionaries to the collection
 
         Log.Information(
-            "Dictionary availability has been updated. Is supported: {IsSupported}. Found {Count} matching dictionaries for target language: {Language}.",
+            "Dictionary availability has been updated. Is supported: {IsSupported}. Found {Count} matching dictionaries for target language: {Language}",
             IsDictionarySupported, matchingDictionaries.Length,
             ToLanguage.Name); // Log the updated dictionary availability
     }
@@ -301,7 +319,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     partial void OnToLanguageChanged(ILanguage value)
     {
         UpdateDictionaryAvailability(); // Update dictionary availability based on the new target language
-        Log.Debug("The target language has been changed to: {Name}.",
-            value.Name); // Log the change in target language
+        Log.Debug("The target language has been changed to: {Name}", value.Name); // Log the change in target language
     }
 }
