@@ -17,7 +17,7 @@ public enum W3Language
 
     /// <summary>
     ///     Brazilian Portuguese language
-    ///     Culture code: pt-BR
+    ///     Culture code: pt
     /// </summary>
     [Description("pt")] Br = 1,
 
