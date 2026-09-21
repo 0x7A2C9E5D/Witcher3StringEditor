@@ -32,9 +32,10 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     /// <summary>
     ///     Creates a new instance of the DeleteDataDialogViewModel class
     /// </summary>
-    /// <param name="items"></param>
-    /// <returns></returns>
-    public DeleteDataDialogViewModel CreateDeleteDialog(IEnumerable<IW3StringItem> items)
+    /// <param name="items">The items to delete</param>
+    /// <returns>The view model for the delete confirmation dialog</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="items" /> is null</exception>
+    public DeleteDataDialogViewModel CreateDeleteDialog(IReadOnlyList<IW3StringItem> items)
     {
         return new DeleteDataDialogViewModel(items);
     }
@@ -100,7 +101,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     {
         return new AboutDialogViewModel(aboutInfo);
     }
-    
+
     /// <summary>
     ///     Creates a new instance of the RecentDialogViewModel class
     /// </summary>
@@ -111,7 +112,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
             serviceProvider.GetRequiredService<IRecentFilesService>(),
             serviceProvider.GetRequiredService<IDialogService>());
     }
-    
+
     /// <summary>
     ///     Creates a new instance of the TranslationDialogViewModel class
     /// </summary>
@@ -123,6 +124,11 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     public TranslationDialogViewModel CreateTranslationDialog(ITranslator translator,
         IReadOnlyList<ITrackableW3StringItem> items, int index, IDictionaryService? dictionaryService)
     {
+        if (items.Count == 0)
+            throw new ArgumentException(@"At least one item is required to translate.", nameof(items));
+        if (index < 0 || index >= items.Count)
+            throw new ArgumentOutOfRangeException(nameof(index), index,
+                $@"The index must be within the range of the {items.Count} provided item(s).");
         return new TranslationDialogViewModel(
             serviceProvider.GetRequiredService<IAppSettings>(),
             translator,
@@ -133,9 +139,9 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     }
 
     /// <summary>
-    ///     Creates a new instance of the BatchItemsTranslationViewModel class
+    ///     Creates a new instance of the DictionaryManagerDialogViewModel class
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The view model for the dictionary management dialog</returns>
     public DictionaryManagerDialogViewModel CreateDictionaryManagerDialog()
     {
         return new DictionaryManagerDialogViewModel(
