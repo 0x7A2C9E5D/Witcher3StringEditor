@@ -1,15 +1,5 @@
 # CodeGraph data files — local to each machine, not for committing.
 # Ignore everything in .codegraph/ except this file itself, so transient
 # files (the database, daemon.pid, sockets, logs) never show up in git.
-#
-# NOTE: `*` only prevents *newly created* files from being tracked. Anything that
-# was committed before these rules were added stays tracked and keeps receiving
-# local runtime data on every change. Remove such files from the index with
-#   git rm --cached .codegraph/<name>
-# and purge the history (for example with git filter-repo) if they were pushed.
-#
-# NOTE: `*` also matches directories, so the negation below can only re-include a
-# *top-level* file. To share a file inside a subdirectory, un-ignore the directory
-# first (`!subdir/`) and then the file (`!subdir/.gitkeep`).
 *
 !.gitignore
