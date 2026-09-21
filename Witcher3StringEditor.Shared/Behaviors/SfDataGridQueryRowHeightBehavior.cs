@@ -13,8 +13,8 @@ public class SfDataGridQueryRowHeightBehavior : Behavior<SfDataGrid>
     ///     Dependency property for minimum row height, with a default value of 25.0
     /// </summary>
     public static readonly DependencyProperty MinHeightProperty
-        = DependencyProperty.Register(nameof(MinHeight), typeof(double), typeof(SfDataGridQueryRowHeightBehavior),
-            new PropertyMetadata(25.0));
+        = DependencyProperty.Register(nameof(MinHeight), typeof(double), 
+            typeof(SfDataGridQueryRowHeightBehavior), new PropertyMetadata(25.0));
 
     /// <summary>
     ///     Grid row sizing options used for calculating auto row heights
@@ -50,19 +50,17 @@ public class SfDataGridQueryRowHeightBehavior : Behavior<SfDataGrid>
 
     /// <summary>
     ///     Handles the QueryRowHeight event of the SfDataGrid
-    ///     Calculates and sets the appropriate row height based on the content
-    ///     Ensures the row height is at least MinHeight
+    ///     Calculates the appropriate row height based on the content and clamps it to <see cref="MinHeight" />
     /// </summary>
     /// <param name="sender">The event sender (SfDataGrid instance)</param>
     /// <param name="e">QueryRowHeight event arguments containing row index and height information</param>
     private void AssociatedObject_QueryRowHeight(object? sender, QueryRowHeightEventArgs e)
     {
-        // Attempt to get the auto row height for the specified row index
-        // If unable to get auto height or if auto height is less than or equal to minimum height, return without handling
+        // Only bail out when the auto sizing failed; the minimum has to be clamped explicitly, otherwise a row
+        // falls back to the grid default and could end up shorter than the requested minimum
         if (!AssociatedObject.GridColumnSizer.GetAutoRowHeight(e.RowIndex, gridRowResizingOptions,
-                out var autoHeight) || autoHeight <= MinHeight) return;
-        // Set the calculated height and mark the event as handled
-        e.Height = autoHeight;
+                out var autoHeight)) return;
+        e.Height = Math.Max(autoHeight, MinHeight);
         e.Handled = true;
     }
 }
