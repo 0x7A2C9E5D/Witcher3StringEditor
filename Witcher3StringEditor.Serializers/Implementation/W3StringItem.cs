@@ -5,20 +5,23 @@ namespace Witcher3StringEditor.Serializers.Implementation;
 /// <summary>
 ///     Represents The Witcher 3 string item with string-based properties
 ///     Implements the IW3StringItem interface to provide a concrete implementation for The Witcher 3 string data
-///     This type is used internally for serialization and deserialization operations
+///     This record is used internally for serialization and deserialization operations
 /// </summary>
-/// <remarks>
-///     Deliberately a class instead of a record: the members are mutable, so synthesized value equality over all
-///     five members would silently violate the hash/equality contract as soon as a value changes (for example when
-///     a translation updates <see cref="Text" />)
-/// </remarks>
-internal class W3StringItem : IW3StringItem
+internal record W3StringItem : IW3StringItem
 {
+    /// <summary>
+    ///     Initializes a new instance of the W3StringItem record
+    ///     Creates an empty W3StringItem with default values
+    /// </summary>
+    public W3StringItem()
+    {
+    }
+
     /// <summary>
     ///     Gets or sets the string ID of The Witcher 3 string item
     ///     This represents the unique identifier for the string in The Witcher 3 system
     /// </summary>
-    public string StrId { get;set; } = string.Empty;
+    public string StrId { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets or sets the hexadecimal key of The Witcher 3 string item
