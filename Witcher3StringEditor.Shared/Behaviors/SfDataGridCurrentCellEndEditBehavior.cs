@@ -29,14 +29,18 @@ public class SfDataGridCurrentCellEndEditBehavior : Behavior<SfDataGrid>
 
     /// <summary>
     ///     Handles the CurrentCellEndEdit event of the SfDataGrid
-    ///     Invalidates the row height and visual container measurement when a cell editing operation ends
-    ///     This ensures the grid properly updates its layout after editing content that might affect row height
+    ///     Invalidates the row height of the edited row so the grid can re-measure content whose height changed
     /// </summary>
     /// <param name="sender">The event sender (SfDataGrid instance)</param>
     /// <param name="e">CurrentCellEndEdit event arguments containing information about the edited cell</param>
     private void AssociatedObject_CurrentCellEndEdit(object? sender, CurrentCellEndEditEventArgs e)
     {
-        AssociatedObject.InvalidateRowHeight(e.RowColumnIndex.RowIndex);
-        AssociatedObject.GetVisualContainer().InvalidateMeasureInfo();
+        // Syncfusion uses -1 when no row could be resolved; the invalidation would be meaningless there
+        var rowIndex = e.RowColumnIndex.RowIndex;
+        if (rowIndex < 0) return;
+        AssociatedObject.InvalidateRowHeight(rowIndex);
+        // InvalidateRowHeight already schedules the row layout update; the container is only invalidated when it
+        // is actually available, so the whole grid is not re-measured on every edit commit
+        AssociatedObject.GetVisualContainer()?.InvalidateMeasureInfo();
     }
 }
