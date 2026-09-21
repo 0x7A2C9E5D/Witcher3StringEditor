@@ -23,8 +23,7 @@ internal class StringToCultureInfoConverter : IValueConverter
         try
         {
             if (value is not string ci) return DependencyProperty.UnsetValue;
-            // GetCultureInfo returns a cached, read-only instance instead of allocating a new mutable one
-            return !string.IsNullOrWhiteSpace(ci) ? CultureInfo.GetCultureInfo(ci) : DependencyProperty.UnsetValue;
+            return !string.IsNullOrWhiteSpace(ci) ? new CultureInfo(ci) : DependencyProperty.UnsetValue;
         }
         catch (CultureNotFoundException)
         {
@@ -39,14 +38,9 @@ internal class StringToCultureInfoConverter : IValueConverter
     /// <param name="targetType">The type to convert to (not used in this implementation)</param>
     /// <param name="parameter">An optional parameter to be used in the converter logic (not used in this implementation)</param>
     /// <param name="culture">The culture to use in the converter (not used in this implementation)</param>
-    /// <returns>
-    ///     The name of the CultureInfo as a string. The invariant culture is reported as
-    ///     <see cref="DependencyProperty.UnsetValue" /> because its empty name would be mapped back to the unset
-    ///     value by <see cref="Convert" />, which keeps a two-way binding symmetric
-    /// </returns>
+    /// <returns>The name of the CultureInfo as a string, or DependencyProperty.UnsetValue if conversion fails</returns>
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not CultureInfo ci) return DependencyProperty.UnsetValue;
-        return ci.Equals(CultureInfo.InvariantCulture) ? DependencyProperty.UnsetValue : ci.Name;
+        return value is CultureInfo ci ? ci.Name : DependencyProperty.UnsetValue;
     }
 }
