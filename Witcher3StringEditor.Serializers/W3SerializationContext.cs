@@ -9,10 +9,21 @@ namespace Witcher3StringEditor.Serializers;
 public record W3SerializationContext
 {
     /// <summary>
-    ///     Gets the output directory where the serialized files will be saved
-    ///     This is a required property that must be specified during context creation
+    ///     Backing field of the <see cref="OutputDirectory" /> property
     /// </summary>
-    public required string OutputDirectory { get; init; }
+    private readonly string outputDirectory = string.Empty;
+
+    /// <summary>
+    ///     Gets the output directory where the serialized files will be saved
+    ///     Must be a rooted, non-white-space path; the value is validated and normalized on assignment because every
+    ///     serializer feeds it straight into <see cref="System.IO.Path.Combine(string, string)" />
+    /// </summary>
+    /// <exception cref="ArgumentException">The value is null, empty, white-space or not a rooted path</exception>
+    public required string OutputDirectory
+    {
+        get => outputDirectory;
+        init => outputDirectory = ValidateOutputDirectory(value);
+    }
 
     /// <summary>
     ///     Gets the target file type for serialization
@@ -40,4 +51,28 @@ public record W3SerializationContext
     ///     When true, bypasses the ID space validation during W3Strings encoding
     /// </summary>
     public bool IgnoreIdSpaceCheck { get; init; }
+
+    /// <summary>
+    ///     Validates and normalizes the output directory
+    /// </summary>
+    /// <param name="outputDirectory">The directory to validate</param>
+    /// <returns>The full path of the directory</returns>
+    /// <exception cref="ArgumentException">
+    ///     The value is null, empty, white-space, not rooted or not a valid path
+    /// </exception>
+    private static string ValidateOutputDirectory(string outputDirectory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(outputDirectory);
+        if (!Path.IsPathRooted(outputDirectory))
+            throw new ArgumentException("The output directory must be an absolute path.", nameof(outputDirectory));
+        try
+        {
+            return Path.GetFullPath(outputDirectory);
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            throw new ArgumentException($"The output directory '{outputDirectory}' is not a valid path.",
+                nameof(outputDirectory), ex);
+        }
+    }
 }
