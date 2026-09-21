@@ -35,12 +35,11 @@ public class W3StringsSerializer(
         try
         {
             // Execute the external W3Strings decoder tool with the file to decode
-            using var process = await ExecuteExternalProcess(appSettings.W3StringsPath,
+            Guard.IsTrue(await ExecuteExternalProcess(appSettings.W3StringsPath,
                 Parser.Default.FormatCommandLine(new W3StringsOptions
                 {
                     InputFileToDecode = tempFilePath
-                }));
-            Guard.IsEqualTo(process.ExitCode, 0); // Ensure the process completed successfully (exit code 0)
+                }))); // Check if the process completed successfully
             return await csvSerializer.Deserialize($"{tempFilePath}.csv"); // CSV serializer for decoded data
         }
         catch (Exception ex)
@@ -157,12 +156,11 @@ public class W3StringsSerializer(
     {
         // Execute the external W3Strings encoder tool with appropriate arguments based on context
         // If ignoring ID space check, pass the ignore flag,Otherwise, pass the expected ID space
-        using var process = await ExecuteExternalProcess(appSettings.W3StringsPath, context.IgnoreIdSpaceCheck
+        return await ExecuteExternalProcess(appSettings.W3StringsPath, context.IgnoreIdSpaceCheck
             ? Parser.Default.FormatCommandLine(new W3StringsOptions
                 { InputFileToEncode = path, IgnoreIdSpaceCheck = true })
             : Parser.Default.FormatCommandLine(new W3StringsOptions
                 { InputFileToEncode = path, ExpectedIdSpace = context.ExpectedIdSpace }));
-        return process.ExitCode == 0; // Return true if the process completed successfully (exit code 0)
     }
 
     /// <summary>
@@ -175,7 +173,7 @@ public class W3StringsSerializer(
     ///     A task that represents the asynchronous operation.
     ///     The task result contains the completed Process object
     /// </returns>
-    private static async Task<Process> ExecuteExternalProcess(string filename, string arguments)
+    private static async Task<bool> ExecuteExternalProcess(string filename, string arguments)
     {
         // Create a new process with the specified filename and arguments
         var process = new Process
@@ -203,7 +201,7 @@ public class W3StringsSerializer(
         process.BeginOutputReadLine();
 
         await process.WaitForExitAsync(); // Wait for the process to exit
-        return process; // Return the completed process
+        return process.ExitCode == 0;
     }
 
     /// <summary>
