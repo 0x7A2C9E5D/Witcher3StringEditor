@@ -12,13 +12,6 @@ namespace Witcher3StringEditor.Models;
 public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
 {
     /// <summary>
-    ///     The text this item was loaded or cloned with
-    ///     Used as the baseline for <see cref="IsModified" /> and deliberately never cleared, so resetting the text
-    ///     cannot corrupt the modified state and the original text stays available to serializers
-    /// </summary>
-    private readonly string baselineText;
-
-    /// <summary>
     ///     Gets or sets the hexadecimal key of The Witcher 3 string item
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
@@ -52,6 +45,13 @@ public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
     private string text = string.Empty;
 
     /// <summary>
+    ///     Initializes a new instance of the W3StringItem class
+    /// </summary>
+    public W3StringItem()
+    {
+    }
+
+    /// <summary>
     ///     Initializes a new instance of the W3StringItem class by copying values from another IW3StringItem
     /// </summary>
     /// <param name="iw3StringItem">The source IW3StringItem to copy values from</param>
@@ -64,22 +64,12 @@ public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
         KeyName = iw3StringItem.KeyName;
         OldText = iw3StringItem.OldText;
         Text = iw3StringItem.Text;
-        baselineText = Text;
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the W3StringItem class
-    ///     Creates an empty W3StringItem with default values
-    /// </summary>
-    public W3StringItem()
-    {
-        baselineText = Text;
     }
 
     /// <summary>
     ///     Gets a value indicating whether the Text property differs from the text the item was loaded with
     /// </summary>
-    public bool IsModified => !string.Equals(Text, baselineText, StringComparison.Ordinal);
+    public bool IsModified => !string.Equals(Text, OldText, StringComparison.Ordinal);
 
     /// <summary>
     ///     Gets the unique tracking identifier for this item
@@ -111,6 +101,6 @@ public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
     [RelayCommand(CanExecute = nameof(CanResetText))]
     private void ResetText()
     {
-        Text = baselineText;
+        Text = OldText;
     }
 }
