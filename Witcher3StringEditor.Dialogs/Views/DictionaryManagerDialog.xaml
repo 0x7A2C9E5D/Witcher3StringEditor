@@ -111,7 +111,7 @@
                 <b1:DictionaryTreeBehavior SelectedItem="{Binding SelectedDictionary,Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
         </TreeView>
-        <sf:SfDataGrid x:Name="SfDataGrid" Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0"
+        <sf:SfDataGrid Grid.Row="2" Grid.Column="1" AutoGenerateColumns="False" Margin="16,16,16,0"
                        ColumnSizer="Star" ItemsSource="{Binding PagedSource, ElementName=SfDataPager}"
                        NavigationMode="Row" ShowRowHeader="True">
             <sf:SfDataGrid.Resources>
