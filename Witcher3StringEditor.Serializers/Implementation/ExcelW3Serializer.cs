@@ -1,6 +1,7 @@
 using CommunityToolkit.Diagnostics;
 using Serilog;
 using Syncfusion.XlsIO;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
 
@@ -13,32 +14,34 @@ namespace Witcher3StringEditor.Serializers.Implementation;
 public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serializer
 {
     /// <summary>
+    ///     The column headers the reader expects, in order
+    /// </summary>
+    private static readonly string[] ExpectedHeaders = ["StrId", "KeyHex", "KeyName", "OldText", "Text"];
+
+    /// <summary>
     ///     Deserializes The Witcher 3 string items from an Excel file
     /// </summary>
     /// <param name="filePath">The path to the Excel file to deserialize</param>
+    /// <param name="cancellationToken">A token used to abort the read</param>
     /// <returns>
     ///     A task that represents the asynchronous deserialize operation.
-    ///     The task result contains the deserialized The Witcher 3 string items, or an empty list if an error occurred
+    ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
-    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
+    /// <exception cref="ArgumentException"><paramref name="filePath" /> is null, empty or white-space</exception>
+    /// <exception cref="InvalidDataException">The worksheet does not have the expected layout</exception>
+    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath,
+        CancellationToken cancellationToken = default)
     {
-        try
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+        // Failures are not converted into an empty list: an unreadable workbook must not look like an empty one
+        return await Task.Run(() => // Async deserialize
         {
-            return await Task.Run(() => // Async deserialize
-            {
-                using var excelEngine = new ExcelEngine(); // Auto-cleanup engine
-                var worksheet = excelEngine.Excel.Workbooks.Open(filePath).Worksheets[0]; // Get 1st sheet
-                var usedRange = worksheet.UsedRange; // Get data range
-                return worksheet.ExportData<W3StringItem>(1, 1, usedRange.LastRow,
-                    usedRange.LastColumn); // Export data
-            }).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred while deserializing Excel worksheets file: {Path}.",
-                filePath); // Log error
-            return []; // Empty on fail
-        }
+            using var excelEngine = new ExcelEngine(); // Auto-cleanup engine
+            var worksheet = excelEngine.Excel.Workbooks.Open(filePath).Worksheets[0]; // Get 1st sheet
+            var lastRow = ValidateLayout(worksheet, filePath); // Validate the header and the used range
+            return worksheet.ExportData<W3StringItem>(1, 1, lastRow,
+                ExpectedHeaders.Length); // Export data
+        }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -46,31 +49,76 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
     /// </summary>
     /// <param name="w3StringItems">The Witcher 3 string items to serialize</param>
     /// <param name="context">The serialization context containing output directory and target language information</param>
+    /// <param name="cancellationToken">A token used to abort to write</param>
     /// <returns>
     ///     A task that represents the asynchronous serialize operation.
     ///     The task result indicates whether the serialization was successful
     /// </returns>
-    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
+    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context,
+        CancellationToken cancellationToken = default)
     {
+        Guard.IsGreaterThan(w3StringItems.Count, 0); // Require items to serialize
+        var filePath = Path.Combine(context.OutputDirectory,
+            $"{GetLanguageName(context.TargetLanguage)}.xlsx"); // Build language-specific Excel path
         try
         {
-            // Run the serialization process on a background thread to prevent UI blocking
-            return await Task.Run(async () =>
-            {
-                Guard.IsGreaterThan(w3StringItems.Count, 0); // Require items to serialize
-                var filePath = Path.Combine(context.OutputDirectory,
-                    $"{Enum.GetName(context.TargetLanguage)!.ToLowerInvariant()}.xlsx"); // Build language-specific Excel path
-                if (File.Exists(filePath))
-                    Guard.IsTrue(await backupService.Backup(filePath)); // Backup existing file if exists
-                GenerateExcelFile(filePath, w3StringItems); // Generate Excel file
-                return true; // Return success
-            }).ConfigureAwait(false);
+            if (File.Exists(filePath))
+                Guard.IsTrue(await backupService.BackupAsync(filePath)); // Backup existing file if exists
+            await Task.Run(() => GenerateExcelFile(filePath, w3StringItems), cancellationToken)
+                .ConfigureAwait(false); // Generate Excel file
+            return true; // Return success
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "An error occurred while serializing the Excel worksheets file."); // Log serialization error
+            Log.Error(ex, "An error occurred while serializing the Excel worksheets file"); // Log serialization error
             return false; // Return failure
         }
+    }
+
+    /// <summary>
+    ///     Gets the lower-case language name used in the file name
+    /// </summary>
+    /// <param name="language">The target language</param>
+    /// <returns>The lower-case name of the language</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The language value is not defined</exception>
+    private static string GetLanguageName(W3Language language)
+    {
+        return Enum.GetName(language)?.ToLowerInvariant()
+               ?? throw new ArgumentOutOfRangeException(nameof(language), language,
+                   "The target language is not defined.");
+    }
+
+    /// <summary>
+    ///     Validates that the worksheet has the expected header row and data range
+    /// </summary>
+    /// <param name="worksheet">The worksheet to validate</param>
+    /// <param name="filePath">The path of the workbook, used for the diagnostics</param>
+    /// <returns>The last row index of the data range</returns>
+    /// <exception cref="InvalidDataException">The layout does not match the expected columns</exception>
+    private static int ValidateLayout(IWorksheet worksheet, string filePath)
+    {
+        var usedRange = worksheet.UsedRange; // Get data range
+        var lastRow = usedRange.LastRow;
+        var lastColumn = usedRange.LastColumn;
+        if (lastRow < 2 || lastColumn < ExpectedHeaders.Length)
+            throw new InvalidDataException(
+                $"The worksheet '{worksheet.Name}' in '{filePath}' does not contain the expected StrId/KeyHex/KeyName/OldText/Text columns.");
+
+        // The columns are mapped by position, so the header has to be verified to avoid silently reading the wrong
+        // values from a reordered or unrelated workbook
+        for (var column = 0; column < ExpectedHeaders.Length; column++)
+        {
+            var address = $"{(char)('A' + column)}1";
+            var header = worksheet[address].Text?.Trim();
+            if (!string.Equals(header, ExpectedHeaders[column], StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException(
+                    $"The worksheet '{worksheet.Name}' in '{filePath}' has an unexpected header in cell {address}: '{header}' (expected '{ExpectedHeaders[column]}').");
+        }
+
+        if (lastColumn > ExpectedHeaders.Length)
+            Log.Warning("The worksheet '{Worksheet}' in '{Path}' has {Count} extra column(s); they are ignored",
+                worksheet.Name, filePath, lastColumn - ExpectedHeaders.Length);
+        return lastRow;
     }
 
     /// <summary>
@@ -109,12 +157,9 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
     /// <param name="worksheet">The worksheet to set headers on</param>
     private static void SetTableHeaders(IWorksheet worksheet)
     {
-        // Set the header values for the worksheet columns:
-        worksheet["A1"].Value = "StrId"; // Column A: String ID (StrId)
-        worksheet["B1"].Value = "KeyHex"; // Column B: Key in hexadecimal format (KeyHex)
-        worksheet["C1"].Value = "KeyName"; // Column C: Key name (KeyName)
-        worksheet["D1"].Value = "OldText"; // Column D: Original text (OldText)
-        worksheet["E1"].Value = "Text"; // Column E: Translated/new text (Text)
+        // Set the header values for the worksheet columns, using the same order the reader expects
+        for (var column = 0; column < ExpectedHeaders.Length; column++)
+            worksheet[$"{(char)('A' + column)}1"].Value = ExpectedHeaders[column];
     }
 
     /// <summary>
@@ -212,12 +257,28 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
         // Iterate through each string item to write data to the worksheet
         for (var i = 0; i < w3StringItems.Count; i++)
         {
+            var item = w3StringItems[i];
             var rowIndex = i + 2; //Row 1 is header, data starts from row 2
-            worksheet[$"A{rowIndex}"].Value = w3StringItems[i].StrId; //Column A: StrId
-            worksheet[$"B{rowIndex}"].Value = w3StringItems[i].KeyHex; //Column B: KeyHex
-            worksheet[$"C{rowIndex}"].Value = w3StringItems[i].KeyName; //Column C: KeyName
-            worksheet[$"D{rowIndex}"].Value = w3StringItems[i].OldText; //Column D: OldText
-            worksheet[$"E{rowIndex}"].Value = w3StringItems[i].Text; //Column E: Text
+            WriteTextCell(worksheet, $"A{rowIndex}", item.StrId); //Column A: StrId
+            WriteTextCell(worksheet, $"B{rowIndex}", item.KeyHex); //Column B: KeyHex
+            WriteTextCell(worksheet, $"C{rowIndex}", item.KeyName); //Column C: KeyName
+            WriteTextCell(worksheet, $"D{rowIndex}", item.OldText); //Column D: OldText
+            WriteTextCell(worksheet, $"E{rowIndex}", item.Text); //Column E: Text
         }
+    }
+
+    /// <summary>
+    ///     Writes a value as literal text so user supplied content cannot be interpreted as a formula
+    /// </summary>
+    /// <param name="worksheet">The worksheet to write to</param>
+    /// <param name="address">The A1 address of the cell</param>
+    /// <param name="value">The value to write</param>
+    private static void WriteTextCell(IWorksheet worksheet, string address, string value)
+    {
+        var cell = worksheet[address];
+        // The text format is applied per cell instead of relying on the range level format, so a value that starts
+        // with '=', '+' or '@' is stored as literal text rather than being interpreted as a formula
+        cell.NumberFormat = "@";
+        cell.Value = value;
     }
 }
