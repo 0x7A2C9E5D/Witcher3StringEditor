@@ -7,7 +7,7 @@ namespace Witcher3StringEditor.Services;
 
 /// <summary>
 ///     Centralizes the creation of dialog view models
-///     View models are created here so that the main window view model only depends on this factory
+///     are created here so that the main window view model only depends on this factory
 ///     instead of knowing the concrete dialog view model types and their dependencies
 /// </summary>
 internal interface IDialogViewModelFactory
@@ -21,8 +21,11 @@ internal interface IDialogViewModelFactory
     /// <summary>
     ///     Creates a view model for the delete confirmation dialog
     /// </summary>
-    /// <param name="items">The items to delete</param>
-    DeleteDataDialogViewModel CreateDeleteDialog(IEnumerable<IW3StringItem> items);
+    /// <param name="items">
+    ///     The items to delete as a materialized list, so the dialog cannot re-enumerate a
+    ///     changing sequence
+    /// </param>
+    DeleteDataDialogViewModel CreateDeleteDialog(IReadOnlyList<IW3StringItem> items);
 
     /// <summary>
     ///     Creates a view model for the backup management dialog
@@ -48,7 +51,7 @@ internal interface IDialogViewModelFactory
     SettingDialogViewModel CreateSettingsDialog(IEnumerable<string> translatorNames);
 
     /// <summary>
-    ///     Creates a view model for the about dialog
+    ///     Creates a view model for the about-dialog
     /// </summary>
     /// <param name="aboutInfo">The application information to display</param>
     AboutDialogViewModel CreateAboutDialog(IReadOnlyDictionary<string, object?> aboutInfo);
@@ -61,7 +64,12 @@ internal interface IDialogViewModelFactory
     /// <summary>
     ///     Creates a view model for the translation dialog
     /// </summary>
-    /// <param name="translator">The translator to use; the caller is responsible for disposing it</param>
+    /// <remarks>
+    ///     Ownership of <paramref name="translator" /> is transferred to the created view model; the caller must
+    ///     not dispose it. Exposing the third-party translator type keeps the factory tied to the translation
+    ///     library, which is acceptable because the factory is the only place that knows the concrete view models
+    /// </remarks>
+    /// <param name="translator">The translator to use, owned by the created view model</param>
     /// <param name="items">The items to translate</param>
     /// <param name="index">The index of the initially selected item</param>
     /// <param name="dictionaryService">The dictionary service, or null if dictionaries are not supported</param>
