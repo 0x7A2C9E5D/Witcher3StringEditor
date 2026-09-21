@@ -11,11 +11,6 @@ namespace Witcher3StringEditor.Dialogs.Converters;
 ///     representations
 ///     Used in XAML data binding to display user-friendly file type descriptions
 /// </summary>
-/// <remarks>
-///     The localized text is resolved from the ambient <see cref="Strings" /> resources, so it follows the
-///     application language rather than the converter culture. The second bound value is not read by the
-///     conversion itself; it only re-evaluates the binding when the language setting changes
-/// </remarks>
 internal class W3FileTypeToLocalizedStringConverter : IMultiValueConverter
 {
     /// <summary>
@@ -25,36 +20,30 @@ internal class W3FileTypeToLocalizedStringConverter : IMultiValueConverter
     /// <param name="targetType">The type of the binding target property (not used in this implementation)</param>
     /// <param name="parameter">An optional parameter to be used in the converter logic (not used in this implementation)</param>
     /// <param name="culture">The culture to use in the converter (not used in this implementation)</param>
-    /// <returns>
-    ///     The localized string representation of the file type; unmapped values fall back to the enum name so a
-    ///     missing mapping is visible instead of rendering an empty cell
-    /// </returns>
+    /// <returns>The localized string representation of the file type, or DependencyProperty.UnsetValue if conversion fails</returns>
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values.Length == 0 || values[0] is not W3FileType fileType) 
-            return DependencyProperty.UnsetValue;
+        if (values[0] is not W3FileType fileType) return DependencyProperty.UnsetValue;
         return fileType switch
         {
             W3FileType.Csv => Strings.FileFormatTextFile,
             W3FileType.W3Strings => Strings.FileFormatWitcher3StringsFile,
             W3FileType.Excel => Strings.FileFormatExcelWorkbook,
-            _ => fileType.ToString()
+            _ => DependencyProperty.UnsetValue
         };
     }
 
     /// <summary>
-    ///     Reports that no value should be written back to the sources
+    ///     Converts a localized string back to a W3FileType enum value (not implemented)
     /// </summary>
     /// <param name="value">The value to convert back</param>
-    /// <param name="targetTypes">The types of the binding source properties</param>
-    /// <param name="parameter">The converter parameter</param>
-    /// <param name="culture">The culture of the conversion</param>
-    /// <returns>
-    ///     <see cref="Binding.DoNothing" /> for every source, because this converter is display-only. Throwing here
-    ///     would surface as a runtime binding failure whenever WPF evaluates the reverse direction
-    /// </returns>
+    /// <param name="targetTypes">The types of the binding target properties</param>
+    /// <param name="parameter">An optional parameter to be used in the converter logic</param>
+    /// <param name="culture">The culture to use in the converter</param>
+    /// <returns>Throws NotImplementedException as this operation is not supported</returns>
+    /// <exception cref="NotImplementedException">This method is not implemented</exception>
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
-        return [.. Enumerable.Repeat(Binding.DoNothing, targetTypes.Length)];
+        throw new NotImplementedException();
     }
 }
