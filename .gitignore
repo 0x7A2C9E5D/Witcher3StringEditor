@@ -359,9 +359,10 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-# Fody - auto-generated XML schema
-FodyWeavers.xsd
+# The embedded Syncfusion license text contains a license key, so it is intentionally not tracked.
+# Builds require this file to be placed next to the project manually (see the csproj EmbeddedResource entry).
 /Witcher3StringEditor/License.txt
-/.idea/.idea.Witcher3StringEditor/.idea
-*.yaml
-/Witcher3StringEditor/NexusApiKey.txt
+
+# JetBrains Rider/IntelliJ project files. The previous pattern only matched a non-standard nested
+# directory and therefore let real project files such as workspace.xml and *.iml be committed.
+/.idea/
