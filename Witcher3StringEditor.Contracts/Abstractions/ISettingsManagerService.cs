@@ -19,6 +19,8 @@ public interface ISettingsManagerService
     /// <param name="dialogOwner">
     ///     The view model owning the window the notifications are shown on top of
     /// </param>
+    /// <param name="cancellationToken">A token used to abort the validation and the user notifications</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    Task CheckSettings(INotifyPropertyChanged dialogOwner);
+    /// <exception cref="OperationCanceledException"><paramref name="cancellationToken" /> was cancelled</exception>
+    Task CheckSettings(INotifyPropertyChanged dialogOwner, CancellationToken cancellationToken = default);
 }

@@ -1,7 +1,10 @@
 namespace Witcher3StringEditor.Serializers.Abstractions;
 
 /// <summary>
-///     Defines a contract for W3Strings serialization of The Witcher 3 string items
-///     This interface extends the base IW3Serializer interface to provide W3Strings-specific serialization functionality
+///     Marker contract used to disambiguate the W3Strings serializer in the dependency injection container
 /// </summary>
+/// <remarks>
+///     The marker declares no additional members: the W3Strings specific behavior is expressed by
+///     <see cref="W3StringsSerializer" /> itself, and all members are inherited from <see cref="IW3Serializer" />
+/// </remarks>
 public interface IW3StringsSerializer : IW3Serializer;
