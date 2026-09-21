@@ -20,32 +20,28 @@ public class W3SerializerCoordinator(
     ///     Determines the appropriate serializer based on the file extension
     /// </summary>
     /// <param name="filePath">The path to the file to deserialize</param>
-    /// <param name="cancellationToken">A token used to abort the read</param>
     /// <returns>
     ///     A task that represents the asynchronous deserialize operation.
     ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
-    /// <exception cref="ArgumentException"><paramref name="filePath" /> is null, empty or white-space</exception>
     /// <exception cref="NotSupportedException">Thrown when the file format is not supported</exception>
-    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath,
-        CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
         // Determine the appropriate deserializer based on the file extension
         // Convert the extension to lowercase for case-insensitive comparison
         var items = await (Path.GetExtension(filePath).ToLowerInvariant() switch
         {
             // For CSV files, use the CSV serializer
-            ".csv" => csvW3Serializer.Deserialize(filePath, cancellationToken),
+            ".csv" => csvW3Serializer.Deserialize(filePath),
             // For Excel files, use the Excel serializer
-            ".xlsx" => excelW3Serializer.Deserialize(filePath, cancellationToken),
+            ".xlsx" => excelW3Serializer.Deserialize(filePath),
             // For W3Strings files, use the W3Strings serializer
-            ".w3strings" => w3StringsSerializer.Deserialize(filePath, cancellationToken),
+            ".w3strings" => w3StringsSerializer.Deserialize(filePath),
             // Throw an exception for unsupported file formats
             _ => throw new NotSupportedException($"File format not supported: {filePath}")
         });
 
-        Log.Information("Deserialized {Count} item(s) from {Path}", items.Count, filePath);
+        Log.Information("Deserialized {Count} item(s) from {Path}.", items.Count, filePath);
         return items;
     }
 
@@ -55,39 +51,28 @@ public class W3SerializerCoordinator(
     /// </summary>
     /// <param name="w3StringItems">The Witcher 3 string items to serialize</param>
     /// <param name="context">The serialization context containing the target file type and other parameters</param>
-    /// <param name="cancellationToken">A token used to abort to write</param>
     /// <returns>
     ///     A task that represents the asynchronous serialize operation.
     ///     The task result indicates whether the serialization was successful
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    ///     <paramref name="w3StringItems" /> or <paramref name="context" /> is null
-    /// </exception>
     /// <exception cref="NotSupportedException">Thrown when the target file type is not supported</exception>
-    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
     {
-        ArgumentNullException.ThrowIfNull(w3StringItems);
-        ArgumentNullException.ThrowIfNull(context);
         // Determine the appropriate serializer based on the target file type
         var succeeded = await (context.TargetFileType switch
         {
             // For CSV file type, use the CSV serializer
-            W3FileType.Csv => csvW3Serializer.Serialize(w3StringItems, context, cancellationToken),
+            W3FileType.Csv => csvW3Serializer.Serialize(w3StringItems, context),
             // For Excel file type, use the Excel serializer
-            W3FileType.Excel => excelW3Serializer.Serialize(w3StringItems, context, cancellationToken),
+            W3FileType.Excel => excelW3Serializer.Serialize(w3StringItems, context),
             // For W3Strings file type, use the W3Strings serializer
-            W3FileType.W3Strings => w3StringsSerializer.Serialize(w3StringItems, context, cancellationToken),
+            W3FileType.W3Strings => w3StringsSerializer.Serialize(w3StringItems, context),
             // Throw an exception for unsupported file types
             _ => throw new NotSupportedException($"File type not supported: {context.TargetFileType}")
         });
 
         if (succeeded)
-            Log.Information("Serialized {Count} item(s) as {FileType} to {Directory}", w3StringItems.Count,
-                context.TargetFileType, context.OutputDirectory);
-        else
-            // The failure path must be as traceable as the success path, otherwise a failed write leaves no trace
-            Log.Warning("Failed to serialize {Count} item(s) as {FileType} to {Directory}", w3StringItems.Count,
+            Log.Information("Serialized {Count} item(s) as {FileType} to {Directory}.", w3StringItems.Count,
                 context.TargetFileType, context.OutputDirectory);
         return succeeded;
     }
