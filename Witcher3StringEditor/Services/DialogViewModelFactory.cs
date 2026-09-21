@@ -100,7 +100,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     {
         return new AboutDialogViewModel(aboutInfo);
     }
-    
+
     /// <summary>
     ///     Creates a new instance of the RecentDialogViewModel class
     /// </summary>
@@ -111,7 +111,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
             serviceProvider.GetRequiredService<IRecentFilesService>(),
             serviceProvider.GetRequiredService<IDialogService>());
     }
-    
+
     /// <summary>
     ///     Creates a new instance of the TranslationDialogViewModel class
     /// </summary>
