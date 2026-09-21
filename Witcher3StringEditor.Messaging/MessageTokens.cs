@@ -4,6 +4,10 @@ namespace Witcher3StringEditor.Messaging;
 ///     Provides a centralized collection of message tokens used for communication between components
 ///     These tokens are used with the messaging system to identify specific types of messages
 /// </summary>
+/// <remarks>
+///     The tokens are plain string constants, so a handwritten literal at a call site would compile and only
+///     fail at runtime. Always reference the constants defined here rather than duplicating their values
+/// </remarks>
 public static class MessageTokens
 {
     /// <summary>
@@ -42,12 +46,7 @@ public static class MessageTokens
     public const string DataGridPagedSourceChanged = "DataGridPagedSourceChanged";
 
     /// <summary>
-    ///     Token for messages indicating that a request for data grid paged source has been made
+    ///     Token for messages requesting the current data grid paged source
     /// </summary>
     public const string RequestDataGridPagedSource = "RequestDataGridPagedSource";
-
-    /// <summary>
-    ///     Token for messages indicating that a recent file entry has been changed
-    /// </summary>
-    public const string RecentItem = "RecentItem";
 }
