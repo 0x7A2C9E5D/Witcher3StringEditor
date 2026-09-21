@@ -14,11 +14,6 @@ namespace Witcher3StringEditor.Serializers.Implementation;
 public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
 {
     /// <summary>
-    ///     The field delimiter used by the W3Strings CSV format
-    /// </summary>
-    private const char FieldDelimiter = '|';
-
-    /// <summary>
     ///     Deserializes The Witcher 3 string items from a CSV file
     /// </summary>
     /// <param name="filePath">The path to the CSV file to deserialize</param>
@@ -41,7 +36,7 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
         {
             lineNumber++;
             if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue; // Skip empty lines and comments
-            var parts = line.Split(FieldDelimiter); // Split line into parts
+            var parts = line.Split('|'); // Split line into parts
             if (parts.Length != 4)
             {
                 Log.Warning("Skipped malformed CSV line {LineNumber} in {Path}", lineNumber, filePath);
