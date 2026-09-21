@@ -10,14 +10,21 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 ///     Handles user confirmation for deleting selected The Witcher 3 string items
 ///     Implements IModalDialogViewModel for dialog result handling and ICloseable for close notifications
 /// </summary>
-/// <param name="w3StringItems">The collection of The Witcher 3 string items to be deleted</param>
-public partial class DeleteDataDialogViewModel(IEnumerable<IW3StringItem> w3StringItems)
-    : ObservableObject, IModalDialogViewModel, ICloseable
+public partial class DeleteDataDialogViewModel : ObservableObject, IModalDialogViewModel, ICloseable
 {
+    /// <summary>
+    ///     Initializes a new instance of the DeleteDataDialogViewModel class
+    /// </summary>
+    /// <param name="w3StringItems">The collection of The Witcher 3 string items to be deleted</param>
+    public DeleteDataDialogViewModel(IReadOnlyList<IW3StringItem> w3StringItems)
+    {
+        W3StringItems = w3StringItems;
+    }
+
     /// <summary>
     ///     Gets the collection of The Witcher 3 string items to be deleted
     /// </summary>
-    public IEnumerable<IW3StringItem> W3StringItems { get; } = w3StringItems;
+    public IReadOnlyList<IW3StringItem> W3StringItems { get; }
 
     /// <summary>
     ///     Event that is raised when the dialog requests to be closed
@@ -37,8 +44,7 @@ public partial class DeleteDataDialogViewModel(IEnumerable<IW3StringItem> w3Stri
     [RelayCommand]
     private void Delete()
     {
-        DialogResult = true; // Set dialog result to true
-        RequestClose?.Invoke(this, EventArgs.Empty); // Request close
+        Close(true); // Confirm the deletion
     }
 
     /// <summary>
@@ -48,7 +54,16 @@ public partial class DeleteDataDialogViewModel(IEnumerable<IW3StringItem> w3Stri
     [RelayCommand]
     private void Cancel()
     {
-        DialogResult = false; // Set dialog result to false
+        Close(false); // Cancel the deletion
+    }
+
+    /// <summary>
+    ///     Sets the dialog result and requests the close
+    /// </summary>
+    /// <param name="dialogResult">True when the deletion was confirmed</param>
+    private void Close(bool dialogResult)
+    {
+        DialogResult = dialogResult; // Set dialog result
         RequestClose?.Invoke(this, EventArgs.Empty); // Request close
     }
 }
