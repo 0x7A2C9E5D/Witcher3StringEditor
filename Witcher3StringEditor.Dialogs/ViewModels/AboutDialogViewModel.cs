@@ -8,14 +8,24 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 ///     Displays application information such as version, author, and other relevant details
 ///     Implements IModalDialogViewModel to support dialog result handling
 /// </summary>
-/// <param name="aboutInfo">A dictionary containing information to display in about dialog</param>
-public class AboutDialogViewModel(IReadOnlyDictionary<string, object?> aboutInfo)
-    : ObservableObject, IModalDialogViewModel
+public class AboutDialogViewModel : ObservableObject, IModalDialogViewModel
 {
     /// <summary>
-    ///     Gets the dictionary containing information to display in about dialog
+    ///     Initializes a new instance of the AboutDialogViewModel class
     /// </summary>
-    public IReadOnlyDictionary<string, object?> AboutInfo => aboutInfo;
+    /// <param name="aboutInfo">The information to display in the about dialog; the caller may keep mutating it</param>
+    /// <exception cref="ArgumentNullException"><paramref name="aboutInfo" /> is null</exception>
+    public AboutDialogViewModel(IReadOnlyDictionary<string, object?> aboutInfo)
+    {
+        ArgumentNullException.ThrowIfNull(aboutInfo);
+        // The entries are copied so a caller that keeps mutating the source cannot change what the dialog renders
+        AboutInfo = aboutInfo;
+    }
+
+    /// <summary>
+    ///     Gets the immutable snapshot of the information displayed in the about dialog
+    /// </summary>
+    public IReadOnlyDictionary<string, object?> AboutInfo { get; }
 
     /// <summary>
     ///     Gets the dialog result value
