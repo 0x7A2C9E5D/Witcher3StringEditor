@@ -21,7 +21,7 @@
         <PackageReference Include="HanumanInstitute.MvvmDialogs" Version="2.1.0"/>
         <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1"/>
         <PackageReference Include="Serilog" Version="4.4.0"/>
-        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="34.2.8"/>
+        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="34.2.9" />
         <PackageReference Update="Nerdbank.GitVersioning">
             <Version>3.10.94</Version>
         </PackageReference>
