@@ -1,8 +1,7 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using Witcher3StringEditor.Contracts;
-using Witcher3StringEditor.Shared.Extensions;
+using Witcher3StringEditor.W3Strings;
 
 namespace Witcher3StringEditor.Dialogs.Converters;
 
@@ -26,7 +25,7 @@ public class W3LanguageToNativeNameConverter : IValueConverter
         if (value is not W3Language language) return DependencyProperty.UnsetValue;
 
         // Get the native name of the language via its associated culture
-        return language.GetCultureInfo().NativeName;
+        return CultureInfo.GetCultureInfo(language.CultureCode).NativeName;
     }
 
     /// <summary>

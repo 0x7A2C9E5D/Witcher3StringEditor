@@ -15,13 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.35.0.4138">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Update="Nerdbank.GitVersioning">
-            <Version>3.10.94</Version>
-        </PackageReference>
+        <ProjectReference Include="..\Witcher3StringEditor.W3Strings\Witcher3StringEditor.W3Strings.csproj"/>
     </ItemGroup>
 
 </Project>

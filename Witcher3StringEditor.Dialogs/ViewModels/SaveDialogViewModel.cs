@@ -9,6 +9,7 @@ using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Serializers;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Shared.Extensions;
+using Witcher3StringEditor.W3Strings;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 

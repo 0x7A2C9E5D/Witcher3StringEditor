@@ -59,7 +59,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serialize
             {
                 Guard.IsGreaterThan(w3StringItems.Count, 0); // Require items to serialize
                 var filePath = Path.Combine(context.OutputDirectory,
-                    $"{Enum.GetName(context.TargetLanguage)!.ToLowerInvariant()}.xlsx"); // Build language-specific Excel path
+                    $"{context.TargetLanguage.Code.ToLowerInvariant()}.xlsx"); // Build language-specific Excel path
                 if (File.Exists(filePath))
                     Guard.IsTrue(await backupService.Backup(filePath)); // Backup existing file if exists
                 GenerateExcelFile(filePath, w3StringItems); // Generate Excel file

@@ -105,14 +105,14 @@ public static class W3StringsReader
     private static void ResolveLanguage(W3StringsFile file)
     {
         // Full 32-bit key first.
-        var lang = W3Language.FromKey(file.Key);
+        var language = W3Language.FromKey(file.Key);
         // key1 alone is reliable when tooling left a foreign key2 behind.
-        lang ??= W3Language.FromKey1(file.Key1);
+        language ??= W3Language.FromKey1(file.Key1);
 
-        if (lang is not null)
+        if (language is { } resolved)
         {
-            file.Language = lang;
-            file.Magic = W3Language.MagicForLanguage(lang);
+            file.Language = resolved;
+            file.Magic = resolved.Magic;
             return;
         }
 

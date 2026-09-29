@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.W3Strings;
 
 namespace Witcher3StringEditor.Models;
 
@@ -33,14 +34,14 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     /// <param name="recentItems">The collection of recent items</param>
     [JsonConstructor]
     public AppSettings(string gameExePath, W3FileType preferredW3FileType,
-        W3Language preferredLanguage, ObservableCollection<IBackupItem> backupItems,
+        W3Language? preferredLanguage, ObservableCollection<IBackupItem> backupItems,
         ObservableCollection<IRecentFileEntry> recentItems)
     {
         GameExePath = gameExePath;
         BackupItems = [.. backupItems];
         RecentItems = [.. recentItems];
         PreferredW3FileType = preferredW3FileType;
-        PreferredLanguage = preferredLanguage;
+        PreferredLanguage = preferredLanguage ?? W3Language.En; // Settings may predate the language
     }
 
     /// <summary>

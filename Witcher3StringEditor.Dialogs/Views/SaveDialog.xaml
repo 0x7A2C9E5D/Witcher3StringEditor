@@ -10,6 +10,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
     xmlns:com="clr-namespace:Witcher3StringEditor.Contracts;assembly=Witcher3StringEditor.Contracts"
+    xmlns:codec="clr-namespace:Witcher3StringEditor.W3Strings;assembly=Witcher3StringEditor.W3Strings"
     xmlns:con="clr-namespace:Witcher3StringEditor.Dialogs.Converters"
     Title="{I18N {x:Static l:LangKeys.SaveDialogTitle}}"
     Width="800"
@@ -43,12 +44,7 @@
             <!-- Data provider for The Witcher 3 languages enumeration -->
             <ObjectDataProvider
                 x:Key="W3Language"
-                MethodName="GetValues"
-                ObjectType="{x:Type sys:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="com:W3Language" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
+                ObjectInstance="{x:Static codec:W3Language.All}" />
             <!-- Converter for displaying The Witcher 3 language native names -->
             <con:W3LanguageToNativeNameConverter x:Key="W3LanguageToNativeNameConverter" />
             <!-- Converter for displaying The Witcher 3 file type localized strings -->

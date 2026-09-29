@@ -1,7 +1,6 @@
 using CommunityToolkit.Diagnostics;
 using Cysharp.Text;
 using Serilog;
-using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
 
@@ -65,13 +64,11 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
         try
         {
             var languageName =
-                Enum.GetName(context.TargetLanguage)!.ToLowerInvariant(); // Lowercase language name for filename
-            var csvLanguageIdentifier = context.TargetLanguage switch // Get language ID for CSV metadata
-            {
-                W3Language.Ar or W3Language.Br or W3Language.Cn or W3Language.Esmx or W3Language.Kr or W3Language.Tr
-                    => "cleartext", // Special case: use "cleartext" for these languages
-                _ => languageName // Default: use language name
-            };
+                context.TargetLanguage.Code.ToLowerInvariant(); // Lowercase content-file code for the filename
+            // A magic of zero means the stored text is not obfuscated, so it is cleartext
+            var csvLanguageIdentifier = context.TargetLanguage.Magic == 0
+                ? "cleartext" // Special case: unobfuscated languages
+                : languageName; // Default: use language name
             await WriteFileWithBackup(Path.Combine(context.OutputDirectory, $"{languageName}.csv"),
                 BuildCsvContent(w3StringItems, csvLanguageIdentifier)); // Write CSV with backup
             return true; // Return success

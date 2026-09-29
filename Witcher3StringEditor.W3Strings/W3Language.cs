@@ -1,92 +1,115 @@
+using JetBrains.Annotations;
+
 namespace Witcher3StringEditor.W3Strings;
 
-public static class W3Language
+[PublicAPI]
+public sealed class W3Language
 {
-    private static readonly Dictionary<string, uint> Keys =
-        new(StringComparer.OrdinalIgnoreCase)
-        {
-            ["pl"] = 0x83496237,
-            ["en"] = 0x43975139,
-            ["de"] = 0x75886138,
-            ["it"] = 0x45931894,
-            ["fr"] = 0x23863176,
-            ["cz"] = 0x24987354,
-            ["es"] = 0x18796651,
-            ["zh"] = 0x18632176,
-            ["ru"] = 0x63481486,
-            ["hu"] = 0x42378932,
-            ["jp"] = 0x54834893,
-            ["ar"] = 0x00000000,
-            ["br"] = 0x00000000,
-            ["esMX"] = 0x00000000,
-            ["kr"] = 0x00000000,
-            ["tr"] = 0x00000000,
-            ["ua"] = 0x00000000,
-            ["cn"] = 0x00000000
-        };
+    public static readonly W3Language Ar = new("ar", "ar", 0x00000000, 0x00000000);
 
-    private static readonly Dictionary<string, uint> Magics =
-        new(StringComparer.OrdinalIgnoreCase)
-        {
-            ["pl"] = 0x73946816,
-            ["en"] = 0x79321793,
-            ["de"] = 0x42791159,
-            ["it"] = 0x12375973,
-            ["fr"] = 0x75921975,
-            ["cz"] = 0x21793217,
-            ["es"] = 0x42387566,
-            ["zh"] = 0x16875467,
-            ["ru"] = 0x42386347,
-            ["hu"] = 0x67823218,
-            ["jp"] = 0x59825646,
-            ["ar"] = 0x00000000,
-            ["br"] = 0x00000000,
-            ["esMX"] = 0x00000000,
-            ["kr"] = 0x00000000,
-            ["tr"] = 0x00000000,
-            ["ua"] = 0x00000000,
-            ["cn"] = 0x00000000
-        };
+    public static readonly W3Language Br = new("br", "pt", 0x00000000, 0x00000000);
 
-    private static readonly Dictionary<uint, string> KeyToLanguage = BuildKeyLookup();
-    private static readonly Dictionary<ushort, string> Key1ToLanguage = BuildKey1Lookup();
+    public static readonly W3Language Cn = new("cn", "zh-Hans", 0x00000000, 0x00000000);
 
-    private static Dictionary<uint, string> BuildKeyLookup()
+    public static readonly W3Language Cz = new("cz", "cs", 0x24987354, 0x21793217);
+
+    public static readonly W3Language De = new("de", "de", 0x75886138, 0x42791159);
+
+    public static readonly W3Language En = new("en", "en", 0x43975139, 0x79321793);
+
+    public static readonly W3Language Es = new("es", "es", 0x18796651, 0x42387566);
+
+    public static readonly W3Language Esmx = new("esMX", "es-MX", 0x00000000, 0x00000000);
+
+    public static readonly W3Language Fr = new("fr", "fr", 0x23863176, 0x75921975);
+
+    public static readonly W3Language Hu = new("hu", "hu", 0x42378932, 0x67823218);
+
+    public static readonly W3Language It = new("it", "it", 0x45931894, 0x12375973);
+
+    public static readonly W3Language Jp = new("jp", "ja", 0x54834893, 0x59825646);
+
+    public static readonly W3Language Kr = new("kr", "ko", 0x00000000, 0x00000000);
+
+    public static readonly W3Language Pl = new("pl", "pl", 0x83496237, 0x73946816);
+
+    public static readonly W3Language Ru = new("ru", "ru", 0x63481486, 0x42386347);
+
+    public static readonly W3Language Zh = new("zh", "zh-Hant", 0x18632176, 0x16875467);
+
+    public static readonly W3Language Tr = new("tr", "tr", 0x00000000, 0x00000000);
+
+    public static readonly W3Language Ua = new("ua", "uk", 0x00000000, 0x00000000);
+
+    // Built on first use: the field initializers run in declaration order, and All is one of
+    // them, so the language instances may not all exist while they are still running.
+    private static readonly Lazy<Dictionary<uint, W3Language>> KeyToLanguage = new(BuildKeyLookup);
+    private static readonly Lazy<Dictionary<ushort, W3Language>> Key1ToLanguage = new(BuildKey1Lookup);
+    private static readonly Lazy<Dictionary<string, W3Language>> CodeToLanguage = new(BuildCodeLookup);
+
+    private W3Language(string code, string cultureCode, uint key, uint magic)
+    {
+        Code = code;
+        CultureCode = cultureCode;
+        Key = key;
+        Magic = magic;
+    }
+
+    public string Code { get; }
+
+    public string CultureCode { get; }
+
+    public uint Key { get; }
+
+    public uint Magic { get; }
+
+    public static IReadOnlyList<W3Language> All { get; } =
+        [Ar, Br, Cn, Cz, De, En, Es, Esmx, Fr, Hu, It, Jp, Kr, Pl, Ru, Zh, Tr, Ua];
+
+    private static Dictionary<uint, W3Language> BuildKeyLookup()
     {
         // Only a key owned by exactly one language identifies that language: every
         // language added after the game's release shares key 0.
-        return Keys.GroupBy(pair => pair.Value).Where(group => group.Count() == 1)
-            .ToDictionary(group => group.Key, group => group.First().Key);
+        return All.GroupBy(language => language.Key).Where(group => group.Count() == 1)
+            .ToDictionary(group => group.Key, group => group.First());
     }
 
-    private static Dictionary<ushort, string> BuildKey1Lookup()
+    private static Dictionary<ushort, W3Language> BuildKey1Lookup()
     {
         // Same rule as the full key, applied to the high half of the key.
-        return Keys.GroupBy(pair => (ushort)(pair.Value >> 16)).Where(group => group.Count() == 1)
-            .ToDictionary(group => group.Key, group => group.First().Key);
+        return All.GroupBy(language => (ushort)(language.Key >> 16)).Where(group => group.Count() == 1)
+            .ToDictionary(group => group.Key, group => group.First());
     }
 
-    public static string? FromKey(uint key)
+    private static Dictionary<string, W3Language> BuildCodeLookup()
     {
-        return KeyToLanguage.GetValueOrDefault(key);
+        var map = new Dictionary<string, W3Language>(StringComparer.OrdinalIgnoreCase);
+        foreach (var language in All)
+        {
+            map[language.Code] = language;
+            map[language.CultureCode] = language;
+        }
+
+        return map;
     }
 
-    public static string? FromKey1(ushort key1)
+    public static W3Language? FromKey(uint key)
     {
-        return Key1ToLanguage.GetValueOrDefault(key1);
+        return KeyToLanguage.Value.GetValueOrDefault(key);
     }
 
-    public static uint KeyForLanguage(string language)
+    public static W3Language? FromKey1(ushort key1)
     {
-        return Keys.TryGetValue(language, out var key)
-            ? key
-            : throw new ArgumentException($"unknown language: {language}", nameof(language));
+        return Key1ToLanguage.Value.GetValueOrDefault(key1);
     }
 
-    public static uint MagicForLanguage(string language)
+    public static W3Language? FromCode(string? code)
     {
-        return Magics.TryGetValue(language, out var magic)
-            ? magic
-            : throw new ArgumentException($"unknown language: {language}", nameof(language));
+        return code is not null && CodeToLanguage.Value.TryGetValue(code, out var language) ? language : null;
+    }
+
+    public override string ToString()
+    {
+        return Code;
     }
 }

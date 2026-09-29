@@ -10,7 +10,7 @@ public sealed class W3StringsFile
 
     public uint Key => ((uint)Key1 << 16) | Key2;
 
-    public string? Language { get; set; }
+    public W3Language? Language { get; set; }
 
     public uint Magic { get; set; }
 

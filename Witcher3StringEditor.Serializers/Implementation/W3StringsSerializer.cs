@@ -7,8 +7,6 @@ using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.W3Strings;
 using Witcher3StringEditor.W3Strings.Model;
 using Witcher3StringEditor.W3Strings.Primitives;
-using CodecLanguage = Witcher3StringEditor.W3Strings.W3Language;
-using W3Language = Witcher3StringEditor.Contracts.W3Language;
 
 namespace Witcher3StringEditor.Serializers.Implementation;
 
@@ -83,8 +81,8 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
         try
         {
             var saveLang =
-                Enum.GetName(context.TargetLanguage)!
-                    .ToLowerInvariant(); // Get the lowercase name of the target language for file naming
+                context.TargetLanguage.Code
+                    .ToLowerInvariant(); // Lowercase content-file code of the target language for file naming
             var outputW3StringsPath =
                 Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings"); // Destination of the encoded container
             var tempW3StringsPath =
@@ -121,7 +119,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
     {
         var container = W3StringsReader.ReadFile(filePath); // Parse the container
         Log.Information("Read W3Strings v{Version} container ({Language}) from {Path}", container.Version,
-            container.Language ?? "unknown", filePath); // Log the container facts, including the detected language
+            container.Language?.ToString() ?? "unknown", filePath); // Log the container facts, including the detected language
 
         // Block 2 maps a localization-key hash to the id it resolves to. An id can carry
         // several keys, so the first hash found is the one shown next to the entry.
@@ -151,15 +149,14 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
     private static W3StringsFile BuildContainer(IReadOnlyList<IW3StringItem> w3StringItems,
         W3SerializationContext context)
     {
-        var language = LanguageCode(context.TargetLanguage); // Language code understood by the codec
-        var key = CodecLanguage.KeyForLanguage(language); // 32-bit language key of the target language
+        var language = context.TargetLanguage; // Language the container is written for
         var container = new W3StringsFile
         {
             Version = ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
-            Language = language, // Target language code
-            Magic = CodecLanguage.MagicForLanguage(language), // Magic XORed into the stored ids
-            Key1 = (ushort)(key >> 16), // High half of the language key
-            Key2 = (ushort)(key & 0xFFFF) // Low half of the language key
+            Language = language, // Target language
+            Magic = language.Magic, // Magic XORed into the stored ids
+            Key1 = (ushort)(language.Key >> 16), // High half of the language key
+            Key2 = (ushort)(language.Key & 0xFFFF) // Low half of the language key
         };
 
         foreach (var w3StringItem in w3StringItems) // Process each string item
@@ -172,33 +169,6 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
 
         return container; // Return the container
     }
-
-    /// <summary>
-    ///     Maps The Witcher 3 language to the language code used by the codec
-    /// </summary>
-    /// <param name="language">The language to map</param>
-    /// <returns>The language code of the codec</returns>
-    private static string LanguageCode(W3Language language) => language switch
-    {
-        W3Language.Ar => "ar",
-        W3Language.Br => "br",
-        W3Language.Cn => "cn",
-        W3Language.Cz => "cz",
-        W3Language.De => "de",
-        W3Language.En => "en",
-        W3Language.Es => "es",
-        W3Language.Esmx => "esMX",
-        W3Language.Fr => "fr",
-        W3Language.Hu => "hu",
-        W3Language.It => "it",
-        W3Language.Jp => "jp",
-        W3Language.Kr => "kr",
-        W3Language.Pl => "pl",
-        W3Language.Ru => "ru",
-        W3Language.Tr => "tr",
-        W3Language.Zh => "zh",
-        _ => throw new ArgumentOutOfRangeException(nameof(language), language, "Unsupported W3 language")
-    };
 
     /// <summary>
     ///     Parses the string id of The Witcher 3 string item

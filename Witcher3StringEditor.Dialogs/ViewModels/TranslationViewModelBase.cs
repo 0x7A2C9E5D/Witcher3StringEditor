@@ -230,7 +230,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <returns>The preferred language</returns>
     private static Language GetPreferredLanguage(IAppSettings appSettings)
     {
-        var cultureCode = appSettings.PreferredLanguage.GetCultureCode(); // Get culture code for preferred language
+        var cultureCode = appSettings.PreferredLanguage.CultureCode; // Get culture code for preferred language
         return cultureCode == "es-MX" ? new Language("es") : new Language(cultureCode); // Return preferred language
     }
 
