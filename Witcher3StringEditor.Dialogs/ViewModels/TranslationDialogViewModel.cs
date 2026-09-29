@@ -45,16 +45,6 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     private readonly IReadOnlyList<ITrackableW3StringItem> w3StringItems;
 
     /// <summary>
-    ///     Gets or sets the current translation view model (either single or batch)
-    /// </summary>
-    [ObservableProperty] private TranslationViewModelBase currentViewModel;
-
-    /// <summary>
-    ///     Gets or sets the title of the dialog window
-    /// </summary>
-    [ObservableProperty] private string title = Strings.TranslateDialogTitle;
-
-    /// <summary>
     ///     Initializes a new instance of the TranslationDialogViewModel class
     /// </summary>
     /// <param name="appSettings">Application settings service</param>
@@ -78,6 +68,18 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
             new SingleItemTranslationViewModel(appSettings, translator, this.w3StringItems,
                 index, dialogService); // Initialize the current view model
     }
+
+    /// <summary>
+    ///     Gets or sets the current translation view model (either single or batch)
+    /// </summary>
+    [ObservableProperty]
+    public partial TranslationViewModelBase CurrentViewModel { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the title of the dialog window
+    /// </summary>
+    [ObservableProperty]
+    public partial string Title { get; set; } = Strings.TranslateDialogTitle;
 
     /// <summary>
     ///     Gets the dialog result value

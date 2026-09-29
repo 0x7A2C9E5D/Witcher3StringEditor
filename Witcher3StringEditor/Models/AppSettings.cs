@@ -14,47 +14,6 @@ namespace Witcher3StringEditor.Models;
 internal partial class AppSettings : ObservableObject, IAppSettings
 {
     /// <summary>
-    ///     Gets or sets the path to the game executable
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private string gameExePath = string.Empty;
-
-    /// <summary>
-    ///     Gets or sets the application language
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private string language = string.Empty;
-
-    /// <summary>
-    ///     Gets or sets the page size for pagination
-    /// </summary>
-    [ObservableProperty] private int pageSize = 30;
-
-    /// <summary>
-    ///     Gets or sets the preferred language for The Witcher 3 string operations
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private W3Language preferredLanguage;
-
-    /// <summary>
-    ///     Gets or sets the preferred The Witcher 3 file type for operations
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private W3FileType preferredW3FileType;
-
-    /// <summary>
-    ///     Gets or sets the preferred translator service
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private string translator = "MicrosoftTranslator";
-
-    /// <summary>
-    ///     Gets or sets the path to the W3Strings tool executable
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private string w3StringsPath = string.Empty;
-
-    /// <summary>
     ///     Initializes a new instance of the AppSettings class
     ///     Creates an empty settings object with default values
     /// </summary>
@@ -84,6 +43,54 @@ internal partial class AppSettings : ObservableObject, IAppSettings
         PreferredW3FileType = preferredW3FileType;
         PreferredLanguage = preferredLanguage;
     }
+
+    /// <summary>
+    ///     Gets or sets the path to the game executable
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial string GameExePath { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the application language
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial string Language { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the page size for pagination
+    /// </summary>
+    [ObservableProperty]
+    public partial int PageSize { get; set; } = 30;
+
+    /// <summary>
+    ///     Gets or sets the preferred language for The Witcher 3 string operations
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial W3Language PreferredLanguage { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the preferred The Witcher 3 file type for operations
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial W3FileType PreferredW3FileType { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the preferred translator service
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial string Translator { get; set; } = "MicrosoftTranslator";
+
+    /// <summary>
+    ///     Gets or sets the path to the W3Strings tool executable
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial string W3StringsPath { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets the URL to the NexusMods page for this application

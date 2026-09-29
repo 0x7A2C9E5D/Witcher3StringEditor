@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Diagnostics;
+using CommunityToolkit.Diagnostics;
 using Cysharp.Text;
 using Serilog;
 using Witcher3StringEditor.Contracts;
@@ -28,9 +28,8 @@ public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
             await using var fileStream = File.OpenRead(filePath); // Open file stream
             using var reader = new StreamReader(fileStream); // Create stream reader
             var items = new List<IW3StringItem>(); // Create list to store items
-            while (!reader.EndOfStream) // Read lines
+            while (await reader.ReadLineAsync() is { } line) // Read lines
             {
-                var line = await reader.ReadLineAsync(); // Read line
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue; // Skip empty lines and comments
                 var parts = line.Split('|'); // Split line into parts
                 if (parts.Length != 4) continue; // Skip lines with incorrect number of parts

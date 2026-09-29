@@ -22,8 +22,8 @@ A powerful tool for editing string resources in *The Witcher 3: Wild Hunt*, enab
 
 ## Required External Dependencies (For End Users)
 
-- **.NET 8 Desktop Runtime**  
-  Required for the application to run. Download the matching architecture (x64/x86) from the [Microsoft Official Page](https://dotnet.microsoft.com/download/dotnet/8.0) (select "Desktop Runtime" for your system).
+- **.NET 10 Desktop Runtime**  
+  Required for the application to run. Download the matching architecture (x64/x86) from the [Microsoft Official Page](https://dotnet.microsoft.com/download/dotnet/10.0) (select "Desktop Runtime" for your system).
 
 - **w3strings Encoder**  
   Required for `.w3strings` file encoding/decoding. Download from [Nexus Mods](https://www.nexusmods.com/witcher3/mods/1055) and specify its path during first-run setup.

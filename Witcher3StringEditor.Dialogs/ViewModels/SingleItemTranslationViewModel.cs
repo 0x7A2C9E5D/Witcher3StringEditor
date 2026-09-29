@@ -24,20 +24,6 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public sealed partial class SingleItemTranslationViewModel : TranslationViewModelBase
 {
     /// <summary>
-    ///     Gets or sets the index of the currently selected item for translation
-    ///     Notifies CanExecute changes for Previous and Next commands when this value changes
-    /// </summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PreviousCommand))]
-    [NotifyCanExecuteChangedFor(nameof(NextCommand))]
-    private int currentItemIndex = -1;
-
-    /// <summary>
-    ///     Gets or sets the current translate item model containing the text to translate
-    /// </summary>
-    [ObservableProperty] private TranslateItemModel? currentTranslateItemModel;
-
-    /// <summary>
     ///     Initializes a new instance of the SingleItemTranslationViewModel class
     /// </summary>
     /// <param name="appSettings">Application settings service</param>
@@ -52,6 +38,21 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     {
         CurrentItemIndex = index;
     }
+
+    /// <summary>
+    ///     Gets or sets the index of the currently selected item for translation
+    ///     Notifies CanExecute changes for Previous and Next commands when this value changes
+    /// </summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PreviousCommand))]
+    [NotifyCanExecuteChangedFor(nameof(NextCommand))]
+    public partial int CurrentItemIndex { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the current translate item model containing the text to translate
+    /// </summary>
+    [ObservableProperty]
+    public partial TranslateItemModel? CurrentTranslateItemModel { get; set; }
 
     /// <summary>
     ///     Gets a value indicating whether the Save command can be executed

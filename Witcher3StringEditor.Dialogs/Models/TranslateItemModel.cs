@@ -12,12 +12,14 @@ public partial class TranslateItemModel : ObservableObject
     /// <summary>
     ///     Gets or sets a value indicating whether the translation has been saved
     /// </summary>
-    [ObservableProperty] private bool isSaved;
+    [ObservableProperty]
+    public partial bool IsSaved { get; set; }
 
     /// <summary>
     ///     Gets or sets the translated text
     /// </summary>
-    [ObservableProperty] private string translatedText = string.Empty;
+    [ObservableProperty]
+    public partial string TranslatedText { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets the unique identifier for this translation item

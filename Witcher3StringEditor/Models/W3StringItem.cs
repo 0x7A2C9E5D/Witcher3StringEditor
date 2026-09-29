@@ -12,40 +12,6 @@ namespace Witcher3StringEditor.Models;
 public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
 {
     /// <summary>
-    ///     Gets or sets the hexadecimal key of The Witcher 3 string item
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private string keyHex = string.Empty;
-
-    /// <summary>
-    ///     Gets or sets the key name of The Witcher 3 string item
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private string keyName = string.Empty;
-
-    /// <summary>
-    ///     Gets or sets the original text of The Witcher 3 string item
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsModified))]
-    [NotifyCanExecuteChangedFor(nameof(ResetTextCommand))]
-    private string oldText = string.Empty;
-
-    /// <summary>
-    ///     Gets or sets the string ID of The Witcher 3 string item
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private string strId = string.Empty;
-
-    /// <summary>
-    ///     Gets or sets the current text of The Witcher 3 string item
-    ///     This property supports data binding through the ObservableObject base class
-    ///     When this property changes, if OldText is empty, it will be set to the previous Text value
-    /// </summary>
-    [ObservableProperty] private string text = string.Empty;
-
-    /// <summary>
     ///     Initializes a new instance of the W3StringItem class by copying values from another IW3StringItem
     /// </summary>
     /// <param name="iw3StringItem">The source IW3StringItem to copy values from</param>
@@ -70,6 +36,44 @@ public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
     ///     Gets a value indicating whether the Text property has been modified from its original value
     /// </summary>
     public bool IsModified => !string.IsNullOrEmpty(OldText);
+
+    /// <summary>
+    ///     Gets or sets the hexadecimal key of The Witcher 3 string item
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial string KeyHex { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the key name of The Witcher 3 string item
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial string KeyName { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the original text of The Witcher 3 string item
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsModified))]
+    [NotifyCanExecuteChangedFor(nameof(ResetTextCommand))]
+    public partial string OldText { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the string ID of The Witcher 3 string item
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial string StrId { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the current text of The Witcher 3 string item
+    ///     This property supports data binding through the ObservableObject base class
+    ///     When this property changes, if OldText is empty, it will be set to the previous Text value
+    /// </summary>
+    [ObservableProperty]
+    public partial string Text { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets the unique tracking identifier for this item

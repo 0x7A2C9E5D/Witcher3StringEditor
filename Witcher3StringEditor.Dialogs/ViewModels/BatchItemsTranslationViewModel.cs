@@ -18,41 +18,6 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public sealed partial class BatchItemsTranslationViewModel : TranslationViewModelBase
 {
     /// <summary>
-    ///     Gets or sets the end index for batch translation
-    /// </summary>
-    [ObservableProperty] private int endIndex;
-
-    /// <summary>
-    ///     Gets or sets the minimum value for the end index (based on start index)
-    /// </summary>
-    [ObservableProperty] private int endIndexMin;
-
-    /// <summary>
-    ///     Gets or sets the count of failed translations
-    /// </summary>
-    [ObservableProperty] private int failureCount;
-
-    /// <summary>
-    ///     Gets or sets the maximum value for indices (typically the total item count)
-    /// </summary>
-    [ObservableProperty] private int maxValue;
-
-    /// <summary>
-    ///     Gets or sets the count of pending translations
-    /// </summary>
-    [ObservableProperty] private int pendingCount;
-
-    /// <summary>
-    ///     Gets or sets the start index for batch translation
-    /// </summary>
-    [ObservableProperty] private int startIndex;
-
-    /// <summary>
-    ///     Gets or sets the count of successful translations
-    /// </summary>
-    [ObservableProperty] private int successCount;
-
-    /// <summary>
     ///     Initializes a new instance of the BatchItemsTranslationViewModel class
     /// </summary>
     /// <param name="appSettings">Application settings service</param>
@@ -70,6 +35,48 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
         StartIndex = startIndex; // Set start index
         EndIndex = MaxValue = W3StringItems.Count; // Set end index and maximum value
     }
+
+    /// <summary>
+    ///     Gets or sets the end index for batch translation
+    /// </summary>
+    [ObservableProperty]
+    public partial int EndIndex { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the minimum value for the end index (based on start index)
+    /// </summary>
+    [ObservableProperty]
+    public partial int EndIndexMin { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the count of failed translations
+    /// </summary>
+    [ObservableProperty]
+    public partial int FailureCount { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the maximum value for indices (typically the total item count)
+    /// </summary>
+    [ObservableProperty]
+    public partial int MaxValue { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the count of pending translations
+    /// </summary>
+    [ObservableProperty]
+    public partial int PendingCount { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the start index for batch translation
+    /// </summary>
+    [ObservableProperty]
+    public partial int StartIndex { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the count of successful translations
+    /// </summary>
+    [ObservableProperty]
+    public partial int SuccessCount { get; set; }
 
     /// <summary>
     ///     Gets a value indicating whether the Cancel command can be executed

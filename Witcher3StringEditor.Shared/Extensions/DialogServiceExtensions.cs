@@ -32,41 +32,41 @@ public enum MessageBoxIcon
 /// </remarks>
 public static class DialogServiceExtensions
 {
-    /// <summary>
-    ///     Shows a notification dialog that the user can choose to dismiss.
-    /// </summary>
     /// <param name="service"></param>
-    /// <param name="owner"></param>
-    /// <param name="content"></param>
-    /// <param name="title"></param>
-    /// <param name="severity"></param>
-    /// <returns></returns>
-    public static Task MessageBoxNotifyAsync(this IDialogService service,
-        INotifyPropertyChanged owner,
-        string content,
-        string title,
-        MessageBoxIcon severity = MessageBoxIcon.Information)
+    extension(IDialogService service)
     {
-        return Task.FromResult(ShowMessageBox(service, owner, content, title, MessageBoxButton.OK, severity));
-    }
+        /// <summary>
+        ///     Shows a notification dialog that the user can choose to dismiss.
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="content"></param>
+        /// <param name="title"></param>
+        /// <param name="severity"></param>
+        /// <returns></returns>
+        public Task MessageBoxNotifyAsync(INotifyPropertyChanged owner,
+            string content,
+            string title,
+            MessageBoxIcon severity = MessageBoxIcon.Information)
+        {
+            return Task.FromResult(ShowMessageBox(service, owner, content, title, MessageBoxButton.OK, severity));
+        }
 
-    /// <summary>
-    ///     Shows a confirmation dialog that the user can choose to confirm or cancel.
-    /// </summary>
-    /// <param name="service"></param>
-    /// <param name="owner"></param>
-    /// <param name="content"></param>
-    /// <param name="title"></param>
-    /// <param name="severity"></param>
-    /// <returns></returns>
-    public static Task<bool> MessageBoxConfirmAsync(this IDialogService service,
-        INotifyPropertyChanged owner,
-        string content,
-        string title,
-        MessageBoxIcon severity = MessageBoxIcon.Information)
-    {
-        return Task.FromResult(ShowMessageBox(service, owner, content, title, MessageBoxButton.YesNo, severity) ==
-                               MessageBoxResult.Yes);
+        /// <summary>
+        ///     Shows a confirmation dialog that the user can choose to confirm or cancel.
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="content"></param>
+        /// <param name="title"></param>
+        /// <param name="severity"></param>
+        /// <returns></returns>
+        public Task<bool> MessageBoxConfirmAsync(INotifyPropertyChanged owner,
+            string content,
+            string title,
+            MessageBoxIcon severity = MessageBoxIcon.Information)
+        {
+            return Task.FromResult(ShowMessageBox(service, owner, content, title, MessageBoxButton.YesNo, severity) ==
+                                   MessageBoxResult.Yes);
+        }
     }
 
     /// <summary>

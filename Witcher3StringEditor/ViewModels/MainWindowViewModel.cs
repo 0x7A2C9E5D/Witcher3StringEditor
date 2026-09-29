@@ -44,39 +44,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IW3Serializer w3Serializer; // Get serializer service
 
     /// <summary>
-    ///     Registers a message handler to listen for translator changes and update dictionary support status
-    /// </summary>
-    [ObservableProperty] private bool isSupportDictionary;
-
-    /// <summary>
-    ///     Gets or sets a value indicating whether an update is available
-    /// </summary>
-    [ObservableProperty] private bool isUpdateAvailable;
-
-    /// <summary>
-    ///     Gets or sets the output folder path
-    ///     Notifies OpenWorkingFolderCommand when this property changes
-    /// </summary>
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(OpenWorkingFolderCommand))]
-    private string outputFolder = string.Empty;
-
-    /// <summary>
-    ///     Gets or sets the page size
-    /// </summary>
-    [ObservableProperty] private int pageSize;
-
-    /// <summary>
-    ///     Gets or sets the source collection for the DataGrid
-    /// </summary>
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
-    private IList<W3StringItem>? pagedSource;
-
-    /// <summary>
-    ///     Gets or sets the current search text used for filtering W3String items
-    /// </summary>
-    [ObservableProperty] private string searchText = string.Empty;
-
-    /// <summary>
     ///     Gets or sets the collection of The Witcher 3 string items
     ///     Notifies multiple commands when this property changes
     /// </summary>
@@ -124,6 +91,45 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
         RegisterMessengerHandlers(); // Register all message handlers
     }
+
+    /// <summary>
+    ///     Registers a message handler to listen for translator changes and update dictionary support status
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsSupportDictionary { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether an update is available
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsUpdateAvailable { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the output folder path
+    ///     Notifies OpenWorkingFolderCommand when this property changes
+    /// </summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(OpenWorkingFolderCommand))]
+    private partial string OutputFolder { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Gets or sets the page size
+    /// </summary>
+    [ObservableProperty]
+    public partial int PageSize { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the source collection for the DataGrid
+    /// </summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
+    private partial IList<W3StringItem>? PagedSource { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the current search text used for filtering W3String items
+    /// </summary>
+    [ObservableProperty]
+    public partial string SearchText { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets or sets the application settings

@@ -11,24 +11,6 @@ namespace Witcher3StringEditor.Models;
 internal partial class RecentItem : ObservableObject, IRecentFileEntry
 {
     /// <summary>
-    ///     Gets or sets the file path of the recently opened item
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private string filePath;
-
-    /// <summary>
-    ///     Gets or sets a value indicating whether the item is marked
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private bool isMarked;
-
-    /// <summary>
-    ///     Gets or sets the time when the item was last opened
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty] private DateTime openedTime;
-
-    /// <summary>
     ///     Initializes a new instance of the RecentItem class with specified values
     /// </summary>
     /// <param name="filePath">The file path of the recently opened item</param>
@@ -40,4 +22,25 @@ internal partial class RecentItem : ObservableObject, IRecentFileEntry
         FilePath = filePath;
         OpenedTime = openedTime;
     }
+
+    /// <summary>
+    ///     Gets or sets the file path of the recently opened item
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial string FilePath { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether the item is marked
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsMarked { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the time when the item was last opened
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial DateTime OpenedTime { get; set; }
 }

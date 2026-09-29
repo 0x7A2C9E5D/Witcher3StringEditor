@@ -37,31 +37,6 @@ public partial class SaveDialogViewModel
     private readonly IReadOnlyList<IW3StringItem> w3StringItems;
 
     /// <summary>
-    ///     Gets or sets the ID space value for the items being saved
-    /// </summary>
-    [ObservableProperty] private int idSpace;
-
-    /// <summary>
-    ///     Gets or sets a value indicating whether to ignore ID space checking during save
-    /// </summary>
-    [ObservableProperty] private bool isIgnoreIdSpaceCheck;
-
-    /// <summary>
-    ///     Gets or sets the output directory where the file will be saved
-    /// </summary>
-    [ObservableProperty] private string outputDirectory;
-
-    /// <summary>
-    ///     Gets or sets the target file type for the save operation
-    /// </summary>
-    [ObservableProperty] private W3FileType targetFileType;
-
-    /// <summary>
-    ///     Gets or sets the target language for the save operation
-    /// </summary>
-    [ObservableProperty] private W3Language targetLanguage;
-
-    /// <summary>
     ///     Initializes a new instance of the SaveDialogViewModel class
     /// </summary>
     /// <param name="appSettings">Application settings to get preferred language and file type</param>
@@ -80,6 +55,36 @@ public partial class SaveDialogViewModel
         TargetLanguage = appSettings.PreferredLanguage;
         TargetFileType = appSettings.PreferredW3FileType;
     }
+
+    /// <summary>
+    ///     Gets or sets the ID space value for the items being saved
+    /// </summary>
+    [ObservableProperty]
+    public partial int IdSpace { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether to ignore ID space checking during save
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsIgnoreIdSpaceCheck { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the output directory where the file will be saved
+    /// </summary>
+    [ObservableProperty]
+    private partial string OutputDirectory { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the target file type for the save operation
+    /// </summary>
+    [ObservableProperty]
+    public partial W3FileType TargetFileType { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the target language for the save operation
+    /// </summary>
+    [ObservableProperty]
+    public partial W3Language TargetLanguage { get; set; }
 
     /// <summary>
     ///     Event that is raised when the dialog requests to be closed

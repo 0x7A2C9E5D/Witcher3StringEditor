@@ -47,33 +47,6 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private protected CancellationTokenSource? CancellationTokenSource;
 
     /// <summary>
-    ///     Gets or sets the source language for translation
-    /// </summary>
-    [ObservableProperty] private ILanguage formLanguage;
-
-    private bool isBusy;
-
-    /// <summary>
-    ///     Gets or sets a value indicating whether the dictionary service is supported
-    /// </summary>
-    [ObservableProperty] private bool isDictionarySupported;
-
-    /// <summary>
-    ///     Gets or sets the collection of supported languages for the current translator
-    /// </summary>
-    [ObservableProperty] private IEnumerable<ILanguage> languages;
-
-    /// <summary>
-    ///     Gets or sets the selected dictionary for translation
-    /// </summary>
-    [ObservableProperty] private DictionaryInfo? selectedDictionary;
-
-    /// <summary>
-    ///     Gets or sets the target language for translation
-    /// </summary>
-    [ObservableProperty] private ILanguage toLanguage;
-
-    /// <summary>
     ///     Initializes a new instance of the TranslationViewModelBase class
     /// </summary>
     /// <param name="appSettings">Application settings service</param>
@@ -97,6 +70,36 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
                 appSettings); // Get the preferred target language from application settings and set the ToLanguage property
     }
 
+    /// <summary>
+    ///     Gets or sets the source language for translation
+    /// </summary>
+    [ObservableProperty]
+    public partial ILanguage FormLanguage { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether the dictionary service is supported
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsDictionarySupported { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the collection of supported languages for the current translator
+    /// </summary>
+    [ObservableProperty]
+    public partial IEnumerable<ILanguage> Languages { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the selected dictionary for translation
+    /// </summary>
+    [ObservableProperty]
+    public partial DictionaryInfo? SelectedDictionary { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the target language for translation
+    /// </summary>
+    [ObservableProperty]
+    public partial ILanguage ToLanguage { get; set; }
+
     private protected DictionaryInfo NoneDictionary { get; } = new(
         string.Empty,
         Strings.NoDictionary,
@@ -116,10 +119,10 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     public bool IsBusy
     {
-        get => isBusy;
+        get;
         set
         {
-            if (SetProperty(ref isBusy, value))
+            if (SetProperty(ref field, value))
                 OnIsBusyChanged();
         }
     }

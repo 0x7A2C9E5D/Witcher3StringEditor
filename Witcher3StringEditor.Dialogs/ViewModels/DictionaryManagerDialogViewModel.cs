@@ -32,16 +32,6 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     private readonly IDictionaryProvider dictionaryProvider;
 
     /// <summary>
-    ///     The dictionary terms.
-    /// </summary>
-    [ObservableProperty] private Dictionary<string, string>? dictionaryTerms;
-
-    /// <summary>
-    ///     The selected dictionary.
-    /// </summary>
-    [ObservableProperty] private DictionaryInfo? selectedDictionary;
-
-    /// <summary>
     ///     Initializes a new instance of the DictionaryDialogViewModel class.
     /// </summary>
     /// <param name="dictionaryManager"></param>
@@ -62,6 +52,18 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             "Dictionary manager dialog opened: {Count} dictionary(ies) in {GroupCount} language group(s)",
             found.Count, DictionaryGroups.Count);
     }
+
+    /// <summary>
+    ///     The dictionary terms.
+    /// </summary>
+    [ObservableProperty]
+    public partial Dictionary<string, string>? DictionaryTerms { get; set; }
+
+    /// <summary>
+    ///     The selected dictionary.
+    /// </summary>
+    [ObservableProperty]
+    public partial DictionaryInfo? SelectedDictionary { get; set; }
 
     /// <summary>
     ///     Groups of dictionaries.

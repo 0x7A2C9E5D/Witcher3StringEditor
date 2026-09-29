@@ -167,9 +167,7 @@ public partial class SettingDialogViewModel(
         // Create a zip file from the temporary folder.
         var archiveFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip");
-        ZipFile.CreateFromDirectory(tempFolder,
-            archiveFileName);
-
+        await ZipFile.CreateFromDirectoryAsync(tempFolder, archiveFileName);
         Directory.Delete(tempFolder, true); // Delete the temporary folder.
         await dialogService.MessageBoxNotifyAsync(this, Strings.LogFilesCollectedMessage,
             Strings.LogFilesCollectedCaption); // Tell the user where the archive has been created.
