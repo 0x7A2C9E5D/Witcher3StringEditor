@@ -123,7 +123,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
         Log.Information("Read W3Strings v{Version} container ({Language}) from {Path}", container.Version,
             container.Language ?? "unknown", filePath); // Log the container facts, including the detected language
 
-        // Block 2 maps a localisation-key hash to the id it resolves to. An id can carry
+        // Block 2 maps a localization-key hash to the id it resolves to. An id can carry
         // several keys, so the first hash found is the one shown next to the entry.
         var keyHashes = new Dictionary<uint, uint>(container.Keys.Count);
         foreach (var key in container.Keys)
@@ -167,14 +167,14 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
             var id = ParseId(w3StringItem.StrId); // Parse the string id
             container.Strings.Add(new W3StringEntry { Id = id, Value = w3StringItem.Text }); // Add the string
             if (ResolveKeyHash(w3StringItem) is { } keyHash)
-                container.Keys.Add(new W3KeyEntry { KeyHash = keyHash, Id = id }); // Add the localisation key
+                container.Keys.Add(new W3KeyEntry { KeyHash = keyHash, Id = id }); // Add the localization key
         }
 
         return container; // Return the container
     }
 
     /// <summary>
-    ///     Maps a The Witcher 3 language to the language code used by the codec
+    ///     Maps The Witcher 3 language to the language code used by the codec
     /// </summary>
     /// <param name="language">The language to map</param>
     /// <returns>The language code of the codec</returns>
@@ -201,7 +201,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
     };
 
     /// <summary>
-    ///     Parses the string id of a The Witcher 3 string item
+    ///     Parses the string id of The Witcher 3 string item
     /// </summary>
     /// <param name="strId">The string id to parse</param>
     /// <returns>The parsed string id</returns>
@@ -212,7 +212,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
             : throw new W3StringsException($"'{strId}' is not a valid W3Strings string id");
 
     /// <summary>
-    ///     Resolves the localisation-key hash of a The Witcher 3 string item
+    ///     Resolves the localization-key hash of The Witcher 3 string item
     ///     The readable key name wins over the raw hash when both are set
     /// </summary>
     /// <param name="w3StringItem">The string item to resolve the key of</param>
@@ -221,7 +221,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
     private static uint? ResolveKeyHash(IW3StringItem w3StringItem)
     {
         if (!string.IsNullOrWhiteSpace(w3StringItem.KeyName))
-            return LocalizationKeyHash.Compute(w3StringItem.KeyName); // Hash the localisation key
+            return LocalizationKeyHash.Compute(w3StringItem.KeyName); // Hash the localization key
         if (string.IsNullOrWhiteSpace(w3StringItem.KeyHex))
             return null; // The item carries no key at all
 
