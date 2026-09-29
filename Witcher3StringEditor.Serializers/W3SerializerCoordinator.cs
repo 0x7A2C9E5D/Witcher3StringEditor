@@ -58,22 +58,22 @@ public class W3SerializerCoordinator(
     /// <exception cref="NotSupportedException">Thrown when the target file type is not supported</exception>
     public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
     {
-        // Determine the appropriate serializer based on the target file type
-        var succeeded = await (context.TargetFileType switch
+        // Determine the appropriate serializer based on the target file format
+        var succeeded = await (context.TargetFileFormat switch
         {
-            // For CSV file type, use the CSV serializer
-            W3FileType.Csv => csvW3Serializer.Serialize(w3StringItems, context),
-            // For Excel file type, use the Excel serializer
-            W3FileType.Excel => excelW3Serializer.Serialize(w3StringItems, context),
-            // For W3Strings file type, use the W3Strings serializer
-            W3FileType.W3Strings => w3StringsSerializer.Serialize(w3StringItems, context),
-            // Throw an exception for unsupported file types
-            _ => throw new NotSupportedException($"File type not supported: {context.TargetFileType}")
+            // For the CSV file format, use the CSV serializer
+            W3FileFormat.Csv => csvW3Serializer.Serialize(w3StringItems, context),
+            // For the Excel file format, use the Excel serializer
+            W3FileFormat.Excel => excelW3Serializer.Serialize(w3StringItems, context),
+            // For the W3Strings file format, use the W3Strings serializer
+            W3FileFormat.W3Strings => w3StringsSerializer.Serialize(w3StringItems, context),
+            // Throw an exception for unsupported file formats
+            _ => throw new NotSupportedException($"File format not supported: {context.TargetFileFormat}")
         });
 
         if (succeeded)
-            Log.Information("Serialized {Count} item(s) as {FileType} to {Directory}", w3StringItems.Count,
-                context.TargetFileType, context.OutputDirectory);
+            Log.Information("Serialized {Count} item(s) as {FileFormat} to {Directory}", w3StringItems.Count,
+                context.TargetFileFormat, context.OutputDirectory);
         return succeeded;
     }
 }

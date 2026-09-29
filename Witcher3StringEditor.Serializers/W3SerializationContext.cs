@@ -17,11 +17,11 @@ public record W3SerializationContext
     public required string OutputDirectory { get; init; }
 
     /// <summary>
-    ///     Gets the target file type for serialization
+    ///     Gets the target file format for serialization
     ///     This determines the format in which The Witcher 3 string items will be serialized (e.g., CSV, Excel, W3Strings)
     ///     This is a required property that must be specified during context creation
     /// </summary>
-    public required W3FileType TargetFileType { get; init; }
+    public required W3FileFormat TargetFileFormat { get; init; }
 
     /// <summary>
     ///     Gets the target language for serialization

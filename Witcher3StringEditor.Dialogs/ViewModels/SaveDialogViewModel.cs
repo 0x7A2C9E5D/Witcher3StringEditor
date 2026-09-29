@@ -58,7 +58,7 @@ public partial class SaveDialogViewModel
         this.dialogService = dialogService;
         this.appSettings = appSettings;
         TargetLanguage = appSettings.PreferredLanguage;
-        TargetFileType = appSettings.PreferredW3FileType;
+        TargetFileFormat = appSettings.PreferredW3FileType;
         TargetEncoding = appSettings.PreferredW3StringsEncoding;
     }
 
@@ -80,10 +80,10 @@ public partial class SaveDialogViewModel
     private partial string OutputDirectory { get; set; }
 
     /// <summary>
-    ///     Gets or sets the target file type for the save operation
+    ///     Gets or sets the target file format for the save operation
     /// </summary>
     [ObservableProperty]
-    public partial W3FileType TargetFileType { get; set; }
+    public partial W3FileFormat TargetFileFormat { get; set; }
 
     /// <summary>
     ///     Gets or sets the target language for the save operation
@@ -109,9 +109,9 @@ public partial class SaveDialogViewModel
     [RelayCommand]
     private async Task Save()
     {
-        Log.Information("Saving {Count} item(s) to {Directory} as {FileType} ({Language})",
-            w3StringItems.Count, OutputDirectory, TargetFileType, TargetLanguage);
-        if (TargetFileType == W3FileType.W3Strings)
+        Log.Information("Saving {Count} item(s) to {Directory} as {FileFormat} ({Language})",
+            w3StringItems.Count, OutputDirectory, TargetFileFormat, TargetLanguage);
+        if (TargetFileFormat == W3FileFormat.W3Strings)
         {
             Log.Information("W3Strings payload encoding: {Encoding}",
                 TargetEncoding.WebName); // Log the chosen encoding
@@ -121,7 +121,7 @@ public partial class SaveDialogViewModel
         var saveResult = await serializer.Serialize(w3StringItems, new W3SerializationContext // Serialize items
         {
             OutputDirectory = OutputDirectory, // Set output directory
-            TargetFileType = TargetFileType, // Set file type
+            TargetFileFormat = TargetFileFormat, // Set the file format
             TargetLanguage = TargetLanguage, // Set language
             Encoding = TargetEncoding // Set the payload encoding
         });

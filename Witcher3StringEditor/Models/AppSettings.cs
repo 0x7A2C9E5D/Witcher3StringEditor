@@ -28,12 +28,12 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This constructor is used during JSON deserialization
     /// </summary>
     /// <param name="gameExePath">The path to the game executable</param>
-    /// <param name="preferredW3FileType">The preferred The Witcher 3 file type</param>
+    /// <param name="preferredW3FileType">The preferred The Witcher 3 file format</param>
     /// <param name="preferredLanguage">The preferred language</param>
     /// <param name="backupItems">The collection of backup items</param>
     /// <param name="recentItems">The collection of recent items</param>
     [JsonConstructor]
-    public AppSettings(string gameExePath, W3FileType preferredW3FileType,
+    public AppSettings(string gameExePath, W3FileFormat preferredW3FileType,
         W3Language? preferredLanguage, ObservableCollection<IBackupItem> backupItems,
         ObservableCollection<IRecentFileEntry> recentItems)
     {
@@ -79,11 +79,11 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     public partial Encoding PreferredW3StringsEncoding { get; set; } = Encoding.Unicode;
 
     /// <summary>
-    ///     Gets or sets the preferred The Witcher 3 file type for operations
+    ///     Gets or sets the preferred The Witcher 3 file format for operations
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
-    public partial W3FileType PreferredW3FileType { get; set; }
+    public partial W3FileFormat PreferredW3FileType { get; set; }
 
     /// <summary>
     ///     Gets or sets the preferred translator service

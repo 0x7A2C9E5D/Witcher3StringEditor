@@ -27,13 +27,13 @@
     -->
     <Window.Resources>
         <ResourceDictionary>
-            <!-- Data provider for The Witcher 3 file types enumeration -->
+            <!-- Data provider for The Witcher 3 file formats enumeration -->
             <ObjectDataProvider
-                x:Key="FileType"
+                x:Key="FileFormat"
                 MethodName="GetValues"
                 ObjectType="{x:Type sys:Enum}">
                 <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="common:W3FileType" />
+                    <x:Type TypeName="common:W3FileFormat" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
             <!-- Data provider for The Witcher 3 languages enumeration -->
@@ -62,8 +62,8 @@
             <c:StringToCultureInfoConverter x:Key="StringToCultureInfoConverter" />
             <!-- Converter for displaying The Witcher 3 language native names -->
             <c:W3LanguageToNativeNameConverter x:Key="W3LanguageToNativeNameConverter" />
-            <!-- Converter for displaying The Witcher 3 file type localized strings -->
-            <c:W3FileTypeToLocalizedStringConverter x:Key="W3FileTypeToLocalizedStringConverter" />
+            <!-- Converter for displaying The Witcher 3 file format localized strings -->
+            <c:W3FileFormatToLocalizedStringConverter x:Key="W3FileFormatToLocalizedStringConverter" />
             <!-- Converter for checking if a file exists -->
             <c:FileExistsToCollapsedConverter x:Key="FileExistsToCollapsedConverter" />
         </ResourceDictionary>
@@ -129,13 +129,13 @@
                     <ui:SettingsCard.HeaderIcon>
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Type}" />
                     </ui:SettingsCard.HeaderIcon>
-                    <ComboBox ItemsSource="{Binding Source={StaticResource FileType}}"
+                    <ComboBox ItemsSource="{Binding Source={StaticResource FileFormat}}"
                               SelectedItem="{Binding AppSettings.PreferredW3FileType, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>
                                     <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource W3FileTypeToLocalizedStringConverter}">
+                                        <MultiBinding Converter="{StaticResource W3FileFormatToLocalizedStringConverter}">
                                             <Binding />
                                             <Binding Path="DataContext.AppSettings.Language"
                                                      RelativeSource="{RelativeSource AncestorType=ComboBox}" />

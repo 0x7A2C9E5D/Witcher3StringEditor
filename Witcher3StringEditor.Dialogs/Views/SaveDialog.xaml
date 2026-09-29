@@ -32,13 +32,13 @@
             <Style BasedOn="{StaticResource ExpanderCardStyle}" TargetType="Expander">
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style>
-            <!-- Data provider for The Witcher 3 file types enumeration -->
+            <!-- Data provider for The Witcher 3 file formats enumeration -->
             <ObjectDataProvider
-                x:Key="FileType"
+                x:Key="FileFormat"
                 MethodName="GetValues"
                 ObjectType="{x:Type sys:Enum}">
                 <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="com:W3FileType" />
+                    <x:Type TypeName="com:W3FileFormat" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
             <!-- Data provider for The Witcher 3 languages enumeration -->
@@ -48,7 +48,7 @@
             <!-- Converter for displaying The Witcher 3 language native names -->
             <con:W3LanguageToNativeNameConverter x:Key="W3LanguageToNativeNameConverter" />
             <!-- Converter for displaying The Witcher 3 file type localized strings -->
-            <con:W3FileTypeToLocalizedStringConverter x:Key="W3FileTypeToLocalizedStringConverter" />
+            <con:W3FileFormatToLocalizedStringConverter x:Key="W3FileFormatToLocalizedStringConverter" />
             <!-- Converter for displaying the W3Strings payload encodings -->
             <con:W3StringsEncodingToDisplayStringConverter x:Key="W3StringsEncodingToDisplayStringConverter" />
         </ResourceDictionary>
@@ -92,14 +92,14 @@
                         <ComboBox
                             Grid.Column="1"
                             HorizontalAlignment="Stretch"
-                            ItemsSource="{Binding Source={StaticResource FileType}}"
-                            SelectedValue="{Binding TargetFileType}">
+                            ItemsSource="{Binding Source={StaticResource FileFormat}}"
+                            SelectedValue="{Binding TargetFileFormat}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock>
                                         <TextBlock.Text>
                                             <MultiBinding
-                                                Converter="{StaticResource W3FileTypeToLocalizedStringConverter}">
+                                                Converter="{StaticResource W3FileFormatToLocalizedStringConverter}">
                                                 <Binding />
                                             </MultiBinding>
                                         </TextBlock.Text>
@@ -139,9 +139,9 @@
                                 <Style TargetType="Grid">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <!-- Show when file type is W3Strings -->
-                                        <DataTrigger Binding="{Binding TargetFileType}"
-                                                     Value="{x:Static com:W3FileType.W3Strings}">
+                                        <!-- Show when file format is W3Strings -->
+                                        <DataTrigger Binding="{Binding TargetFileFormat}"
+                                                     Value="{x:Static com:W3FileFormat.W3Strings}">
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>
