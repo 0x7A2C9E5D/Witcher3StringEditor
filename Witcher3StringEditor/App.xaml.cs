@@ -148,7 +148,7 @@ public sealed partial class App : IDisposable
     {
         // Read the license from embedded resources
         using var stream = Assembly.GetExecutingAssembly()
-            .GetManifestResourceStream("Witcher3StringEditor.License.txt")!;
+            .GetManifestResourceStream("Witcher3StringEditor.Syncfusion.lic")!;
         using var reader = new StreamReader(stream);
         // Register the license with Syncfusion
         SyncfusionLicenseProvider.RegisterLicense(reader.ReadToEnd());

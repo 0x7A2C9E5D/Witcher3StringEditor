@@ -24,10 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="License.txt"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.2"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
         <PackageReference Include="GTranslate" Version="2.4.0"/>
@@ -64,6 +60,11 @@
         <ProjectReference Include="..\Witcher3StringEditor.NexusIntegration\Witcher3StringEditor.NexusIntegration.csproj"/>
         <ProjectReference Include="..\Witcher3StringEditor.Serializers\Witcher3StringEditor.Serializers.csproj"/>
         <ProjectReference Include="..\Witcher3StringEditor.Shared\Witcher3StringEditor.Shared.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Syncfusion.lic" />
+      <EmbeddedResource Include="Syncfusion.lic" />
     </ItemGroup>
 
 </Project>
