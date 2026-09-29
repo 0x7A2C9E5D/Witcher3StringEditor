@@ -1,3 +1,4 @@
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -57,23 +58,19 @@ public partial class SaveDialogViewModel
         this.appSettings = appSettings;
         TargetLanguage = appSettings.PreferredLanguage;
         TargetFileType = appSettings.PreferredW3FileType;
-        TargetVersion = appSettings.PreferredW3StringsVersion == W3StringsVersion.Legacy
-            ? W3StringsVersion.Classic // Older builds saved the value the legacy external encoder wrote
-            : appSettings.PreferredW3StringsVersion;
+        TargetEncoding = appSettings.PreferredW3StringsEncoding;
     }
 
     /// <summary>
-    ///     Gets the container versions the user can choose from
-    ///     The dialog offers them as the payload encoding each version implies
-    ///     Version 163 is deliberately absent: it is only ever read, never written
+    ///     Gets the payload encodings the user can choose from
     /// </summary>
-    public IReadOnlyList<W3StringsVersion> Versions { get; } = [W3StringsVersion.Classic, W3StringsVersion.Utf8];
+    public IReadOnlyList<Encoding> Encodings { get; } = [Encoding.Unicode, Encoding.UTF8];
 
     /// <summary>
-    ///     Gets or sets the container version written for W3Strings files
+    ///     Gets or sets the payload encoding written for W3Strings files
     /// </summary>
     [ObservableProperty]
-    public partial W3StringsVersion TargetVersion { get; set; }
+    public partial Encoding TargetEncoding { get; set; }
 
     /// <summary>
     ///     Gets or sets the output directory where the file will be saved
@@ -115,8 +112,9 @@ public partial class SaveDialogViewModel
             w3StringItems.Count, OutputDirectory, TargetFileType, TargetLanguage);
         if (TargetFileType == W3FileType.W3Strings)
         {
-            Log.Information("W3Strings container version: {Version}", (int)TargetVersion); // Log container version
-            appSettings.PreferredW3StringsVersion = TargetVersion; // Remember the container version
+            Log.Information("W3Strings payload encoding: {Encoding}",
+                TargetEncoding.WebName); // Log the chosen encoding
+            appSettings.PreferredW3StringsEncoding = TargetEncoding; // Remember the chosen encoding
         }
 
         var saveResult = await serializer.Serialize(w3StringItems, new W3SerializationContext // Serialize items
@@ -124,7 +122,7 @@ public partial class SaveDialogViewModel
             OutputDirectory = OutputDirectory, // Set output directory
             TargetFileType = TargetFileType, // Set file type
             TargetLanguage = TargetLanguage, // Set language
-            Version = TargetVersion // Set container version
+            Encoding = TargetEncoding // Set the payload encoding
         });
         if (saveResult)
             Log.Information("Save completed successfully");

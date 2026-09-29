@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using CommunityToolkit.Diagnostics;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
@@ -18,6 +19,26 @@ namespace Witcher3StringEditor.Serializers.Implementation;
 /// </summary>
 public class W3StringsSerializer(IBackupService backupService) : IW3StringsSerializer
 {
+    /// <summary>
+    ///     Container version of the UTF-8 generation
+    /// </summary>
+    private const uint Utf8ContainerVersion = 164;
+
+    /// <summary>
+    ///     Container version of the classic UTF-16LE generation
+    /// </summary>
+    private const uint Utf16LeContainerVersion = 162;
+
+    /// <summary>
+    ///     Gets the container version that stores the given payload encoding
+    /// </summary>
+    /// <param name="encoding">The payload encoding to store</param>
+    /// <returns>The container version of the UTF-8 generation, or the classic one for every other encoding</returns>
+    private static uint ContainerVersion(Encoding encoding)
+    {
+        return encoding.CodePage == Encoding.UTF8.CodePage ? Utf8ContainerVersion : Utf16LeContainerVersion;
+    }
+
     /// <summary>
     ///     Deserializes The Witcher 3 string items from a W3Strings file
     ///     Parses the container directly with the built-in codec, which covers both the UTF-16 and the UTF-8 generations
@@ -74,7 +95,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
             Guard.IsTrue(await ReplaceFileWithBackup(tempW3StringsPath,
                 outputW3StringsPath)); // Replace the destination file with backup if needed
             Log.Information("Encoded {Count} item(s) as W3Strings v{Version} to {Path}", w3StringItems.Count,
-                (int)context.Version, outputW3StringsPath); // Log the encoded container
+                ContainerVersion(context.Encoding), outputW3StringsPath); // Log the encoded container
             return true; // Return true to indicate successful serialization
         }
         catch (Exception ex)
@@ -134,7 +155,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3StringsSeria
         var key = CodecLanguage.KeyForLanguage(language); // 32-bit language key of the target language
         var container = new W3StringsFile
         {
-            Version = (uint)context.Version, // Requested container version
+            Version = ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
             Language = language, // Target language code
             Magic = CodecLanguage.MagicForLanguage(language), // Magic XORed into the stored ids
             Key1 = (ushort)(key >> 16), // High half of the language key

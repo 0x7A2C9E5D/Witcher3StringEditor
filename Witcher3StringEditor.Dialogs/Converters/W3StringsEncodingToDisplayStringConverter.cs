@@ -1,31 +1,29 @@
 using System.Globalization;
+using System.Text;
 using System.Windows.Data;
-using Witcher3StringEditor.Contracts;
 
 namespace Witcher3StringEditor.Dialogs.Converters;
 
 /// <summary>
-///     W3Strings container version to display string converter
-///     Names the payload encoding the version implies, which is what the user picks
-///     and is a technical fact that needs no translation
+///     W3Strings payload encoding to display string converter
+///     Spells the encoding out, which is a technical fact that needs no translation
 /// </summary>
-public class W3StringsVersionToDisplayStringConverter : IValueConverter
+public class W3StringsEncodingToDisplayStringConverter : IValueConverter
 {
     /// <summary>
-    ///     Converts a container version to its display string
+    ///     Converts a payload encoding to its display string
     /// </summary>
-    /// <param name="value">The W3StringsVersion value to display</param>
+    /// <param name="value">The Encoding value to display</param>
     /// <param name="targetType">Target type (should be string type)</param>
     /// <param name="parameter">Converter parameter (not used)</param>
     /// <param name="culture">Culture information</param>
-    /// <returns>The encoding of the payload</returns>
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value switch
+    /// <returns>The name of the payload encoding</returns>
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        W3StringsVersion.Classic => "UTF-16LE",
-        W3StringsVersion.Legacy => "UTF-16LE",
-        W3StringsVersion.Utf8 => "UTF-8",
-        _ => string.Empty
-    };
+        if (value is not Encoding encoding) return string.Empty;
+        // Only the two encodings a container can store are offered
+        return encoding.CodePage == Encoding.UTF8.CodePage ? "UTF-8" : "UTF-16LE";
+    }
 
     /// <summary>
     ///     Reverse conversion (not implemented)

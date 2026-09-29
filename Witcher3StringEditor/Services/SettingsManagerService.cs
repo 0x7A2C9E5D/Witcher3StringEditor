@@ -82,9 +82,9 @@ internal class SettingsManagerService : ISettingsManagerService
     private static void LogAdditionalSettings(IAppSettings appSettings)
     {
         Log.Information(
-            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Preferred W3Strings version: {Version}, Translator: {Translator}",
+            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Preferred W3Strings encoding: {Encoding}, Translator: {Translator}",
             appSettings.PreferredW3FileType, appSettings.PreferredLanguage,
-            (int)appSettings.PreferredW3StringsVersion,
+            appSettings.PreferredW3StringsEncoding.WebName,
             appSettings.Translator); // Log the relevant settings in a single entry
     }
 

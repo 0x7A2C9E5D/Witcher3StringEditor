@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Witcher3StringEditor.Contracts;
@@ -70,11 +71,11 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     public partial W3Language PreferredLanguage { get; set; }
 
     /// <summary>
-    ///     Gets or sets the preferred container version written for .w3strings files
+    ///     Gets or sets the preferred payload encoding written for .w3strings files
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
-    public partial W3StringsVersion PreferredW3StringsVersion { get; set; } = W3StringsVersion.Classic;
+    public partial Encoding PreferredW3StringsEncoding { get; set; } = Encoding.Unicode;
 
     /// <summary>
     ///     Gets or sets the preferred The Witcher 3 file type for operations

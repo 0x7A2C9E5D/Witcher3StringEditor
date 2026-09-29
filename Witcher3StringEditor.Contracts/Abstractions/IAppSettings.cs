@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace Witcher3StringEditor.Contracts.Abstractions;
 
@@ -19,9 +20,9 @@ public interface IAppSettings
     public W3Language PreferredLanguage { get; set; }
 
     /// <summary>
-    ///     Gets or sets the preferred container version written for <c>.w3strings</c> files
+    ///     Gets or sets the preferred payload encoding written for <c>.w3strings</c> files
     /// </summary>
-    public W3StringsVersion PreferredW3StringsVersion { get; set; }
+    public Encoding PreferredW3StringsEncoding { get; set; }
 
     /// <summary>
     ///     Gets or sets the path to the game executable

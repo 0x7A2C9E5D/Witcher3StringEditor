@@ -1,3 +1,4 @@
+using System.Text;
 using Witcher3StringEditor.Contracts;
 
 namespace Witcher3StringEditor.Serializers;
@@ -29,9 +30,10 @@ public record W3SerializationContext
     public required W3Language TargetLanguage { get; init; }
 
     /// <summary>
-    ///     Gets the container version to write for W3Strings files
-    ///     This is used during W3Strings serialization to select the container generation of the written file
+    ///     Gets the payload encoding to write for W3Strings files
+    ///     This is used during W3Strings serialization to select the text encoding and the
+    ///     size of one offset/length unit of the written file
     ///     This is a required property that must be specified during context creation
     /// </summary>
-    public required W3StringsVersion Version { get; init; }
+    public required Encoding Encoding { get; init; }
 }

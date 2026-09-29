@@ -53,8 +53,8 @@
             <con:W3LanguageToNativeNameConverter x:Key="W3LanguageToNativeNameConverter" />
             <!-- Converter for displaying The Witcher 3 file type localized strings -->
             <con:W3FileTypeToLocalizedStringConverter x:Key="W3FileTypeToLocalizedStringConverter" />
-            <!-- Converter for displaying W3Strings container versions -->
-            <con:W3StringsVersionToDisplayStringConverter x:Key="W3StringsVersionToDisplayStringConverter" />
+            <!-- Converter for displaying the W3Strings payload encodings -->
+            <con:W3StringsEncodingToDisplayStringConverter x:Key="W3StringsEncodingToDisplayStringConverter" />
         </ResourceDictionary>
     </Window.Resources>
     <!-- 
@@ -160,12 +160,12 @@
                             <ComboBox
                                 Margin="0,16,0,0"
                                 HorizontalAlignment="Right"
-                                ItemsSource="{Binding Versions}"
-                                SelectedValue="{Binding TargetVersion}">
+                                ItemsSource="{Binding Encodings}"
+                                SelectedValue="{Binding TargetEncoding}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock
-                                            Text="{Binding Converter={StaticResource W3StringsVersionToDisplayStringConverter}}" />
+                                            Text="{Binding Converter={StaticResource W3StringsEncodingToDisplayStringConverter}}" />
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
