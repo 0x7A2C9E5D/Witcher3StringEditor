@@ -103,13 +103,6 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excel munkalapok</value>
   </data>
-    <data name="FirstRunMessage" xml:space="preserve">
-    <value>(Kötelező) Első indításkor először állítsa be az encoder elérési útját.
-(Opcionális) Állítsa be a játék executable elérési útját a játék közvetlen indításához a szoftverben.</value>
-  </data>
-    <data name="FirstRunCaption" xml:space="preserve">
-    <value>Első Indítási Konfigurációs Üzenet</value>
-  </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>Több példány helyzetben az adatok helytelenül írhatók felül. Csak egyszeres példány-futtatás támogatott. Aktiválja az már nyitott ablakot?</value>
   </data>
@@ -136,9 +129,6 @@
   </data>
     <data name="EditDialogTitle" xml:space="preserve">
     <value>Szerkesztés</value>
-  </data>
-    <data name="SelectW3Strings" xml:space="preserve">
-    <value>w3strings.exe kiválasztása</value>
   </data>
     <data name="SelectGameExe" xml:space="preserve">
     <value>witcher3.exe  kiválasztása</value>
@@ -188,12 +178,6 @@
     <data name="TargetLanguage" xml:space="preserve">
     <value>Célnyelv</value>
   </data>
-    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
-    <value>ID helyellenőrzés figyelmen kívül hagyása</value>
-  </data>
-    <data name="IDSpace" xml:space="preserve">
-    <value>ID Terület</value>
-  </data>
     <data name="BackupDialogTitle" xml:space="preserve">
     <value>Biztonsági mentés</value>
   </data>
@@ -233,9 +217,6 @@
     <data name="SettingsDialogTitle" xml:space="preserve">
     <value>Beállítások</value>
   </data>
-    <data name="W3StringsPath" xml:space="preserve">
-    <value>Kérem, válaszd ki a w3strings.exe fájlt</value>
-  </data>
     <data name="GameExePath" xml:space="preserve">
     <value>Kérem, válaszd ki a witcher3.exe fájlt</value>
   </data>
@@ -244,15 +225,6 @@
   </data>
     <data name="PreferredLanguage" xml:space="preserve">
     <value>Kedvelt nyelv</value>
-  </data>
-    <data name="IsOn" xml:space="preserve">
-    <value>Be</value>
-  </data>
-    <data name="IsOff" xml:space="preserve">
-    <value>Ki</value>
-  </data>
-    <data name="IdSpaceToolTip" xml:space="preserve">
-    <value>Az ID hely tartománya egy négyjegyű egész szám (0000 és 9999 között). Ha hiba van az észlelésben, a program automatikusan jelzi ezt az ID-tér negatív egységként való megjelenítésével. Kérjük, vegye figyelembe, hogy az eredmények csak referenciaként szolgálnak.</value>
   </data>
     <data name="RecentDialogTitle" xml:space="preserve">
     <value>Legutóbbiak</value>
@@ -332,6 +304,9 @@
     <data name="AboutDialogTitle" xml:space="preserve">
     <value>Rólunk</value>
   </data>
+    <data name="Encoding" xml:space="preserve">
+    <value>Kódolás:</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Verzió:</value>
   </data>
@@ -340,9 +315,6 @@
   </data>
     <data name="AppBuildTime" xml:space="preserve">
     <value>Készítési idő:</value>
-  </data>
-    <data name="EncoderSettingCardHeader" xml:space="preserve">
-    <value>Kódoló útvonal</value>
   </data>
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Játék útvonal</value>

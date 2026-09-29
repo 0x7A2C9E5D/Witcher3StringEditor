@@ -1,9 +1,8 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
-using CommandLine;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -153,11 +152,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private bool CanPlayGame => File.Exists(AppSettings.GameExePath);
 
     /// <summary>
-    ///     Gets a value indicating whether a file can be opened
-    /// </summary>
-    private bool CanOpenFile => File.Exists(AppSettings.W3StringsPath);
-
-    /// <summary>
     ///     Handles the drag over event
     /// </summary>
     /// <param name="dropInfo"></param>
@@ -193,11 +187,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     private void RegisterSettingsMessageHandlers()
     {
-        // Register handler for W3Strings path change notifications
-        WeakReferenceMessenger.Default
-            .Register<MainWindowViewModel, ValueChangedMessage<bool>, string>(this, MessageTokens.W3StringsPathChanged,
-                (_, _) => OpenFileCommand
-                    .NotifyCanExecuteChanged()); // Update OpenFile command state when W3Strings path changes
         // Register handler for GameExe path change notifications
         WeakReferenceMessenger.Default
             .Register<MainWindowViewModel, ValueChangedMessage<bool>, string>(this, MessageTokens.GameExePathChanged,
@@ -290,7 +279,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <summary>
     ///     Opens a file using a file dialog
     /// </summary>
-    [RelayCommand(CanExecute = nameof(CanOpenFile))]
+    [RelayCommand]
     private async Task OpenFile()
     {
         // Show open file dialog
@@ -368,7 +357,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         if (await dialogService.ShowDialogAsync(this, dialogViewModel) == true // Show add dialog
             && dialogViewModel.Item is not null) // Check if user confirmed
         {
-            W3StringItems!.Add(dialogViewModel.Item.Cast<W3StringItem>()); // Add new item to collection
+            W3StringItems!.Add((W3StringItem)dialogViewModel.Item); // Add new item to collection
             await RequestDataGridPagedSource(); // Request updated paged source
             Log.Information("W3String item added: {StrId}", dialogViewModel.Item.StrId); // Log successful addition
         }
@@ -422,7 +411,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         {
             foreach (var item in w3Items)
             {
-                var stringItem = item.Cast<W3StringItem>(); // Cast to string item model
+                var stringItem = (W3StringItem)item; // Cast to string item model
                 W3StringItems!.Remove(stringItem); // Remove from main collection
             }
 

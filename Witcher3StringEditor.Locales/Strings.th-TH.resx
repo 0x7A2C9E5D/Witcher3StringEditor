@@ -210,13 +210,6 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>เวิร์กบุ๊ก Excel</value>
   </data>
-    <data name="FirstRunMessage" xml:space="preserve">
-    <value>(จำเป็น) เมื่อเรียกใช้งานครั้งแรก โปรดตั้งค่าเส้นทางของตัวแปลงรหัส (Encoder Path) ก่อน
-(ไม่บังคับ) ตั้งค่าเส้นทางตัวรันเกม เพื่อเปิดเกมโดยตรงจากโปรแกรม</value>
-  </data>
-    <data name="FirstRunCaption" xml:space="preserve">
-    <value>คำแนะนำในการตั้งค่าสำหรับการใช้งานครั้งแรก</value>
-  </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>การเปิดโปรแกรมซ้อนกันหลายหน้าต่างอาจทำให้ข้อมูลถูกบันทึกทับอย่างไม่ถูกต้อง ระบบรองรับการใช้งานเพียงหน้าต่างเดียวเท่านั้น คุณต้องการแสดงหน้าต่างที่เปิดอยู่แล้วขึ้นมาหรือไม่?</value>
   </data>
@@ -243,9 +236,6 @@
   </data>
     <data name="EditDialogTitle" xml:space="preserve">
     <value>แก้ไข</value>
-  </data>
-    <data name="SelectW3Strings" xml:space="preserve">
-    <value>เลือก w3strings.exe</value>
   </data>
     <data name="SelectGameExe" xml:space="preserve">
     <value>เลือก witcher3.exe</value>
@@ -295,12 +285,6 @@
     <data name="TargetLanguage" xml:space="preserve">
     <value>ภาษาปลายทาง</value>
   </data>
-    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
-    <value>ข้ามการตรวจสอบ ID Space</value>
-  </data>
-    <data name="IDSpace" xml:space="preserve">
-    <value>ID Space</value>
-  </data>
     <data name="BackupDialogTitle" xml:space="preserve">
     <value>สำรองข้อมูล</value>
   </data>
@@ -340,9 +324,6 @@
     <data name="SettingsDialogTitle" xml:space="preserve">
     <value>การตั้งค่า</value>
   </data>
-    <data name="W3StringsPath" xml:space="preserve">
-    <value>โปรดเลือก w3strings.exe</value>
-  </data>
     <data name="GameExePath" xml:space="preserve">
     <value>โปรดเลือก witcher3.exe</value>
   </data>
@@ -351,15 +332,6 @@
   </data>
     <data name="PreferredLanguage" xml:space="preserve">
     <value>ภาษาที่ต้องการ</value>
-  </data>
-    <data name="IsOn" xml:space="preserve">
-    <value>เปิด</value>
-  </data>
-    <data name="IsOff" xml:space="preserve">
-    <value>ปิด</value>
-  </data>
-    <data name="IdSpaceToolTip" xml:space="preserve">
-    <value>ช่วงของ ID Space คือจำนวนเต็มสี่หลัก (ตั้งแต่ 0000 ถึง 9999) เมื่อเกิดข้อผิดพลาดในการตรวจจับ โปรแกรมจะแสดงค่า ID Space เป็น -1 โดยอัตโนมัติ โปรดทราบว่าผลลัพธ์นี้ใช้สำหรับอ้างอิงเท่านั้น</value>
   </data>
     <data name="RecentDialogTitle" xml:space="preserve">
     <value>ล่าสุด</value>
@@ -439,6 +411,9 @@
     <data name="AboutDialogTitle" xml:space="preserve">
     <value>เกี่ยวกับ</value>
   </data>
+    <data name="Encoding" xml:space="preserve">
+    <value>การเข้ารหัส:</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>เวอร์ชัน:</value>
   </data>
@@ -447,9 +422,6 @@
   </data>
     <data name="AppBuildTime" xml:space="preserve">
     <value>เวลาที่สร้าง (Build Time):</value>
-  </data>
-    <data name="EncoderSettingCardHeader" xml:space="preserve">
-    <value>เส้นทางตัวแปลงรหัส (Encoder Path)</value>
   </data>
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>เส้นทางตัวเกม (Game Path)</value>

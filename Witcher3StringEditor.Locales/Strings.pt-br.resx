@@ -103,13 +103,6 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Planilha do Excel</value>
   </data>
-    <data name="FirstRunMessage" xml:space="preserve">
-    <value>(Obrigatório) Como é a primeira execução, configure o caminho do codificador (w3strings.exe).
-(Opcional) Indique o caminho do jogo para conseguir iniciá-lo por aqui (witcher3.exe).</value>
-  </data>
-    <data name="FirstRunCaption" xml:space="preserve">
-    <value>Configurações Iniciais</value>
-  </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>Abrir o programa várias vezes pode corromper seus dados. Deseja alternar para a janela que já está aberta?</value>
   </data>
@@ -136,9 +129,6 @@
   </data>
     <data name="EditDialogTitle" xml:space="preserve">
     <value>Editar</value>
-  </data>
-    <data name="SelectW3Strings" xml:space="preserve">
-    <value>Selecione w3strings.exe</value>
   </data>
     <data name="SelectGameExe" xml:space="preserve">
     <value>Selecione witcher3.exe</value>
@@ -188,12 +178,6 @@
     <data name="TargetLanguage" xml:space="preserve">
     <value>Idioma</value>
   </data>
-    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
-    <value>Ignorar verificação de ID Space</value>
-  </data>
-    <data name="IDSpace" xml:space="preserve">
-    <value>ID Space</value>
-  </data>
     <data name="BackupDialogTitle" xml:space="preserve">
     <value>Backup</value>
   </data>
@@ -233,9 +217,6 @@
     <data name="SettingsDialogTitle" xml:space="preserve">
     <value>Configurações</value>
   </data>
-    <data name="W3StringsPath" xml:space="preserve">
-    <value>Por favor, selecione o arquivo w3strings.exe</value>
-  </data>
     <data name="GameExePath" xml:space="preserve">
     <value>Por favor, selecione o executável do jogo (witcher3.exe)</value>
   </data>
@@ -244,15 +225,6 @@
   </data>
     <data name="PreferredLanguage" xml:space="preserve">
     <value>Idioma Padrão</value>
-  </data>
-    <data name="IsOn" xml:space="preserve">
-    <value>Ativado</value>
-  </data>
-    <data name="IsOff" xml:space="preserve">
-    <value>Desativado</value>
-  </data>
-    <data name="IdSpaceToolTip" xml:space="preserve">
-    <value>O ID Space deve ser um número de 4 dígitos (0000 a 9999). Se o programa encontrar um erro na leitura, ele exibirá o valor como "-1". Use esses resultados apenas como referência.</value>
   </data>
     <data name="RecentDialogTitle" xml:space="preserve">
     <value>Recentes</value>
@@ -332,6 +304,9 @@
     <data name="AboutDialogTitle" xml:space="preserve">
     <value>Sobre</value>
   </data>
+    <data name="Encoding" xml:space="preserve">
+    <value>Codificação:</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Versão:</value>
   </data>
@@ -340,9 +315,6 @@
   </data>
     <data name="AppBuildTime" xml:space="preserve">
     <value>Horário da compilação:</value>
-  </data>
-    <data name="EncoderSettingCardHeader" xml:space="preserve">
-    <value>Caminho do Codificador</value>
   </data>
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Pasta do Jogo</value>

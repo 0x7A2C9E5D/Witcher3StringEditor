@@ -29,15 +29,9 @@ public record W3SerializationContext
     public required W3Language TargetLanguage { get; init; }
 
     /// <summary>
-    ///     Gets the expected ID space for The Witcher 3 string items
-    ///     This is used during W3Strings serialization to validate that the string IDs are within the expected range
+    ///     Gets the container version to write for W3Strings files
+    ///     This is used during W3Strings serialization to select the container generation of the written file
     ///     This is a required property that must be specified during context creation
     /// </summary>
-    public required int ExpectedIdSpace { get; init; }
-
-    /// <summary>
-    ///     Gets or sets a value indicating whether to ignore the ID space check during serialization
-    ///     When true, bypasses the ID space validation during W3Strings encoding
-    /// </summary>
-    public bool IgnoreIdSpaceCheck { get; init; }
+    public required W3StringsVersion Version { get; init; }
 }

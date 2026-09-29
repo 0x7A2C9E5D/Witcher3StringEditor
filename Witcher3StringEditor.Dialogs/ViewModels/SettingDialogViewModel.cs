@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -50,30 +50,6 @@ public partial class SettingDialogViewModel(
     ///     Returns true to indicate that the dialog was closed successfully
     /// </summary>
     public bool? DialogResult => true;
-
-    /// <summary>
-    ///     Sets the path to the w3strings.exe file
-    ///     Opens a file dialog to allow the user to select the w3strings.exe file
-    /// </summary>
-    [RelayCommand]
-    private async Task SetW3StringsPath()
-    {
-        // Open a file dialog to allow the user to select the w3strings.exe file.
-        var dialogSettings = new OpenFileDialogSettings
-        {
-            Filters = [new FileFilter("w3strings.exe", ".exe")], // Set the file filter.
-            Title = Strings.SelectW3Strings, // Set the dialog title.
-            SuggestedFileName = "w3strings" // Set the suggested file name.
-        };
-        using var storageFile =
-            await dialogService.ShowOpenFileDialogAsync(this, dialogSettings); // Open the file dialog.
-        if (storageFile is
-            { Name: "w3strings.exe" }) // If the selected file is w3strings.exe, set the path to the file.
-        {
-            AppSettings.W3StringsPath = storageFile.LocalPath; // Set the path to the file.
-            Log.Information("Encoder path set to {Path}", storageFile.LocalPath); // Log the path.
-        }
-    }
 
     /// <summary>
     ///     Sets the path to the witcher3.exe file

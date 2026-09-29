@@ -210,13 +210,6 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excel工作簿</value>
   </data>
-    <data name="FirstRunMessage" xml:space="preserve">
-    <value>（必須）首次執行時，請先設定編碼器路徑。
-（可選）設定遊戲可執行檔路徑，可在軟體內直接啟動遊戲。</value>
-  </data>
-    <data name="FirstRunCaption" xml:space="preserve">
-    <value>首次執行設定提示</value>
-  </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>多執行個體可能導致資料被錯誤覆蓋，僅支援單執行個體執行。是否喚醒已開啟視窗？</value>
   </data>
@@ -243,9 +236,6 @@
   </data>
     <data name="EditDialogTitle" xml:space="preserve">
     <value>編輯</value>
-  </data>
-    <data name="SelectW3Strings" xml:space="preserve">
-    <value>選擇w3strings.exe</value>
   </data>
     <data name="SelectGameExe" xml:space="preserve">
     <value>選擇witcher3.exe</value>
@@ -295,12 +285,6 @@
     <data name="TargetLanguage" xml:space="preserve">
     <value>目標語言</value>
   </data>
-    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
-    <value>跳過ID空間檢查</value>
-  </data>
-    <data name="IDSpace" xml:space="preserve">
-    <value>ID空間</value>
-  </data>
     <data name="BackupDialogTitle" xml:space="preserve">
     <value>備份</value>
   </data>
@@ -340,9 +324,6 @@
     <data name="SettingsDialogTitle" xml:space="preserve">
     <value>設定</value>
   </data>
-    <data name="W3StringsPath" xml:space="preserve">
-    <value>請選擇w3strings.exe</value>
-  </data>
     <data name="GameExePath" xml:space="preserve">
     <value>請選擇witcher3.exe</value>
   </data>
@@ -351,15 +332,6 @@
   </data>
     <data name="PreferredLanguage" xml:space="preserve">
     <value>預設目標語言</value>
-  </data>
-    <data name="IsOn" xml:space="preserve">
-    <value>開</value>
-  </data>
-    <data name="IsOff" xml:space="preserve">
-    <value>關</value>
-  </data>
-    <data name="IdSpaceToolTip" xml:space="preserve">
-    <value>ID空間的範圍是0000-9999的四位整數。程式會自動偵測ID空間，當偵測出錯時會顯示為-1。該結果僅供參考。</value>
   </data>
     <data name="RecentDialogTitle" xml:space="preserve">
     <value>最近開啟的檔案</value>
@@ -439,6 +411,9 @@
     <data name="AboutDialogTitle" xml:space="preserve">
     <value>關於</value>
   </data>
+    <data name="Encoding" xml:space="preserve">
+    <value>編碼:</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>版本:</value>
   </data>
@@ -447,9 +422,6 @@
   </data>
     <data name="AppBuildTime" xml:space="preserve">
     <value>編譯時間:</value>
-  </data>
-    <data name="EncoderSettingCardHeader" xml:space="preserve">
-    <value>編碼器路徑</value>
   </data>
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>遊戲路徑</value>
@@ -509,7 +481,7 @@
     <value>路徑異常</value>
   </data>
     <data name="PathInvalidMessage" xml:space="preserve">
-    <value>當前設定的編碼器路徑或遊戲路徑已失效，請檢查設定。</value>
+    <value>當前設定的遊戲路徑已失效，請檢查設定。</value>
   </data>
     <data name="PathInvalidIndicatorText" xml:space="preserve">
     <value>（無効）</value>

@@ -17,11 +17,6 @@ public static class MessageTokens
     public const string RecentFileOpened = "RecentFileOpened";
 
     /// <summary>
-    ///     Token for messages indicating that the W3Strings path has changed
-    /// </summary>
-    public const string W3StringsPathChanged = "W3StringsPathChanged";
-
-    /// <summary>
     ///     Token for messages indicating that the game executable path has changed
     /// </summary>
     public const string GameExePathChanged = "GameExePathChanged";

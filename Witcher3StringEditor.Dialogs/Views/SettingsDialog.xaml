@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="Witcher3StringEditor.Dialogs.Views.SettingsDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -94,39 +94,6 @@
                 <!-- General settings section header -->
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                            Text="{I18N {x:Static l:LangKeys.GeneralSettingsHeader}}" />
-                <!-- W3Strings encoder path settings card -->
-                <ui:SettingsCard>
-                    <ui:SettingsCard.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{I18N {x:Static l:LangKeys.EncoderSettingCardHeader}}" />
-                            <TextBlock Text="{I18N {x:Static l:LangKeys.PathInvalidIndicatorText}}" Margin="5,0,0,0"
-                                       Visibility="{Binding AppSettings.W3StringsPath,Converter={StaticResource FileExistsToCollapsedConverter}}" />
-                        </StackPanel>
-                    </ui:SettingsCard.Header>
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Repair}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ui:SettingsCard.Description>
-                        <Grid>
-                            <TextBlock Text="{Binding AppSettings.W3StringsPath}" />
-                            <TextBlock Text="{I18N {x:Static l:LangKeys.W3StringsPath}}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Hidden" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding AppSettings.W3StringsPath}" Value="">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-                    </ui:SettingsCard.Description>
-                    <Button Command="{Binding SetW3StringsPathCommand}">
-                        <ui:FontIcon Glyph="&#xe71e;" />
-                    </Button>
-                </ui:SettingsCard>
                 <!-- Game executable path settings card -->
                 <ui:SettingsCard>
                     <ui:SettingsCard.Header>

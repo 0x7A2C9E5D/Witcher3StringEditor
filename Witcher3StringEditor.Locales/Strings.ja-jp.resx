@@ -210,13 +210,6 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excelワークシート</value>
   </data>
-    <data name="FirstRunMessage" xml:space="preserve">
-    <value>（必須）初回実行時は、まずエンコーダーのパスを設定してください。
-（オプション）ゲームの実行ファイルパスを設定すると、ソフトウェア内から直接ゲームを起動できます。</value>
-  </data>
-    <data name="FirstRunCaption" xml:space="preserve">
-    <value>初回設定</value>
-  </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>複数インスタンスはデータの上書きエラーを引き起こす可能性があります。単一インスタンスのみサポートされています。既に開いているウィンドウを前面に表示しますか？</value>
   </data>
@@ -243,9 +236,6 @@
   </data>
     <data name="EditDialogTitle" xml:space="preserve">
     <value>編集</value>
-  </data>
-    <data name="SelectW3Strings" xml:space="preserve">
-    <value>w3strings.exeを選択</value>
   </data>
     <data name="SelectGameExe" xml:space="preserve">
     <value>witcher3.exeを選択</value>
@@ -295,12 +285,6 @@
     <data name="TargetLanguage" xml:space="preserve">
     <value>翻訳後の言語</value>
   </data>
-    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
-    <value>IDスペースチェックを無視</value>
-  </data>
-    <data name="IDSpace" xml:space="preserve">
-    <value>IDスペース</value>
-  </data>
     <data name="BackupDialogTitle" xml:space="preserve">
     <value>バックアップ</value>
   </data>
@@ -340,9 +324,6 @@
     <data name="SettingsDialogTitle" xml:space="preserve">
     <value>設定</value>
   </data>
-    <data name="W3StringsPath" xml:space="preserve">
-    <value>w3strings.exeを選択してください</value>
-  </data>
     <data name="GameExePath" xml:space="preserve">
     <value>witcher3.exeを選択してください</value>
   </data>
@@ -351,15 +332,6 @@
   </data>
     <data name="PreferredLanguage" xml:space="preserve">
     <value>優先言語</value>
-  </data>
-    <data name="IsOn" xml:space="preserve">
-    <value>オン</value>
-  </data>
-    <data name="IsOff" xml:space="preserve">
-    <value>オフ</value>
-  </data>
-    <data name="IdSpaceToolTip" xml:space="preserve">
-    <value>IDスペースの範囲は0000から9999までの4桁の整数です。検出エラーが発生した場合、プログラムはIDスペースを-1と表示します。結果は参考情報のみです。</value>
   </data>
     <data name="RecentDialogTitle" xml:space="preserve">
     <value>最近開いたファイル</value>
@@ -439,6 +411,9 @@
     <data name="AboutDialogTitle" xml:space="preserve">
     <value>このソフトについて</value>
   </data>
+    <data name="Encoding" xml:space="preserve">
+    <value>エンコード:</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>バージョン:</value>
   </data>
@@ -447,9 +422,6 @@
   </data>
     <data name="AppBuildTime" xml:space="preserve">
     <value>ビルド日時:</value>
-  </data>
-    <data name="EncoderSettingCardHeader" xml:space="preserve">
-    <value>エンコーダーパス</value>
   </data>
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>ゲームパス</value>

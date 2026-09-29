@@ -210,13 +210,6 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Excel Workbook</value>
   </data>
-    <data name="FirstRunMessage" xml:space="preserve">
-    <value>(Required) When running for the first time, please set the encoder path first.
-(Optional) Set the game executable path to launch the game directly in the software.</value>
-  </data>
-    <data name="FirstRunCaption" xml:space="preserve">
-    <value>First-Run Setup Prompt</value>
-  </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>Multiple instances may cause data to be overwritten incorrectly. Only single-instance operation is supported. Do you want to bring up the already open window?</value>
   </data>
@@ -243,9 +236,6 @@
   </data>
     <data name="EditDialogTitle" xml:space="preserve">
     <value>Edit</value>
-  </data>
-    <data name="SelectW3Strings" xml:space="preserve">
-    <value>Select w3strings.exe</value>
   </data>
     <data name="SelectGameExe" xml:space="preserve">
     <value>Select witcher3.exe</value>
@@ -295,12 +285,6 @@
     <data name="TargetLanguage" xml:space="preserve">
     <value>Target Language</value>
   </data>
-    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
-    <value>Ignore ID Space Check</value>
-  </data>
-    <data name="IDSpace" xml:space="preserve">
-    <value>ID Space</value>
-  </data>
     <data name="BackupDialogTitle" xml:space="preserve">
     <value>Backup</value>
   </data>
@@ -340,9 +324,6 @@
     <data name="SettingsDialogTitle" xml:space="preserve">
     <value>Settings</value>
   </data>
-    <data name="W3StringsPath" xml:space="preserve">
-    <value>Please select w3strings.exe</value>
-  </data>
     <data name="GameExePath" xml:space="preserve">
     <value>Please select witcher3.exe</value>
   </data>
@@ -351,15 +332,6 @@
   </data>
     <data name="PreferredLanguage" xml:space="preserve">
     <value>Preferred Language</value>
-  </data>
-    <data name="IsOn" xml:space="preserve">
-    <value>On</value>
-  </data>
-    <data name="IsOff" xml:space="preserve">
-    <value>Off</value>
-  </data>
-    <data name="IdSpaceToolTip" xml:space="preserve">
-    <value>The range of the ID Space is a four-digit integer (from 0000 to 9999). When there is an error in detection, the program automatically indicates this by displaying the ID Space as negative one. Please note that the results are for reference only.</value>
   </data>
     <data name="RecentDialogTitle" xml:space="preserve">
     <value>Recent</value>
@@ -439,6 +411,9 @@
     <data name="AboutDialogTitle" xml:space="preserve">
     <value>About</value>
   </data>
+    <data name="Encoding" xml:space="preserve">
+    <value>Encoding:</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Version:</value>
   </data>
@@ -447,9 +422,6 @@
   </data>
     <data name="AppBuildTime" xml:space="preserve">
     <value>Build Time:</value>
-  </data>
-    <data name="EncoderSettingCardHeader" xml:space="preserve">
-    <value>Encoder Path</value>
   </data>
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Game Path</value>
@@ -509,7 +481,7 @@
     <value>Invalid Path</value>
   </data>
     <data name="PathInvalidMessage" xml:space="preserve">
-    <value>The currently set encoder path or game path is invalid. Please check your settings.</value>
+    <value>The currently set game path is invalid. Please check your settings.</value>
   </data>
     <data name="PathInvalidIndicatorText" xml:space="preserve">
     <value>(Invalid)</value>

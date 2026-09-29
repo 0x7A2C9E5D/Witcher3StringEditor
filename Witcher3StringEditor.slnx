@@ -8,5 +8,6 @@
     <Project Path="Witcher3StringEditor.NexusIntegration/Witcher3StringEditor.NexusIntegration.csproj"/>
     <Project Path="Witcher3StringEditor.Serializers/Witcher3StringEditor.Serializers.csproj"/>
     <Project Path="Witcher3StringEditor.Shared/Witcher3StringEditor.Shared.csproj"/>
+    <Project Path="Witcher3StringEditor.W3Strings/Witcher3StringEditor.W3Strings.csproj"/>
     <Project Path="Witcher3StringEditor/Witcher3StringEditor.csproj"/>
 </Solution>

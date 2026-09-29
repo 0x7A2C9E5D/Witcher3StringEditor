@@ -44,46 +44,9 @@ internal class SettingsManagerService : ISettingsManagerService
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task CheckSettings(INotifyPropertyChanged dialogOwner)
     {
-        if (await CheckRequiredSettings(dialogOwner)) return; // Check required settings
-        var hasErrors = false; // Create a flag to indicate whether there are errors
-        hasErrors |= !ValidateW3StringsPath(AppSettings); // Validate W3Strings path
-        hasErrors |= !ValidateGameExePath(AppSettings); // Validate game executable path
+        var hasErrors = !ValidateGameExePath(AppSettings); // Validate game executable path
         LogAdditionalSettings(AppSettings); // Log additional settings
         await HandleValidationResult(dialogOwner, hasErrors); // Handle validation result
-    }
-
-    /// <summary>
-    ///     Checks if required settings are present and triggers first run if not
-    /// </summary>
-    /// <returns>True if first run setup was triggered, otherwise false</returns>
-    private async Task<bool> CheckRequiredSettings(INotifyPropertyChanged dialogOwner)
-    {
-        if (!string.IsNullOrWhiteSpace(AppSettings.W3StringsPath)) return false; // Check if W3Strings path is set
-        Log.Error(
-            "Settings are incorrect or initial setup is incomplete"); // Log settings incorrect or incomplete message
-        await dialogService.MessageBoxNotifyAsync(dialogOwner, Strings.FirstRunMessage, Strings.FirstRunCaption,
-            MessageBoxIcon.Warning); // Tell the user that the initial setup is incomplete
-        return true; // Return true if first run was triggered
-    }
-
-    /// <summary>
-    ///     Validates the W3Strings path setting
-    /// </summary>
-    /// <param name="appSettings">The application settings instance</param>
-    /// ///
-    /// <returns></returns>
-    private static bool ValidateW3StringsPath(IAppSettings appSettings)
-    {
-        if (!File.Exists(appSettings.W3StringsPath)) // Check if file exists
-        {
-            Log.Error("The W3Strings path is invalid: {Path}",
-                appSettings.W3StringsPath); // Log w3strings path invalid message
-            return false; // Return false if file does not exist
-        }
-
-        Log.Information("The W3Strings path has been set to {Path}",
-            appSettings.W3StringsPath); // Log valid w3strings path message
-        return true; // Return true if file exists
     }
 
     /// <summary>
@@ -119,8 +82,9 @@ internal class SettingsManagerService : ISettingsManagerService
     private static void LogAdditionalSettings(IAppSettings appSettings)
     {
         Log.Information(
-            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Translator: {Translator}",
+            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Preferred W3Strings version: {Version}, Translator: {Translator}",
             appSettings.PreferredW3FileType, appSettings.PreferredLanguage,
+            (int)appSettings.PreferredW3StringsVersion,
             appSettings.Translator); // Log the relevant settings in a single entry
     }
 
@@ -149,10 +113,6 @@ internal class SettingsManagerService : ISettingsManagerService
         // Handle different property changes with appropriate actions
         switch (e.PropertyName) // Switch on property name
         {
-            case nameof(IAppSettings.W3StringsPath): // If W3StringsPath changed
-                _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(true), // Send message
-                    MessageTokens.W3StringsPathChanged);
-                break;
             case nameof(IAppSettings.GameExePath): // If GameExePath changed
                 _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(true), // Send message
                     MessageTokens.GameExePathChanged);

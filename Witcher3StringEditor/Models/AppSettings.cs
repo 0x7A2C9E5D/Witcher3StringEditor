@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Witcher3StringEditor.Contracts;
@@ -25,19 +25,17 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     Initializes a new instance of the AppSettings class with specified values
     ///     This constructor is used during JSON deserialization
     /// </summary>
-    /// <param name="w3StringsPath">The path to the W3Strings tool executable</param>
     /// <param name="gameExePath">The path to the game executable</param>
     /// <param name="preferredW3FileType">The preferred The Witcher 3 file type</param>
     /// <param name="preferredLanguage">The preferred language</param>
     /// <param name="backupItems">The collection of backup items</param>
     /// <param name="recentItems">The collection of recent items</param>
     [JsonConstructor]
-    public AppSettings(string w3StringsPath, string gameExePath, W3FileType preferredW3FileType,
+    public AppSettings(string gameExePath, W3FileType preferredW3FileType,
         W3Language preferredLanguage, ObservableCollection<IBackupItem> backupItems,
         ObservableCollection<IRecentFileEntry> recentItems)
     {
         GameExePath = gameExePath;
-        W3StringsPath = w3StringsPath;
         BackupItems = [.. backupItems];
         RecentItems = [.. recentItems];
         PreferredW3FileType = preferredW3FileType;
@@ -72,6 +70,13 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     public partial W3Language PreferredLanguage { get; set; }
 
     /// <summary>
+    ///     Gets or sets the preferred container version written for .w3strings files
+    ///     This property supports data binding through the ObservableObject base class
+    /// </summary>
+    [ObservableProperty]
+    public partial W3StringsVersion PreferredW3StringsVersion { get; set; } = W3StringsVersion.Classic;
+
+    /// <summary>
     ///     Gets or sets the preferred The Witcher 3 file type for operations
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
@@ -84,13 +89,6 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     /// </summary>
     [ObservableProperty]
     public partial string Translator { get; set; } = "MicrosoftTranslator";
-
-    /// <summary>
-    ///     Gets or sets the path to the W3Strings tool executable
-    ///     This property supports data binding through the ObservableObject base class
-    /// </summary>
-    [ObservableProperty]
-    public partial string W3StringsPath { get; set; } = string.Empty;
 
     /// <summary>
     ///     Gets the URL to the NexusMods page for this application

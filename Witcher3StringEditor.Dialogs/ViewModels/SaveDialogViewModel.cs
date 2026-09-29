@@ -1,5 +1,3 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -21,6 +19,11 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public partial class SaveDialogViewModel
     : ObservableObject, IModalDialogViewModel, ICloseable
 {
+    /// <summary>
+    ///     The application settings used to read and remember the save preferences
+    /// </summary>
+    private readonly IAppSettings appSettings;
+
     /// <summary>
     ///     The dialog service used to inform the user about the result of the save operation
     /// </summary>
@@ -51,22 +54,26 @@ public partial class SaveDialogViewModel
         this.w3StringItems = w3StringItems;
         this.serializer = serializer;
         this.dialogService = dialogService;
-        IdSpace = FindIdSpace(w3StringItems[0]);
+        this.appSettings = appSettings;
         TargetLanguage = appSettings.PreferredLanguage;
         TargetFileType = appSettings.PreferredW3FileType;
+        TargetVersion = appSettings.PreferredW3StringsVersion == W3StringsVersion.Legacy
+            ? W3StringsVersion.Classic // Older builds saved the value the legacy external encoder wrote
+            : appSettings.PreferredW3StringsVersion;
     }
 
     /// <summary>
-    ///     Gets or sets the ID space value for the items being saved
+    ///     Gets the container versions the user can choose from
+    ///     The dialog offers them as the payload encoding each version implies
+    ///     Version 163 is deliberately absent: it is only ever read, never written
     /// </summary>
-    [ObservableProperty]
-    public partial int IdSpace { get; set; }
+    public IReadOnlyList<W3StringsVersion> Versions { get; } = [W3StringsVersion.Classic, W3StringsVersion.Utf8];
 
     /// <summary>
-    ///     Gets or sets a value indicating whether to ignore ID space checking during save
+    ///     Gets or sets the container version written for W3Strings files
     /// </summary>
     [ObservableProperty]
-    public partial bool IsIgnoreIdSpaceCheck { get; set; }
+    public partial W3StringsVersion TargetVersion { get; set; }
 
     /// <summary>
     ///     Gets or sets the output directory where the file will be saved
@@ -108,19 +115,16 @@ public partial class SaveDialogViewModel
             w3StringItems.Count, OutputDirectory, TargetFileType, TargetLanguage);
         if (TargetFileType == W3FileType.W3Strings)
         {
-            if (IsIgnoreIdSpaceCheck)
-                Log.Information("ID space check is ignored"); // Log ignore ID space check
-            else
-                Log.Information("Expected ID space: {IdSpace}", IdSpace);
+            Log.Information("W3Strings container version: {Version}", (int)TargetVersion); // Log container version
+            appSettings.PreferredW3StringsVersion = TargetVersion; // Remember the container version
         }
 
         var saveResult = await serializer.Serialize(w3StringItems, new W3SerializationContext // Serialize items
         {
             OutputDirectory = OutputDirectory, // Set output directory
-            ExpectedIdSpace = IdSpace, // Set ID space
             TargetFileType = TargetFileType, // Set file type
             TargetLanguage = TargetLanguage, // Set language
-            IgnoreIdSpaceCheck = IsIgnoreIdSpaceCheck // Set ID space check flag
+            Version = TargetVersion // Set container version
         });
         if (saveResult)
             Log.Information("Save completed successfully");
@@ -142,24 +146,4 @@ public partial class SaveDialogViewModel
         DialogResult = false;
         RequestClose?.Invoke(this, EventArgs.Empty);
     }
-
-    /// <summary>
-    ///     Finds the ID space from The Witcher 3 string item's StrId
-    /// </summary>
-    /// <param name="iw3StringItem">The Witcher 3 string item to extract the ID space from</param>
-    /// <returns>The ID space value, or -1 if not found</returns>
-    private static int FindIdSpace(IW3StringItem iw3StringItem)
-    {
-        var match = IdSpaceRegex().Match(iw3StringItem.StrId); // Apply regex to extract ID space
-        if (!match.Success) return -1; // Return -1 if no match found
-        var foundIdSpace = match.Groups[1].Value; // Get the captured group
-        return int.Parse(foundIdSpace, CultureInfo.InvariantCulture); // Parse and return as integer
-    }
-
-    /// <summary>
-    ///     Regular expression to match and extract the ID space from a string ID
-    /// </summary>
-    /// <returns>A Regex object for matching ID space patterns</returns>
-    [GeneratedRegex(@"^211(\d{4})\d{3}$")]
-    private static partial Regex IdSpaceRegex();
 }

@@ -103,13 +103,6 @@
     <data name="FileFormatExcelWorkbook" xml:space="preserve">
     <value>Skoroszyt Excel</value>
   </data>
-    <data name="FirstRunMessage" xml:space="preserve">
-    <value>(Wymagane) Przy pierwszym uruchomieniu ustaw najpierw ścieżkę enkodera.
-(Opcjonalne) Ustaw ścieżkę do pliku wykonywalnego gry, aby uruchamiać grę bezpośrednio z programu.</value>
-  </data>
-    <data name="FirstRunCaption" xml:space="preserve">
-    <value>Konfiguracja pierwszego uruchomienia</value>
-  </data>
     <data name="MultipleInstanceMessage" xml:space="preserve">
     <value>Wiele instancji może powodować nieprawidłowe nadpisywanie danych. Obsługiwana jest tylko praca z jedną instancją. Czy chcesz przywołać już otwarte okno?</value>
   </data>
@@ -136,9 +129,6 @@
   </data>
     <data name="EditDialogTitle" xml:space="preserve">
     <value>Edytuj</value>
-  </data>
-    <data name="SelectW3Strings" xml:space="preserve">
-    <value>Wybierz w3strings.exe</value>
   </data>
     <data name="SelectGameExe" xml:space="preserve">
     <value>Wybierz witcher3.exe</value>
@@ -188,12 +178,6 @@
     <data name="TargetLanguage" xml:space="preserve">
     <value>Język docelowy</value>
   </data>
-    <data name="IgnoreIDSpaceCheck" xml:space="preserve">
-    <value>Ignoruj sprawdzanie przestrzeni ID</value>
-  </data>
-    <data name="IDSpace" xml:space="preserve">
-    <value>Przestrzeń ID</value>
-  </data>
     <data name="BackupDialogTitle" xml:space="preserve">
     <value>Kopia zapasowa</value>
   </data>
@@ -233,9 +217,6 @@
     <data name="SettingsDialogTitle" xml:space="preserve">
     <value>Ustawienia</value>
   </data>
-    <data name="W3StringsPath" xml:space="preserve">
-    <value>Proszę wybrać w3strings.exe</value>
-  </data>
     <data name="GameExePath" xml:space="preserve">
     <value>Proszę wybrać witcher3.exe</value>
   </data>
@@ -244,15 +225,6 @@
   </data>
     <data name="PreferredLanguage" xml:space="preserve">
     <value>Preferowany język</value>
-  </data>
-    <data name="IsOn" xml:space="preserve">
-    <value>Włączone</value>
-  </data>
-    <data name="IsOff" xml:space="preserve">
-    <value>Wyłączone</value>
-  </data>
-    <data name="IdSpaceToolTip" xml:space="preserve">
-    <value>Zakres przestrzeni ID to czterocyfrowa liczba całkowita (od 0000 do 9999). W przypadku błędu wykrywania program automatycznie wyświetli przestrzeń ID jako minus jeden. Wyniki mają charakter wyłącznie informacyjny.</value>
   </data>
     <data name="RecentDialogTitle" xml:space="preserve">
     <value>Ostatnie</value>
@@ -332,6 +304,9 @@
     <data name="AboutDialogTitle" xml:space="preserve">
     <value>O programie</value>
   </data>
+    <data name="Encoding" xml:space="preserve">
+    <value>Kodowanie:</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Wersja:</value>
   </data>
@@ -340,9 +315,6 @@
   </data>
     <data name="AppBuildTime" xml:space="preserve">
     <value>Data kompilacji:</value>
-  </data>
-    <data name="EncoderSettingCardHeader" xml:space="preserve">
-    <value>Ścieżka enkodera</value>
   </data>
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Ścieżka gry</value>

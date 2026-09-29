@@ -1,27 +1,26 @@
-using System.Diagnostics;
-using CommandLine;
+using System.Globalization;
 using CommunityToolkit.Diagnostics;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
+using Witcher3StringEditor.W3Strings;
+using Witcher3StringEditor.W3Strings.Model;
+using Witcher3StringEditor.W3Strings.Primitives;
+using CodecLanguage = Witcher3StringEditor.W3Strings.W3Language;
+using W3Language = Witcher3StringEditor.Contracts.W3Language;
 
 namespace Witcher3StringEditor.Serializers.Implementation;
 
 /// <summary>
 ///     Provides W3Strings serialization functionality for The Witcher 3 string items
 ///     Implements the IW3StringsSerializer interface to handle reading from and writing to W3Strings files
-///     This serializer uses an external tool (W3Strings encoder/decoder) to perform the actual serialization
+///     This serializer uses the built-in W3Strings codec, so no external encoder/decoder tool is required
 /// </summary>
-public class W3StringsSerializer(
-    IAppSettings appSettings,
-    IBackupService backupService,
-    ICsvW3Serializer csvSerializer)
-    : IW3StringsSerializer
+public class W3StringsSerializer(IBackupService backupService) : IW3StringsSerializer
 {
     /// <summary>
     ///     Deserializes The Witcher 3 string items from a W3Strings file
-    ///     This method uses an external tool to decode the W3Strings file into a CSV format,
-    ///     then uses the CSV serializer to read the data
+    ///     Parses the container directly with the built-in codec, which covers both the UTF-16 and the UTF-8 generations
     /// </summary>
     /// <param name="filePath">The path to the W3Strings file to deserialize</param>
     /// <returns>
@@ -30,17 +29,9 @@ public class W3StringsSerializer(
     /// </returns>
     public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
     {
-        var tempFilePath = CreateTemporaryCopy(filePath); // Create temporary copy of W3Strings file
-
         try
         {
-            // Execute the external W3Strings decoder tool with the file to decode
-            Guard.IsTrue(await ExecuteExternalProcess(appSettings.W3StringsPath,
-                Parser.Default.FormatCommandLine(new W3StringsOptions
-                {
-                    InputFileToDecode = tempFilePath
-                }))); // Check if the process completed successfully
-            return await csvSerializer.Deserialize($"{tempFilePath}.csv"); // CSV serializer for decoded data
+            return await Task.Run(() => ReadItems(filePath)); // Decode the container off the calling thread
         }
         catch (Exception ex)
         {
@@ -48,23 +39,16 @@ public class W3StringsSerializer(
                 filePath); // Log any errors that occur during deserialization
             return []; // Return an empty list in case of errors
         }
-        finally
-        {
-            var tempDirectory = Path.GetDirectoryName(tempFilePath)!; // Get the directory of the temporary file
-            Directory.Delete(tempDirectory, true); // Delete the temporary directory
-            Log.Debug("Temporary directory deleted: {Directory}",
-                tempDirectory); // Delete the temporary directory
-        }
     }
 
     /// <summary>
     ///     Serializes The Witcher 3 string items to a W3Strings file
-    ///     This method first creates a temporary CSV file, then uses an external tool to encode it into a W3Strings file
+    ///     Builds the container with the built-in codec and writes it into the output directory
     /// </summary>
     /// <param name="w3StringItems">The Witcher 3 string items to serialize</param>
     /// <param name="context">
     ///     The serialization context containing output directory, target language,
-    ///     and other serialization parameters
+    ///     container version, and other serialization parameters
     /// </param>
     /// <returns>
     ///     A task that represents the asynchronous serialize operation.
@@ -80,25 +64,17 @@ public class W3StringsSerializer(
             var saveLang =
                 Enum.GetName(context.TargetLanguage)!
                     .ToLowerInvariant(); // Get the lowercase name of the target language for file naming
-
-            // Create a temporary context with the temp directory as output
-            var tempContext = context with
-            {
-                OutputDirectory = tempDirectory
-            };
-
-            // Define paths for temporary CSV and W3Strings files
-            var tempCsvPath = Path.Combine(tempDirectory, $"{saveLang}.csv");
-            var tempW3StringsPath = Path.ChangeExtension(tempCsvPath, ".csv.w3strings");
             var outputW3StringsPath =
-                Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings");
+                Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings"); // Destination of the encoded container
+            var tempW3StringsPath =
+                Path.Combine(tempDirectory, $"{saveLang}.w3strings"); // Intermediate container file
 
-            Guard.IsTrue(await csvSerializer.Serialize(w3StringItems,
-                tempContext)); // Serialize the items to a temporary CSV file
-            Guard.IsTrue(await StartSerializationProcess(tempContext,
-                tempCsvPath)); // Encode the temporary CSV file to W3Strings format
+            // Encode the container off the calling thread, then swap it in with a backup of the destination
+            await Task.Run(() => W3StringsWriter.WriteFile(BuildContainer(w3StringItems, context), tempW3StringsPath));
             Guard.IsTrue(await ReplaceFileWithBackup(tempW3StringsPath,
                 outputW3StringsPath)); // Replace the destination file with backup if needed
+            Log.Information("Encoded {Count} item(s) as W3Strings v{Version} to {Path}", w3StringItems.Count,
+                (int)context.Version, outputW3StringsPath); // Log the encoded container
             return true; // Return true to indicate successful serialization
         }
         catch (Exception ex)
@@ -116,16 +92,124 @@ public class W3StringsSerializer(
     }
 
     /// <summary>
-    ///     Creates a temporary copy of the specified file in a temporary directory
+    ///     Reads every string entry of a container into The Witcher 3 string items
     /// </summary>
-    /// <param name="filePath">The path to the file to be copied</param>
-    /// <returns>The path to the temporary copy of the file</returns>
-    private static string CreateTemporaryCopy(string filePath)
+    /// <param name="filePath">The path to the W3Strings file to read</param>
+    /// <returns>The string items of the container, in container order</returns>
+    private static List<IW3StringItem> ReadItems(string filePath)
     {
-        var tempDirectory = Directory.CreateTempSubdirectory().FullName; // Create temporary directory
-        var tempFilePath = Path.Combine(tempDirectory, Path.GetFileName(filePath)); // Build temporary file path
-        File.Copy(filePath, tempFilePath, true); // Copy file to temporary location
-        return tempFilePath; // Return temporary file path
+        var container = W3StringsReader.ReadFile(filePath); // Parse the container
+        Log.Information("Read W3Strings v{Version} container ({Language}) from {Path}", container.Version,
+            container.Language ?? "unknown", filePath); // Log the container facts, including the detected language
+
+        // Block 2 maps a localisation-key hash to the id it resolves to. An id can carry
+        // several keys, so the first hash found is the one shown next to the entry.
+        var keyHashes = new Dictionary<uint, uint>(container.Keys.Count);
+        foreach (var key in container.Keys)
+            keyHashes.TryAdd(key.Id, key.KeyHash);
+
+        var items = new List<IW3StringItem>(container.Strings.Count); // Create list to store items
+        foreach (var entry in container.Strings)
+            items.Add(new W3StringItem // Create new string item
+            {
+                StrId = entry.Id.ToString(CultureInfo.InvariantCulture), // String id
+                KeyHex = keyHashes.TryGetValue(entry.Id, out var keyHash)
+                    ? keyHash.ToString("X8", CultureInfo.InvariantCulture)
+                    : string.Empty, // Localisation key hash, when the entry has one
+                Text = entry.Value // Decoded text
+            });
+        return items; // Return list of items
+    }
+
+    /// <summary>
+    ///     Builds a W3Strings container from The Witcher 3 string items
+    /// </summary>
+    /// <param name="w3StringItems">The Witcher 3 string items to include</param>
+    /// <param name="context">The serialization context supplying the target language and container version</param>
+    /// <returns>The container to encode</returns>
+    private static W3StringsFile BuildContainer(IReadOnlyList<IW3StringItem> w3StringItems,
+        W3SerializationContext context)
+    {
+        var language = LanguageCode(context.TargetLanguage); // Language code understood by the codec
+        var key = CodecLanguage.KeyForLanguage(language); // 32-bit language key of the target language
+        var container = new W3StringsFile
+        {
+            Version = (uint)context.Version, // Requested container version
+            Language = language, // Target language code
+            Magic = CodecLanguage.MagicForLanguage(language), // Magic XORed into the stored ids
+            Key1 = (ushort)(key >> 16), // High half of the language key
+            Key2 = (ushort)(key & 0xFFFF) // Low half of the language key
+        };
+
+        foreach (var w3StringItem in w3StringItems) // Process each string item
+        {
+            var id = ParseId(w3StringItem.StrId); // Parse the string id
+            container.Strings.Add(new W3StringEntry { Id = id, Value = w3StringItem.Text }); // Add the string
+            if (ResolveKeyHash(w3StringItem) is { } keyHash)
+                container.Keys.Add(new W3KeyEntry { KeyHash = keyHash, Id = id }); // Add the localisation key
+        }
+
+        return container; // Return the container
+    }
+
+    /// <summary>
+    ///     Maps a The Witcher 3 language to the language code used by the codec
+    /// </summary>
+    /// <param name="language">The language to map</param>
+    /// <returns>The language code of the codec</returns>
+    private static string LanguageCode(W3Language language) => language switch
+    {
+        W3Language.Ar => "ar",
+        W3Language.Br => "br",
+        W3Language.Cn => "cn",
+        W3Language.Cz => "cz",
+        W3Language.De => "de",
+        W3Language.En => "en",
+        W3Language.Es => "es",
+        W3Language.Esmx => "esMX",
+        W3Language.Fr => "fr",
+        W3Language.Hu => "hu",
+        W3Language.It => "it",
+        W3Language.Jp => "jp",
+        W3Language.Kr => "kr",
+        W3Language.Pl => "pl",
+        W3Language.Ru => "ru",
+        W3Language.Tr => "tr",
+        W3Language.Zh => "zh",
+        _ => throw new ArgumentOutOfRangeException(nameof(language), language, "Unsupported W3 language")
+    };
+
+    /// <summary>
+    ///     Parses the string id of a The Witcher 3 string item
+    /// </summary>
+    /// <param name="strId">The string id to parse</param>
+    /// <returns>The parsed string id</returns>
+    /// <exception cref="W3StringsException">Thrown when the id is not a 32-bit unsigned integer</exception>
+    private static uint ParseId(string strId) =>
+        uint.TryParse(strId, NumberStyles.None, CultureInfo.InvariantCulture, out var id)
+            ? id
+            : throw new W3StringsException($"'{strId}' is not a valid W3Strings string id");
+
+    /// <summary>
+    ///     Resolves the localisation-key hash of a The Witcher 3 string item
+    ///     The readable key name wins over the raw hash when both are set
+    /// </summary>
+    /// <param name="w3StringItem">The string item to resolve the key of</param>
+    /// <returns>The key hash, or null when the item carries no key</returns>
+    /// <exception cref="W3StringsException">Thrown when the hexadecimal key is not a 32-bit unsigned integer</exception>
+    private static uint? ResolveKeyHash(IW3StringItem w3StringItem)
+    {
+        if (!string.IsNullOrWhiteSpace(w3StringItem.KeyName))
+            return LocalizationKeyHash.Compute(w3StringItem.KeyName); // Hash the localisation key
+        if (string.IsNullOrWhiteSpace(w3StringItem.KeyHex))
+            return null; // The item carries no key at all
+
+        var keyHex = w3StringItem.KeyHex.Trim(); // Trim the hexadecimal key
+        if (keyHex.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            keyHex = keyHex[2..]; // Drop an optional hexadecimal prefix
+        return uint.TryParse(keyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var keyHash)
+            ? keyHash
+            : throw new W3StringsException($"'{w3StringItem.KeyHex}' is not a valid localisation key hash");
     }
 
     /// <summary>
@@ -141,92 +225,5 @@ public class W3StringsSerializer(
             return false; // Return false if backup creation failed
         File.Copy(sourceFilePath, destinationFilePath, true); // Copy with overwrite
         return true; // Return true to indicate successful replacement
-    }
-
-    /// <summary>
-    ///     Starts the serialization process by executing the external W3Strings encoder tool
-    /// </summary>
-    /// <param name="context">The serialization context containing serialization parameters</param>
-    /// <param name="path">The path to the temporary CSV file to encode</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    ///     The task result indicates whether the process completed successfully (exit code 0)
-    /// </returns>
-    private async Task<bool> StartSerializationProcess(W3SerializationContext context, string path)
-    {
-        // Execute the external W3Strings encoder tool with appropriate arguments based on context
-        // If ignoring ID space check, pass the ignore flag,Otherwise, pass the expected ID space
-        return await ExecuteExternalProcess(appSettings.W3StringsPath, context.IgnoreIdSpaceCheck
-            ? Parser.Default.FormatCommandLine(new W3StringsOptions
-                { InputFileToEncode = path, IgnoreIdSpaceCheck = true })
-            : Parser.Default.FormatCommandLine(new W3StringsOptions
-                { InputFileToEncode = path, ExpectedIdSpace = context.ExpectedIdSpace }));
-    }
-
-    /// <summary>
-    ///     Executes an external process with the specified filename and arguments
-    ///     Captures and logs both standard output and error output
-    /// </summary>
-    /// <param name="filename">The filename of the executable to run</param>
-    /// <param name="arguments">The arguments to pass to the executable</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation.
-    ///     The task result contains the completed Process object
-    /// </returns>
-    private static async Task<bool> ExecuteExternalProcess(string filename, string arguments)
-    {
-        // Create a new process with the specified filename and arguments
-        var process = new Process
-        {
-            EnableRaisingEvents = true,
-            StartInfo = new ProcessStartInfo
-            {
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                FileName = filename,
-                Arguments = arguments
-            }
-        };
-
-        // Attach event handlers for error and output data
-        process.ErrorDataReceived += Process_ErrorDataReceived;
-        process.OutputDataReceived += Process_OutputDataReceived;
-
-        process.Start(); // Start the process
-
-        // Begin asynchronous reading of error and output streams
-        process.BeginErrorReadLine();
-        process.BeginOutputReadLine();
-
-        await process.WaitForExitAsync(); // Wait for the process to exit
-        return process.ExitCode == 0;
-    }
-
-    /// <summary>
-    ///     Handles the ErrorDataReceived event of the external process
-    ///     Logs error output from the process
-    /// </summary>
-    /// <param name="sender">The source of the event</param>
-    /// <param name="e">The DataReceivedEventArgs instance containing the event data</param>
-    private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-    {
-        // The encoder reports problems on stderr; treat these as warnings rather than application errors
-        if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Warning("External encoder error output: {Data}", e.Data);
-    }
-
-    /// <summary>
-    ///     Handles the OutputDataReceived event of the external process
-    ///     Logs standard output from the process
-    /// </summary>
-    /// <param name="sender">The source of the event</param>
-    /// <param name="e">The DataReceivedEventArgs instance containing the event data</param>
-    private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
-    {
-        // Standard output of the encoder is diagnostic detail only
-        if (!string.IsNullOrWhiteSpace(e.Data))
-            Log.Debug("External encoder output: {Data}", e.Data);
     }
 }

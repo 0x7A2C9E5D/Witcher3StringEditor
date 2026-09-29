@@ -382,13 +382,14 @@ namespace Witcher3StringEditor.Locales {
                 return ResourceManager.GetString("EditDialogTitle", resourceCulture);
             }
         }
+
         
         /// <summary>
-        ///   Looks up a localized string similar to Encoder Path.
+        ///   Looks up a localized string similar to Encoding:.
         /// </summary>
-        public static string EncoderSettingCardHeader {
+        public static string Encoding {
             get {
-                return ResourceManager.GetString("EncoderSettingCardHeader", resourceCulture);
+                return ResourceManager.GetString("Encoding", resourceCulture);
             }
         }
         
@@ -472,25 +473,7 @@ namespace Witcher3StringEditor.Locales {
                 return ResourceManager.GetString("FileOpenedNoFoundMessage", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First-Run Setup Prompt.
-        /// </summary>
-        public static string FirstRunCaption {
-            get {
-                return ResourceManager.GetString("FirstRunCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (Required) When running for the first time, please set the encoder path first.
-        ///(Optional) Set the game executable path to launch the game directly in the software..
-        /// </summary>
-        public static string FirstRunMessage {
-            get {
-                return ResourceManager.GetString("FirstRunMessage", resourceCulture);
-            }
-        }
+
         
         /// <summary>
         ///   Looks up a localized string similar to Please select witcher3.exe.
@@ -527,33 +510,9 @@ namespace Witcher3StringEditor.Locales {
                 return ResourceManager.GetString("Hash", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ID Space.
-        /// </summary>
-        public static string IDSpace {
-            get {
-                return ResourceManager.GetString("IDSpace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The range of the ID Space is a four-digit integer (from 0000 to 9999). When there is an error in detection, the program automatically indicates this by displaying the ID Space as negative one. Please note that the results are for reference only..
-        /// </summary>
-        public static string IdSpaceToolTip {
-            get {
-                return ResourceManager.GetString("IdSpaceToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ignore ID Space Check.
-        /// </summary>
-        public static string IgnoreIDSpaceCheck {
-            get {
-                return ResourceManager.GetString("IgnoreIDSpaceCheck", resourceCulture);
-            }
-        }
+
+
+
         
         /// <summary>
         ///   Looks up a localized string similar to Import Dict.
@@ -581,24 +540,8 @@ namespace Witcher3StringEditor.Locales {
                 return ResourceManager.GetString("ImportDictionaryFailedMessage", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Off.
-        /// </summary>
-        public static string IsOff {
-            get {
-                return ResourceManager.GetString("IsOff", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to On.
-        /// </summary>
-        public static string IsOn {
-            get {
-                return ResourceManager.GetString("IsOn", resourceCulture);
-            }
-        }
+
+
         
         /// <summary>
         ///   Looks up a localized string similar to Select the language for the application interface display.
@@ -1184,15 +1127,7 @@ namespace Witcher3StringEditor.Locales {
                 return ResourceManager.GetString("SelectGameExe", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select w3strings.exe.
-        /// </summary>
-        public static string SelectW3Strings {
-            get {
-                return ResourceManager.GetString("SelectW3Strings", resourceCulture);
-            }
-        }
+
         
         /// <summary>
         ///   Looks up a localized string similar to Settings.
@@ -1499,14 +1434,6 @@ namespace Witcher3StringEditor.Locales {
                 return ResourceManager.GetString("Version", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please select w3strings.exe.
-        /// </summary>
-        public static string W3StringsPath {
-            get {
-                return ResourceManager.GetString("W3StringsPath", resourceCulture);
-            }
-        }
+
     }
 }
