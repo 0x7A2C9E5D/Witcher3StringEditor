@@ -1,17 +1,29 @@
 using CommunityToolkit.Diagnostics;
 using Cysharp.Text;
 using Serilog;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
+using Witcher3StringEditor.Serializers.Model;
 
-namespace Witcher3StringEditor.Serializers.Implementation;
+namespace Witcher3StringEditor.Serializers.Formats;
 
 /// <summary>
 ///     Provides CSV serialization functionality for The Witcher 3 string items
-///     Implements the ICsvW3Serializer interface to handle reading from and writing to CSV files
+///     Implements IW3Serializer for the CSV file format
 /// </summary>
-public class CsvW3Serializer(IBackupService backupService) : ICsvW3Serializer
+public class CsvW3Serializer(IBackupService backupService) : IW3Serializer
 {
+    /// <summary>
+    ///     Determines whether this serializer reads and writes the given file format
+    /// </summary>
+    /// <param name="fileFormat">The file format to check</param>
+    /// <returns>True when the format is CSV</returns>
+    public bool CanHandle(W3FileFormat fileFormat)
+    {
+        return fileFormat == W3FileFormat.Csv;
+    }
+
     /// <summary>
     ///     Deserializes The Witcher 3 string items from a CSV file
     /// </summary>

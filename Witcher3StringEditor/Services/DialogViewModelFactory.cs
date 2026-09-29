@@ -61,7 +61,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     {
         return new SaveDialogViewModel(
             serviceProvider.GetRequiredService<IAppSettings>(),
-            serviceProvider.GetRequiredService<IW3Serializer>(),
+            serviceProvider.GetRequiredService<IW3SerializerCoordinator>(),
             serviceProvider.GetRequiredService<IDialogService>(),
             items,
             outputDirectory);

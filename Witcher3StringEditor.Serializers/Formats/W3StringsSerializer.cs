@@ -2,21 +2,33 @@ using System.Globalization;
 using System.Text;
 using CommunityToolkit.Diagnostics;
 using Serilog;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
+using Witcher3StringEditor.Serializers.Model;
 using Witcher3StringEditor.W3Strings;
 using Witcher3StringEditor.W3Strings.Model;
 using Witcher3StringEditor.W3Strings.Primitives;
 
-namespace Witcher3StringEditor.Serializers.Implementation;
+namespace Witcher3StringEditor.Serializers.Formats;
 
 /// <summary>
 ///     Provides W3Strings serialization functionality for The Witcher 3 string items
-///     Implements the IW3StringsSerializer interface to handle reading from and writing to W3Strings files
+///     Implements IW3Serializer for the W3Strings container format
 ///     This serializer uses the built-in W3Strings codec, so no external encoder/decoder tool is required
 /// </summary>
-public class W3StringsSerializer(IBackupService backupService) : IW3StringsSerializer
+public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
 {
+    /// <summary>
+    ///     Determines whether this serializer reads and writes the given file format
+    /// </summary>
+    /// <param name="fileFormat">The file format to check</param>
+    /// <returns>True when the format is a W3Strings container</returns>
+    public bool CanHandle(W3FileFormat fileFormat)
+    {
+        return fileFormat == W3FileFormat.W3Strings;
+    }
+
     /// <summary>
     ///     Container version of the UTF-8 generation
     /// </summary>

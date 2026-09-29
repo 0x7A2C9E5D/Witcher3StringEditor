@@ -40,7 +40,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IShellOpenService shellOpenService; // Get explorer service
     private readonly ITranslatorProvider translatorProvider; // Get translator provider
-    private readonly IW3Serializer w3Serializer; // Get serializer service
+    private readonly IW3SerializerCoordinator w3Serializer; // Get serializer service
 
     /// <summary>
     ///     Gets or sets the collection of The Witcher 3 string items
@@ -75,7 +75,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         ISettingsManagerService settingsManagerService,
         IServiceProvider serviceProvider,
         ITranslatorProvider translatorProvider,
-        IW3Serializer w3Serializer)
+        IW3SerializerCoordinator w3Serializer)
     {
         this.dialogService = dialogService;
         this.dialogViewModelFactory = dialogViewModelFactory;

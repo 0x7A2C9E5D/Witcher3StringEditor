@@ -1,17 +1,29 @@
 using CommunityToolkit.Diagnostics;
 using Serilog;
 using Syncfusion.XlsIO;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
+using Witcher3StringEditor.Serializers.Model;
 
-namespace Witcher3StringEditor.Serializers.Implementation;
+namespace Witcher3StringEditor.Serializers.Formats;
 
 /// <summary>
 ///     Provides Excel serialization functionality for The Witcher 3 string items
-///     Implements the IExcelW3Serializer interface to handle reading from and writing to Excel files
+///     Implements IW3Serializer for the Excel workbook file format
 /// </summary>
-public class ExcelW3Serializer(IBackupService backupService) : IExcelW3Serializer
+public class ExcelW3Serializer(IBackupService backupService) : IW3Serializer
 {
+    /// <summary>
+    ///     Determines whether this serializer reads and writes the given file format
+    /// </summary>
+    /// <param name="fileFormat">The file format to check</param>
+    /// <returns>True when the format is an Excel workbook</returns>
+    public bool CanHandle(W3FileFormat fileFormat)
+    {
+        return fileFormat == W3FileFormat.Excel;
+    }
+
     /// <summary>
     ///     Deserializes The Witcher 3 string items from an Excel file
     /// </summary>

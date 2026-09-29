@@ -2,7 +2,7 @@ using System.Text;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.W3Strings;
 
-namespace Witcher3StringEditor.Serializers;
+namespace Witcher3StringEditor.Serializers.Model;
 
 /// <summary>
 ///     Represents the context information required for The Witcher 3 serialization operations

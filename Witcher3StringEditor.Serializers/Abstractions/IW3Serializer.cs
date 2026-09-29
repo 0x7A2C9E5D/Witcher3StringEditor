@@ -1,4 +1,6 @@
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Serializers.Model;
 
 namespace Witcher3StringEditor.Serializers.Abstractions;
 
@@ -9,6 +11,13 @@ namespace Witcher3StringEditor.Serializers.Abstractions;
 /// </summary>
 public interface IW3Serializer
 {
+    /// <summary>
+    ///     Determines whether this serializer reads and writes the given file format
+    /// </summary>
+    /// <param name="fileFormat">The file format to check</param>
+    /// <returns>True when this serializer handles that format</returns>
+    public bool CanHandle(W3FileFormat fileFormat);
+
     /// <summary>
     ///     Deserializes The Witcher 3 string items from a file
     /// </summary>

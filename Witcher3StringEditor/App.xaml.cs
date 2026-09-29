@@ -21,7 +21,7 @@ using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers;
 using Witcher3StringEditor.Serializers.Abstractions;
-using Witcher3StringEditor.Serializers.Implementation;
+using Witcher3StringEditor.Serializers.Formats;
 using Witcher3StringEditor.Services;
 using Witcher3StringEditor.ViewModels;
 using Witcher3StringEditor.Views;
@@ -191,10 +191,10 @@ public sealed partial class App : IDisposable
                 .GetRequiredService<ISettingsPersistenceService>().Load<AppSettings>())
             .AddSingleton<ICultureResolver, CultureResolver>()
             .AddSingleton<IBackupService, BackupService>()
-            .AddSingleton<ICsvW3Serializer, CsvW3Serializer>()
-            .AddSingleton<IExcelW3Serializer, ExcelW3Serializer>()
-            .AddSingleton<IW3StringsSerializer, W3StringsSerializer>()
-            .AddSingleton<IW3Serializer, W3SerializerCoordinator>()
+            .AddSingleton<IW3Serializer, CsvW3Serializer>()
+            .AddSingleton<IW3Serializer, ExcelW3Serializer>()
+            .AddSingleton<IW3Serializer, W3StringsSerializer>()
+            .AddSingleton<IW3SerializerCoordinator, W3SerializerCoordinator>()
             .AddSingleton<IDialogManager, DialogManager>()
             .AddSingleton<IDialogService, DialogService>()
             .AddSingleton<ILogAccessService, LogAccessService>()
