@@ -5,5 +5,5 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 /// </summary>
 /// <param name="message">What went wrong, in the words of the codec</param>
 /// <param name="innerException">The failure underneath this one, when there was any</param>
-internal sealed class W3StringsException(string message, Exception? innerException = null)
+public sealed class W3StringsException(string message, Exception? innerException = null)
     : Exception(message, innerException);
