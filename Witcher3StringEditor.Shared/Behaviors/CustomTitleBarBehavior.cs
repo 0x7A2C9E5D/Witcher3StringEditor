@@ -10,7 +10,7 @@ namespace Witcher3StringEditor.Shared.Behaviors;
 ///     Keeps the window content clear of the system caption buttons by resizing the column that
 ///     is named <c>RightPaddingColumn</c> to the system overlay right inset
 /// </summary>
-public sealed class TitleBarBehavior : Behavior<Window>
+public sealed class CustomTitleBarBehavior : Behavior<Window>
 {
     /// <summary>
     ///     The name of the column that is reserved for the system caption buttons

@@ -8,6 +8,7 @@ using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
 using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
+using Witcher3StringEditor.Shared.Behaviors;
 
 namespace Witcher3StringEditor.Views;
 
@@ -123,13 +124,13 @@ public partial class MainWindow
 
     /// <summary>
     ///     Handles the Closed event of the window
-    ///     Unregisters message handlers and disposes resources
+    ///     Disposes the data grid resources
+    ///     (Message handlers are unregistered by <see cref="WindowCloseBehavior" />)
     /// </summary>
     /// <param name="sender">The source of the event</param>
     /// <param name="e">The event arguments</param>
     private void Window_Closed(object sender, EventArgs e)
     {
-        WeakReferenceMessenger.Default.UnregisterAll(this); // Unregister all message handlers
         SfDataGrid.SearchHelper.Dispose(); // Dispose the search helper
         SfDataGrid.Dispose(); // Dispose the data grid
         SfDataPager.Dispose(); // Dispose the data pager

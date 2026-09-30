@@ -34,16 +34,14 @@
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
         </i:EventTrigger>
-        <i:EventTrigger EventName="Closed">
-            <i:InvokeCommandAction Command="{Binding WindowClosedCommand}" />
-        </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{Binding WindowClosingCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <!-- Set up the custom title bar regions through an attached behavior -->
     <i:Interaction.Behaviors>
-        <b:TitleBarBehavior />
+        <b:CustomTitleBarBehavior />
+        <b:WindowCloseBehavior />
     </i:Interaction.Behaviors>
     <!-- Main window grid layout -->
     <Grid>

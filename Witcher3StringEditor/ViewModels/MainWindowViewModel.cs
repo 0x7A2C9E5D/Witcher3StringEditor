@@ -267,16 +267,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     }
 
     /// <summary>
-    ///     Handles the window closed event
-    ///     Unregisters all message handlers for this view model
-    /// </summary>
-    [RelayCommand]
-    private void WindowClosed()
-    {
-        WeakReferenceMessenger.Default.UnregisterAll(this);
-    }
-
-    /// <summary>
     ///     Opens a file using a file dialog
     /// </summary>
     [RelayCommand]
