@@ -174,8 +174,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
             Version = ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
             Language = language, // Target language
             Magic = language.Magic, // Magic XORed into the stored ids
-            Key1 = (ushort)(language.Key >> 16), // High half of the language key
-            Key2 = (ushort)(language.Key & 0xFFFF) // Low half of the language key
+            Key = language.Key // Language key, stored split over the header and the end of the container
         };
 
         var mayWrite = true;

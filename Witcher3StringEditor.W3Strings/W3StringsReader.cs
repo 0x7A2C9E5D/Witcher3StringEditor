@@ -61,17 +61,18 @@ public static class W3StringsReader
 
         var payloads = ReadPayloads(input, entries, buffer, head.Unit);
 
-        // The language completes the magic every id and payload was obfuscated with.
-        var key2 = ReadKey2(reader, payloadLimit);
-        var language = ResolveLanguage(head.Key1, key2);
+        // The language completes the magic every id and payload was obfuscated with. Its two halves are
+        // apart: the head one was read with the header, the tail one closes the container.
+        var key = head.Key | ReadKey2(reader, payloadLimit);
+        var language = ResolveLanguage(key);
         var magic = language?.Magic ?? 0;
 
-        return ToFile(head, key2, language, magic, buffer, ReadTrailer(input, buffer.End, payloadLimit),
+        return ToFile(head, key, language, magic, buffer, ReadTrailer(input, buffer.End, payloadLimit),
             entries, keys, payloads, head.Unit);
     }
 
     /// <summary>
-    ///     Reads the head of a container: its magic, the version and the first half of the language key
+    ///     Reads the head of a container: its magic, the version and the head half of the language key
     /// </summary>
     /// <param name="reader">The reader the head comes from</param>
     /// <param name="length">The length of the container</param>
@@ -89,7 +90,8 @@ public static class W3StringsReader
                 $"bad magic: expected \"RTSW\", got \"{Encoding.ASCII.GetString(magic)}\"");
 
         var version = reader.ReadUInt32();
-        return new Head(version, reader.ReadUInt16(), W3StringsFormat.OffsetUnitSize(version));
+        var key = (uint)reader.ReadUInt16() << 16; // The head half: the tail half closes the container
+        return new Head(version, key, W3StringsFormat.OffsetUnitSize(version));
     }
 
     /// <summary>
@@ -188,7 +190,7 @@ public static class W3StringsReader
     ///     Builds the container out of the sections that were read, decoding every text on the way
     /// </summary>
     /// <param name="head">The head of the container</param>
-    /// <param name="key2">The tail half of the language key</param>
+    /// <param name="key">The full language key, both halves together</param>
     /// <param name="language">The resolved language, or null for the languages that share key 0</param>
     /// <param name="magic">The magic every id and payload was obfuscated with</param>
     /// <param name="buffer">The extent of the string buffer</param>
@@ -198,14 +200,13 @@ public static class W3StringsReader
     /// <param name="payloads">The stored bytes of every entry, in entry order</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
-    private static W3StringsFile ToFile(Head head, ushort key2, W3Language? language, uint magic, Buffer buffer,
+    private static W3StringsFile ToFile(Head head, uint key, W3Language? language, uint magic, Buffer buffer,
         byte[] trailer, StringEntry[] entries, KeyEntry[] keys, byte[][] payloads, int unit)
     {
         var file = new W3StringsFile
         {
             Version = head.Version,
-            Key1 = head.Key1,
-            Key2 = key2,
+            Key = key,
             Language = language,
             Magic = magic,
             DeclaredBufferUnits = buffer.Units,
@@ -230,8 +231,8 @@ public static class W3StringsReader
             });
         }
 
-        foreach (var key in keys)
-            file.Keys.Add(new W3KeyEntry { KeyHash = key.Hash, Id = key.Id ^ magic });
+        foreach (var entry in keys)
+            file.Keys.Add(new W3KeyEntry { KeyHash = entry.Hash, Id = entry.Id ^ magic });
 
         return file;
     }
@@ -315,16 +316,14 @@ public static class W3StringsReader
     /// <summary>
     ///     Resolves the language, and with it the magic every id and payload was obfuscated with
     /// </summary>
-    /// <param name="key1">The head half of the language key, read from the header</param>
-    /// <param name="key2">The tail half of the language key, read from the end of the container</param>
+    /// <param name="key">The full language key, both halves together</param>
     /// <returns>The language, or null for the languages that share key 0</returns>
     /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
-    private static W3Language? ResolveLanguage(ushort key1, ushort key2)
+    private static W3Language? ResolveLanguage(uint key)
     {
-        var key = ((uint)key1 << 16) | key2;
-
-        // Full 32-bit key first, then key1 alone, which is reliable when tooling left a foreign key2.
-        var language = W3Language.FromKey(key) ?? W3Language.FromKey1(key1);
+        // Full 32-bit key first, then its head half alone, which is reliable when tooling left a
+        // foreign tail half behind.
+        var language = W3Language.FromKey(key) ?? W3Language.FromKey1((ushort)(key >> 16));
         if (language is not null) return language;
 
         // Every language the game added after its release shares key 0, so a zero key identifies no
@@ -343,9 +342,9 @@ public static class W3StringsReader
     ///     The head of a container
     /// </summary>
     /// <param name="Version">The version the container was written with</param>
-    /// <param name="Key1">The head half of the language key</param>
+    /// <param name="Key">The language key with its head half in place, waiting for the tail half</param>
     /// <param name="Unit">The number of bytes one character takes in the container</param>
-    private readonly record struct Head(uint Version, ushort Key1, int Unit);
+    private readonly record struct Head(uint Version, uint Key, int Unit);
 
     /// <summary>
     ///     The extent of the string buffer
