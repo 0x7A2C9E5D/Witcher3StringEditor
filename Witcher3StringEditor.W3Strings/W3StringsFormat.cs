@@ -2,6 +2,8 @@ namespace Witcher3StringEditor.W3Strings;
 
 internal static class W3StringsFormat
 {
+    public const int MinSize = 16;
+    
     public const int FirstUtf8Version = 164;
 
     public const int Block1EntrySize = 12;
