@@ -18,4 +18,10 @@
         <ProjectReference Include="..\Witcher3StringEditor.W3Strings\Witcher3StringEditor.W3Strings.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Update="Nerdbank.GitVersioning">
+        <Version>3.10.94</Version>
+      </PackageReference>
+    </ItemGroup>
+
 </Project>
