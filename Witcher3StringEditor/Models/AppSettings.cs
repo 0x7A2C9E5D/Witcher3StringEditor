@@ -41,7 +41,7 @@ internal partial class AppSettings : ObservableObject, IAppSettings
         BackupItems = [.. backupItems];
         RecentItems = [.. recentItems];
         PreferredW3FileType = preferredW3FileType;
-        PreferredLanguage = preferredLanguage ?? W3Language.En; // Settings may predate the language
+        PreferredLanguage = preferredLanguage ?? W3Language.Default; // Settings may predate the language
     }
 
     /// <summary>

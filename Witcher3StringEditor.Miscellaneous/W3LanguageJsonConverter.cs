@@ -25,8 +25,8 @@ public class W3LanguageJsonConverter : JsonConverter<W3Language>
         JsonSerializerOptions options)
     {
         return reader.TokenType == JsonTokenType.String
-            ? W3Language.FromCode(reader.GetString()) ?? W3Language.En
-            : W3Language.En;
+            ? W3Language.FromCode(reader.GetString()) ?? W3Language.Default
+            : W3Language.Default;
     }
 
     /// <summary>

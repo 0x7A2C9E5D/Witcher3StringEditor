@@ -9,7 +9,7 @@ internal static class PayloadCodec
         return (ushort)(((x << 1) | (x >> 15)) & 0xFFFF);
     }
 
-    public static void XorUtf8(Span<byte> data, int length, uint magic)
+    private static void XorUtf8(Span<byte> data, int length, uint magic)
     {
         var key = (ushort)((magic >> 8) & 0xFFFF);
         for (var i = 0; i < length; i++)
@@ -20,7 +20,7 @@ internal static class PayloadCodec
         }
     }
 
-    public static void XorUtf16(Span<byte> data, int length, uint magic)
+    private static void XorUtf16(Span<byte> data, int length, uint magic)
     {
         var key = (ushort)((magic >> 8) & 0xFFFF);
         for (var i = 0; i < length; i++)
@@ -31,7 +31,8 @@ internal static class PayloadCodec
             key = Rotl16(key);
         }
     }
-
+    
+    
     public static string Decode(Span<byte> stored, int length, uint magic, int unit)
     {
         if (unit == 2) XorUtf16(stored, length, magic);

@@ -2,50 +2,14 @@ using JetBrains.Annotations;
 
 namespace Witcher3StringEditor.W3Strings;
 
+/// <summary>
+///     A language a container can be written for
+///     Every language carries the key a container stores in two halves and the magic its strings are
+///     obfuscated with, both of which come from the game's own content files
+/// </summary>
 [PublicAPI]
 public sealed class W3Language
 {
-    public static readonly W3Language Ar = new("ar", "ar", 0x00000000, 0x00000000);
-
-    public static readonly W3Language Br = new("br", "pt", 0x00000000, 0x00000000);
-
-    public static readonly W3Language Cn = new("cn", "zh-Hans", 0x00000000, 0x00000000);
-
-    public static readonly W3Language Cz = new("cz", "cs", 0x24987354, 0x21793217);
-
-    public static readonly W3Language De = new("de", "de", 0x75886138, 0x42791159);
-
-    public static readonly W3Language En = new("en", "en", 0x43975139, 0x79321793);
-
-    public static readonly W3Language Es = new("es", "es", 0x18796651, 0x42387566);
-
-    public static readonly W3Language Esmx = new("esMX", "es-MX", 0x00000000, 0x00000000);
-
-    public static readonly W3Language Fr = new("fr", "fr", 0x23863176, 0x75921975);
-
-    public static readonly W3Language Hu = new("hu", "hu", 0x42378932, 0x67823218);
-
-    public static readonly W3Language It = new("it", "it", 0x45931894, 0x12375973);
-
-    public static readonly W3Language Jp = new("jp", "ja", 0x54834893, 0x59825646);
-
-    public static readonly W3Language Kr = new("kr", "ko", 0x00000000, 0x00000000);
-
-    public static readonly W3Language Pl = new("pl", "pl", 0x83496237, 0x73946816);
-
-    public static readonly W3Language Ru = new("ru", "ru", 0x63481486, 0x42386347);
-
-    public static readonly W3Language Zh = new("zh", "zh-Hant", 0x18632176, 0x16875467);
-
-    public static readonly W3Language Tr = new("tr", "tr", 0x00000000, 0x00000000);
-
-    public static readonly W3Language Ua = new("ua", "uk", 0x00000000, 0x00000000);
-
-    // Built on first use: the field initializers run in declaration order, and All is one of
-    // them, so the language instances may not all exist while they are still running.
-    private static readonly Lazy<Dictionary<uint, W3Language>> KeyToLanguage = new(BuildKeyLookup);
-    private static readonly Lazy<Dictionary<string, W3Language>> CodeToLanguage = new(BuildCodeLookup);
-
     private W3Language(string code, string cultureCode, uint key, uint magic)
     {
         Code = code;
@@ -54,50 +18,87 @@ public sealed class W3Language
         Magic = magic;
     }
 
+    /// <summary>
+    ///     The code the game's content files are named after, for example "cn"
+    /// </summary>
     public string Code { get; }
 
+    /// <summary>
+    ///     The culture code that code stands for, for example "zh-Hans"
+    /// </summary>
     public string CultureCode { get; }
 
+    /// <summary>
+    ///     The full 32-bit language key a container stores for the language
+    /// </summary>
     public uint Key { get; }
 
+    /// <summary>
+    ///     The magic the strings and ids of the language are obfuscated with
+    /// </summary>
     public uint Magic { get; }
 
+    /// <summary>
+    ///     Every language this build knows
+    /// </summary>
+    /// <remarks>
+    ///     Every language the game added after its release shares key 0 and magic 0, which is why a zero
+    ///     key identifies no language at all and the containers of those languages are stored without
+    ///     obfuscation. They are listed as the languages they are
+    /// </remarks>
     public static IReadOnlyList<W3Language> All { get; } =
-        [Ar, Br, Cn, Cz, De, En, Es, Esmx, Fr, Hu, It, Jp, Kr, Pl, Ru, Zh, Tr, Ua];
+    [
+        new(code: "ar", cultureCode: "ar", key: 0x00000000, magic: 0x00000000),
+        new(code: "br", cultureCode: "pt", key: 0x00000000, magic: 0x00000000),
+        new(code: "cn", cultureCode: "zh-Hans", key: 0x00000000, magic: 0x00000000),
+        new(code: "cz", cultureCode: "cs", key: 0x24987354, magic: 0x21793217),
+        new(code: "de", cultureCode: "de", key: 0x75886138, magic: 0x42791159),
+        new(code: "en", cultureCode: "en", key: 0x43975139, magic: 0x79321793),
+        new(code: "es", cultureCode: "es", key: 0x18796651, magic: 0x42387566),
+        new(code: "esMX", cultureCode: "es-MX", key: 0x00000000, magic: 0x00000000),
+        new(code: "fr", cultureCode: "fr", key: 0x23863176, magic: 0x75921975),
+        new(code: "hu", cultureCode: "hu", key: 0x42378932, magic: 0x67823218),
+        new(code: "it", cultureCode: "it", key: 0x45931894, magic: 0x12375973),
+        new(code: "jp", cultureCode: "ja", key: 0x54834893, magic: 0x59825646),
+        new(code: "kr", cultureCode: "ko", key: 0x00000000, magic: 0x00000000),
+        new(code: "pl", cultureCode: "pl", key: 0x83496237, magic: 0x73946816),
+        new(code: "ru", cultureCode: "ru", key: 0x63481486, magic: 0x42386347),
+        new(code: "zh", cultureCode: "zh-Hant", key: 0x18632176, magic: 0x16875467),
+        new(code: "tr", cultureCode: "tr", key: 0x00000000, magic: 0x00000000),
+        new(code: "ua", cultureCode: "uk", key: 0x00000000, magic: 0x00000000)
+    ];
 
-    private static Dictionary<uint, W3Language> BuildKeyLookup()
-    {
-        // Only a key owned by exactly one language identifies that language: every
-        // language added after the game's release shares key 0.
-        return All.GroupBy(language => language.Key).Where(group => group.Count() == 1)
-            .ToDictionary(group => group.Key, group => group.First());
-    }
-
-    private static Dictionary<string, W3Language> BuildCodeLookup()
-    {
-        var map = new Dictionary<string, W3Language>(StringComparer.OrdinalIgnoreCase);
-        foreach (var language in All)
-        {
-            map[language.Code] = language;
-            map[language.CultureCode] = language;
-        }
-
-        return map;
-    }
+    /// <summary>
+    ///     The language everything that cannot name one falls back to
+    /// </summary>
+    public static W3Language Default => FromCode("en")!;
 
     /// <summary>
     ///     Gets the language that owns the given full key
     /// </summary>
     /// <param name="key">The full 32-bit language key, both halves together</param>
     /// <returns>The language, or null when no language owns the key</returns>
+    /// <remarks>
+    ///     Only a key owned by exactly one language identifies that language: every language the game
+    ///     added after its release shares key 0, so a zero key names none of them
+    /// </remarks>
     public static W3Language? FromKey(uint key)
     {
-        return KeyToLanguage.Value.GetValueOrDefault(key);
+        // Two are taken so that a key with a rival is recognized as one that names neither.
+        var owned = All.Where(language => language.Key == key).Take(2).ToArray();
+        return owned.Length == 1 ? owned[0] : null;
     }
 
+    /// <summary>
+    ///     Gets the language the given code or culture code names
+    /// </summary>
+    /// <param name="code">The code of the language, or its culture code</param>
+    /// <returns>The language, or null when no language answers to the code</returns>
     public static W3Language? FromCode(string? code)
     {
-        return code is not null && CodeToLanguage.Value.TryGetValue(code, out var language) ? language : null;
+        return All.FirstOrDefault(language =>
+            string.Equals(language.Code, code, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(language.CultureCode, code, StringComparison.OrdinalIgnoreCase));
     }
 
     public override string ToString()
