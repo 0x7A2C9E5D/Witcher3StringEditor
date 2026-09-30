@@ -5,4 +5,4 @@ namespace Witcher3StringEditor.Serializers.Abstractions;
 ///     It delegates every request to the serializer able to handle the requested file format, so callers
 ///     never need to know which file formats exist
 /// </summary>
-public interface IW3SerializerCoordinator : IW3Serializer;
+public interface ISerializerCoordinator : ISerializer;

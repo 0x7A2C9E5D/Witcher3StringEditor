@@ -11,15 +11,15 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 ///     Handles adding or editing a single The Witcher 3 string item
 ///     Implements IModalDialogViewModel for dialog result handling and ICloseable for close notifications
 /// </summary>
-/// <param name="w3StringItem">The Witcher 3 string item to edit or use as a template for adding a new item</param>
-public partial class EditDataDialogViewModel(ITrackableW3StringItem w3StringItem)
+/// <param name="stringItem">The Witcher 3 string item to edit or use as a template for adding a new item</param>
+public partial class EditDataDialogViewModel(ITrackableStringItem stringItem)
     : ObservableObject, IModalDialogViewModel, ICloseable
 {
     /// <summary>
     ///     Gets the title for the dialog window
     ///     Displays "Add" if the item is new (no StrId), or "Edit" if editing an existing item
     /// </summary>
-    public string Title { get; } = string.IsNullOrWhiteSpace(w3StringItem.StrId)
+    public string Title { get; } = string.IsNullOrWhiteSpace(stringItem.StrId)
         ? Strings.AddDialogTitle
         : Strings.EditDialogTitle;
 
@@ -27,7 +27,7 @@ public partial class EditDataDialogViewModel(ITrackableW3StringItem w3StringItem
     ///     Gets a clone of The Witcher 3 string item being edited
     ///     This allows editing without affecting the original item until changes are confirmed
     /// </summary>
-    public ITrackableW3StringItem? Item { get; } = w3StringItem.Clone() as ITrackableW3StringItem;
+    public ITrackableStringItem? Item { get; } = stringItem.Clone() as ITrackableStringItem;
 
     /// <summary>
     ///     Event that is raised when the dialog requests to be closed

@@ -25,7 +25,7 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
         {
             new JsonStringEnumConverter(),
             new EncodingJsonConverter(),
-            new W3LanguageJsonConverter(),
+            new LanguageJsonConverter(),
             new InterfaceJsonConverter<IRecentFileEntry, RecentItem>(),
             new InterfaceJsonConverter<IBackupItem, BackupItem>(),
             new ObservableCollectionJsonConverter<IBackupItem>(),

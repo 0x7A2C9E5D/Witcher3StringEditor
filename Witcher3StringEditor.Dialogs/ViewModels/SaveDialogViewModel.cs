@@ -33,12 +33,12 @@ public partial class SaveDialogViewModel
     /// <summary>
     ///     The serializer used to save The Witcher 3 string items
     /// </summary>
-    private readonly IW3SerializerCoordinator serializer;
+    private readonly ISerializerCoordinator serializer;
 
     /// <summary>
     ///     The collection of The Witcher 3 string items to save
     /// </summary>
-    private readonly IReadOnlyList<IW3StringItem> w3StringItems;
+    private readonly IReadOnlyList<IStringItem> w3StringItems;
 
     /// <summary>
     ///     Initializes a new instance of the SaveDialogViewModel class
@@ -48,9 +48,9 @@ public partial class SaveDialogViewModel
     /// <param name="dialogService">The dialog service used to report the result of the save operation</param>
     /// <param name="w3StringItems">The collection of The Witcher 3 string items to save</param>
     /// <param name="outputDirectory">The initial output directory for saving</param>
-    public SaveDialogViewModel(IAppSettings appSettings, IW3SerializerCoordinator serializer,
+    public SaveDialogViewModel(IAppSettings appSettings, ISerializerCoordinator serializer,
         IDialogService dialogService,
-        IReadOnlyList<IW3StringItem> w3StringItems, string outputDirectory)
+        IReadOnlyList<IStringItem> w3StringItems, string outputDirectory)
     {
         OutputDirectory = outputDirectory;
         this.w3StringItems = w3StringItems;
@@ -58,7 +58,7 @@ public partial class SaveDialogViewModel
         this.dialogService = dialogService;
         this.appSettings = appSettings;
         TargetLanguage = appSettings.PreferredLanguage;
-        TargetFileFormat = appSettings.PreferredW3FileType;
+        TargetFileFormat = appSettings.PreferredFileType;
         TargetEncoding = appSettings.PreferredW3StringsEncoding;
     }
 
@@ -83,13 +83,13 @@ public partial class SaveDialogViewModel
     ///     Gets or sets the target file format for the save operation
     /// </summary>
     [ObservableProperty]
-    public partial W3FileFormat TargetFileFormat { get; set; }
+    public partial FileFormat TargetFileFormat { get; set; }
 
     /// <summary>
     ///     Gets or sets the target language for the save operation
     /// </summary>
     [ObservableProperty]
-    public partial W3Language TargetLanguage { get; set; }
+    public partial Language TargetLanguage { get; set; }
 
     /// <summary>
     ///     Event that is raised when the dialog requests to be closed
@@ -111,14 +111,14 @@ public partial class SaveDialogViewModel
     {
         Log.Information("Saving {Count} item(s) to {Directory} as {FileFormat} ({Language})",
             w3StringItems.Count, OutputDirectory, TargetFileFormat, TargetLanguage);
-        if (TargetFileFormat == W3FileFormat.W3Strings)
+        if (TargetFileFormat == FileFormat.W3Strings)
         {
             Log.Information("W3Strings payload encoding: {Encoding}",
                 TargetEncoding.WebName); // Log the chosen encoding
             appSettings.PreferredW3StringsEncoding = TargetEncoding; // Remember the chosen encoding
         }
 
-        var saveResult = await serializer.Serialize(w3StringItems, new W3SerializationContext // Serialize items
+        var saveResult = await serializer.Serialize(w3StringItems, new SerializationContext // Serialize items
         {
             OutputDirectory = OutputDirectory, // Set output directory
             TargetFileFormat = TargetFileFormat, // Set the file format

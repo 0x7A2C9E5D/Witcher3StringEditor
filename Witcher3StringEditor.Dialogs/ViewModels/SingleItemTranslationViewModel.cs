@@ -32,7 +32,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     /// <param name="index">Initial index of the item to translate</param>
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
     public SingleItemTranslationViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems,
+        IReadOnlyList<ITrackableStringItem> w3StringItems,
         int index, IDialogService dialogService)
         : base(appSettings, translator, w3StringItems, dialogService)
     {

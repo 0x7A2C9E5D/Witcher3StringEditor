@@ -40,7 +40,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IShellOpenService shellOpenService; // Get explorer service
     private readonly ITranslatorProvider translatorProvider; // Get translator provider
-    private readonly IW3SerializerCoordinator w3Serializer; // Get serializer service
+    private readonly ISerializerCoordinator serializer; // Get serializer service
 
     /// <summary>
     ///     Gets or sets the collection of The Witcher 3 string items
@@ -53,7 +53,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [NotifyCanExecuteChangedFor(nameof(MergeDataCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShowSaveDialogCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
-    private ObservableCollection<W3StringItem>? w3StringItems;
+    private ObservableCollection<StringItem>? w3StringItems;
 
 
     /// <summary>
@@ -66,7 +66,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <param name="settingsManagerService"></param>
     /// <param name="serviceProvider"></param>
     /// <param name="translatorProvider"></param>
-    /// <param name="w3Serializer"></param>
+    /// <param name="serializer"></param>
     public MainWindowViewModel(
         IDialogService dialogService,
         IDialogViewModelFactory dialogViewModelFactory,
@@ -75,7 +75,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         ISettingsManagerService settingsManagerService,
         IServiceProvider serviceProvider,
         ITranslatorProvider translatorProvider,
-        IW3SerializerCoordinator w3Serializer)
+        ISerializerCoordinator serializer)
     {
         this.dialogService = dialogService;
         this.dialogViewModelFactory = dialogViewModelFactory;
@@ -84,7 +84,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         this.settingsManagerService = settingsManagerService;
         this.serviceProvider = serviceProvider;
         this.translatorProvider = translatorProvider;
-        this.w3Serializer = w3Serializer;
+        this.serializer = serializer;
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
@@ -122,7 +122,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
-    private partial IList<W3StringItem>? PagedSource { get; set; }
+    private partial IList<StringItem>? PagedSource { get; set; }
 
     /// <summary>
     ///     Gets or sets the current search text used for filtering W3String items
@@ -221,7 +221,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     private void RegisterSearchMessageHandlers()
     {
-        WeakReferenceMessenger.Default.Register<MainWindowViewModel, List<W3StringItem>, string>(
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, List<StringItem>, string>(
             this,
             MessageTokens.DataGridPagedSourceChanged,
             (_, m) => { PagedSource = m; });
@@ -318,10 +318,10 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     ///     A task that represents the asynchronous operation. The task result contains the deserialized The Witcher 3
     ///     string items
     /// </returns>
-    private async Task<ObservableCollection<W3StringItem>> DeserializeW3StringItems(string fileName)
+    private async Task<ObservableCollection<StringItem>> DeserializeW3StringItems(string fileName)
     {
-        var deserializedItems = await w3Serializer.Deserialize(fileName); // Deserialize file contents
-        return deserializedItems.Select(x => new W3StringItem(x))
+        var deserializedItems = await serializer.Deserialize(fileName); // Deserialize file contents
+        return deserializedItems.Select(x => new StringItem(x))
             .ToObservableCollection(); // Convert to observable collection
     }
 
@@ -343,11 +343,11 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task Add()
     {
         var dialogViewModel =
-            dialogViewModelFactory.CreateEditDialog(new W3StringItem()); // Create new item view model
+            dialogViewModelFactory.CreateEditDialog(new StringItem()); // Create new item view model
         if (await dialogService.ShowDialogAsync(this, dialogViewModel) == true // Show add dialog
             && dialogViewModel.Item is not null) // Check if user confirmed
         {
-            W3StringItems!.Add((W3StringItem)dialogViewModel.Item); // Add new item to collection
+            W3StringItems!.Add((StringItem)dialogViewModel.Item); // Add new item to collection
             await RequestDataGridPagedSource(); // Request updated paged source
             Log.Information("W3String item added: {StrId}", dialogViewModel.Item.StrId); // Log successful addition
         }
@@ -359,7 +359,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task RequestDataGridPagedSource()
     {
         await Task.Delay(100); // Delay to allow time for the collection to update
-        PagedSource = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<List<W3StringItem>>(),
+        PagedSource = await WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<List<StringItem>>(),
             MessageTokens.RequestDataGridPagedSource); // Send request for updated paged source
     }
 
@@ -368,7 +368,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     /// <param name="selectedItem">The item to edit</param>
     [RelayCommand(CanExecute = nameof(HasW3StringItems))]
-    private async Task Edit(W3StringItem selectedItem)
+    private async Task Edit(StringItem selectedItem)
     {
         var dialogViewModel = dialogViewModelFactory.CreateEditDialog(selectedItem); // Create edit dialog view model
         if (await dialogService.ShowDialogAsync(this, // Show edit dialog
@@ -394,14 +394,14 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private async Task Delete(IEnumerable<object> selectedItems)
     {
         var w3Items = selectedItems
-            .OfType<ITrackableW3StringItem>().ToArray(); // Filter and convert to trackable items
+            .OfType<ITrackableStringItem>().ToArray(); // Filter and convert to trackable items
         if (w3Items.Length > 0 &&
             await dialogService.ShowDialogAsync(this, dialogViewModelFactory.CreateDeleteDialog(w3Items)) ==
             true) // Show delete confirmation dialog
         {
             foreach (var item in w3Items)
             {
-                var stringItem = (W3StringItem)item; // Cast to string item model
+                var stringItem = (StringItem)item; // Cast to string item model
                 W3StringItems!.Remove(stringItem); // Remove from main collection
             }
 
@@ -530,7 +530,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     /// <param name="selectedItem">The initially selected item in the dialog</param>
     [RelayCommand(CanExecute = nameof(CanShowTranslateDialog))]
-    private async Task ShowTranslateDialog(IW3StringItem? selectedItem)
+    private async Task ShowTranslateDialog(IStringItem? selectedItem)
     {
         var itemsToUse = PagedSource ?? W3StringItems!; // Use filtered items if available
         var selectedIndex =
@@ -590,7 +590,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             {
                 // Deserialize the file
                 var mergeData =
-                    await w3Serializer.Deserialize(storageFile.LocalPath);
+                    await serializer.Deserialize(storageFile.LocalPath);
 
                 // Join the two collections
                 var matchedPairs = W3StringItems!.Join(

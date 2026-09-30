@@ -38,7 +38,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <summary>
     ///     The collection of items to translate
     /// </summary>
-    private protected readonly IReadOnlyList<ITrackableW3StringItem> W3StringItems;
+    private protected readonly IReadOnlyList<ITrackableStringItem> W3StringItems;
 
     /// <summary>
     ///     The cancellation token source for managing translation operation cancellation
@@ -54,7 +54,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
     /// <param name="dictionaryService">Dictionary service</param>
     protected TranslationViewModelBase(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, IDialogService dialogService,
+        IReadOnlyList<ITrackableStringItem> w3StringItems, IDialogService dialogService,
         IDictionaryService? dictionaryService = null)
     {
         Translator = translator; // Initialize the translator

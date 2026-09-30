@@ -9,18 +9,18 @@ namespace Witcher3StringEditor.Serializers;
 ///     Coordinates serialization operations for The Witcher 3 string items across different file formats
 ///     Acts as a facade that delegates every request to the serializer able to handle the requested file format
 /// </summary>
-public class W3SerializerCoordinator : IW3SerializerCoordinator
+public class SerializerCoordinator : ISerializerCoordinator
 {
     /// <summary>
     ///     The serializers to delegate to, one per supported file format
     /// </summary>
-    private readonly IW3Serializer[] serializers;
+    private readonly ISerializer[] serializers;
 
     /// <summary>
-    ///     Initializes a new instance of the W3SerializerCoordinator class
+    ///     Initializes a new instance of the SerializerCoordinator class
     /// </summary>
     /// <param name="serializers">The serializers to delegate to</param>
-    public W3SerializerCoordinator(IEnumerable<IW3Serializer> serializers)
+    public SerializerCoordinator(IEnumerable<ISerializer> serializers)
     {
         this.serializers = [.. serializers];
     }
@@ -30,7 +30,7 @@ public class W3SerializerCoordinator : IW3SerializerCoordinator
     /// </summary>
     /// <param name="fileFormat">The file format to check</param>
     /// <returns>True when one of the serializers handles that format</returns>
-    public bool CanHandle(W3FileFormat fileFormat)
+    public bool CanHandle(FileFormat fileFormat)
     {
         return serializers.Any(serializer => serializer.CanHandle(fileFormat));
     }
@@ -45,7 +45,7 @@ public class W3SerializerCoordinator : IW3SerializerCoordinator
     ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
     /// <exception cref="NotSupportedException">Thrown when the file format is not supported</exception>
-    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
+    public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
     {
         var items = await Resolve(FormatOf(filePath)).Deserialize(filePath);
         Log.Information("Deserialized {Count} item(s) from {Path}", items.Count, filePath);
@@ -63,7 +63,7 @@ public class W3SerializerCoordinator : IW3SerializerCoordinator
     ///     The task result indicates whether the serialization was successful
     /// </returns>
     /// <exception cref="NotSupportedException">Thrown when the target file format is not supported</exception>
-    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
+    public async Task<bool> Serialize(IReadOnlyList<IStringItem> w3StringItems, SerializationContext context)
     {
         var succeeded = await Resolve(context.TargetFileFormat).Serialize(w3StringItems, context);
         if (succeeded)
@@ -78,7 +78,7 @@ public class W3SerializerCoordinator : IW3SerializerCoordinator
     /// <param name="fileFormat">The file format to handle</param>
     /// <returns>The serializer able to read and write that format</returns>
     /// <exception cref="NotSupportedException">Thrown when no serializer handles the format</exception>
-    private IW3Serializer Resolve(W3FileFormat fileFormat)
+    private ISerializer Resolve(FileFormat fileFormat)
     {
         return serializers.FirstOrDefault(serializer => serializer.CanHandle(fileFormat))
                ?? throw new NotSupportedException($"File format not supported: {fileFormat}");
@@ -90,13 +90,13 @@ public class W3SerializerCoordinator : IW3SerializerCoordinator
     /// <param name="filePath">The path to map</param>
     /// <returns>The file format of the path</returns>
     /// <exception cref="NotSupportedException">Thrown when the extension is not supported</exception>
-    private static W3FileFormat FormatOf(string filePath)
+    private static FileFormat FormatOf(string filePath)
     {
         return Path.GetExtension(filePath).ToLowerInvariant() switch
         {
-            ".csv" => W3FileFormat.Csv,
-            ".xlsx" => W3FileFormat.Excel,
-            ".w3strings" => W3FileFormat.W3Strings,
+            ".csv" => FileFormat.Csv,
+            ".xlsx" => FileFormat.Excel,
+            ".w3strings" => FileFormat.W3Strings,
             _ => throw new NotSupportedException($"File format not supported: {filePath}")
         };
     }

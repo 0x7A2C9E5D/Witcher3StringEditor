@@ -5,7 +5,7 @@ namespace Witcher3StringEditor.Contracts;
 ///     One of them is the game's own container; the other two are interchange formats used to
 ///     edit and translate the items outside the game
 /// </summary>
-public enum W3FileFormat
+public enum FileFormat
 {
     /// <summary>
     ///     CSV (comma-separated values) text file

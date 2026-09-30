@@ -21,7 +21,7 @@ internal static class W3StringsContainerBuilder
     /// <param name="key">The language key the container is written for</param>
     /// <param name="logger">The logger every anomaly is written to</param>
     /// <returns>The container to encode, or null when one of its entries would be unreachable</returns>
-    public static W3StringsFile? Build(IReadOnlyList<IW3StringItem> items, uint version, uint key, ILogger logger)
+    public static W3StringsFile? Build(IReadOnlyList<IStringItem> items, uint version, uint key, ILogger logger)
     {
         var file = new W3StringsFile { Version = version, Key = key };
 
@@ -119,7 +119,7 @@ internal static class W3StringsContainerBuilder
     /// <param name="keyHash">Receives the key hash, null when the item carries no key at all</param>
     /// <param name="logger">The logger an unusable key hash is written to</param>
     /// <returns>True when the key may be written</returns>
-    private static bool TryResolveKey(IW3StringItem item, uint id, out uint? keyHash, ILogger logger)
+    private static bool TryResolveKey(IStringItem item, uint id, out uint? keyHash, ILogger logger)
     {
         keyHash = null;
         if (!string.IsNullOrWhiteSpace(item.KeyName))

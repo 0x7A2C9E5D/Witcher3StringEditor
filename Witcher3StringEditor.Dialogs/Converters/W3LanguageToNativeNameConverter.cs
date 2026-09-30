@@ -6,30 +6,30 @@ using Witcher3StringEditor.Contracts;
 namespace Witcher3StringEditor.Dialogs.Converters;
 
 /// <summary>
-///     A value converter that converts W3Language enum values to their corresponding native language names
-///     Uses the W3Language culture helpers to retrieve the native name of the language
+///     A value converter that converts Language enum values to their corresponding native language names
+///     Uses the Language culture helpers to retrieve the native name of the language
 /// </summary>
 public class W3LanguageToNativeNameConverter : IValueConverter
 {
     /// <summary>
-    ///     Converts a W3Language enum value to its corresponding native language name
+    ///     Converts a Language enum value to its corresponding native language name
     /// </summary>
-    /// <param name="value">The W3Language enum value to convert</param>
+    /// <param name="value">The Language enum value to convert</param>
     /// <param name="targetType">The type of the binding target property (not used in this implementation)</param>
     /// <param name="parameter">An optional parameter to be used in the converter logic (not used in this implementation)</param>
     /// <param name="culture">The culture to use in the converter (not used in this implementation)</param>
     /// <returns>The native name of the language, or DependencyProperty.UnsetValue if conversion fails</returns>
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        // Check if the value is a valid W3Language enum, if not return UnsetValue
-        if (value is not W3Language language) return DependencyProperty.UnsetValue;
+        // Check if the value is a valid Language enum, if not return UnsetValue
+        if (value is not Language language) return DependencyProperty.UnsetValue;
 
         // Get the native name of the language via its associated culture
         return CultureInfo.GetCultureInfo(language.CultureCode).NativeName;
     }
 
     /// <summary>
-    ///     Converts a native language name back to a W3Language enum value (not implemented)
+    ///     Converts a native language name back to a Language enum value (not implemented)
     /// </summary>
     /// <param name="value">The value to convert back</param>
     /// <param name="targetType">The type to convert to (not used in this implementation)</param>

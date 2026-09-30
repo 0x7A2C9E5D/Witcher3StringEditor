@@ -9,19 +9,19 @@ namespace Witcher3StringEditor.Serializers;
 
 /// <summary>
 ///     Provides W3Strings serialization functionality for The Witcher 3 string items
-///     Implements IW3Serializer for the W3Strings container format
+///     Implements ISerializer for the W3Strings container format
 ///     This serializer uses the built-in W3Strings codec, so no external encoder/decoder tool is required
 /// </summary>
-public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
+public class W3StringsSerializer(IBackupService backupService) : ISerializer
 {
     /// <summary>
     ///     Determines whether this serializer reads and writes the given file format
     /// </summary>
     /// <param name="fileFormat">The file format to check</param>
     /// <returns>True when the format is a W3Strings container</returns>
-    public bool CanHandle(W3FileFormat fileFormat)
+    public bool CanHandle(FileFormat fileFormat)
     {
-        return fileFormat == W3FileFormat.W3Strings;
+        return fileFormat == FileFormat.W3Strings;
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     ///     A task that represents the asynchronous deserialize operation.
     ///     The task result contains the deserialized The Witcher 3 string items, or an empty list if an error occurred
     /// </returns>
-    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
+    public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
     {
         try
         {
@@ -63,7 +63,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     ///     The task result indicates whether the serialization was successful, which it is not when the
     ///     container holds an entry the game could never reach
     /// </returns>
-    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
+    public async Task<bool> Serialize(IReadOnlyList<IStringItem> w3StringItems, SerializationContext context)
     {
         try
         {
@@ -127,7 +127,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     /// </summary>
     /// <param name="filePath">The path to the W3Strings file to read</param>
     /// <returns>The string items of the container, in container order</returns>
-    private static List<IW3StringItem> ReadItems(string filePath)
+    private static List<IStringItem> ReadItems(string filePath)
     {
         using var stream = File.OpenRead(filePath); // The codec reads a stream, the serializer knows the path
         var container = W3StringsReader.Read(stream); // Parse the container

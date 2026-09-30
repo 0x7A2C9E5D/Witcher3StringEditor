@@ -6,7 +6,7 @@ namespace Witcher3StringEditor.Contracts.Abstractions;
 ///     Defines a contract for The Witcher 3 string items
 ///     Represents a single string entry from The Witcher 3 game files with its metadata and text content
 /// </summary>
-public interface IW3StringItem
+public interface IStringItem
 {
     /// <summary>
     ///     Gets or sets the string identifier

@@ -66,7 +66,7 @@ internal static class W3StringsFormat
     /// </remarks>
     public static uint MagicOf(uint key)
     {
-        var language = W3Language.FromKey(key);
+        var language = Language.FromKey(key);
         if (language is not null) return language.Magic;
         if (key == 0) return 0;
         throw new W3StringsException(

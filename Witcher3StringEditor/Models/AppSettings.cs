@@ -27,20 +27,20 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This constructor is used during JSON deserialization
     /// </summary>
     /// <param name="gameExePath">The path to the game executable</param>
-    /// <param name="preferredW3FileType">The preferred The Witcher 3 file format</param>
+    /// <param name="preferredFileType">The preferred The Witcher 3 file format</param>
     /// <param name="preferredLanguage">The preferred language</param>
     /// <param name="backupItems">The collection of backup items</param>
     /// <param name="recentItems">The collection of recent items</param>
     [JsonConstructor]
-    public AppSettings(string gameExePath, W3FileFormat preferredW3FileType,
-        W3Language? preferredLanguage, ObservableCollection<IBackupItem> backupItems,
+    public AppSettings(string gameExePath, FileFormat preferredFileType,
+        Language? preferredLanguage, ObservableCollection<IBackupItem> backupItems,
         ObservableCollection<IRecentFileEntry> recentItems)
     {
         GameExePath = gameExePath;
         BackupItems = [.. backupItems];
         RecentItems = [.. recentItems];
-        PreferredW3FileType = preferredW3FileType;
-        PreferredLanguage = preferredLanguage ?? W3Language.Default; // Settings may predate the language
+        PreferredFileType = preferredFileType;
+        PreferredLanguage = preferredLanguage ?? Contracts.Language.Default; // Settings may predate the language
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
-    public partial W3Language PreferredLanguage { get; set; }
+    public partial Language PreferredLanguage { get; set; }
 
     /// <summary>
     ///     Gets or sets the preferred payload encoding written for .w3strings files
@@ -82,7 +82,7 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
-    public partial W3FileFormat PreferredW3FileType { get; set; }
+    public partial FileFormat PreferredFileType { get; set; }
 
     /// <summary>
     ///     Gets or sets the preferred translator service

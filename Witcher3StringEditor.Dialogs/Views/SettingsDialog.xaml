@@ -33,13 +33,13 @@
                 MethodName="GetValues"
                 ObjectType="{x:Type sys:Enum}">
                 <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="common:W3FileFormat" />
+                    <x:Type TypeName="common:FileFormat" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
             <!-- Data provider for The Witcher 3 languages enumeration -->
             <ObjectDataProvider
                 x:Key="W3Language"
-                ObjectInstance="{x:Static codec:W3Language.All}" />
+                ObjectInstance="{x:Static codec:Language.All}" />
             <!-- Static array data provider for page size options -->
             <!-- Provides predefined page size values (20, 30, 50, 100) for data grid pagination -->
             <x:Array x:Key="PageSizes" Type="sys:Int32">
@@ -100,7 +100,7 @@
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Type}" />
                     </ui:SettingsCard.HeaderIcon>
                     <ComboBox ItemsSource="{Binding Source={StaticResource FileFormat}}"
-                              SelectedItem="{Binding AppSettings.PreferredW3FileType, Mode=TwoWay}">
+                              SelectedItem="{Binding AppSettings.PreferredFileType, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>

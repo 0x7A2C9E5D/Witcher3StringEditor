@@ -9,18 +9,18 @@ namespace Witcher3StringEditor.Serializers;
 
 /// <summary>
 ///     Provides Excel serialization functionality for The Witcher 3 string items
-///     Implements IW3Serializer for the Excel workbook file format
+///     Implements ISerializer for the Excel workbook file format
 /// </summary>
-public class ExcelW3Serializer(IBackupService backupService) : IW3Serializer
+public class ExcelSerializer(IBackupService backupService) : ISerializer
 {
     /// <summary>
     ///     Determines whether this serializer reads and writes the given file format
     /// </summary>
     /// <param name="fileFormat">The file format to check</param>
     /// <returns>True when the format is an Excel workbook</returns>
-    public bool CanHandle(W3FileFormat fileFormat)
+    public bool CanHandle(FileFormat fileFormat)
     {
-        return fileFormat == W3FileFormat.Excel;
+        return fileFormat == FileFormat.Excel;
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IW3Serializer
     ///     A task that represents the asynchronous deserialize operation.
     ///     The task result contains the deserialized The Witcher 3 string items, or an empty list if an error occurred
     /// </returns>
-    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
+    public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
     {
         try
         {
@@ -40,7 +40,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IW3Serializer
                 using var excelEngine = new ExcelEngine(); // Auto-cleanup engine
                 var worksheet = excelEngine.Excel.Workbooks.Open(filePath).Worksheets[0]; // Get 1st sheet
                 var usedRange = worksheet.UsedRange; // Get data range
-                return worksheet.ExportData<W3StringItem>(1, 1, usedRange.LastRow,
+                return worksheet.ExportData<StringItem>(1, 1, usedRange.LastRow,
                     usedRange.LastColumn); // Export data
             }).ConfigureAwait(false);
         }
@@ -61,7 +61,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IW3Serializer
     ///     A task that represents the asynchronous serialize operation.
     ///     The task result indicates whether the serialization was successful
     /// </returns>
-    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context)
+    public async Task<bool> Serialize(IReadOnlyList<IStringItem> w3StringItems, SerializationContext context)
     {
         try
         {
@@ -89,7 +89,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IW3Serializer
     /// </summary>
     /// <param name="path">The path where the Excel file will be created</param>
     /// <param name="w3StringItems">The Witcher 3 string items to include in the Excel file</param>
-    private static void GenerateExcelFile(string path, IReadOnlyList<IW3StringItem> w3StringItems)
+    private static void GenerateExcelFile(string path, IReadOnlyList<IStringItem> w3StringItems)
     {
         using var fileStream = File.Create(path); // Create output file stream (auto-disposed)
         using var excelEngine = new ExcelEngine(); // Initialize Excel engine (auto-cleanup)
@@ -107,7 +107,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IW3Serializer
     /// </summary>
     /// <param name="worksheet">The worksheet to format</param>
     /// <param name="w3StringItems">The Witcher 3 string items used to determine row count</param>
-    private static void FormatWorksheet(IWorksheet worksheet, IReadOnlyList<IW3StringItem> w3StringItems)
+    private static void FormatWorksheet(IWorksheet worksheet, IReadOnlyList<IStringItem> w3StringItems)
     {
         SetTableHeaders(worksheet); // Set table headers
         SetTableStyles(worksheet, w3StringItems.Count); // Apply table styles (align/borders/freeze)
@@ -218,7 +218,7 @@ public class ExcelW3Serializer(IBackupService backupService) : IW3Serializer
     /// </summary>
     /// <param name="worksheet">The worksheet to write data to</param>
     /// <param name="w3StringItems">The Witcher 3 string items to write</param>
-    private static void WriteDataToWorksheet(IWorksheet worksheet, IReadOnlyList<IW3StringItem> w3StringItems)
+    private static void WriteDataToWorksheet(IWorksheet worksheet, IReadOnlyList<IStringItem> w3StringItems)
     {
         // Iterate through each string item to write data to the worksheet
         for (var i = 0; i < w3StringItems.Count; i++)

@@ -83,7 +83,7 @@ internal class SettingsManagerService : ISettingsManagerService
     {
         Log.Information(
             "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Preferred W3Strings encoding: {Encoding}, Translator: {Translator}",
-            appSettings.PreferredW3FileType, appSettings.PreferredLanguage,
+            appSettings.PreferredFileType, appSettings.PreferredLanguage,
             appSettings.PreferredW3StringsEncoding.WebName,
             appSettings.Translator); // Log the relevant settings in a single entry
     }

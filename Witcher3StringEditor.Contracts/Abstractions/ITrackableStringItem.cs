@@ -2,9 +2,9 @@
 
 /// <summary>
 ///     Defines a contract for trackable The Witcher 3 string items
-///     Extends the basic IW3StringItem interface with tracking capabilities and cloning functionality
+///     Extends the basic IStringItem interface with tracking capabilities and cloning functionality
 /// </summary>
-public interface ITrackableW3StringItem : IW3StringItem, ICloneable
+public interface ITrackableStringItem : IStringItem, ICloneable
 {
     /// <summary>
     ///     Gets the unique tracking identifier for this item

@@ -8,9 +8,9 @@ namespace Witcher3StringEditor.Contracts;
 ///     obfuscated with, both of which come from the game's own content files
 /// </summary>
 [PublicAPI]
-public sealed class W3Language
+public sealed class Language
 {
-    private W3Language(string code, string cultureCode, uint key, uint magic)
+    private Language(string code, string cultureCode, uint key, uint magic)
     {
         Code = code;
         CultureCode = cultureCode;
@@ -46,7 +46,7 @@ public sealed class W3Language
     ///     key identifies no language at all and the containers of those languages are stored without
     ///     obfuscation. They are listed as the languages they are
     /// </remarks>
-    public static IReadOnlyList<W3Language> All { get; } =
+    public static IReadOnlyList<Language> All { get; } =
     [
         new("ar", "ar", 0x00000000, 0x00000000),
         new("br", "pt", 0x00000000, 0x00000000),
@@ -71,7 +71,7 @@ public sealed class W3Language
     /// <summary>
     ///     The language everything that cannot name one falls back to
     /// </summary>
-    public static W3Language Default => FromCode("en")!;
+    public static Language Default => FromCode("en")!;
 
     /// <summary>
     ///     Gets the language that owns the given full key
@@ -82,7 +82,7 @@ public sealed class W3Language
     ///     Only a key owned by exactly one language identifies that language: every language the game
     ///     added after its release shares key 0, so a zero key names none of them
     /// </remarks>
-    public static W3Language? FromKey(uint key)
+    public static Language? FromKey(uint key)
     {
         // Two are taken so that a key with a rival is recognized as one that names neither.
         var owned = All.Where(language => language.Key == key).Take(2).ToArray();
@@ -94,7 +94,7 @@ public sealed class W3Language
     /// </summary>
     /// <param name="code">The code of the language, or its culture code</param>
     /// <returns>The language, or null when no language answers to the code</returns>
-    public static W3Language? FromCode(string? code)
+    public static Language? FromCode(string? code)
     {
         return All.FirstOrDefault(language =>
             string.Equals(language.Code, code, StringComparison.OrdinalIgnoreCase) ||

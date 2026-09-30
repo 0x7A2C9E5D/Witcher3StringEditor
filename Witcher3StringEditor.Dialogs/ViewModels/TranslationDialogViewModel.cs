@@ -42,7 +42,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <summary>
     ///     The collection of items to translate
     /// </summary>
-    private readonly IReadOnlyList<ITrackableW3StringItem> w3StringItems;
+    private readonly IReadOnlyList<ITrackableStringItem> w3StringItems;
 
     /// <summary>
     ///     Initializes a new instance of the TranslationDialogViewModel class
@@ -54,7 +54,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
     /// <param name="dictionaryService">Dictionary service</param>
     public TranslationDialogViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int index, IDialogService dialogService,
+        IReadOnlyList<ITrackableStringItem> w3StringItems, int index, IDialogService dialogService,
         IDictionaryService? dictionaryService)
     {
         this.translator = translator;

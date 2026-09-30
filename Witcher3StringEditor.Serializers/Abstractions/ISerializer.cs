@@ -8,14 +8,14 @@ namespace Witcher3StringEditor.Serializers.Abstractions;
 ///     This interface provides the basic functionality for converting between The Witcher 3 string items and various file
 ///     formats
 /// </summary>
-public interface IW3Serializer
+public interface ISerializer
 {
     /// <summary>
     ///     Determines whether this serializer reads and writes the given file format
     /// </summary>
     /// <param name="fileFormat">The file format to check</param>
     /// <returns>True when this serializer handles that format</returns>
-    public bool CanHandle(W3FileFormat fileFormat);
+    public bool CanHandle(FileFormat fileFormat);
 
     /// <summary>
     ///     Deserializes The Witcher 3 string items from a file
@@ -25,7 +25,7 @@ public interface IW3Serializer
     ///     A task that represents the asynchronous deserialize operation. The task result contains the deserialized W3
     ///     string items
     /// </returns>
-    public Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath);
+    public Task<IReadOnlyList<IStringItem>> Deserialize(string filePath);
 
     /// <summary>
     ///     Serializes The Witcher 3 string items to a file
@@ -36,5 +36,5 @@ public interface IW3Serializer
     ///     A task that represents the asynchronous serialize operation. The task result indicates whether the
     ///     serialization was successful
     /// </returns>
-    public Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3SerializationContext context);
+    public Task<bool> Serialize(IReadOnlyList<IStringItem> w3StringItems, SerializationContext context);
 }
