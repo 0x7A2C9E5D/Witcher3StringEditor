@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
-using Witcher3StringEditor.W3Strings;
 
 namespace Witcher3StringEditor.Models;
 

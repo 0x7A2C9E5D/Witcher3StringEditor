@@ -2,7 +2,6 @@ using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
-using Witcher3StringEditor.Serializers.Model;
 
 namespace Witcher3StringEditor.Serializers;
 

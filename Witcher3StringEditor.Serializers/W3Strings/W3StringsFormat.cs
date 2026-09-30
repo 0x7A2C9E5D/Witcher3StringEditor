@@ -1,10 +1,12 @@
-namespace Witcher3StringEditor.W3Strings;
+using Witcher3StringEditor.Contracts;
+
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
 ///     The fixed facts of the w3strings container layout: its magic, the size of its sections and the
 ///     versions it is written in
 /// </summary>
-public static class W3StringsFormat
+internal static class W3StringsFormat
 {
     /// <summary>
     ///     The size a file has to reach before it can hold the fixed head and tail of a container at all

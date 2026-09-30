@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Witcher3StringEditor.W3Strings;
+using Witcher3StringEditor.Contracts;
 
 namespace Witcher3StringEditor.Miscellaneous;
 

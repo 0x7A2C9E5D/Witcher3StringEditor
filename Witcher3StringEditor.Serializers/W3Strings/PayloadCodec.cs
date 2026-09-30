@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Witcher3StringEditor.W3Strings.Primitives;
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
 internal static class PayloadCodec
 {

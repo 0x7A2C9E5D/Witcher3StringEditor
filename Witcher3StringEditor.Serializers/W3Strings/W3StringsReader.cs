@@ -1,15 +1,13 @@
 using System.Text;
-using Witcher3StringEditor.W3Strings.Model;
-using Witcher3StringEditor.W3Strings.Primitives;
 
-namespace Witcher3StringEditor.W3Strings;
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
 ///     Reads a w3strings container out of a stream
 ///     The container is read section by section and never held whole: the first block says where every
 ///     text sits, so the payloads are fetched one at a time and only the model keeps them
 /// </summary>
-public static class W3StringsReader
+internal static class W3StringsReader
 {
     /// <summary>
     ///     Reads a container from a file stream

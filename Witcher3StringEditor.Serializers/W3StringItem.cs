@@ -1,6 +1,6 @@
 using Witcher3StringEditor.Contracts.Abstractions;
 
-namespace Witcher3StringEditor.Serializers.Model;
+namespace Witcher3StringEditor.Serializers;
 
 /// <summary>
 ///     Represents The Witcher 3 string item with string-based properties

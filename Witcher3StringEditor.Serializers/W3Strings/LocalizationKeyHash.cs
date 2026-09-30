@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace Witcher3StringEditor.W3Strings.Primitives;
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
-public static class LocalizationKeyHash
+internal static class LocalizationKeyHash
 {
     public static uint Compute(string key)
     {

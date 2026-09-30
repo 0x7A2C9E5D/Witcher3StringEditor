@@ -1,9 +1,8 @@
 using System.Globalization;
 using Serilog;
-using Witcher3StringEditor.W3Strings.Model;
-using Witcher3StringEditor.W3Strings.Primitives;
+using Witcher3StringEditor.Contracts.Abstractions;
 
-namespace Witcher3StringEditor.W3Strings;
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
 ///     Assembles a container out of the items that are about to be written
@@ -12,7 +11,7 @@ namespace Witcher3StringEditor.W3Strings;
 ///     up. The caller is told whether the container may be written at all before it touches a file, and
 ///     never has to know any of those rules itself
 /// </summary>
-public static class W3StringsContainerBuilder
+internal static class W3StringsContainerBuilder
 {
     /// <summary>
     ///     Builds the container of the given items
@@ -22,7 +21,7 @@ public static class W3StringsContainerBuilder
     /// <param name="key">The language key the container is written for</param>
     /// <param name="logger">The logger every anomaly is written to</param>
     /// <returns>The container to encode, or null when one of its entries would be unreachable</returns>
-    public static W3StringsFile? Build(IReadOnlyList<Item> items, uint version, uint key, ILogger logger)
+    public static W3StringsFile? Build(IReadOnlyList<IW3StringItem> items, uint version, uint key, ILogger logger)
     {
         var file = new W3StringsFile { Version = version, Key = key };
 
@@ -36,10 +35,10 @@ public static class W3StringsContainerBuilder
 
         foreach (var item in items)
         {
-            if (!TryParseId(item.StringId, out var id))
+            if (!TryParseId(item.StrId, out var id))
             {
                 logger.Error("Skipping an item whose string ID {StringId} is not a 32-bit unsigned integer",
-                    item.StringId);
+                    item.StrId);
                 mayWrite = false;
                 continue;
             }
@@ -103,12 +102,12 @@ public static class W3StringsContainerBuilder
     /// <summary>
     ///     Parses the string id of one item
     /// </summary>
-    /// <param name="stringId">The string id the item carries</param>
+    /// <param name="strId">The string id the item carries</param>
     /// <param name="id">Receives the parsed string id</param>
     /// <returns>True when the id is a 32-bit unsigned integer</returns>
-    private static bool TryParseId(string stringId, out uint id)
+    private static bool TryParseId(string strId, out uint id)
     {
-        return uint.TryParse(stringId, NumberStyles.None, CultureInfo.InvariantCulture, out id);
+        return uint.TryParse(strId, NumberStyles.None, CultureInfo.InvariantCulture, out id);
     }
 
     /// <summary>
@@ -120,7 +119,7 @@ public static class W3StringsContainerBuilder
     /// <param name="keyHash">Receives the key hash, null when the item carries no key at all</param>
     /// <param name="logger">The logger an unusable key hash is written to</param>
     /// <returns>True when the key may be written</returns>
-    private static bool TryResolveKey(Item item, uint id, out uint? keyHash, ILogger logger)
+    private static bool TryResolveKey(IW3StringItem item, uint id, out uint? keyHash, ILogger logger)
     {
         keyHash = null;
         if (!string.IsNullOrWhiteSpace(item.KeyName))
@@ -146,12 +145,3 @@ public static class W3StringsContainerBuilder
         return false;
     }
 }
-
-/// <summary>
-///     One item that is about to be written, as it arrives from the caller
-/// </summary>
-/// <param name="StringId">The string id the item carries, still unparsed</param>
-/// <param name="KeyName">The readable localization key of the item, which wins over the key hash</param>
-/// <param name="KeyHex">The hexadecimal key hash of the item, used when the item carries no key name</param>
-/// <param name="Text">The text of the item, which is written as it is</param>
-public record Item(string StringId, string KeyName, string KeyHex, string Text);

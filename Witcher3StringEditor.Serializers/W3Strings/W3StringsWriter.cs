@@ -1,8 +1,6 @@
 using System.Text;
-using Witcher3StringEditor.W3Strings.Model;
-using Witcher3StringEditor.W3Strings.Primitives;
 
-namespace Witcher3StringEditor.W3Strings;
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
 ///     Encodes a container into a stream
@@ -10,7 +8,7 @@ namespace Witcher3StringEditor.W3Strings;
 ///     be known before the first byte is written. The lengths are therefore measured in a first pass,
 ///     which only needs the size of every text and never the encoded bytes themselves
 /// </summary>
-public static class W3StringsWriter
+internal static class W3StringsWriter
 {
     /// <summary>
     ///     Measures every text and places it in the string buffer, encoding nothing

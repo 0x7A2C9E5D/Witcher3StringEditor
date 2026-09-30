@@ -40,8 +40,4 @@
         <None Remove="Constants\**"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Witcher3StringEditor.W3Strings\Witcher3StringEditor.W3Strings.csproj"/>
-    </ItemGroup>
-
 </Project>

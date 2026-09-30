@@ -15,7 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Witcher3StringEditor.W3Strings\Witcher3StringEditor.W3Strings.csproj"/>
+        <ProjectReference Include="..\Witcher3StringEditor.Contracts\Witcher3StringEditor.Contracts.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Text;
-using Witcher3StringEditor.W3Strings;
 
 namespace Witcher3StringEditor.Contracts.Abstractions;
 

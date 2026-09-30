@@ -1,6 +1,6 @@
-namespace Witcher3StringEditor.W3Strings.Model;
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
-public sealed class W3StringEntry
+internal sealed class W3StringEntry
 {
     /// <summary>
     ///     The id the text is stored under, which a key of the key block resolves to

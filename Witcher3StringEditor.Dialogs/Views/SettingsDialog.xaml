@@ -11,7 +11,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:vm="clr-namespace:Witcher3StringEditor.Dialogs.ViewModels"
     xmlns:common="clr-namespace:Witcher3StringEditor.Contracts;assembly=Witcher3StringEditor.Contracts"
-    xmlns:codec="clr-namespace:Witcher3StringEditor.W3Strings;assembly=Witcher3StringEditor.W3Strings"
+    xmlns:codec="clr-namespace:Witcher3StringEditor.Contracts;assembly=Witcher3StringEditor.Contracts"
     Title="{I18N {x:Static l:LangKeys.SettingsDialogTitle}}"
     Width="800"
     Height="880"

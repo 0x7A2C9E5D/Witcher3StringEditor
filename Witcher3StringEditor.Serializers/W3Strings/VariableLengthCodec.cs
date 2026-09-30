@@ -1,9 +1,9 @@
-namespace Witcher3StringEditor.W3Strings.Primitives;
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
 ///     Encodes and decodes the bit6 counts the w3strings sections are introduced by
 /// </summary>
-public static class VariableLengthCodec
+internal static class VariableLengthCodec
 {
     /// <summary>
     ///     Reads a bit6 encoded count from a stream

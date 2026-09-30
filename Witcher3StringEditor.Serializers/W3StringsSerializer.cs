@@ -3,8 +3,7 @@ using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
-using Witcher3StringEditor.Serializers.Model;
-using Witcher3StringEditor.W3Strings;
+using Witcher3StringEditor.Serializers.W3Strings;
 
 namespace Witcher3StringEditor.Serializers;
 
@@ -81,7 +80,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
             // that cannot be written leaves the destination exactly as it was. What makes an item
             // unusable is a rule of the format, so it is not decided here.
             var container = W3StringsContainerBuilder.Build(
-                w3StringItems.Select(item => new Item(item.StrId, item.KeyName, item.KeyHex, item.Text)).ToList(),
+                w3StringItems,
                 ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
                 context.TargetLanguage.Key, // The language key is what every id and text is obfuscated by
                 logger);
@@ -128,7 +127,6 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     /// </summary>
     /// <param name="filePath">The path to the W3Strings file to read</param>
     /// <returns>The string items of the container, in container order</returns>
-    /// <exception cref="W3StringsException">Thrown when the file is not a container this build can decode</exception>
     private static List<IW3StringItem> ReadItems(string filePath)
     {
         using var stream = File.OpenRead(filePath); // The codec reads a stream, the serializer knows the path
@@ -143,13 +141,6 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
         // Reading only decodes: what the container says about itself is not checked here, the check
         // belongs to the save that would produce a w3strings file again. How its entries are shown as
         // items is a rule of the format, so it is not decided here either.
-        var items = new List<IW3StringItem>();
-        items.AddRange(W3StringsItemReader.ReadItems(container).Select(item => new W3StringItem
-        {
-            StrId = item.StringId, // String id
-            KeyHex = item.KeyHex, // Localisation key hash, when the entry has one
-            Text = item.Text // Decoded text
-        }));
-        return items; // Return list of items
+        return [.. W3StringsItemReader.ReadItems(container)];
     }
 }

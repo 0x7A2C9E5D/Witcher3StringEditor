@@ -1,6 +1,6 @@
-namespace Witcher3StringEditor.W3Strings.Model;
+namespace Witcher3StringEditor.Serializers.W3Strings;
 
-public sealed class W3StringsFile
+internal sealed class W3StringsFile
 {
     /// <summary>
     ///     The version the container is written with, which decides how its texts are encoded

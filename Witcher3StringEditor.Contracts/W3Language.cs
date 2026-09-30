@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace Witcher3StringEditor.W3Strings;
+namespace Witcher3StringEditor.Contracts;
 
 /// <summary>
 ///     A language a container can be written for
