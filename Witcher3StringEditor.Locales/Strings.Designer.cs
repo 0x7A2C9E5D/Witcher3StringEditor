@@ -394,6 +394,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Game Version.
+        /// </summary>
+        public static string GameVersion {
+            get {
+                return ResourceManager.GetString("GameVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End Index.
         /// </summary>
         public static string EndIndex {

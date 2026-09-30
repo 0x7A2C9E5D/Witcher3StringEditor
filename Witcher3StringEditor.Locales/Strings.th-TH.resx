@@ -414,6 +414,9 @@
     <data name="Encoding" xml:space="preserve">
     <value>การเข้ารหัส:</value>
   </data>
+    <data name="GameVersion" xml:space="preserve">
+    <value>เวอร์ชันเกม</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>เวอร์ชัน:</value>
   </data>

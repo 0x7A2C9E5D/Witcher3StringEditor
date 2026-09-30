@@ -414,6 +414,9 @@
     <data name="Encoding" xml:space="preserve">
     <value>编码:</value>
   </data>
+    <data name="GameVersion" xml:space="preserve">
+    <value>游戏版本</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>版本:</value>
   </data>

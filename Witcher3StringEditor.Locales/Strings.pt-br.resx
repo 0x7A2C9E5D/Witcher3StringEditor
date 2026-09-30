@@ -307,6 +307,9 @@
     <data name="Encoding" xml:space="preserve">
     <value>Codificação:</value>
   </data>
+    <data name="GameVersion" xml:space="preserve">
+    <value>Versão do Jogo</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Versão:</value>
   </data>

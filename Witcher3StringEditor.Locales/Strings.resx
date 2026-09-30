@@ -414,6 +414,9 @@
     <data name="Encoding" xml:space="preserve">
     <value>Encoding:</value>
   </data>
+    <data name="GameVersion" xml:space="preserve">
+    <value>Game Version</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Version:</value>
   </data>

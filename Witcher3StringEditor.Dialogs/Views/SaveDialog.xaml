@@ -147,11 +147,11 @@
                                     </Style.Triggers>
                                 </Style>
                             </Grid.Style>
-                            <!-- Payload encoding label -->
+                            <!-- Game version label -->
                             <TextBlock
                                 Margin="0,16,0,0"
                                 VerticalAlignment="Center"
-                                Text="{I18N {x:Static l:LangKeys.Encoding}}" />
+                                Text="{I18N {x:Static l:LangKeys.GameVersion}}" />
                             <!-- Payload encoding selection combobox -->
                             <ComboBox
                                 Margin="0,16,0,0"
