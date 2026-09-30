@@ -87,9 +87,9 @@
             VerticalAlignment="Center"
             Text="{I18N {x:Static l:LangKeys.SettingsDialogTitle}}" />
         <!-- Scrollable content area containing all settings cards -->
-            <!-- The vertical margins keep breathing room between the first/last card and the window edges -->
-            <ScrollViewer Grid.Row="1">
-                <iwk:SimpleStackPanel Margin="36,8,36,24" Spacing="4">
+        <!-- The vertical margins keep breathing room between the first/last card and the window edges -->
+        <ScrollViewer Grid.Row="1">
+            <iwk:SimpleStackPanel Margin="36,8,36,24" Spacing="4">
                 <!-- Save settings group header -->
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                            Text="{I18N {x:Static l:LangKeys.SaveSettingsHeader}}" />

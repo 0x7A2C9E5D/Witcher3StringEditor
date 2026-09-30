@@ -73,7 +73,9 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
         {
             // The path is built first: every anomaly the container is checked for is logged with the
             // file it is about, which is the only way to tell two runs apart in the log.
-            var saveLang = context.TargetLanguage.Code.ToLowerInvariant(); // Lowercase content-file code of the target language for file naming
+            var saveLang =
+                context.TargetLanguage.Code
+                    .ToLowerInvariant(); // Lowercase content-file code of the target language for file naming
             var outputW3StringsPath =
                 Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings"); // Destination of the encoded container
             var logger = Log.ForContext("Container", outputW3StringsPath); // Every line names its container
@@ -94,7 +96,9 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
             // The container is streamed straight into its destination, so the encoded file is never
             // held in memory: only one payload exists at a time.
             using (var stream = File.Create(outputW3StringsPath))
+            {
                 await Task.Run(() => W3StringsWriter.Write(stream, container)); // Encode off the calling thread
+            }
 
             Log.Information("Encoded {Count} item(s) as W3Strings v{Version} to {Path}", w3StringItems.Count,
                 ContainerVersion(context.Encoding), outputW3StringsPath); // Log the encoded container
