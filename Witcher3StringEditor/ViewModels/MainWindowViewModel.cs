@@ -115,7 +115,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     ///     Gets or sets the page size
     /// </summary>
     [ObservableProperty]
-    public partial int PageSize { get; set; }
+    public partial int PageSize { get; private set; }
 
     /// <summary>
     ///     Gets or sets the source collection for the DataGrid
