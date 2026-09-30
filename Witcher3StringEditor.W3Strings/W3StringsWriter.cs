@@ -29,7 +29,8 @@ public static class W3StringsWriter
     /// <param name="file">The container to encode</param>
     /// <returns>The slot of every entry, and the size of the buffer they occupy</returns>
     /// <remarks>
-    ///     The texts are laid out one behind the other, each closed by the terminator the format asks for
+    ///     The texts are laid out one behind the other, each closed by the terminator the format asks
+    ///     for, so the buffer holds exactly what they need and nothing more
     /// </remarks>
     private static Buffer BufferOf(W3StringsFile file)
     {
@@ -45,9 +46,7 @@ public static class W3StringsWriter
             cursor += (uint)lengths[i] + 1;
         }
 
-        // A container may declare a larger buffer than its entries need, and the room left over is
-        // written as zeroes.
-        return new Buffer(lengths, offsets, Math.Max(cursor * (uint)unit, file.DeclaredBufferUnits * unit));
+        return new Buffer(lengths, offsets, cursor * (uint)unit);
     }
 
     /// <summary>
@@ -83,13 +82,12 @@ public static class W3StringsWriter
         WriteCount(writer, buffer.Units(file.Unit));
         WriteBuffer(writer, file, buffer);
 
-        if (file.Trailer.Length > 0) writer.Write(file.Trailer);
         writer.Write(file.Key2);
     }
 
     /// <summary>
-    ///     Writes the string buffer: every text, closed by its terminator, and the zeroes the declared
-    ///     size leaves over
+    ///     Writes the string buffer: every text, closed by its terminator, and the zeroes the size the
+    ///     container gives the buffer leaves over
     /// </summary>
     /// <param name="writer">The writer the buffer goes to</param>
     /// <param name="file">The container to encode</param>
@@ -99,18 +97,17 @@ public static class W3StringsWriter
         var unit = file.Unit;
         var magic = file.Magic;
 
-        for (var i = 0; i < file.Strings.Count; i++)
+        foreach (var payload in file.Strings.Select(t => PayloadCodec.Encode(t.Value, magic, unit, out _)))
         {
-            var payload = PayloadCodec.Encode(file.Strings[i].Value, magic, unit, out _);
             writer.Write(payload);
             WriteZeros(writer, unit); // The terminator that closes the text
         }
 
-        WriteZeros(writer, buffer.Size - buffer.Used(unit)); // Whatever the declared size leaves over
+        WriteZeros(writer, buffer.Size - buffer.Used(unit)); // Whatever the buffer size leaves over
     }
 
     /// <summary>
-    ///     Writes a run of zero bytes, which the terminator and the room a declared buffer leaves over
+    ///     Writes a run of zero bytes, which the terminator and the room a larger buffer leaves over
     ///     are made of
     /// </summary>
     /// <param name="writer">The writer the zeroes go to</param>
@@ -142,7 +139,8 @@ public static class W3StringsWriter
     private readonly record struct Buffer(int[] Lengths, uint[] Offsets, long Size)
     {
         /// <summary>
-        ///     Gets the size the buffer occupies once no declared room is left over
+        ///     Gets the size the entries and their terminators occupy, leaving out the room the
+        ///     container gives the buffer beyond them
         /// </summary>
         /// <param name="unit">The number of bytes one character takes in the container</param>
         /// <returns>The size of the entries and their terminators, in bytes</returns>

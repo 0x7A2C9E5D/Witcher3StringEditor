@@ -49,25 +49,24 @@ public static class W3StringsReader
     private static W3StringsFile ReadContainer(Stream input)
     {
         // The last two bytes hold the tail half of the language key, so no section may reach into them.
-        var payloadLimit = input.Length - 2;
+        var key2Offset = input.Length - 2;
 
         using var reader = new BinaryReader(input, Encoding.UTF8, true); // The stream stays open for the caller
         var head = ReadHead(reader, input.Length);
 
         // The layout of the payloads is needed before any text can be decoded.
-        var entries = ReadStringEntries(reader, payloadLimit);
-        var keys = ReadKeys(reader, payloadLimit);
-        var buffer = ReadBuffer(reader, payloadLimit, head.Unit);
+        var entries = ReadStringEntries(reader, key2Offset);
+        var keys = ReadKeys(reader, key2Offset);
+        var buffer = ReadBuffer(reader, key2Offset, head.Unit);
 
         var payloads = ReadPayloads(input, entries, buffer, head.Unit);
 
         // The key closes the container with its tail half, and it is what the magic every id and
         // payload was obfuscated with follows from.
-        var key = head.Key | ReadKey2(reader, payloadLimit);
+        var key = head.Key | ReadKey2(reader, key2Offset);
         var magic = W3StringsFormat.MagicOf(key);
 
-        return ToFile(head with { Key = key }, magic, buffer, ReadTrailer(input, buffer.End, payloadLimit),
-            entries, keys, payloads, head.Unit);
+        return ToFile(head with { Key = key }, magic, entries, keys, payloads, head.Unit);
     }
 
     /// <summary>
@@ -97,12 +96,12 @@ public static class W3StringsReader
     ///     Reads the first block: where every text sits in the string buffer
     /// </summary>
     /// <param name="reader">The reader the block comes from</param>
-    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
     /// <returns>One entry per text, without its payload</returns>
-    private static StringEntry[] ReadStringEntries(BinaryReader reader, long payloadLimit)
+    private static StringEntry[] ReadStringEntries(BinaryReader reader, long key2Offset)
     {
         var count = CheckBlockFits(reader.BaseStream.Position, VariableLengthCodec.Read(reader.BaseStream),
-            W3StringsFormat.Block1EntrySize, payloadLimit, "block1");
+            W3StringsFormat.Block1EntrySize, key2Offset, "block1");
 
         var entries = new StringEntry[count];
         for (var i = 0; i < count; i++)
@@ -120,12 +119,12 @@ public static class W3StringsReader
     ///     Reads the second block: which key resolves to which id
     /// </summary>
     /// <param name="reader">The reader the block comes from</param>
-    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
     /// <returns>One entry per key, still obfuscated</returns>
-    private static KeyEntry[] ReadKeys(BinaryReader reader, long payloadLimit)
+    private static KeyEntry[] ReadKeys(BinaryReader reader, long key2Offset)
     {
         var count = CheckBlockFits(reader.BaseStream.Position, VariableLengthCodec.Read(reader.BaseStream),
-            W3StringsFormat.Block2EntrySize, payloadLimit, "block2");
+            W3StringsFormat.Block2EntrySize, key2Offset, "block2");
 
         var keys = new KeyEntry[count];
         for (var i = 0; i < count; i++)
@@ -139,49 +138,32 @@ public static class W3StringsReader
     }
 
     /// <summary>
-    ///     Reads the size of the string buffer and where it starts
+    ///     Reads the size the container gives its string buffer, which says where the buffer ends
     /// </summary>
     /// <param name="reader">The reader the size comes from</param>
-    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The extent of the string buffer</returns>
     /// <exception cref="W3StringsException">Thrown when the buffer reaches past the end of the file</exception>
-    private static Buffer ReadBuffer(BinaryReader reader, long payloadLimit, int unit)
+    private static Buffer ReadBuffer(BinaryReader reader, long key2Offset, int unit)
     {
         var units = VariableLengthCodec.Read(reader.BaseStream);
         var start = reader.BaseStream.Position;
         var end = start + units * unit;
-        return end > payloadLimit
-            ? throw new W3StringsException($"string buffer overruns file ({end} > {payloadLimit})")
+        return end > key2Offset
+            ? throw new W3StringsException($"string buffer overruns file ({end} > {key2Offset})")
             : new Buffer(start, units, end);
-    }
-
-    /// <summary>
-    ///     Reads the bytes between the string buffer and the language key at the end of the container
-    /// </summary>
-    /// <param name="input">The stream to read from</param>
-    /// <param name="start">The offset the trailer starts at</param>
-    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
-    /// <returns>The trailer, empty when the buffer ends where the container does</returns>
-    private static byte[] ReadTrailer(Stream input, long start, long payloadLimit)
-    {
-        var trailer = new byte[payloadLimit - start];
-        if (trailer.Length == 0) return trailer;
-
-        input.Seek(start, SeekOrigin.Begin);
-        input.ReadExactly(trailer);
-        return trailer;
     }
 
     /// <summary>
     ///     Reads the tail half of the language key, which closes the container
     /// </summary>
     /// <param name="reader">The reader the key comes from</param>
-    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
     /// <returns>The tail half of the language key</returns>
-    private static ushort ReadKey2(BinaryReader reader, long payloadLimit)
+    private static ushort ReadKey2(BinaryReader reader, long key2Offset)
     {
-        reader.BaseStream.Seek(payloadLimit, SeekOrigin.Begin);
+        reader.BaseStream.Seek(key2Offset, SeekOrigin.Begin);
         return reader.ReadUInt16();
     }
 
@@ -190,22 +172,18 @@ public static class W3StringsReader
     /// </summary>
     /// <param name="head">The head of the container, holding the version and the full language key</param>
     /// <param name="magic">The magic every id and payload was obfuscated with</param>
-    /// <param name="buffer">The extent of the string buffer</param>
-    /// <param name="trailer">The bytes behind the string buffer</param>
     /// <param name="entries">The entries of the first block</param>
     /// <param name="keys">The entries of the second block</param>
     /// <param name="payloads">The stored bytes of every entry, in entry order, which decoding consumes</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
-    private static W3StringsFile ToFile(Head head, uint magic, Buffer buffer,
-        byte[] trailer, StringEntry[] entries, KeyEntry[] keys, byte[][] payloads, int unit)
+    private static W3StringsFile ToFile(Head head, uint magic, StringEntry[] entries, KeyEntry[] keys,
+        byte[][] payloads, int unit)
     {
         var file = new W3StringsFile
         {
             Version = head.Version,
-            Key = head.Key,
-            DeclaredBufferUnits = buffer.Units,
-            Trailer = trailer
+            Key = head.Key
         };
 
         // Only the id and the text survive: where the container put a text and how long it said it was
@@ -229,17 +207,17 @@ public static class W3StringsReader
     /// <param name="start">The offset the block starts at</param>
     /// <param name="count">The number of entries the container declares</param>
     /// <param name="entrySize">The size of one entry in bytes</param>
-    /// <param name="payloadLimit">The offset the language key at the end of the file starts at</param>
+    /// <param name="key2Offset">The offset the language key at the end of the file starts at</param>
     /// <param name="name">The name of the block, used in the error message</param>
     /// <returns>The number of entries, as an index</returns>
     /// <exception cref="W3StringsException">Thrown when the block does not fit before the payload limit</exception>
-    private static int CheckBlockFits(long start, uint count, int entrySize, long payloadLimit, string name)
+    private static int CheckBlockFits(long start, uint count, int entrySize, long key2Offset, string name)
     {
         var end = start + count * entrySize;
         // The next section and, at the very least, the string buffer have to follow.
-        if (end >= payloadLimit)
+        if (end >= key2Offset)
             throw new W3StringsException(
-                $"{name} declares {count} entries, which does not fit before the end of the file ({end} >= {payloadLimit})");
+                $"{name} declares {count} entries, which does not fit before the end of the file ({end} >= {key2Offset})");
 
         // A block that fits a file of this size cannot hold more entries than an index can address.
         return (int)count;
@@ -311,8 +289,12 @@ public static class W3StringsReader
     ///     The extent of the string buffer
     /// </summary>
     /// <param name="Start">The offset the buffer starts at, in bytes</param>
-    /// <param name="Units">The size of the buffer, in units</param>
+    /// <param name="Units">The size the container gives the buffer, in units</param>
     /// <param name="End">The offset the buffer ends at, in bytes</param>
+    /// <remarks>
+    ///     The size is used to find the extent of the buffer and to hold every entry inside it, and then
+    ///     dropped: the writer works the size of the buffer out from the texts it lays out in it
+    /// </remarks>
     private readonly record struct Buffer(long Start, uint Units, long End);
 
     /// <summary>

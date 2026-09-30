@@ -47,8 +47,4 @@ public sealed class W3StringsFile
     public List<W3StringEntry> Strings { get; } = [];
 
     public List<W3KeyEntry> Keys { get; } = [];
-
-    public uint DeclaredBufferUnits { get; init; }
-
-    public byte[] Trailer { get; init; } = [];
 }
