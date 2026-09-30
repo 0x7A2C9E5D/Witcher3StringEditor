@@ -17,7 +17,6 @@ public static class W3StringsWriter
     /// </summary>
     /// <param name="output">The stream the container is written to</param>
     /// <param name="file">The container to encode</param>
-    /// <exception cref="ArgumentNullException">Thrown when the stream or the container is null</exception>
     public static void Write(Stream output, W3StringsFile file)
     {
         WriteContainer(output, file, BufferOf(file));
