@@ -174,8 +174,9 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
         var container = new W3StringsFile
         {
             Version = ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
-            Magic = language.Magic, // Magic XORed into the stored ids
-            Key = language.Key // Language key, stored split over the header and the end of the container
+            // The key is the only thing a container is told about its language: the magic that every id
+            // and text is obfuscated with follows from it.
+            Key = language.Key
         };
 
         var mayWrite = true;

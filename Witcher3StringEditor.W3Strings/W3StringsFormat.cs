@@ -23,7 +23,7 @@ public static class W3StringsFormat
     ///     that way
     /// </summary>
     public const uint Utf16LeVersion = 162;
-    
+
     /// <summary>
     ///     The size of the first block of entries: 12 bytes
     /// </summary>
@@ -48,6 +48,29 @@ public static class W3StringsFormat
     ///     The magic bytes of the container: "RTSW"
     /// </summary>
     public static ReadOnlySpan<byte> MagicBytes => "RTSW"u8;
+
+    /// <summary>
+    ///     Gets the magic a container of the given language key obfuscates its ids and texts with
+    /// </summary>
+    /// <param name="key">The full 32-bit language key, both halves together</param>
+    /// <returns>The magic of the language that owns the key, or zero for a key no language owns</returns>
+    /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
+    /// <remarks>
+    ///     Every language the game added after its release shares key 0, so a zero key identifies no
+    ///     language but is not an error either: those containers are stored without obfuscation. Any
+    ///     other key that owns no language means the payload was obfuscated with a magic this build does
+    ///     not know, and decoding it as if it were cleartext would turn every string into garbage
+    ///     without a single error, which is worse than refusing the file
+    /// </remarks>
+    public static uint MagicOf(uint key)
+    {
+        var language = W3Language.FromKey(key);
+        if (language is not null) return language.Magic;
+        if (key == 0) return 0;
+        throw new W3StringsException(
+            $"unknown language key 0x{key:X8}, so the string payload cannot be decoded " +
+            "(the language is not supported by this build)");
+    }
 
     /// <summary>
     ///     The size of the offset unit in bytes: 1 byte for UTF-8, 2 bytes for UTF-16LE

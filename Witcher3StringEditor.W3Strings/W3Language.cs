@@ -48,24 +48,24 @@ public sealed class W3Language
     /// </remarks>
     public static IReadOnlyList<W3Language> All { get; } =
     [
-        new(code: "ar", cultureCode: "ar", key: 0x00000000, magic: 0x00000000),
-        new(code: "br", cultureCode: "pt", key: 0x00000000, magic: 0x00000000),
-        new(code: "cn", cultureCode: "zh-Hans", key: 0x00000000, magic: 0x00000000),
-        new(code: "cz", cultureCode: "cs", key: 0x24987354, magic: 0x21793217),
-        new(code: "de", cultureCode: "de", key: 0x75886138, magic: 0x42791159),
-        new(code: "en", cultureCode: "en", key: 0x43975139, magic: 0x79321793),
-        new(code: "es", cultureCode: "es", key: 0x18796651, magic: 0x42387566),
-        new(code: "esMX", cultureCode: "es-MX", key: 0x00000000, magic: 0x00000000),
-        new(code: "fr", cultureCode: "fr", key: 0x23863176, magic: 0x75921975),
-        new(code: "hu", cultureCode: "hu", key: 0x42378932, magic: 0x67823218),
-        new(code: "it", cultureCode: "it", key: 0x45931894, magic: 0x12375973),
-        new(code: "jp", cultureCode: "ja", key: 0x54834893, magic: 0x59825646),
-        new(code: "kr", cultureCode: "ko", key: 0x00000000, magic: 0x00000000),
-        new(code: "pl", cultureCode: "pl", key: 0x83496237, magic: 0x73946816),
-        new(code: "ru", cultureCode: "ru", key: 0x63481486, magic: 0x42386347),
-        new(code: "zh", cultureCode: "zh-Hant", key: 0x18632176, magic: 0x16875467),
-        new(code: "tr", cultureCode: "tr", key: 0x00000000, magic: 0x00000000),
-        new(code: "ua", cultureCode: "uk", key: 0x00000000, magic: 0x00000000)
+        new("ar", "ar", 0x00000000, 0x00000000),
+        new("br", "pt", 0x00000000, 0x00000000),
+        new("cn", "zh-Hans", 0x00000000, 0x00000000),
+        new("cz", "cs", 0x24987354, 0x21793217),
+        new("de", "de", 0x75886138, 0x42791159),
+        new("en", "en", 0x43975139, 0x79321793),
+        new("es", "es", 0x18796651, 0x42387566),
+        new("esMX", "es-MX", 0x00000000, 0x00000000),
+        new("fr", "fr", 0x23863176, 0x75921975),
+        new("hu", "hu", 0x42378932, 0x67823218),
+        new("it", "it", 0x45931894, 0x12375973),
+        new("jp", "ja", 0x54834893, 0x59825646),
+        new("kr", "ko", 0x00000000, 0x00000000),
+        new("pl", "pl", 0x83496237, 0x73946816),
+        new("ru", "ru", 0x63481486, 0x42386347),
+        new("zh", "zh-Hant", 0x18632176, 0x16875467),
+        new("tr", "tr", 0x00000000, 0x00000000),
+        new("ua", "uk", 0x00000000, 0x00000000)
     ];
 
     /// <summary>

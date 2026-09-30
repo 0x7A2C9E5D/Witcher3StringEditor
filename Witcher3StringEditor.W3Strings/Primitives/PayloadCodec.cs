@@ -31,8 +31,8 @@ internal static class PayloadCodec
             key = Rotl16(key);
         }
     }
-    
-    
+
+
     public static string Decode(Span<byte> stored, int length, uint magic, int unit)
     {
         if (unit == 2) XorUtf16(stored, length, magic);
