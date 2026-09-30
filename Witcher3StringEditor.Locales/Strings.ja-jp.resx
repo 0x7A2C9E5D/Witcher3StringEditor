@@ -420,6 +420,9 @@
     <data name="PreferredGameVersion" xml:space="preserve">
     <value>優先ゲームバージョン</value>
   </data>
+    <data name="PreferredGameVersionDescription" xml:space="preserve">
+    <value>ウィッチャー3の文字列ファイルを保存する際のゲームバージョンを選択してください</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>バージョン:</value>
   </data>

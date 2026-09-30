@@ -420,6 +420,9 @@
     <data name="PreferredGameVersion" xml:space="preserve">
     <value>Version du jeu préférée</value>
   </data>
+    <data name="PreferredGameVersionDescription" xml:space="preserve">
+    <value>Sélectionnez la version du jeu pour enregistrer les fichiers de texte de The Witcher 3</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Version:</value>
   </data>

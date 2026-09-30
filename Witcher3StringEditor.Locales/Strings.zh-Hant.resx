@@ -420,6 +420,9 @@
     <data name="PreferredGameVersion" xml:space="preserve">
     <value>預設遊戲版本</value>
   </data>
+    <data name="PreferredGameVersionDescription" xml:space="preserve">
+    <value>選擇保存巫師3文字檔案時使用的遊戲版本</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>版本:</value>
   </data>

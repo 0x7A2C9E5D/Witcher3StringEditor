@@ -313,6 +313,9 @@
     <data name="PreferredGameVersion" xml:space="preserve">
     <value>Preferowana wersja gry</value>
   </data>
+    <data name="PreferredGameVersionDescription" xml:space="preserve">
+    <value>Wybierz wersję gry do zapisywania plików ciągów znaków Wiedźmina 3</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Wersja:</value>
   </data>

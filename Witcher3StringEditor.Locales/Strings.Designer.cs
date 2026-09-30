@@ -412,6 +412,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select the game version used when saving The Witcher 3 string files.
+        /// </summary>
+        public static string PreferredGameVersionDescription {
+            get {
+                return ResourceManager.GetString("PreferredGameVersionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End Index.
         /// </summary>
         public static string EndIndex {

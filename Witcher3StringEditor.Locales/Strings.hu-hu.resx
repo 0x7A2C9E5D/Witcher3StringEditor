@@ -313,6 +313,9 @@
     <data name="PreferredGameVersion" xml:space="preserve">
     <value>Kedvelt játékverzió</value>
   </data>
+    <data name="PreferredGameVersionDescription" xml:space="preserve">
+    <value>Válassza ki a játékverziót a The Witcher 3 karakterlánc fájlok mentéséhez</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Verzió:</value>
   </data>

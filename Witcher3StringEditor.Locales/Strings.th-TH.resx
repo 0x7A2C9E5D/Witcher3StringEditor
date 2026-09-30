@@ -420,6 +420,9 @@
     <data name="PreferredGameVersion" xml:space="preserve">
     <value>เวอร์ชันเกมที่ต้องการ</value>
   </data>
+    <data name="PreferredGameVersionDescription" xml:space="preserve">
+    <value>เลือกเวอร์ชันเกมที่ใช้เมื่อบันทึกไฟล์ข้อความ The Witcher 3</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>เวอร์ชัน:</value>
   </data>
