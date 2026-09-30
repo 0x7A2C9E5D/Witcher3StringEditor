@@ -61,13 +61,13 @@ public static class W3StringsReader
 
         var payloads = ReadPayloads(input, entries, buffer, head.Unit);
 
-        // The language completes the magic every id and payload was obfuscated with. Its two halves are
-        // apart: the head one was read with the header, the tail one closes the container.
+        // The magic every id and payload was obfuscated with is what the key of the container is
+        // looked up for. Its two halves are apart: the head one was read with the header, the tail one
+        // closes the container.
         var key = head.Key | ReadKey2(reader, payloadLimit);
-        var language = ResolveLanguage(key);
-        var magic = language?.Magic ?? 0;
+        var magic = ResolveMagic(key);
 
-        return ToFile(head, key, language, magic, buffer, ReadTrailer(input, buffer.End, payloadLimit),
+        return ToFile(head with { Key = key }, magic, buffer, ReadTrailer(input, buffer.End, payloadLimit),
             entries, keys, payloads, head.Unit);
     }
 
@@ -189,9 +189,7 @@ public static class W3StringsReader
     /// <summary>
     ///     Builds the container out of the sections that were read, decoding every text on the way
     /// </summary>
-    /// <param name="head">The head of the container</param>
-    /// <param name="key">The full language key, both halves together</param>
-    /// <param name="language">The resolved language, or null for the languages that share key 0</param>
+    /// <param name="head">The head of the container, holding the version and the full language key</param>
     /// <param name="magic">The magic every id and payload was obfuscated with</param>
     /// <param name="buffer">The extent of the string buffer</param>
     /// <param name="trailer">The bytes behind the string buffer</param>
@@ -200,14 +198,13 @@ public static class W3StringsReader
     /// <param name="payloads">The stored bytes of every entry, in entry order, which decoding consumes</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
-    private static W3StringsFile ToFile(Head head, uint key, W3Language? language, uint magic, Buffer buffer,
+    private static W3StringsFile ToFile(Head head, uint magic, Buffer buffer,
         byte[] trailer, StringEntry[] entries, KeyEntry[] keys, byte[][] payloads, int unit)
     {
         var file = new W3StringsFile
         {
             Version = head.Version,
-            Key = key,
-            Language = language,
+            Key = head.Key,
             Magic = magic,
             DeclaredBufferUnits = buffer.Units,
             Trailer = trailer
@@ -305,25 +302,25 @@ public static class W3StringsReader
     }
 
     /// <summary>
-    ///     Resolves the language, and with it the magic every id and payload was obfuscated with
+    ///     Resolves the magic every id and payload of the container was obfuscated with
     /// </summary>
     /// <param name="key">The full language key, both halves together</param>
-    /// <returns>The language, or null for the languages that share key 0</returns>
+    /// <returns>The magic of the language that owns the key, or zero for a key no language owns</returns>
     /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
     /// <remarks>
-    ///     Only the full key names a language. Half of one would name a language at best by luck, and
-    ///     the magic it would decode the payload with is what every string of the container depends on,
-    ///     so a container whose two halves do not agree with a known language is refused rather than
-    ///     guessed at
+    ///     Reading needs the magic alone, not the language it belongs to: the language is only how the
+    ///     key is turned into one. Only the full key names a language, since half of one would name a
+    ///     language at best by luck, and every string of the container is decoded with the magic that
+    ///     comes out of it
     /// </remarks>
-    private static W3Language? ResolveLanguage(uint key)
+    private static uint ResolveMagic(uint key)
     {
         var language = W3Language.FromKey(key);
-        if (language is not null) return language;
+        if (language is not null) return language.Magic;
 
         // Every language the game added after its release shares key 0, so a zero key identifies no
         // language but is not an error either: those containers are stored without obfuscation.
-        if (key == 0) return null;
+        if (key == 0) return 0;
 
         // Any other key means the payload was obfuscated with a magic we do not know. Decoding it as
         // if it were cleartext would turn every string into garbage without a single error, which is

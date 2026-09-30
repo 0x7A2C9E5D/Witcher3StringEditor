@@ -21,8 +21,11 @@ public sealed class W3StringsFile
     /// </summary>
     public ushort Key2 => (ushort)(Key & 0xFFFF);
 
-    public W3Language? Language { get; init; }
-
+    /// <summary>
+    ///     The magic every id and text of the container was obfuscated with, which follows from the
+    ///     language key. The codec works with the magic alone: it decodes and encodes with it, and which
+    ///     language the key names is of no concern to it
+    /// </summary>
     public uint Magic { get; init; }
 
     public int Unit => W3StringsFormat.OffsetUnitSize(Version);

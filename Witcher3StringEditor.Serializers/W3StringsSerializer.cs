@@ -133,9 +133,11 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
         using var stream = File.OpenRead(filePath); // The codec reads a stream, the serializer knows the path
         var container = W3StringsReader.Read(stream); // Parse the container
 
-        Log.Information("Read W3Strings v{Version} container ({Language}) from {Path}", container.Version,
-            container.Language?.ToString() ?? "unknown",
-            filePath); // Log the container facts, including the detected language
+        // The magic is all the container says about the language it was written for, and it is what the
+        // ids and texts were decoded with.
+        Log.Information("Read W3Strings v{Version} container (magic {Magic}) from {Path}", container.Version,
+            container.Magic == 0 ? "none" : $"0x{container.Magic:X8}",
+            filePath); // Log the container facts
 
         // Reading only decodes: what the container says about itself is not checked here, the check
         // belongs to the save that would produce a w3strings file again.
@@ -172,7 +174,6 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
         var container = new W3StringsFile
         {
             Version = ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
-            Language = language, // Target language
             Magic = language.Magic, // Magic XORed into the stored ids
             Key = language.Key // Language key, stored split over the header and the end of the container
         };
