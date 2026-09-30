@@ -49,7 +49,8 @@ public partial class SaveDialogViewModel
     /// <param name="dialogService">The dialog service used to report the result of the save operation</param>
     /// <param name="w3StringItems">The collection of The Witcher 3 string items to save</param>
     /// <param name="outputDirectory">The initial output directory for saving</param>
-    public SaveDialogViewModel(IAppSettings appSettings, IW3SerializerCoordinator serializer, IDialogService dialogService,
+    public SaveDialogViewModel(IAppSettings appSettings, IW3SerializerCoordinator serializer,
+        IDialogService dialogService,
         IReadOnlyList<IW3StringItem> w3StringItems, string outputDirectory)
     {
         OutputDirectory = outputDirectory;

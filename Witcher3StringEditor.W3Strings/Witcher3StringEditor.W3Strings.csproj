@@ -25,9 +25,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="JetBrains.Annotations">
-        <HintPath>..\..\..\..\..\..\Program Files\JetBrains\Rider\r2r\2026.2.3R\DE93FF1D3973F4614ECBB3E628DD800\JetBrains.Annotations.dll</HintPath>
-      </Reference>
+        <Reference Include="JetBrains.Annotations">
+            <HintPath>..\..\..\..\..\..\Program Files\JetBrains\Rider\r2r\2026.2.3R\DE93FF1D3973F4614ECBB3E628DD800\JetBrains.Annotations.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

@@ -10,7 +10,6 @@ using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 

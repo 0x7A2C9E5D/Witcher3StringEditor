@@ -104,7 +104,8 @@
                             <DataTemplate>
                                 <TextBlock>
                                     <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource W3FileFormatToLocalizedStringConverter}">
+                                        <MultiBinding
+                                            Converter="{StaticResource W3FileFormatToLocalizedStringConverter}">
                                             <Binding />
                                             <Binding Path="DataContext.AppSettings.Language"
                                                      RelativeSource="{RelativeSource AncestorType=ComboBox}" />

@@ -20,16 +20,6 @@ namespace Witcher3StringEditor.Serializers;
 public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
 {
     /// <summary>
-    ///     Determines whether this serializer reads and writes the given file format
-    /// </summary>
-    /// <param name="fileFormat">The file format to check</param>
-    /// <returns>True when the format is a W3Strings container</returns>
-    public bool CanHandle(W3FileFormat fileFormat)
-    {
-        return fileFormat == W3FileFormat.W3Strings;
-    }
-
-    /// <summary>
     ///     Container version of the UTF-8 generation
     /// </summary>
     private const uint Utf8ContainerVersion = 164;
@@ -40,13 +30,13 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     private const uint Utf16LeContainerVersion = 162;
 
     /// <summary>
-    ///     Gets the container version that stores the given payload encoding
+    ///     Determines whether this serializer reads and writes the given file format
     /// </summary>
-    /// <param name="encoding">The payload encoding to store</param>
-    /// <returns>The container version of the UTF-8 generation, or the classic one for every other encoding</returns>
-    private static uint ContainerVersion(Encoding encoding)
+    /// <param name="fileFormat">The file format to check</param>
+    /// <returns>True when the format is a W3Strings container</returns>
+    public bool CanHandle(W3FileFormat fileFormat)
     {
-        return encoding.CodePage == Encoding.UTF8.CodePage ? Utf8ContainerVersion : Utf16LeContainerVersion;
+        return fileFormat == W3FileFormat.W3Strings;
     }
 
     /// <summary>
@@ -123,6 +113,16 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     }
 
     /// <summary>
+    ///     Gets the container version that stores the given payload encoding
+    /// </summary>
+    /// <param name="encoding">The payload encoding to store</param>
+    /// <returns>The container version of the UTF-8 generation, or the classic one for every other encoding</returns>
+    private static uint ContainerVersion(Encoding encoding)
+    {
+        return encoding.CodePage == Encoding.UTF8.CodePage ? Utf8ContainerVersion : Utf16LeContainerVersion;
+    }
+
+    /// <summary>
     ///     Reads every string entry of a container into The Witcher 3 string items
     /// </summary>
     /// <param name="filePath">The path to the W3Strings file to read</param>
@@ -131,7 +131,8 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     {
         var container = W3StringsReader.ReadFile(filePath); // Parse the container
         Log.Information("Read W3Strings v{Version} container ({Language}) from {Path}", container.Version,
-            container.Language?.ToString() ?? "unknown", filePath); // Log the container facts, including the detected language
+            container.Language?.ToString() ?? "unknown",
+            filePath); // Log the container facts, including the detected language
 
         // Block 2 maps a localization-key hash to the id it resolves to. An id can carry
         // several keys, so the first hash found is the one shown next to the entry.
@@ -188,10 +189,12 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     /// <param name="strId">The string id to parse</param>
     /// <returns>The parsed string id</returns>
     /// <exception cref="W3StringsException">Thrown when the id is not a 32-bit unsigned integer</exception>
-    private static uint ParseId(string strId) =>
-        uint.TryParse(strId, NumberStyles.None, CultureInfo.InvariantCulture, out var id)
+    private static uint ParseId(string strId)
+    {
+        return uint.TryParse(strId, NumberStyles.None, CultureInfo.InvariantCulture, out var id)
             ? id
             : throw new W3StringsException($"'{strId}' is not a valid W3Strings string id");
+    }
 
     /// <summary>
     ///     Resolves the localization-key hash of The Witcher 3 string item

@@ -24,21 +24,6 @@ public sealed partial class LogDialogViewModel
     : DisposableViewModel, IModalDialogViewModel
 {
     /// <summary>
-    ///     The lock object used to synchronize access to the log events collection
-    /// </summary>
-    private readonly object logEventsLock = new();
-
-    /// <summary>
-    ///     The source collection of log events to display
-    /// </summary>
-    private readonly ObservableCollection<LogEvent> sourceLogEvents;
-
-    /// <summary>
-    ///     The shell open service used to open the log folder and external pages
-    /// </summary>
-    private readonly IShellOpenService shellOpenService;
-
-    /// <summary>
     ///     The application settings used to resolve external URLs
     /// </summary>
     private readonly IAppSettings appSettings;
@@ -47,6 +32,21 @@ public sealed partial class LogDialogViewModel
     ///     The dialog service used to show notification messages
     /// </summary>
     private readonly IDialogService dialogService;
+
+    /// <summary>
+    ///     The lock object used to synchronize access to the log events collection
+    /// </summary>
+    private readonly object logEventsLock = new();
+
+    /// <summary>
+    ///     The shell open service used to open the log folder and external pages
+    /// </summary>
+    private readonly IShellOpenService shellOpenService;
+
+    /// <summary>
+    ///     The source collection of log events to display
+    /// </summary>
+    private readonly ObservableCollection<LogEvent> sourceLogEvents;
 
     /// <summary>
     ///     Initializes a new instance of the LogDialogViewModel class

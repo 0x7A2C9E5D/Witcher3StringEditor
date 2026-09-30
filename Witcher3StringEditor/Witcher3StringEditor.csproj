@@ -63,8 +63,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Syncfusion.lic" />
-      <EmbeddedResource Include="Syncfusion.lic" />
+        <None Remove="Syncfusion.lic"/>
+        <EmbeddedResource Include="Syncfusion.lic"/>
     </ItemGroup>
 
 </Project>
