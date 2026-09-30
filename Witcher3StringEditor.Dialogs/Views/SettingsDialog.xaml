@@ -14,7 +14,7 @@
     xmlns:codec="clr-namespace:Witcher3StringEditor.W3Strings;assembly=Witcher3StringEditor.W3Strings"
     Title="{I18N {x:Static l:LangKeys.SettingsDialogTitle}}"
     Width="800"
-    Height="800"
+    Height="880"
     d:DataContext="{d:DesignInstance Type=vm:SettingDialogViewModel}"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.SystemBackdropType="Mica"
