@@ -7,8 +7,7 @@ namespace Witcher3StringEditor.W3Strings;
 public static class W3StringsFormat
 {
     /// <summary>
-    ///     The smallest container that can exist: magic, version, the head half of the language key,
-    ///     the three counts and the tail half of the language key, with no entry and no buffer at all
+    ///     The size a file has to reach before it can hold the fixed head and tail of a container at all
     /// </summary>
     public const int MinSize = 16;
 
