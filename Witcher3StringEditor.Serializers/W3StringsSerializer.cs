@@ -110,7 +110,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
 
             // The container is streamed straight into its destination, so the encoded file is never
             // held in memory: only one payload exists at a time.
-            using (var stream = File.Create(outputW3StringsPath))
+            await using (var stream = File.Create(outputW3StringsPath))
             {
                 await Task.Run(() => W3StringsWriter.Write(stream, container)); // Encode off the calling thread
             }
