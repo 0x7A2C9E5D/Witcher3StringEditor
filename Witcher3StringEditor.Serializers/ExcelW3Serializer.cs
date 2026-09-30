@@ -6,7 +6,7 @@ using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Serializers.Model;
 
-namespace Witcher3StringEditor.Serializers.Formats;
+namespace Witcher3StringEditor.Serializers;
 
 /// <summary>
 ///     Provides Excel serialization functionality for The Witcher 3 string items

@@ -21,7 +21,6 @@ using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers;
 using Witcher3StringEditor.Serializers.Abstractions;
-using Witcher3StringEditor.Serializers.Formats;
 using Witcher3StringEditor.Services;
 using Witcher3StringEditor.ViewModels;
 using Witcher3StringEditor.Views;

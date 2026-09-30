@@ -10,7 +10,7 @@ using Witcher3StringEditor.W3Strings;
 using Witcher3StringEditor.W3Strings.Model;
 using Witcher3StringEditor.W3Strings.Primitives;
 
-namespace Witcher3StringEditor.Serializers.Formats;
+namespace Witcher3StringEditor.Serializers;
 
 /// <summary>
 ///     Provides W3Strings serialization functionality for The Witcher 3 string items
