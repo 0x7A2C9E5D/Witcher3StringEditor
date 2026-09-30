@@ -417,6 +417,9 @@
     <data name="GameVersion" xml:space="preserve">
     <value>Spielversion</value>
   </data>
+    <data name="PreferredGameVersion" xml:space="preserve">
+    <value>Bevorzugte Spielversion</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Version:</value>
   </data>
@@ -431,6 +434,15 @@
   </data>
     <data name="GeneralSettingsHeader" xml:space="preserve">
     <value>Allgemeine Einstellungen</value>
+  </data>
+    <data name="PathSettingsHeader" xml:space="preserve">
+    <value>Pfadeinstellungen</value>
+  </data>
+    <data name="SaveSettingsHeader" xml:space="preserve">
+    <value>Speichereinstellungen</value>
+  </data>
+    <data name="TranslationSettingsHeader" xml:space="preserve">
+    <value>Übersetzungseinstellungen</value>
   </data>
     <data name="TranslatorTranslatingMessage" xml:space="preserve">
     <value>Der Übersetzer ist beschäftigt. Möchtest Du wirklich beenden?</value>

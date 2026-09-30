@@ -64,6 +64,8 @@
             <c:W3LanguageToNativeNameConverter x:Key="W3LanguageToNativeNameConverter" />
             <!-- Converter for displaying The Witcher 3 file format localized strings -->
             <c:W3FileFormatToLocalizedStringConverter x:Key="W3FileFormatToLocalizedStringConverter" />
+            <!-- Converter for displaying the game version that matches a payload encoding -->
+            <c:W3StringsEncodingToDisplayStringConverter x:Key="W3StringsEncodingToDisplayStringConverter" />
             <!-- Converter for checking if a file exists -->
             <c:FileExistsToCollapsedConverter x:Key="FileExistsToCollapsedConverter" />
         </ResourceDictionary>
@@ -87,9 +89,80 @@
         <!-- Scrollable content area containing all settings cards -->
         <ScrollViewer Grid.Row="1">
             <iwk:SimpleStackPanel Margin="36,0" Spacing="4">
-                <!-- General settings section header -->
+                <!-- Save settings group header -->
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
-                           Text="{I18N {x:Static l:LangKeys.GeneralSettingsHeader}}" />
+                           Text="{I18N {x:Static l:LangKeys.SaveSettingsHeader}}" />
+                <!-- Preferred file type settings card -->
+                <ui:SettingsCard Description="{I18N {x:Static l:LangKeys.PreferredFileTypeDescription}}"
+                                 Header="{I18N {x:Static l:LangKeys.PreferredFileType}}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Type}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox ItemsSource="{Binding Source={StaticResource FileFormat}}"
+                              SelectedItem="{Binding AppSettings.PreferredW3FileType, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource W3FileFormatToLocalizedStringConverter}">
+                                            <Binding />
+                                            <Binding Path="DataContext.AppSettings.Language"
+                                                     RelativeSource="{RelativeSource AncestorType=ComboBox}" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ui:SettingsCard>
+                <!-- Preferred game version settings card -->
+                <!-- Shares the preferred encoding with the save dialog, so both stay in sync -->
+                <ui:SettingsCard Header="{I18N {x:Static l:LangKeys.PreferredGameVersion}}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Game}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        ItemsSource="{Binding Encodings}"
+                        SelectedItem="{Binding AppSettings.PreferredW3StringsEncoding, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding Converter={StaticResource W3StringsEncodingToDisplayStringConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ui:SettingsCard>
+                <!-- Translation settings group header -->
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                           Text="{I18N {x:Static l:LangKeys.TranslationSettingsHeader}}" />
+                <!-- Preferred language settings card -->
+                <ui:SettingsCard Description="{I18N {x:Static l:LangKeys.PreferredLanguageDescription}}"
+                                 Header="{I18N {x:Static l:LangKeys.PreferredLanguage}}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox ItemsSource="{Binding Source={StaticResource W3Language}}"
+                              SelectedItem="{Binding AppSettings.PreferredLanguage, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource W3LanguageToNativeNameConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ui:SettingsCard>
+                <!-- Translator selection settings card -->
+                <ui:SettingsCard Description="{I18N {x:Static l:LangKeys.TranslatorSelectionDescription}}"
+                                 Header="{I18N {x:Static l:LangKeys.TranslatorSelection}}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.PenPalette}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        ItemsSource="{Binding Translators}"
+                        SelectedItem="{Binding AppSettings.Translator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </ui:SettingsCard>
+                <!-- Path settings group header -->
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                           Text="{I18N {x:Static l:LangKeys.PathSettingsHeader}}" />
                 <!-- Game executable path settings card -->
                 <ui:SettingsCard>
                     <ui:SettingsCard.Header>
@@ -122,54 +195,6 @@
                     <Button Command="{Binding SetGameExePathCommand}">
                         <ui:FontIcon Glyph="&#xe71e;" />
                     </Button>
-                </ui:SettingsCard>
-                <!-- Preferred file type settings card -->
-                <ui:SettingsCard Description="{I18N {x:Static l:LangKeys.PreferredFileTypeDescription}}"
-                                 Header="{I18N {x:Static l:LangKeys.PreferredFileType}}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Type}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ComboBox ItemsSource="{Binding Source={StaticResource FileFormat}}"
-                              SelectedItem="{Binding AppSettings.PreferredW3FileType, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource W3FileFormatToLocalizedStringConverter}">
-                                            <Binding />
-                                            <Binding Path="DataContext.AppSettings.Language"
-                                                     RelativeSource="{RelativeSource AncestorType=ComboBox}" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </ui:SettingsCard>
-                <!-- Preferred language settings card -->
-                <ui:SettingsCard Description="{I18N {x:Static l:LangKeys.PreferredLanguageDescription}}"
-                                 Header="{I18N {x:Static l:LangKeys.PreferredLanguage}}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ComboBox ItemsSource="{Binding Source={StaticResource W3Language}}"
-                              SelectedItem="{Binding AppSettings.PreferredLanguage, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Converter={StaticResource W3LanguageToNativeNameConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </ui:SettingsCard>
-                <!-- Translator selection settings card -->
-                <ui:SettingsCard Description="{I18N {x:Static l:LangKeys.TranslatorSelectionDescription}}"
-                                 Header="{I18N {x:Static l:LangKeys.TranslatorSelection}}">
-                    <ui:SettingsCard.HeaderIcon>
-                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.PenPalette}" />
-                    </ui:SettingsCard.HeaderIcon>
-                    <ComboBox
-                        ItemsSource="{Binding Translators}"
-                        SelectedItem="{Binding AppSettings.Translator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </ui:SettingsCard>
                 <!-- User interface settings section header -->
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"

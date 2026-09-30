@@ -310,6 +310,9 @@
     <data name="GameVersion" xml:space="preserve">
     <value>Játék Verziója</value>
   </data>
+    <data name="PreferredGameVersion" xml:space="preserve">
+    <value>Kedvelt játékverzió</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Verzió:</value>
   </data>
@@ -324,6 +327,15 @@
   </data>
     <data name="GeneralSettingsHeader" xml:space="preserve">
     <value>Általános beállítások</value>
+  </data>
+    <data name="PathSettingsHeader" xml:space="preserve">
+    <value>Útvonal beállítások</value>
+  </data>
+    <data name="SaveSettingsHeader" xml:space="preserve">
+    <value>Mentési beállítások</value>
+  </data>
+    <data name="TranslationSettingsHeader" xml:space="preserve">
+    <value>Fordítási beállítások</value>
   </data>
     <data name="TranslatorTranslatingMessage" xml:space="preserve">
     <value>A fordító jelenleg dolgozik, nem bánod el hagyni őt?</value>

@@ -417,6 +417,9 @@
     <data name="GameVersion" xml:space="preserve">
     <value>เวอร์ชันเกม</value>
   </data>
+    <data name="PreferredGameVersion" xml:space="preserve">
+    <value>เวอร์ชันเกมที่ต้องการ</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>เวอร์ชัน:</value>
   </data>
@@ -431,6 +434,15 @@
   </data>
     <data name="GeneralSettingsHeader" xml:space="preserve">
     <value>การตั้งค่าทั่วไป</value>
+  </data>
+    <data name="PathSettingsHeader" xml:space="preserve">
+    <value>การตั้งค่าเส้นทาง</value>
+  </data>
+    <data name="SaveSettingsHeader" xml:space="preserve">
+    <value>การตั้งค่าการบันทึก</value>
+  </data>
+    <data name="TranslationSettingsHeader" xml:space="preserve">
+    <value>การตั้งค่าการแปล</value>
   </data>
     <data name="TranslatorTranslatingMessage" xml:space="preserve">
     <value>ระบบกำลังดำเนินการแปลภาษาอยู่ คุณต้องการออกจากโปรแกรมจริงๆ หรือไม่?</value>

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -39,6 +40,12 @@ public partial class SettingDialogViewModel(
     ///     Gets the collection of supported cultures for localization
     /// </summary>
     public IEnumerable<CultureInfo> SupportedCultures { get; } = supportedCultures;
+
+    /// <summary>
+    ///     Gets the payload encodings the user can choose from
+    ///     These are the same encodings offered by the save dialog, so both views stay in sync
+    /// </summary>
+    public IReadOnlyList<Encoding> Encodings { get; } = [Encoding.Unicode, Encoding.UTF8];
 
     /// <summary>
     ///     Gets the dialog result value

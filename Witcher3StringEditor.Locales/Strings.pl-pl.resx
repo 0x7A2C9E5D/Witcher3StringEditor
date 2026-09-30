@@ -310,6 +310,9 @@
     <data name="GameVersion" xml:space="preserve">
     <value>Wersja Gry</value>
   </data>
+    <data name="PreferredGameVersion" xml:space="preserve">
+    <value>Preferowana wersja gry</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>Wersja:</value>
   </data>
@@ -324,6 +327,15 @@
   </data>
     <data name="GeneralSettingsHeader" xml:space="preserve">
     <value>Ustawienia ogólne</value>
+  </data>
+    <data name="PathSettingsHeader" xml:space="preserve">
+    <value>Ustawienia ścieżki</value>
+  </data>
+    <data name="SaveSettingsHeader" xml:space="preserve">
+    <value>Ustawienia zapisu</value>
+  </data>
+    <data name="TranslationSettingsHeader" xml:space="preserve">
+    <value>Ustawienia tłumaczenia</value>
   </data>
     <data name="TranslatorTranslatingMessage" xml:space="preserve">
     <value>Tłumacz jest w trakcie pracy. Czy na pewno chcesz wyjść?</value>

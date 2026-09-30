@@ -417,6 +417,9 @@
     <data name="GameVersion" xml:space="preserve">
     <value>遊戲版本</value>
   </data>
+    <data name="PreferredGameVersion" xml:space="preserve">
+    <value>預設遊戲版本</value>
+  </data>
     <data name="Version" xml:space="preserve">
     <value>版本:</value>
   </data>
@@ -431,6 +434,15 @@
   </data>
     <data name="GeneralSettingsHeader" xml:space="preserve">
     <value>通用設定</value>
+  </data>
+    <data name="PathSettingsHeader" xml:space="preserve">
+    <value>路徑設定</value>
+  </data>
+    <data name="SaveSettingsHeader" xml:space="preserve">
+    <value>儲存設定</value>
+  </data>
+    <data name="TranslationSettingsHeader" xml:space="preserve">
+    <value>翻譯設定</value>
   </data>
     <data name="TranslatorTranslatingMessage" xml:space="preserve">
     <value>翻譯器正在努力翻譯中，你忍心退出嗎？</value>

@@ -403,6 +403,15 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preferred Game Version.
+        /// </summary>
+        public static string PreferredGameVersion {
+            get {
+                return ResourceManager.GetString("PreferredGameVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End Index.
         /// </summary>
         public static string EndIndex {
@@ -508,6 +517,33 @@ namespace Witcher3StringEditor.Locales {
         public static string GeneralSettingsHeader {
             get {
                 return ResourceManager.GetString("GeneralSettingsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Path Settings.
+        /// </summary>
+        public static string PathSettingsHeader {
+            get {
+                return ResourceManager.GetString("PathSettingsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Settings.
+        /// </summary>
+        public static string SaveSettingsHeader {
+            get {
+                return ResourceManager.GetString("SaveSettingsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Translation Settings.
+        /// </summary>
+        public static string TranslationSettingsHeader {
+            get {
+                return ResourceManager.GetString("TranslationSettingsHeader", resourceCulture);
             }
         }
         
