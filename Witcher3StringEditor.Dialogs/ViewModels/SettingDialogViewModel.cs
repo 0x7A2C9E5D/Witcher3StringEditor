@@ -1,6 +1,4 @@
 using System.Globalization;
-using System.IO;
-using System.IO.Compression;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -8,8 +6,6 @@ using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Miscellaneous;
-using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -25,7 +21,6 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 public partial class SettingDialogViewModel(
     IAppSettings appSettings,
     IDialogService dialogService,
-    IShellOpenService shellOpenService,
     IEnumerable<string> translators,
     IEnumerable<CultureInfo> supportedCultures)
     : ObservableObject, IModalDialogViewModel
@@ -72,81 +67,5 @@ public partial class SettingDialogViewModel(
             AppSettings.GameExePath = storageFile.LocalPath; // Set the path to the file.
             Log.Information("Game path set to {Path}", storageFile.LocalPath); // Log the path.
         }
-    }
-
-    /// <summary>
-    ///     Opens the log folder
-    /// </summary>
-    [RelayCommand]
-    private void OpenLogFolder()
-    {
-        shellOpenService.Open(AppPaths.LogDirectory); // Open the log folder.
-        Log.Information("Opened log folder"); // Log that the log folder has been opened.
-    }
-
-    /// <summary>
-    ///     Deletes old log files
-    /// </summary>
-    [RelayCommand]
-    private async Task DeleteOldLogs()
-    {
-        var files = Directory.GetFiles(AppPaths.LogDirectory); // Get all log files in the log folder.
-        if (files.Length == 1) // If there is only one log file, do nothing.
-        {
-            Log.Information("No log cleanup needed: only one log file exists"); // Log that only one log file exists
-            await dialogService.MessageBoxNotifyAsync(this, Strings.LogsNoNeedToCleanMessage,
-                Strings.LogCleanupCaption); // Tell the user that there is nothing to clean up.
-            return;
-        }
-
-        var filesToDelete =
-            files.OrderByDescending(File.GetLastWriteTime)
-                .Skip(1); // Get all log files in the log folder, ordered by last write time, and skip the first one.
-
-        var deletedFilesCount = 0; // Initialize the deleted files count.
-        foreach (var file in filesToDelete) // Loop through all log files in the log folder.
-            try
-            {
-                File.Delete(file); // Delete the log file.
-                deletedFilesCount++; // Increment the deleted files count.
-                Log.Information("Deleted log file: {Path}", file); // Log the deletion.
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Failed to delete log file: {Path}", file); // Log the error.
-            }
-
-        Log.Information("Deleted {Count} log files", deletedFilesCount); // Log the number of deleted log files.
-        await dialogService.MessageBoxNotifyAsync(this, Strings.LogsCleanedMessage,
-            Strings.LogCleanupCaption); // Tell the user that the log files have been cleaned.
-    }
-
-    /// <summary>
-    ///     Collects the log files
-    /// </summary>
-    [RelayCommand]
-    private async Task CollectLogs()
-    {
-        var tempFolder =
-            Directory.CreateTempSubdirectory().FullName; // Create a temporary folder.
-
-        // Copy all log files to the temporary folder.
-        var files = Directory.GetFiles(AppPaths.LogDirectory);
-        foreach (var file in files)
-        {
-            var destFileName =
-                Path.Combine(tempFolder, Path.GetFileName(file)); // Get the destination file name.
-            File.Copy(file, destFileName); // Copy the log file.
-            Log.Information("Copied log file: {Path}", file); // Log the copy.
-        }
-
-        // Create a zip file from the temporary folder.
-        var archiveFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-            $"Logs_{DateTime.Now:yyyyMMddHHmmss}.zip");
-        await ZipFile.CreateFromDirectoryAsync(tempFolder, archiveFileName);
-        Directory.Delete(tempFolder, true); // Delete the temporary folder.
-        await dialogService.MessageBoxNotifyAsync(this, Strings.LogFilesCollectedMessage,
-            Strings.LogFilesCollectedCaption); // Tell the user where the archive has been created.
-        Log.Information("Created zip file: {Path}", archiveFileName); // Log the creation.
     }
 }

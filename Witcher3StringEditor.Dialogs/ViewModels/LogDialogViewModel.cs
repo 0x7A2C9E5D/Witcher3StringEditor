@@ -1,11 +1,17 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Windows;
 using System.Windows.Data;
+using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
+using Serilog;
 using Serilog.Events;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.Models;
+using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Miscellaneous;
+using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -14,7 +20,7 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 ///     Manages the display of log events in the UI and synchronizes with the source log collection
 ///     Implements IModalDialogViewModel to support dialog result handling
 /// </summary>
-public sealed class LogDialogViewModel
+public sealed partial class LogDialogViewModel
     : DisposableViewModel, IModalDialogViewModel
 {
     /// <summary>
@@ -28,11 +34,33 @@ public sealed class LogDialogViewModel
     private readonly ObservableCollection<LogEvent> sourceLogEvents;
 
     /// <summary>
+    ///     The shell open service used to open the log folder and external pages
+    /// </summary>
+    private readonly IShellOpenService shellOpenService;
+
+    /// <summary>
+    ///     The application settings used to resolve external URLs
+    /// </summary>
+    private readonly IAppSettings appSettings;
+
+    /// <summary>
+    ///     The dialog service used to show notification messages
+    /// </summary>
+    private readonly IDialogService dialogService;
+
+    /// <summary>
     ///     Initializes a new instance of the LogDialogViewModel class
     /// </summary>
     /// <param name="logAccessService">The log access service</param>
-    public LogDialogViewModel(ILogAccessService logAccessService)
+    /// <param name="appSettings">The application settings</param>
+    /// <param name="shellOpenService">The shell open service</param>
+    /// <param name="dialogService">The dialog service</param>
+    public LogDialogViewModel(ILogAccessService logAccessService, IAppSettings appSettings,
+        IShellOpenService shellOpenService, IDialogService dialogService)
     {
+        this.appSettings = appSettings;
+        this.shellOpenService = shellOpenService;
+        this.dialogService = dialogService;
         sourceLogEvents = logAccessService.Logs; // Initialize the source collection
         BindingOperations.EnableCollectionSynchronization(LogEvents, logEventsLock);
         // Subscribe to UI collection changes to sync deletions back to source collection
@@ -109,6 +137,63 @@ public sealed class LogDialogViewModel
                     sourceLogEvents.Remove(item.EventEntry);
                 }
             });
+    }
+
+    /// <summary>
+    ///     Opens the log folder
+    /// </summary>
+    [RelayCommand]
+    private void OpenLogFolder()
+    {
+        shellOpenService.Open(AppPaths.LogDirectory); // Open the log folder.
+        Log.Information("Opened log folder"); // Log that the log folder has been opened.
+    }
+
+    /// <summary>
+    ///     Deletes old log files
+    /// </summary>
+    [RelayCommand]
+    private async Task DeleteOldLogs()
+    {
+        var files = Directory.GetFiles(AppPaths.LogDirectory); // Get all log files in the log folder.
+        if (files.Length == 1) // If there is only one log file, do nothing.
+        {
+            Log.Information("No log cleanup needed: only one log file exists"); // Log that only one log file exists
+            await dialogService.MessageBoxNotifyAsync(this, Strings.LogsNoNeedToCleanMessage,
+                Strings.LogCleanupCaption); // Tell the user that there is nothing to clean up.
+            return;
+        }
+
+        var filesToDelete =
+            files.OrderByDescending(File.GetLastWriteTime)
+                .Skip(1); // Get all log files in the log folder, ordered by last write time, and skip the first one.
+
+        var deletedFilesCount = 0; // Initialize the deleted files count.
+        foreach (var file in filesToDelete) // Loop through all log files in the log folder.
+            try
+            {
+                File.Delete(file); // Delete the log file.
+                deletedFilesCount++; // Increment the deleted files count.
+                Log.Information("Deleted log file: {Path}", file); // Log the deletion.
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to delete log file: {Path}", file); // Log the error.
+            }
+
+        Log.Information("Deleted {Count} log files", deletedFilesCount); // Log the number of deleted log files.
+        await dialogService.MessageBoxNotifyAsync(this, Strings.LogsCleanedMessage,
+            Strings.LogCleanupCaption); // Tell the user that the log files have been cleaned.
+    }
+
+    /// <summary>
+    ///     Opens the NexusMods bugs page where issues can be reported
+    /// </summary>
+    [RelayCommand]
+    private void ReportBug()
+    {
+        shellOpenService.Open($"{appSettings.NexusModUrl}?tab=bugs"); // Open the bugs page.
+        Log.Information("Opened NexusMods bugs page"); // Log that the bugs page has been opened.
     }
 
     /// <summary>

@@ -73,7 +73,11 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     /// <returns></returns>
     public LogDialogViewModel CreateLogDialog()
     {
-        return new LogDialogViewModel(serviceProvider.GetRequiredService<ILogAccessService>());
+        return new LogDialogViewModel(
+            serviceProvider.GetRequiredService<ILogAccessService>(),
+            serviceProvider.GetRequiredService<IAppSettings>(),
+            serviceProvider.GetRequiredService<IShellOpenService>(),
+            serviceProvider.GetRequiredService<IDialogService>());
     }
 
     /// <summary>
@@ -86,7 +90,6 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
         return new SettingDialogViewModel(
             serviceProvider.GetRequiredService<IAppSettings>(),
             serviceProvider.GetRequiredService<IDialogService>(),
-            serviceProvider.GetRequiredService<IShellOpenService>(),
             translatorNames,
             serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures);
     }

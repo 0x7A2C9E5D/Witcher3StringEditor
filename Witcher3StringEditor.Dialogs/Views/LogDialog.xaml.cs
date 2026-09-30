@@ -1,4 +1,4 @@
-﻿namespace Witcher3StringEditor.Dialogs.Views;
+namespace Witcher3StringEditor.Dialogs.Views;
 
 /// <summary>
 ///     Interaction logic for LogDialog.xaml

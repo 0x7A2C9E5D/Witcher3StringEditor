@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="Witcher3StringEditor.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -41,6 +41,10 @@
             <i:InvokeCommandAction Command="{Binding WindowClosingCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <!-- Set up the custom title bar regions through an attached behavior -->
+    <i:Interaction.Behaviors>
+        <b:TitleBarBehavior />
+    </i:Interaction.Behaviors>
     <!-- Main window grid layout -->
     <Grid>
         <!-- Define grid rows -->
@@ -57,10 +61,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!-- Title bar area -->
-        <Grid
-            Height="48"
-            Loaded="AppTitleBar_OnLoaded"
-            SizeChanged="AppTitleBar_OnSizeChanged">
+        <Grid Height="48">
             <!-- Define title bar columns -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

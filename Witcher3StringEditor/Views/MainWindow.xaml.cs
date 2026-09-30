@@ -1,9 +1,8 @@
-﻿using System.Windows;
+using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using iNKORE.UI.WPF.Modern;
 using iNKORE.UI.WPF.Modern.Controls;
-using iNKORE.UI.WPF.Modern.Controls.Primitives;
 using Serilog;
 using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
@@ -134,37 +133,6 @@ public partial class MainWindow
         SfDataGrid.SearchHelper.Dispose(); // Dispose the search helper
         SfDataGrid.Dispose(); // Dispose the data grid
         SfDataPager.Dispose(); // Dispose the data pager
-    }
-
-    /// <summary>
-    ///     Handles the Loaded event of the app title bar
-    ///     Sets up regions for custom title bar if extended view is enabled
-    /// </summary>
-    /// <param name="sender">The source of the event</param>
-    /// <param name="e">The event arguments</param>
-    private void AppTitleBar_OnLoaded(object sender, RoutedEventArgs e)
-    {
-        if (TitleBar.GetExtendViewIntoTitleBar(this)) SetRegionsForCustomTitleBar();
-    }
-
-    /// <summary>
-    ///     Handles the SizeChanged event of the app title bar
-    ///     Updates regions for custom title bar when size changes
-    /// </summary>
-    /// <param name="sender">The source of the event</param>
-    /// <param name="e">The event arguments containing size change information</param>
-    private void AppTitleBar_OnSizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (TitleBar.GetExtendViewIntoTitleBar(this)) SetRegionsForCustomTitleBar();
-    }
-
-    /// <summary>
-    ///     Sets regions for custom title bar
-    ///     Adjusts the right padding column width based on system overlay inset
-    /// </summary>
-    private void SetRegionsForCustomTitleBar()
-    {
-        RightPaddingColumn.Width = new GridLength(TitleBar.GetSystemOverlayRightInset(this));
     }
 
     /// <summary>
