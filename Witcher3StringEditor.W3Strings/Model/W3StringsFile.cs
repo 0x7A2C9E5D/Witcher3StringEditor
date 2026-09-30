@@ -10,9 +10,9 @@ public sealed class W3StringsFile
 
     public uint Key => ((uint)Key1 << 16) | Key2;
 
-    public W3Language? Language { get; set; }
+    public W3Language? Language { get; init; }
 
-    public uint Magic { get; set; }
+    public uint Magic { get; init; }
 
     public int Unit => W3StringsFormat.OffsetUnitSize(Version);
 
@@ -20,7 +20,7 @@ public sealed class W3StringsFile
 
     public List<W3KeyEntry> Keys { get; } = [];
 
-    public uint DeclaredBufferUnits { get; set; }
+    public uint DeclaredBufferUnits { get; init; }
 
-    public byte[] Trailer { get; set; } = [];
+    public byte[] Trailer { get; init; } = [];
 }

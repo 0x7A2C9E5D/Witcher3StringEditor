@@ -42,6 +42,22 @@ internal static class PayloadCodec
             : Encoding.UTF8.GetString(stored);
     }
 
+    /// <summary>
+    ///     Measures how many units a text occupies once encoded, without producing the bytes
+    /// </summary>
+    /// <param name="text">The text to measure</param>
+    /// <param name="unit">The number of bytes one character takes in the container</param>
+    /// <returns>The length of the payload, in units</returns>
+    /// <remarks>
+    ///     The result is the length <see cref="Encode" /> reports: an encoding produces the same number
+    ///     of bytes however they are asked for
+    /// </remarks>
+    public static int Measure(string text, int unit)
+    {
+        var bytes = unit == 2 ? Encoding.Unicode.GetByteCount(text) : Encoding.UTF8.GetByteCount(text);
+        return bytes / unit;
+    }
+
     public static byte[] Encode(string text, uint magic, int unit, out int length)
     {
         var raw = unit == 2 ? Encoding.Unicode.GetBytes(text) : Encoding.UTF8.GetBytes(text);

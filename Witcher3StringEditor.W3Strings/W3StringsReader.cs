@@ -1,122 +1,372 @@
-using System.Buffers.Binary;
 using System.Text;
 using Witcher3StringEditor.W3Strings.Model;
 using Witcher3StringEditor.W3Strings.Primitives;
 
 namespace Witcher3StringEditor.W3Strings;
 
+/// <summary>
+///     Reads a w3strings container out of a stream
+///     The container is read section by section and never held whole: the first block says where every
+///     text sits, so the payloads are fetched one at a time and only the model keeps them
+/// </summary>
 public static class W3StringsReader
 {
-    private static W3StringsFile Read(byte[] data)
+    /// <summary>
+    ///     Reads a container from a stream
+    /// </summary>
+    /// <param name="input">The stream to read from, which has to be seekable</param>
+    /// <returns>The container</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the stream is null</exception>
+    /// <exception cref="ArgumentException">Thrown when the stream cannot seek</exception>
+    /// <exception cref="W3StringsException">Thrown when the stream does not hold a container this build can decode</exception>
+    /// <remarks>
+    ///     The offsets of the first block point into a buffer that follows it, and the tail half of the
+    ///     language key sits in the last two bytes of the container. Reaching both out of order is what
+    ///     the stream is seeked for
+    /// </remarks>
+    public static W3StringsFile Read(Stream input)
     {
-        ArgumentNullException.ThrowIfNull(data);
+        ArgumentNullException.ThrowIfNull(input);
+        if (!input.CanSeek) throw new ArgumentException("The stream has to be seekable.", nameof(input));
 
-        if (data.Length < 16)
-            throw new W3StringsException("file too small to be a w3strings container");
+        try
+        {
+            return ReadContainer(input);
+        }
+        catch (Exception ex) when (ex is not W3StringsException)
+        {
+            // The codec answers with one exception type, with whatever went wrong below as its cause.
+            throw new W3StringsException("The stream does not hold a readable w3strings container", ex);
+        }
+    }
 
-        for (var i = 0; i < 4; i++)
-            if (data[i] != W3StringsFormat.MagicBytes[i])
-                throw new W3StringsException(
-                    $"bad magic: expected \"RTSW\", got \"{Encoding.ASCII.GetString(data, 0, 4)}\"");
+    /// <summary>
+    ///     Reads every section of a container in the order the format prescribes
+    /// </summary>
+    /// <param name="input">The seekable stream to read from</param>
+    /// <returns>The container</returns>
+    /// <exception cref="W3StringsException">Thrown when the stream does not hold a decodable container</exception>
+    private static W3StringsFile ReadContainer(Stream input)
+    {
+        // The last two bytes hold the tail half of the language key, so no section may reach into them.
+        var payloadLimit = input.Length - 2;
 
+        using var reader = new BinaryReader(input, Encoding.UTF8, true); // The stream stays open for the caller
+        var head = ReadHead(reader, input.Length);
+
+        // The layout of the payloads is needed before any text can be decoded.
+        var entries = ReadStringEntries(reader, payloadLimit);
+        var keys = ReadKeys(reader, payloadLimit);
+        var buffer = ReadBuffer(reader, payloadLimit, head.Unit);
+
+        var payloads = ReadPayloads(input, entries, buffer, head.Unit);
+
+        // The language completes the magic every id and payload was obfuscated with.
+        var key2 = ReadKey2(reader, payloadLimit);
+        var language = ResolveLanguage(head.Key1, key2);
+        var magic = language?.Magic ?? 0;
+
+        return ToFile(head, key2, language, magic, buffer, ReadTrailer(input, buffer.End, payloadLimit),
+            entries, keys, payloads, head.Unit);
+    }
+
+    /// <summary>
+    ///     Reads the head of a container: its magic, the version and the first half of the language key
+    /// </summary>
+    /// <param name="reader">The reader the head comes from</param>
+    /// <param name="length">The length of the container</param>
+    /// <returns>The head of the container</returns>
+    /// <exception cref="W3StringsException">Thrown when the stream is too short, or is not a container at all</exception>
+    private static Head ReadHead(BinaryReader reader, long length)
+    {
+        if (length < W3StringsFormat.MinSize)
+            throw new W3StringsException($"file too small to be a w3strings container ({length} byte(s))");
+
+        // The magic is compared as it is stored, so the error can quote what was actually found.
+        var magic = reader.ReadBytes(W3StringsFormat.MagicBytes.Length);
+        if (!magic.AsSpan().SequenceEqual(W3StringsFormat.MagicBytes))
+            throw new W3StringsException(
+                $"bad magic: expected \"RTSW\", got \"{Encoding.ASCII.GetString(magic)}\"");
+
+        var version = reader.ReadUInt32();
+        return new Head(version, reader.ReadUInt16(), W3StringsFormat.OffsetUnitSize(version));
+    }
+
+    /// <summary>
+    ///     Reads the first block: where every text sits in the string buffer
+    /// </summary>
+    /// <param name="reader">The reader the block comes from</param>
+    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <returns>One entry per text, without its payload</returns>
+    private static StringEntry[] ReadStringEntries(BinaryReader reader, long payloadLimit)
+    {
+        var count = CheckBlockFits(reader.BaseStream.Position, VariableLengthCodec.Read(reader.BaseStream),
+            W3StringsFormat.Block1EntrySize, payloadLimit, "block1");
+
+        var entries = new StringEntry[count];
+        for (var i = 0; i < count; i++)
+        {
+            var id = reader.ReadUInt32();
+            var offset = reader.ReadUInt32();
+            var length = reader.ReadUInt32();
+            entries[i] = new StringEntry(id, offset, length);
+        }
+
+        return entries;
+    }
+
+    /// <summary>
+    ///     Reads the second block: which key resolves to which id
+    /// </summary>
+    /// <param name="reader">The reader the block comes from</param>
+    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <returns>One entry per key, still obfuscated</returns>
+    private static KeyEntry[] ReadKeys(BinaryReader reader, long payloadLimit)
+    {
+        var count = CheckBlockFits(reader.BaseStream.Position, VariableLengthCodec.Read(reader.BaseStream),
+            W3StringsFormat.Block2EntrySize, payloadLimit, "block2");
+
+        var keys = new KeyEntry[count];
+        for (var i = 0; i < count; i++)
+        {
+            var hash = reader.ReadUInt32();
+            var id = reader.ReadUInt32();
+            keys[i] = new KeyEntry(hash, id);
+        }
+
+        return keys;
+    }
+
+    /// <summary>
+    ///     Reads the size of the string buffer and where it starts
+    /// </summary>
+    /// <param name="reader">The reader the size comes from</param>
+    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <param name="unit">The number of bytes one character takes in the container</param>
+    /// <returns>The extent of the string buffer</returns>
+    /// <exception cref="W3StringsException">Thrown when the buffer reaches past the end of the file</exception>
+    private static Buffer ReadBuffer(BinaryReader reader, long payloadLimit, int unit)
+    {
+        var units = VariableLengthCodec.Read(reader.BaseStream);
+        var start = reader.BaseStream.Position;
+        var end = start + units * unit;
+        return end > payloadLimit
+            ? throw new W3StringsException($"string buffer overruns file ({end} > {payloadLimit})")
+            : new Buffer(start, units, end);
+    }
+
+    /// <summary>
+    ///     Reads the bytes between the string buffer and the language key at the end of the container
+    /// </summary>
+    /// <param name="input">The stream to read from</param>
+    /// <param name="start">The offset the trailer starts at</param>
+    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <returns>The trailer, empty when the buffer ends where the container does</returns>
+    private static byte[] ReadTrailer(Stream input, long start, long payloadLimit)
+    {
+        var trailer = new byte[payloadLimit - start];
+        if (trailer.Length == 0) return trailer;
+
+        input.Seek(start, SeekOrigin.Begin);
+        input.ReadExactly(trailer);
+        return trailer;
+    }
+
+    /// <summary>
+    ///     Reads the tail half of the language key, which closes the container
+    /// </summary>
+    /// <param name="reader">The reader the key comes from</param>
+    /// <param name="payloadLimit">The offset the language key at the end of the container starts at</param>
+    /// <returns>The tail half of the language key</returns>
+    private static ushort ReadKey2(BinaryReader reader, long payloadLimit)
+    {
+        reader.BaseStream.Seek(payloadLimit, SeekOrigin.Begin);
+        return reader.ReadUInt16();
+    }
+
+    /// <summary>
+    ///     Builds the container out of the sections that were read, decoding every text on the way
+    /// </summary>
+    /// <param name="head">The head of the container</param>
+    /// <param name="key2">The tail half of the language key</param>
+    /// <param name="language">The resolved language, or null for the languages that share key 0</param>
+    /// <param name="magic">The magic every id and payload was obfuscated with</param>
+    /// <param name="buffer">The extent of the string buffer</param>
+    /// <param name="trailer">The bytes behind the string buffer</param>
+    /// <param name="entries">The entries of the first block</param>
+    /// <param name="keys">The entries of the second block</param>
+    /// <param name="payloads">The stored bytes of every entry, in entry order</param>
+    /// <param name="unit">The number of bytes one character takes in the container</param>
+    /// <returns>The container</returns>
+    private static W3StringsFile ToFile(Head head, ushort key2, W3Language? language, uint magic, Buffer buffer,
+        byte[] trailer, StringEntry[] entries, KeyEntry[] keys, byte[][] payloads, int unit)
+    {
         var file = new W3StringsFile
         {
-            Version = BinaryPrimitives.ReadUInt32LittleEndian(data.AsSpan(4)),
-            Key1 = BinaryPrimitives.ReadUInt16LittleEndian(data.AsSpan(W3StringsFormat.Key1Offset)),
-            Key2 = BinaryPrimitives.ReadUInt16LittleEndian(data.AsSpan(data.Length - 2))
+            Version = head.Version,
+            Key1 = head.Key1,
+            Key2 = key2,
+            Language = language,
+            Magic = magic,
+            DeclaredBufferUnits = buffer.Units,
+            Trailer = trailer
         };
-        var unit = file.Unit;
 
-        // ---- section counts ----
-        var p = W3StringsFormat.FirstCountOffset;
-        (var count1, p) = VariableLengthCodec.Read(data, p);
-        var block1Start = p;
-        var block1End = block1Start + (int)count1 * W3StringsFormat.Block1EntrySize;
-
-        (var count2, p) = VariableLengthCodec.Read(data, block1End);
-        var block2Start = p;
-        var block2End = block2Start + (int)count2 * W3StringsFormat.Block2EntrySize;
-
-        (var count3, p) = VariableLengthCodec.Read(data, block2End);
-        var bufferStart = p;
-        var bufferEndLong = bufferStart + count3 * unit;
-        if (bufferEndLong > data.Length)
-            throw new W3StringsException(
-                $"string buffer overruns file ({bufferEndLong} > {data.Length})");
-        var bufferEnd = (int)bufferEndLong;
-
-        file.DeclaredBufferUnits = count3;
-        var trailerLength = data.Length - 2 - bufferEnd;
-        file.Trailer = trailerLength > 0
-            ? [.. data.AsSpan(bufferEnd, trailerLength)]
-            : [];
-
-        // ---- resolve language / magic ----
-        ResolveLanguage(file);
-
-        // ---- block 1 ----
-        for (var i = 0; i < count1; i++)
+        for (var i = 0; i < entries.Length; i++)
         {
-            var o = block1Start + i * W3StringsFormat.Block1EntrySize;
-            var storedId = BinaryPrimitives.ReadUInt32LittleEndian(data.AsSpan(o));
-            var offset = BinaryPrimitives.ReadUInt32LittleEndian(data.AsSpan(o + 4));
-            var length = BinaryPrimitives.ReadUInt32LittleEndian(data.AsSpan(o + 8));
-
-            var abs = bufferStart + (int)(offset * (uint)unit);
-            var byteLength = (int)(length * (uint)unit);
-            var stored = data.AsSpan(abs, byteLength).ToArray();
-
-            // Decode into a separate buffer so the stored (obfuscated) bytes are
-            // retained as well; both are needed for a lossless round-trip.
-            var plain = (byte[])stored.Clone();
-            var value = PayloadCodec.Decode(plain, (int)length, file.Magic, unit);
-
+            // Decode into a separate buffer so the stored (obfuscated) bytes are retained as well;
+            // both are needed for a lossless round-trip.
+            var plain = (byte[])payloads[i].Clone();
+            var value = PayloadCodec.Decode(plain, (int)entries[i].Length, magic, unit);
             file.Strings.Add(new W3StringEntry
             {
-                Id = storedId ^ file.Magic,
-                Offset = offset,
-                Length = length,
+                Id = entries[i].Id ^ magic,
+                Offset = entries[i].Offset,
+                Length = entries[i].Length,
                 Value = value,
-                StoredBytes = stored,
+                StoredBytes = payloads[i],
                 PlainBytes = plain,
                 OriginalValue = value
             });
         }
 
-        // ---- block 2 ----
-        for (var i = 0; i < count2; i++)
-        {
-            var o = block2Start + i * W3StringsFormat.Block2EntrySize;
-            file.Keys.Add(new W3KeyEntry
-            {
-                KeyHash = BinaryPrimitives.ReadUInt32LittleEndian(data.AsSpan(o)),
-                Id = BinaryPrimitives.ReadUInt32LittleEndian(data.AsSpan(o + 4)) ^ file.Magic
-            });
-        }
+        foreach (var key in keys)
+            file.Keys.Add(new W3KeyEntry { KeyHash = key.Hash, Id = key.Id ^ magic });
 
         return file;
     }
 
-    public static W3StringsFile ReadFile(string path)
+    /// <summary>
+    ///     Checks that a block of fixed-size entries fits the file, and answers how many there are
+    /// </summary>
+    /// <param name="start">The offset the block starts at</param>
+    /// <param name="count">The number of entries the container declares</param>
+    /// <param name="entrySize">The size of one entry in bytes</param>
+    /// <param name="payloadLimit">The offset the language key at the end of the file starts at</param>
+    /// <param name="name">The name of the block, used in the error message</param>
+    /// <returns>The number of entries, as an index</returns>
+    /// <exception cref="W3StringsException">Thrown when the block does not fit before the payload limit</exception>
+    private static int CheckBlockFits(long start, uint count, int entrySize, long payloadLimit, string name)
     {
-        return Read(File.ReadAllBytes(path));
+        var end = start + count * entrySize;
+        // The next section and, at the very least, the string buffer have to follow.
+        if (end >= payloadLimit)
+            throw new W3StringsException(
+                $"{name} declares {count} entries, which does not fit before the end of the file ({end} >= {payloadLimit})");
+
+        // A block that fits a file of this size cannot hold more entries than an index can address.
+        return (int)count;
     }
 
-    private static void ResolveLanguage(W3StringsFile file)
+    /// <summary>
+    ///     Reads the text of every entry out of the string buffer
+    /// </summary>
+    /// <param name="input">The stream to read from</param>
+    /// <param name="entries">The entries of the first block, in entry order</param>
+    /// <param name="buffer">The extent of the string buffer</param>
+    /// <param name="unit">The number of bytes one character takes in the container</param>
+    /// <returns>The stored bytes of every entry, in entry order</returns>
+    /// <exception cref="W3StringsException">Thrown when an entry points outside the string buffer</exception>
+    private static byte[][] ReadPayloads(Stream input, StringEntry[] entries, Buffer buffer, int unit)
     {
-        // Full 32-bit key first.
-        var language = W3Language.FromKey(file.Key);
-        // key1 alone is reliable when tooling left a foreign key2 behind.
-        language ??= W3Language.FromKey1(file.Key1);
+        var payloads = new byte[entries.Length][];
+        var cursor = buffer.Start;
 
-        if (language is { } resolved)
+        // Entries are fetched in the order they occupy the buffer, which is the order they are listed in
+        // for every container this build writes, so the stream simply keeps moving forward.
+        foreach (var i in Enumerable.Range(0, entries.Length).OrderBy(index => entries[index].Offset))
         {
-            file.Language = resolved;
-            file.Magic = resolved.Magic;
-            return;
+            if ((long)entries[i].Offset + entries[i].Length > buffer.Units)
+                throw new W3StringsException(
+                    $"string entry #{i} points outside the string buffer " +
+                    $"(offset {entries[i].Offset}, length {entries[i].Length}, buffer {buffer.Units} unit(s))");
+
+            var at = buffer.Start + entries[i].Offset * unit;
+            if (at < cursor) input.Seek(at, SeekOrigin.Begin); // An entry out of order has to be sought
+            else Skip(input, at - cursor); // A gap is read past, which keeps the read sequential
+
+            var payload = new byte[entries[i].Length * unit];
+            input.ReadExactly(payload);
+            payloads[i] = payload;
+            cursor = at + payload.Length;
         }
 
-        file.Language = null;
-        file.Magic = 0;
+        return payloads;
     }
+
+    /// <summary>
+    ///     Reads past a gap in the string buffer
+    /// </summary>
+    /// <param name="input">The stream to read from</param>
+    /// <param name="count">The number of bytes to read past</param>
+    private static void Skip(Stream input, long count)
+    {
+        if (count <= 0) return;
+
+        var scratch = new byte[(int)Math.Min(count, 4096)];
+        while (count > 0)
+        {
+            var chunk = (int)Math.Min(count, scratch.Length);
+            input.ReadExactly(scratch, 0, chunk);
+            count -= chunk;
+        }
+    }
+
+    /// <summary>
+    ///     Resolves the language, and with it the magic every id and payload was obfuscated with
+    /// </summary>
+    /// <param name="key1">The head half of the language key, read from the header</param>
+    /// <param name="key2">The tail half of the language key, read from the end of the container</param>
+    /// <returns>The language, or null for the languages that share key 0</returns>
+    /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
+    private static W3Language? ResolveLanguage(ushort key1, ushort key2)
+    {
+        var key = ((uint)key1 << 16) | key2;
+
+        // Full 32-bit key first, then key1 alone, which is reliable when tooling left a foreign key2.
+        var language = W3Language.FromKey(key) ?? W3Language.FromKey1(key1);
+        if (language is not null) return language;
+
+        // Every language the game added after its release shares key 0, so a zero key identifies no
+        // language but is not an error either: those containers are stored without obfuscation.
+        if (key == 0) return null;
+
+        // Any other key means the payload was obfuscated with a magic we do not know. Decoding it as
+        // if it were cleartext would turn every string into garbage without a single error, which is
+        // worse than refusing the file: the user must learn that the language is unsupported.
+        throw new W3StringsException(
+            $"unknown language key 0x{key:X8}, so the string payload cannot be decoded " +
+            "(the language is not supported by this build)");
+    }
+
+    /// <summary>
+    ///     The head of a container
+    /// </summary>
+    /// <param name="Version">The version the container was written with</param>
+    /// <param name="Key1">The head half of the language key</param>
+    /// <param name="Unit">The number of bytes one character takes in the container</param>
+    private readonly record struct Head(uint Version, ushort Key1, int Unit);
+
+    /// <summary>
+    ///     The extent of the string buffer
+    /// </summary>
+    /// <param name="Start">The offset the buffer starts at, in bytes</param>
+    /// <param name="Units">The size of the buffer, in units</param>
+    /// <param name="End">The offset the buffer ends at, in bytes</param>
+    private readonly record struct Buffer(long Start, uint Units, long End);
+
+    /// <summary>
+    ///     One entry of the first block, as it is stored
+    /// </summary>
+    /// <param name="Id">The id of the entry, still obfuscated</param>
+    /// <param name="Offset">The offset of the text, in units</param>
+    /// <param name="Length">The length of the text, in units</param>
+    private readonly record struct StringEntry(uint Id, uint Offset, uint Length);
+
+    /// <summary>
+    ///     One entry of the second block, as it is stored
+    /// </summary>
+    /// <param name="Hash">The hash of the key</param>
+    /// <param name="Id">The id of the string the key resolves to, still obfuscated</param>
+    private readonly record struct KeyEntry(uint Hash, uint Id);
 }

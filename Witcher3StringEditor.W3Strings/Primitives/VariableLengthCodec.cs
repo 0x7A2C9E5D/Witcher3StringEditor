@@ -1,17 +1,81 @@
 namespace Witcher3StringEditor.W3Strings.Primitives;
 
+/// <summary>
+///     Encodes and decodes the bit6 counts the w3strings sections are introduced by
+/// </summary>
 public static class VariableLengthCodec
 {
-    public static (uint Value, int NextOffset) Read(ReadOnlySpan<byte> data, int offset)
+    /// <summary>
+    ///     Reads a bit6 encoded count from a stream
+    /// </summary>
+    /// <param name="input">The stream to read from</param>
+    /// <returns>The count</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the stream is null</exception>
+    /// <exception cref="W3StringsException">Thrown when the stream ends inside the count, or holds no valid one</exception>
+    public static uint Read(Stream input)
     {
-        ulong value = 0;
+        ArgumentNullException.ThrowIfNull(input);
+
+        Span<byte> count = stackalloc byte[6]; // Six groups are the most a bit6 count can take
+        for (var length = 1; length <= count.Length; length++)
+        {
+            var next = input.ReadByte();
+            if (next < 0) break; // The stream ended inside the count
+            count[length - 1] = (byte)next;
+
+            // A count is complete as soon as the framing stops inside the bytes read so far.
+            if (TryDecode(count[..length], 0, out var value, out var end) && end == length) return value;
+        }
+
+        throw new W3StringsException(
+            "bit6: the stream does not hold a readable count here, it ends inside one or it does not fit a 32-bit unsigned integer");
+    }
+
+    /// <summary>
+    ///     Encodes a count
+    /// </summary>
+    /// <param name="value">The count to encode</param>
+    /// <returns>The encoded count</returns>
+    /// <exception cref="W3StringsException">Thrown when no framing holds the value</exception>
+    public static byte[] Write(uint value)
+    {
+        for (var groupCount = 1; groupCount <= 6; groupCount++)
+            foreach (var terminatorBits in new[] { 6, 7, 8 })
+            {
+                var candidate = Build(value, groupCount, terminatorBits);
+                if (candidate is null) continue;
+                // Probing has to be able to reject a framing, so it decodes without throwing: a
+                // framing the reader cannot stop inside is merely the wrong one, not a broken file.
+                // Probing with the throwing Read instead abandoned the search for counts such as
+                // 8192, which a file can easily reach.
+                if (TryDecode(candidate, 0, out var decoded, out _) && decoded == value) return candidate;
+            }
+
+        // Six groups carry 6 + 7 * 4 + 8 = 42 bits, so every 32-bit value is encodable. Reaching this
+        // line means the framing above is wrong, which is a bug and not a property of any input.
+        throw new W3StringsException($"bit6: cannot encode {value}");
+    }
+
+    /// <summary>
+    ///     Reads a bit6 encoded count without throwing
+    /// </summary>
+    /// <param name="data">The data to read from</param>
+    /// <param name="offset">The offset the count starts at</param>
+    /// <param name="value">Receives the count</param>
+    /// <param name="nextOffset">Receives the offset that follows the count</param>
+    /// <returns>True when a count was read</returns>
+    private static bool TryDecode(ReadOnlySpan<byte> data, int offset, out uint value, out int nextOffset)
+    {
+        value = 0;
+        nextOffset = offset;
+
+        ulong raw = 0;
         var shift = 0;
         var index = 1;
         var p = offset;
         while (true)
         {
-            if ((uint)p >= (uint)data.Length)
-                throw new W3StringsException("bit6: unexpected end of data while reading a count");
+            if ((uint)p >= (uint)data.Length) return false;
 
             var x = data[p++];
             uint mask;
@@ -33,31 +97,27 @@ public static class VariableLengthCodec
                     break;
             }
 
-            value |= (ulong)(x & mask) << shift;
+            raw |= (ulong)(x & mask) << shift;
             shift += step;
 
             if (x < 64 || (index >= 3 && x < 128)) break;
             index++;
         }
 
-        return value > uint.MaxValue
-            ? throw new W3StringsException($"bit6: value {value} out of range")
-            : ((uint)value, p);
+        if (raw > uint.MaxValue) return false;
+
+        value = (uint)raw;
+        nextOffset = p;
+        return true;
     }
 
-    public static byte[] Write(uint value)
-    {
-        for (var groupCount = 1; groupCount <= 6; groupCount++)
-            foreach (var terminatorBits in new[] { 6, 7, 8 })
-            {
-                var candidate = Build(value, groupCount, terminatorBits);
-                if (candidate is null) continue;
-                if (Read(candidate, 0).Value == value) return candidate;
-            }
-
-        throw new W3StringsException($"bit6: cannot encode {value}");
-    }
-
+    /// <summary>
+    ///     Frames one count out of the given number of groups
+    /// </summary>
+    /// <param name="value">The count to frame</param>
+    /// <param name="groupCount">The number of bytes to use</param>
+    /// <param name="terminatorBits">The number of data bits the last byte carries</param>
+    /// <returns>The framed count, or null when this framing cannot hold the value</returns>
     private static byte[]? Build(uint value, int groupCount, int terminatorBits)
     {
         if (groupCount == 1)
