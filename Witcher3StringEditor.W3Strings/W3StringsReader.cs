@@ -197,7 +197,7 @@ public static class W3StringsReader
     /// <param name="trailer">The bytes behind the string buffer</param>
     /// <param name="entries">The entries of the first block</param>
     /// <param name="keys">The entries of the second block</param>
-    /// <param name="payloads">The stored bytes of every entry, in entry order</param>
+    /// <param name="payloads">The stored bytes of every entry, in entry order, which decoding consumes</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
     private static W3StringsFile ToFile(Head head, uint key, W3Language? language, uint magic, Buffer buffer,
@@ -213,23 +213,14 @@ public static class W3StringsReader
             Trailer = trailer
         };
 
+        // Only the id and the text survive: where the container put a text and how long it said it was
+        // are facts of the encoding, and the writer works both out again for itself.
         for (var i = 0; i < entries.Length; i++)
-        {
-            // Decode into a separate buffer so the stored (obfuscated) bytes are retained as well;
-            // both are needed for a lossless round-trip.
-            var plain = (byte[])payloads[i].Clone();
-            var value = PayloadCodec.Decode(plain, (int)entries[i].Length, magic, unit);
             file.Strings.Add(new W3StringEntry
             {
                 Id = entries[i].Id ^ magic,
-                Offset = entries[i].Offset,
-                Length = entries[i].Length,
-                Value = value,
-                StoredBytes = payloads[i],
-                PlainBytes = plain,
-                OriginalValue = value
+                Value = PayloadCodec.Decode(payloads[i], (int)entries[i].Length, magic, unit)
             });
-        }
 
         foreach (var entry in keys)
             file.Keys.Add(new W3KeyEntry { KeyHash = entry.Hash, Id = entry.Id ^ magic });
@@ -319,11 +310,15 @@ public static class W3StringsReader
     /// <param name="key">The full language key, both halves together</param>
     /// <returns>The language, or null for the languages that share key 0</returns>
     /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
+    /// <remarks>
+    ///     Only the full key names a language. Half of one would name a language at best by luck, and
+    ///     the magic it would decode the payload with is what every string of the container depends on,
+    ///     so a container whose two halves do not agree with a known language is refused rather than
+    ///     guessed at
+    /// </remarks>
     private static W3Language? ResolveLanguage(uint key)
     {
-        // Full 32-bit key first, then its head half alone, which is reliable when tooling left a
-        // foreign tail half behind.
-        var language = W3Language.FromKey(key) ?? W3Language.FromKey1((ushort)(key >> 16));
+        var language = W3Language.FromKey(key);
         if (language is not null) return language;
 
         // Every language the game added after its release shares key 0, so a zero key identifies no

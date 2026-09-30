@@ -2,31 +2,16 @@ namespace Witcher3StringEditor.W3Strings.Model;
 
 public sealed class W3StringEntry
 {
+    /// <summary>
+    ///     The id the text is stored under, which a key of the key block resolves to
+    /// </summary>
     public uint Id { get; init; }
 
-    public uint Offset { get; init; }
-
-    public uint Length { get; init; }
-
+    /// <summary>
+    ///     The decoded text, which is the only form of it this model keeps: where the container put it
+    ///     and how long it said it was are facts of the encoding, not of the text
+    /// </summary>
     public string Value { get; init; } = string.Empty;
-
-    /// <summary>
-    ///     The bytes of the text as the container stores them: obfuscated with the language magic
-    /// </summary>
-    /// <remarks>
-    ///     Only an entry that was read from a container carries them. They are kept so that writing the
-    ///     container back reproduces the very bytes it was read with
-    /// </remarks>
-    public byte[]? StoredBytes { get; init; }
-
-    /// <summary>
-    ///     The bytes of the text with the obfuscation of the language magic undone
-    /// </summary>
-    /// <remarks>
-    ///     Only an entry that was read from a container carries them, and they always accompany
-    ///     <see cref="StoredBytes" />: the pair is the whole of what a parsed entry remembers
-    /// </remarks>
-    public byte[]? PlainBytes { get; init; }
 
     public override string ToString()
     {

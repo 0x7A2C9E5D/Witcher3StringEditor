@@ -44,7 +44,6 @@ public sealed class W3Language
     // Built on first use: the field initializers run in declaration order, and All is one of
     // them, so the language instances may not all exist while they are still running.
     private static readonly Lazy<Dictionary<uint, W3Language>> KeyToLanguage = new(BuildKeyLookup);
-    private static readonly Lazy<Dictionary<ushort, W3Language>> Key1ToLanguage = new(BuildKey1Lookup);
     private static readonly Lazy<Dictionary<string, W3Language>> CodeToLanguage = new(BuildCodeLookup);
 
     private W3Language(string code, string cultureCode, uint key, uint magic)
@@ -74,13 +73,6 @@ public sealed class W3Language
             .ToDictionary(group => group.Key, group => group.First());
     }
 
-    private static Dictionary<ushort, W3Language> BuildKey1Lookup()
-    {
-        // Same rule as the full key, applied to the high half of the key.
-        return All.GroupBy(language => (ushort)(language.Key >> 16)).Where(group => group.Count() == 1)
-            .ToDictionary(group => group.Key, group => group.First());
-    }
-
     private static Dictionary<string, W3Language> BuildCodeLookup()
     {
         var map = new Dictionary<string, W3Language>(StringComparer.OrdinalIgnoreCase);
@@ -93,14 +85,14 @@ public sealed class W3Language
         return map;
     }
 
+    /// <summary>
+    ///     Gets the language that owns the given full key
+    /// </summary>
+    /// <param name="key">The full 32-bit language key, both halves together</param>
+    /// <returns>The language, or null when no language owns the key</returns>
     public static W3Language? FromKey(uint key)
     {
         return KeyToLanguage.Value.GetValueOrDefault(key);
-    }
-
-    public static W3Language? FromKey1(ushort key1)
-    {
-        return Key1ToLanguage.Value.GetValueOrDefault(key1);
     }
 
     public static W3Language? FromCode(string? code)
