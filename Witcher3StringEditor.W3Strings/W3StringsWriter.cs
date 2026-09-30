@@ -13,16 +13,6 @@ namespace Witcher3StringEditor.W3Strings;
 public static class W3StringsWriter
 {
     /// <summary>
-    ///     Writes a container into the given stream
-    /// </summary>
-    /// <param name="output">The stream the container is written to</param>
-    /// <param name="file">The container to encode</param>
-    public static void Write(Stream output, W3StringsFile file)
-    {
-        WriteContainer(output, file, BufferOf(file));
-    }
-
-    /// <summary>
     ///     Measures every text and places it in the string buffer, encoding nothing
     /// </summary>
     /// <param name="file">The container to encode</param>
@@ -45,17 +35,19 @@ public static class W3StringsWriter
             cursor += (uint)lengths[i] + 1;
         }
 
-        return new Buffer(lengths, offsets, cursor * (uint)unit);
+        return new Buffer(lengths, offsets, cursor, cursor * (uint)unit);
     }
 
     /// <summary>
-    ///     Writes every section of the container in the order the format prescribes
+    ///     Writes a container into the given stream, every section in the order the format prescribes
     /// </summary>
     /// <param name="output">The stream the container is written to</param>
     /// <param name="file">The container to encode</param>
-    /// <param name="buffer">The slot of every entry, and the size of the buffer they occupy</param>
-    private static void WriteContainer(Stream output, W3StringsFile file, Buffer buffer)
+    public static void Write(Stream output, W3StringsFile file)
     {
+        // The layout has to be known before the first byte is written, because the block of offsets and
+        // lengths sits before the string buffer it points into.
+        var buffer = BufferOf(file);
         var magic = file.Magic;
         using var writer = new BinaryWriter(output, Encoding.UTF8, true); // The stream stays open for the caller
 
@@ -78,7 +70,7 @@ public static class W3StringsWriter
             writer.Write(key.Id ^ magic);
         }
 
-        WriteCount(writer, buffer.Units(file.Unit));
+        WriteCount(writer, (uint)(buffer.Size / file.Unit));
         WriteBuffer(writer, file, buffer);
 
         writer.Write(file.Key2);
@@ -90,7 +82,7 @@ public static class W3StringsWriter
     /// </summary>
     /// <param name="writer">The writer the buffer goes to</param>
     /// <param name="file">The container to encode</param>
-    /// <param name="buffer">The slot of every entry, and the size of the buffer they occupy</param>
+    /// <param name="buffer">The slot of every entry, and the sizes the buffer is written with</param>
     private static void WriteBuffer(BinaryWriter writer, W3StringsFile file, Buffer buffer)
     {
         var unit = file.Unit;
@@ -102,7 +94,8 @@ public static class W3StringsWriter
             WriteZeros(writer, unit); // The terminator that closes the text
         }
 
-        WriteZeros(writer, buffer.Size - buffer.Used(unit)); // Whatever the buffer size leaves over
+        // Whatever the buffer size leaves beyond the entries and their terminators.
+        WriteZeros(writer, buffer.Size - buffer.Used * (uint)unit);
     }
 
     /// <summary>
@@ -134,28 +127,7 @@ public static class W3StringsWriter
     /// </summary>
     /// <param name="Lengths">The length of every entry, in units</param>
     /// <param name="Offsets">The offset of every entry, in units</param>
+    /// <param name="Used">The size the entries and their terminators occupy, in units</param>
     /// <param name="Size">The size of the string buffer, in bytes</param>
-    private readonly record struct Buffer(int[] Lengths, uint[] Offsets, long Size)
-    {
-        /// <summary>
-        ///     Gets the size the entries and their terminators occupy, leaving out the room the
-        ///     container gives the buffer beyond them
-        /// </summary>
-        /// <param name="unit">The number of bytes one character takes in the container</param>
-        /// <returns>The size of the entries and their terminators, in bytes</returns>
-        public long Used(int unit)
-        {
-            return Offsets.Length == 0 ? 0 : (Offsets[^1] + (uint)Lengths[^1] + 1) * (uint)unit;
-        }
-
-        /// <summary>
-        ///     Gets the size of the buffer in the units the container counts it in
-        /// </summary>
-        /// <param name="unit">The number of bytes one character takes in the container</param>
-        /// <returns>The size of the string buffer, in units</returns>
-        public uint Units(int unit)
-        {
-            return (uint)(Size / unit);
-        }
-    }
+    private readonly record struct Buffer(int[] Lengths, uint[] Offsets, uint Used, long Size);
 }
