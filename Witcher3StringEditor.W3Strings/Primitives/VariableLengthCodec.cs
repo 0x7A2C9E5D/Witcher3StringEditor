@@ -10,12 +10,9 @@ public static class VariableLengthCodec
     /// </summary>
     /// <param name="input">The stream to read from</param>
     /// <returns>The count</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the stream is null</exception>
     /// <exception cref="W3StringsException">Thrown when the stream ends inside the count, or holds no valid one</exception>
     public static uint Read(Stream input)
     {
-        ArgumentNullException.ThrowIfNull(input);
-
         Span<byte> count = stackalloc byte[6]; // Six groups are the most a bit6 count can take
         for (var length = 1; length <= count.Length; length++)
         {

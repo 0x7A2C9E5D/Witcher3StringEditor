@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text;
 using Serilog;
 using Witcher3StringEditor.Contracts;
@@ -6,7 +5,6 @@ using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Serializers.Model;
 using Witcher3StringEditor.W3Strings;
-using Witcher3StringEditor.W3Strings.Model;
 
 namespace Witcher3StringEditor.Serializers;
 
@@ -79,29 +77,15 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
                 Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings"); // Destination of the encoded container
             var logger = Log.ForContext("Container", outputW3StringsPath); // Every line names its container
 
-            // The rows are checked before anything is written, so a save that cannot be written leaves
-            // the destination exactly as it was. The names come first: two rows with one name are a
-            // problem of the rows, which the container can no longer see once their hashes are built.
-            var inputs = w3StringItems
-                .Select(item => new Item(item.StrId, item.KeyName, item.KeyHex, item.Text)) // Raw, unparsed
-                .ToList();
-            var namesAreUsable = W3StringsValidator.ValidateKeyNames(inputs, logger);
-            var parsed = W3StringsValidator.ValidateItems(inputs, logger);
-            if (parsed is null || !namesAreUsable)
-            {
-                logger.Error("Refusing to write {Count} item(s): some of them carry no usable string ID or key",
-                    w3StringItems.Count);
-                return false;
-            }
-
-            var container = BuildContainer(parsed, context);
-            if (!W3StringsValidator.Validate(container, logger))
-            {
-                // Writing it would produce a file whose entries cannot all be reached, so the reasons
-                // above stand in place of a silently unsound mod.
-                logger.Error("Refusing to write {Count} item(s): the container holds errors", w3StringItems.Count);
-                return false;
-            }
+            // The container is assembled and checked by the codec before anything is written, so a save
+            // that cannot be written leaves the destination exactly as it was. What makes an item
+            // unusable is a rule of the format, so it is not decided here.
+            var container = W3StringsContainerBuilder.Build(
+                w3StringItems.Select(item => new Item(item.StrId, item.KeyName, item.KeyHex, item.Text)).ToList(),
+                ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
+                context.TargetLanguage.Key, // The language key is what every id and text is obfuscated by
+                logger);
+            if (container is null) return false; // The reasons are in the log, one per anomaly
 
             // Back the destination up before it is opened, because creating it truncates it.
             if (File.Exists(outputW3StringsPath) &&
@@ -136,9 +120,7 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
     /// </returns>
     private static uint ContainerVersion(Encoding encoding)
     {
-        return encoding.CodePage == Encoding.UTF8.CodePage
-            ? W3StringsFormat.FirstUtf8Version
-            : W3StringsFormat.Utf16LeVersion;
+        return encoding.Equals(Encoding.UTF8) ? W3StringsFormat.FirstUtf8Version : W3StringsFormat.Utf16LeVersion;
     }
 
     /// <summary>
@@ -159,50 +141,15 @@ public class W3StringsSerializer(IBackupService backupService) : IW3Serializer
             filePath); // Log the container facts
 
         // Reading only decodes: what the container says about itself is not checked here, the check
-        // belongs to the save that would produce a w3strings file again.
-
-        // Block 2 maps a localization-key hash to the id it resolves to. An id can carry
-        // several keys, so the first hash found is the one shown next to the entry.
-        var keyHashes = new Dictionary<uint, uint>(container.Keys.Count);
-        foreach (var key in container.Keys)
-            keyHashes.TryAdd(key.Id, key.KeyHash);
-
-        var items = new List<IW3StringItem>(container.Strings.Count); // Create list to store items
-        items.AddRange(container.Strings.Select(entry => new W3StringItem // Create new string item
+        // belongs to the save that would produce a w3strings file again. How its entries are shown as
+        // items is a rule of the format, so it is not decided here either.
+        var items = new List<IW3StringItem>();
+        items.AddRange(W3StringsItemReader.ReadItems(container).Select(item => new W3StringItem
         {
-            StrId = entry.Id.ToString(CultureInfo.InvariantCulture), // String id
-            KeyHex = keyHashes.TryGetValue(entry.Id, out var keyHash)
-                ? keyHash.ToString("X8", CultureInfo.InvariantCulture)
-                : string.Empty, // Localisation key hash, when the entry has one
-            Text = entry.Value // Decoded text
+            StrId = item.StringId, // String id
+            KeyHex = item.KeyHex, // Localisation key hash, when the entry has one
+            Text = item.Text // Decoded text
         }));
         return items; // Return list of items
-    }
-
-    /// <summary>
-    ///     Builds a W3Strings container from the items that have already been checked
-    /// </summary>
-    /// <param name="items">The parsed items to include, in the order they were given</param>
-    /// <param name="context">The serialization context supplying the target language and container version</param>
-    /// <returns>The container to encode</returns>
-    private static W3StringsFile BuildContainer(IReadOnlyList<Item> items, W3SerializationContext context)
-    {
-        var language = context.TargetLanguage; // Language the container is written for
-        var container = new W3StringsFile
-        {
-            Version = ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
-            // The key is the only thing a container is told about its language: the magic that every id
-            // and text is obfuscated with follows from it.
-            Key = language.Key
-        };
-
-        foreach (var item in items)
-        {
-            container.Strings.Add(new W3StringEntry { Id = item.Id, Value = item.Text });
-            if (item.KeyHash is { } hash)
-                container.Keys.Add(new W3KeyEntry { KeyHash = hash, Id = item.Id });
-        }
-
-        return container;
     }
 }
