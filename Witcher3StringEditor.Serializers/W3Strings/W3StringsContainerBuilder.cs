@@ -12,13 +12,20 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 ///     never has to know any of those rules itself
 ///     Every anomaly is written to the static Serilog logger, which the application configures once at
 ///     startup, so no logger is handed in here
+///     An item is the caller's own object, so it is left carrying the key it is written with: the eight
+///     digits of the hash, or no text at all when it carries no key. A name that is set is the key, and the
+///     hash of it is put back on the item the moment the key is resolved, which is how the caller reads the
+///     written key off the very item it handed in
 /// </summary>
 internal static class W3StringsContainerBuilder
 {
     /// <summary>
     ///     Builds the container of the given items
     /// </summary>
-    /// <param name="items">The items to write, as they arrive from the caller</param>
+    /// <param name="items">
+    ///     The items to write, as they arrive from the caller. Every one of them is left carrying the key it
+    ///     is written with, because they are the caller's own objects
+    /// </param>
     /// <param name="version">The container version that stores the chosen payload encoding</param>
     /// <param name="key">The language key the container is written for</param>
     /// <returns>The container to encode, or null when one of its entries would be unreachable</returns>
@@ -100,14 +107,16 @@ internal static class W3StringsContainerBuilder
                 continue;
             }
 
-            if (!TryResolveKey(item, out var keyHash)) mayWrite = false;
+            // The key is resolved on the item itself, which is left carrying the key it is written with.
+            ResolveKey(item);
 
             file.Strings.Add(new W3StringEntry { Id = id, Value = item.Text });
 
-            // Only an item that came back with a key gets one collected: an item without a key is reached
-            // by its id rather than by any key.
-            if (keyHash is not { } hash) continue;
-            keys.Add((hash, id, item.KeyName));
+            // Only an item that came out carrying a key gets one: an item without a key is reached by its
+            // id rather than by any key.
+            if (item.KeyHex.Length == 0) continue;
+            keys.Add((uint.Parse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture), id,
+                item.KeyName));
         }
 
         return mayWrite;
@@ -188,58 +197,93 @@ internal static class W3StringsContainerBuilder
     }
 
     /// <summary>
-    ///     Resolves the localization key of one item
+    ///     Resolves the localization key of one item, and leaves the item carrying the key it is written with
     ///     The readable key name wins over the raw hash when both are set
     /// </summary>
-    /// <param name="item">The item to resolve the key of</param>
-    /// <param name="keyHash">Receives the key hash, null when the item carries no key at all</param>
-    /// <returns>True when the key may be written</returns>
+    /// <param name="item">
+    ///     The item to resolve the key of. It is left carrying the key it is written with, as the eight
+    ///     digits of its hash, or carrying no text at all when it has no key
+    /// </param>
     /// <remarks>
-    ///     An item carries its key as a readable name, as a raw hash, or as both, and a hash of zero is how
-    ///     either of them says it carries no key. Whatever the item carries has to be readable: a hash that
-    ///     is not a 32-bit hexadecimal number is an error even when a name is there to take its place,
-    ///     because the item would otherwise be reduced to a different key without a word
+    ///     A name that is set is what the key is, and it is how a key is ordinarily authored: a container
+    ///     stores hashes, so the hash of the name is the key the item is written with, and the hash the item
+    ///     arrived with is only compared with it. An item with no name is written with the hash it carries,
+    ///     when that text is one
+    ///     A hash of zero is how either of them says it carries no key: an empty name is no name at all, and
+    ///     it hashes to that very zero. Text that is not a 32-bit hexadecimal number is not a key either,
+    ///     and it is reported rather than obeyed, because an item without a name has nothing left to be
+    ///     looked up by then
+    ///     Items arrive by reference, which is how the row a caller just saved comes to show the key it
+    ///     was written with rather than the one it happened to carry
     /// </remarks>
-    private static bool TryResolveKey(IStringItem item, out uint? keyHash)
+    private static void ResolveKey(IStringItem item)
     {
-        keyHash = null;
+        if (!string.IsNullOrWhiteSpace(item.KeyName))
+            ResolveKeyFromName(item); // A name that is set is the key, whatever else the item carries
+        else
+            ResolveKeyFromHash(item); // Without a name, the key is the hash the item carries itself
+    }
 
-        // The hash the item carries, read even when a name is set, so that a hash nobody can read is
-        // never dropped in silence.
-        uint? carried = null;
+    /// <summary>
+    ///     Resolves the key of an item that carries a readable name, which is the key it is written with
+    /// </summary>
+    /// <param name="item">The item whose name is the key, left carrying the hash the name stands for</param>
+    /// <remarks>
+    ///     The hash the item arrived with is only compared with the one its name stands for: the name is the
+    ///     key either way, and a hash that is another key is reported rather than obeyed
+    /// </remarks>
+    private static void ResolveKeyFromName(IStringItem item)
+    {
+        var named = LocalizationKeyHash.Compute(item.KeyName); // Hash the readable localization key
+
+        // An item that carries no hash at all has nothing to compare.
         if (!string.IsNullOrWhiteSpace(item.KeyHex))
         {
-            var keyHex = item.KeyHex.Trim();
-            if (keyHex.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-                keyHex = keyHex[2..]; // Drop an optional hexadecimal prefix
-            if (!uint.TryParse(keyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hash))
-            {
-                Log.Error(
-                    "String ID {StringId} carries the key hash {KeyHash}, which is not a 32-bit hexadecimal number",
-                    item.StrId, item.KeyHex);
-                return false;
-            }
-
-            carried = hash;
+            // A hash of zero says the item carries no key, which is what no hash says as well, so only a
+            // hash that is another key is worth a word, and text that is not a hash at all is one of those:
+            // it is not this name's hash either.
+            uint? carried = uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                out var hash)
+                ? hash
+                : null;
+            if (carried != 0 && carried != named)
+                Log.Warning(
+                    "String ID {StringId} carries the key hash {KeyHash}, but its key name {KeyName} hashes to 0x{Named:X8}, so the name is the key it is written with",
+                    item.StrId, item.KeyHex, item.KeyName, named);
         }
 
-        // The name is only ever input that gets hashed on the way in. A container stores hashes, so what
-        // is written is the name's hash, and a hash that says something else is reported rather than
-        // obeyed: the item is written with the key its name stands for.
-        var named = string.IsNullOrWhiteSpace(item.KeyName)
-            ? (uint?)null
-            : LocalizationKeyHash.Compute(item.KeyName); // Hash the readable localization key
+        // An empty name is no name at all, and it hashes to the very zero that says there is no key.
+        item.KeyHex = named == 0 ? string.Empty : named.ToString("X8", CultureInfo.InvariantCulture);
+    }
 
-        // Zero is how either of them says it carries no key, and no key is one thing rather than two.
-        if (carried == 0) carried = null;
-        if (named == 0) named = null;
+    /// <summary>
+    ///     Resolves the key of an item that carries no name, which is the hash it carries itself
+    /// </summary>
+    /// <param name="item">The item whose hash is the key, left carrying it as the eight digits of a hash</param>
+    /// <remarks>
+    ///     Text that is not a 32-bit hexadecimal number is not a key, and a hash of zero is how a hash says
+    ///     it carries no key: either way the item is left carrying no text at all, because there is nothing
+    ///     left for anything to look it up by then
+    /// </remarks>
+    private static void ResolveKeyFromHash(IStringItem item)
+    {
+        if (string.IsNullOrWhiteSpace(item.KeyHex))
+        {
+            item.KeyHex = string.Empty;
+            return;
+        }
 
-        if (named is { } fromName && carried is { } fromHash && fromHash != fromName)
-            Log.Warning(
-                "String ID {StringId} carries the key hash 0x{Carried:X8}, but its key name {KeyName} hashes to 0x{Named:X8}, so the name is the key it is written with",
-                item.StrId, fromHash, item.KeyName, fromName);
+        if (uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var carried))
+        {
+            item.KeyHex = carried == 0 // A hash of zero says it carries no key, and no key is no text
+                ? string.Empty
+                : carried.ToString("X8", CultureInfo.InvariantCulture);
+            return;
+        }
 
-        keyHash = named ?? carried;
-        return true;
+        Log.Warning(
+            "String ID {StringId} carries the key hash {KeyHash}, which is not a 32-bit hexadecimal number, so it is not the key the item is written with",
+            item.StrId, item.KeyHex);
+        item.KeyHex = string.Empty;
     }
 }
