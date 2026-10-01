@@ -54,16 +54,21 @@ internal static class W3StringsWriter
         writer.Write(file.Version);
         writer.Write(file.Key1);
 
+        // The game resolves both blocks by binary search: entries by string id in the first block, and
+        // keys by localization-key hash in the second. Each block is therefore written in ascending
+        // order of the value it is searched by. A key block in any other order still loads without an
+        // error, but most of its keys stop resolving, and the game shows the menu the raw "##key" it
+        // asked for instead of the text.
         WriteCount(writer, (uint)file.Strings.Count);
-        for (var i = 0; i < file.Strings.Count; i++)
+        foreach (var entry in EntriesById(file.Strings, buffer))
         {
-            writer.Write(file.Strings[i].Id ^ magic);
-            writer.Write(buffer.Offsets[i]);
-            writer.Write((uint)buffer.Lengths[i]);
+            writer.Write(entry.Id ^ magic);
+            writer.Write(entry.Offset);
+            writer.Write(entry.Length);
         }
 
         WriteCount(writer, (uint)file.Keys.Count);
-        foreach (var key in file.Keys)
+        foreach (var key in file.Keys.OrderBy(key => key.KeyHash))
         {
             writer.Write(key.KeyHash);
             writer.Write(key.Id ^ magic);
@@ -73,6 +78,25 @@ internal static class W3StringsWriter
         WriteBuffer(writer, file, buffer);
 
         writer.Write(file.Key2);
+    }
+
+    /// <summary>
+    ///     Pairs every entry with the slot of the string buffer that holds its text, ordered by string id
+    /// </summary>
+    /// <param name="entries">The entries of the container</param>
+    /// <param name="buffer">The slot of every entry, in the order the entries are listed</param>
+    /// <returns>The entries with their slots, ordered by string id</returns>
+    /// <remarks>
+    ///     The buffer is laid out in the order the entries are listed, so the slots are paired before the
+    ///     entries are ordered: ordering the slots as well would move a text away from the bytes written
+    ///     for it, while the offsets make the order of the block itself free
+    /// </remarks>
+    private static IEnumerable<(uint Id, uint Offset, uint Length)> EntriesById(
+        IReadOnlyList<W3StringEntry> entries, Buffer buffer)
+    {
+        return entries
+            .Select((entry, index) => (entry.Id, Offset: buffer.Offsets[index], Length: (uint)buffer.Lengths[index]))
+            .OrderBy(entry => entry.Id);
     }
 
     /// <summary>
