@@ -37,16 +37,6 @@ internal static class W3StringsFormat
     public const int Block2EntrySize = 8;
 
     /// <summary>
-    ///     The offset of the first key in the container: 8 bytes
-    /// </summary>
-    public const int Key1Offset = 8;
-
-    /// <summary>
-    ///     The offset of the second key in the container: 10 bytes
-    /// </summary>
-    public const int FirstCountOffset = 10;
-
-    /// <summary>
     ///     The magic bytes of the container: "RTSW"
     /// </summary>
     public static ReadOnlySpan<byte> MagicBytes => "RTSW"u8;
