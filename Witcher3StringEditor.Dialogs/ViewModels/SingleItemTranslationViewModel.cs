@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -37,6 +37,9 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
         : base(appSettings, translator, w3StringItems, dialogService)
     {
         CurrentItemIndex = index;
+        // The initial index may equal the property's default, in which case setting it raises no
+        // change and the model has to be built here instead of by the change handler below.
+        CurrentTranslateItemModel ??= CreateTranslateItemModel(CurrentItemIndex);
     }
 
     /// <summary>
@@ -92,8 +95,18 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     /// <param name="value">The new current item index value</param>
     partial void OnCurrentItemIndexChanged(int value)
     {
-        var selectedItem = W3StringItems[value];
-        CurrentTranslateItemModel = new TranslateItemModel { Id = selectedItem.TrackingId, Text = selectedItem.Text };
+        CurrentTranslateItemModel = CreateTranslateItemModel(value);
+    }
+
+    /// <summary>
+    ///     Builds the translate item model of the item at the given index
+    /// </summary>
+    /// <param name="index">The index of the item in the collection</param>
+    /// <returns>The model holding the item's original text</returns>
+    private TranslateItemModel CreateTranslateItemModel(int index)
+    {
+        var selectedItem = W3StringItems[index];
+        return new TranslateItemModel { Id = selectedItem.TrackingId, Text = selectedItem.Text };
     }
 
     /// <summary>
