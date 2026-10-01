@@ -61,7 +61,10 @@ internal static class W3StringsBuilder
         return new W3KeyEntry
         {
             Id = id,
-            KeyHash = uint.Parse(item.KeyHex)
+            // The key is carried as hexadecimal text, and a cleared key means the hash is zero
+            KeyHash = string.IsNullOrWhiteSpace(item.KeyHex)
+                ? 0
+                : uint.Parse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture)
         };
     }
 
