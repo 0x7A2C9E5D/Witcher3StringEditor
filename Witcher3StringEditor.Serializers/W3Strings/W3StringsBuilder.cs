@@ -4,7 +4,7 @@ using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
-internal static class W3StringsContainerBuilder
+internal static class W3StringsBuilder
 {
     public static W3StringsFile? Build(IReadOnlyList<IStringItem> items, uint version, uint key)
     {

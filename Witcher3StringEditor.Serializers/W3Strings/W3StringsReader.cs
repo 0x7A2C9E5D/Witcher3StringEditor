@@ -58,7 +58,7 @@ internal static class W3StringsReader
     /// <param name="file">The container to read the items of</param>
     /// <returns>The items of the container, in container order</returns>
     /// <remarks>
-    ///     The reverse of what <see cref="W3StringsContainerBuilder" /> does, and the only place the ids and
+    ///     The reverse of what <see cref="W3StringsBuilder" /> does, and the only place the ids and
     ///     key hashes of a container are written out as text: a caller that reads a file gets items back and
     ///     never has to know how either of them is stored
     /// </remarks>

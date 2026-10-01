@@ -77,7 +77,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             // that cannot be written leaves the destination exactly as it was. What makes an item
             // unusable is a rule of the format, so it is not decided here. The builder logs every
             // anomaly it refuses the container for itself, one line per anomaly.
-            var container = W3StringsContainerBuilder.Build(
+            var container = W3StringsBuilder.Build(
                 w3StringItems,
                 ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
                 context.TargetLanguage.Key); // The language key is what every id and text is obfuscated by
