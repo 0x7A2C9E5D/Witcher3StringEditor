@@ -8,111 +8,67 @@ internal static class W3StringsContainerBuilder
 {
     public static W3StringsFile? Build(IReadOnlyList<IStringItem> items, uint version, uint key)
     {
-        if (items.DistinctBy(x => x.StrId).Count() < items.Count)
-        {
-            Log.Error("The container has multiple items with the same string id");
-            return Refuse(items);
-        }
-
-        if (!ReadIds(items)) return Refuse(items);
+        if (HasDuplicateStrIds(items)) return null;
 
         var file = new W3StringsFile { Version = version, Key = key };
-        AddStrings(file, items);
 
-        foreach (var item in items) ResolveKey(item);
-
-        if (!ReportDuplicateKey(items)) return Refuse(items);
-
-        AddKeys(file, items);
-        if (file.Keys.Count != 0) return file;
-        Log.Error(
-            "None of the {Count} item(s) carries a key, and the game's encoder cannot read a container without a key block",
-            items.Count);
-        return Refuse(items);
-    }
-
-
-    private static W3StringsFile? Refuse(IReadOnlyList<IStringItem> items)
-    {
-        Log.Error("Refusing to write {Count} item(s): the container holds errors", items.Count);
-        return null;
-    }
-
-
-    private static void AddStrings(W3StringsFile file, IReadOnlyList<IStringItem> items)
-    {
         foreach (var item in items)
-            file.Strings.Add(new W3StringEntry
+            if (uint.TryParse(item.StrId, out var id))
             {
-                Id = uint.Parse(item.StrId, NumberStyles.None, CultureInfo.InvariantCulture),
-                Value = item.Text
-            });
-    }
-
-
-    private static bool ReadIds(IReadOnlyList<IStringItem> items)
-    {
-        HashSet<uint> ids = [];
-        foreach (var strId in items.Select(item => item.StrId))
-        {
-            if (!TryParseId(strId, out var id))
+                ResolveKeyAndAddEntry(file, id, item);
+            }
+            else
             {
-                Log.Error(
-                    "String ID {StringId} is not a 32-bit unsigned integer, so the container is refused rather than written without it",
-                    strId);
-                return false;
+                Log.Error("String ID {StringId} is not a 32-bit unsigned integer", item.StrId);
+                return null;
             }
 
-            if (ids.Add(id)) continue;
-
-            Log.Error("String ID {Id} is used by more than one entry, so the container cannot be looked up", id);
-            return false;
-        }
-
-        return true;
+        return file;
     }
 
-
-    private static bool ReportDuplicateKey(IReadOnlyList<IStringItem> items)
+    private static void ResolveKeyAndAddEntry(W3StringsFile file, uint id, IStringItem item)
     {
-        var duplicated = items.Where(item => item.KeyHex.Length != 0).GroupBy(item => item.KeyHex)
-            .FirstOrDefault(group => group.Count() > 1);
-        if (duplicated is null) return true;
-
-        var ids = duplicated.Select(item => uint.Parse(item.StrId, NumberStyles.None, CultureInfo.InvariantCulture))
-            .Distinct().Order().ToArray();
-        var name = duplicated.First().KeyName is { Length: > 0 } named ? $" (named {named})" : string.Empty;
-        Log.Error(
-            "Key hash 0x{Hash:l}{Name:l} points at {Count} different string IDs ({StringIds:l}), so only one of them can be looked up",
-            duplicated.Key, name, ids.Length, string.Join(", ", ids));
-        return false;
+        ResolveKey(item);
+        AddEntry(file, id, item);
     }
 
-    private static void AddKeys(W3StringsFile file, IReadOnlyList<IStringItem> items)
+    private static void AddEntry(W3StringsFile file, uint id, IStringItem item)
     {
-        foreach (var item in items)
+        file.Keys.Add(CreateKeyEntry(id, item));
+        file.Strings.Add(CreateStringEntry(id, item));
+    }
+
+    private static W3StringEntry CreateStringEntry(uint id, IStringItem item)
+    {
+        return new W3StringEntry
         {
-            if (item.KeyHex.Length == 0) continue; // An item that carries no key is looked up by its id
-
-            file.Keys.Add(new W3KeyEntry
-            {
-                KeyHash = uint.Parse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture),
-                Id = uint.Parse(item.StrId, NumberStyles.None, CultureInfo.InvariantCulture)
-            });
-        }
+            Id = id,
+            Value = item.Text
+        };
     }
 
-    private static bool TryParseId(string strId, out uint id)
+    private static W3KeyEntry CreateKeyEntry(uint id, IStringItem item)
     {
-        return uint.TryParse(strId, NumberStyles.None, CultureInfo.InvariantCulture, out id);
+        return new W3KeyEntry
+        {
+            Id = id,
+            KeyHash = uint.Parse(item.KeyHex)
+        };
+    }
+
+    private static bool HasDuplicateStrIds(IReadOnlyList<IStringItem> items)
+    {
+        if (items.DistinctBy(x => x.StrId).Count() >= items.Count) return false;
+        Log.Error("The container has multiple items with the same string id");
+        return true;
     }
 
     private static void ResolveKey(IStringItem item)
     {
         if (!string.IsNullOrWhiteSpace(item.KeyName))
-            ResolveKeyFromName(item); // A name that is set is the key, whatever else the item carries
+            ResolveKeyFromName(item);
         else
-            ResolveKeyFromHash(item); // Without a name, the key is the hash the item carries itself
+            ResolveKeyFromHash(item);
     }
 
 
@@ -122,10 +78,10 @@ internal static class W3StringsContainerBuilder
 
         if (!string.IsNullOrWhiteSpace(item.KeyHex))
         {
-            uint? carried =
-                uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hash)
-                    ? hash
-                    : null;
+            uint? carried = uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                out var hash)
+                ? hash
+                : null;
             if (carried != 0 && carried != named)
                 Log.Warning(
                     "String ID {StringId} carries the key hash {KeyHash}, but its key name {KeyName} hashes to 0x{Named:X8}, so the name is the key it is written with",
@@ -145,7 +101,9 @@ internal static class W3StringsContainerBuilder
 
         if (uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var carried))
         {
-            item.KeyHex = carried == 0 ? string.Empty : carried.ToString("X8", CultureInfo.InvariantCulture);
+            item.KeyHex = carried == 0
+                ? string.Empty
+                : carried.ToString("X8", CultureInfo.InvariantCulture);
             return;
         }
 
