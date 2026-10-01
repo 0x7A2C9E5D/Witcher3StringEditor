@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="Witcher3StringEditor.Dialogs.Views.EditDataDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -48,8 +48,11 @@
             <iwk:SimpleStackPanel Spacing="16">
                 <!-- String ID input field -->
                 <TextBox ui:ControlHelper.Header="ID" Text="{Binding Item.StrId, FallbackValue=''}" />
-                <!-- Key in hexadecimal format input field -->
-                <TextBox ui:ControlHelper.Header="Key(Hex)" Text="{Binding Item.KeyHex, FallbackValue=''}" />
+                <!-- Key in hexadecimal format: it is the hash of the key name, so it is shown rather than typed -->
+                <TextBox
+                    ui:ControlHelper.Header="Key(Hex)"
+                    IsReadOnly="True"
+                    Text="{Binding Item.KeyHex, FallbackValue='', Mode=OneWay}" />
                 <!-- Key name input field -->
                 <TextBox ui:ControlHelper.Header="Key(String)" Text="{Binding Item.KeyName, FallbackValue=''}" />
             </iwk:SimpleStackPanel>

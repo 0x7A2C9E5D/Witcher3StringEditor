@@ -349,7 +349,8 @@
                     HeaderText="Key(Hex)"
                     MappingName="KeyHex"
                     MinimumWidth="50"
-                    TextAlignment="Center" />
+                    TextAlignment="Center" 
+                    IsReadOnly="True" />
                 <!-- Key (String) column -->
                 <sf:GridTextColumn
                     Width="300"
