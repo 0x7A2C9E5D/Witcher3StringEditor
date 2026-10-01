@@ -29,27 +29,19 @@ public class ExcelSerializer(IBackupService backupService) : ISerializer
     /// <param name="filePath">The path to the Excel file to deserialize</param>
     /// <returns>
     ///     A task that represents the asynchronous deserialize operation.
-    ///     The task result contains the deserialized The Witcher 3 string items, or an empty list if an error occurred
+    ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
+    /// <exception cref="Exception">Thrown when the file could not be read</exception>
     public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
     {
-        try
+        return await Task.Run(() => // Async deserialize
         {
-            return await Task.Run(() => // Async deserialize
-            {
-                using var excelEngine = new ExcelEngine(); // Auto-cleanup engine
-                var worksheet = excelEngine.Excel.Workbooks.Open(filePath).Worksheets[0]; // Get 1st sheet
-                var usedRange = worksheet.UsedRange; // Get data range
-                return worksheet.ExportData<StringItem>(1, 1, usedRange.LastRow,
-                    usedRange.LastColumn); // Export data
-            }).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred while deserializing Excel worksheets file: {Path}",
-                filePath); // Log error
-            return []; // Empty on fail
-        }
+            using var excelEngine = new ExcelEngine(); // Auto-cleanup engine
+            var worksheet = excelEngine.Excel.Workbooks.Open(filePath).Worksheets[0]; // Get 1st sheet
+            var usedRange = worksheet.UsedRange; // Get data range
+            return worksheet.ExportData<StringItem>(1, 1, usedRange.LastRow,
+                usedRange.LastColumn); // Export data
+        }).ConfigureAwait(false);
     }
 
     /// <summary>

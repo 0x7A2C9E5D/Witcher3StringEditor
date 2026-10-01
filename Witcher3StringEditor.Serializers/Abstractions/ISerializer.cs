@@ -25,6 +25,7 @@ public interface ISerializer
     ///     A task that represents the asynchronous deserialize operation. The task result contains the deserialized W3
     ///     string items
     /// </returns>
+    /// <exception cref="Exception">Thrown when the file could not be read</exception>
     public Task<IReadOnlyList<IStringItem>> Deserialize(string filePath);
 
     /// <summary>

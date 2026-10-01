@@ -36,11 +36,11 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDialogViewModelFactory dialogViewModelFactory; // Get dialog view model factory
     private readonly IRecentFilesService recentFilesService; // Get recent files service
+    private readonly ISerializerCoordinator serializer; // Get serializer service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
     private readonly IShellOpenService shellOpenService; // Get explorer service
     private readonly ITranslatorProvider translatorProvider; // Get translator provider
-    private readonly ISerializerCoordinator serializer; // Get serializer service
 
     /// <summary>
     ///     Gets or sets the collection of The Witcher 3 string items

@@ -29,36 +29,29 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
     /// <param name="filePath">The path to the CSV file to deserialize</param>
     /// <returns>
     ///     A task that represents the asynchronous deserialize operation.
-    ///     The task result contains the deserialized The Witcher 3 string items, or an empty list if an error occurred
+    ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
+    /// <exception cref="Exception">Thrown when the file could not be read</exception>
     public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
     {
-        try
+        await using var fileStream = File.OpenRead(filePath); // Open file stream
+        using var reader = new StreamReader(fileStream); // Create stream reader
+        var items = new List<IStringItem>(); // Create list to store items
+        while (await reader.ReadLineAsync() is { } line) // Read lines
         {
-            await using var fileStream = File.OpenRead(filePath); // Open file stream
-            using var reader = new StreamReader(fileStream); // Create stream reader
-            var items = new List<IStringItem>(); // Create list to store items
-            while (await reader.ReadLineAsync() is { } line) // Read lines
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue; // Skip empty lines and comments
+            var parts = line.Split('|'); // Split line into parts
+            if (parts.Length != 4) continue; // Skip lines with incorrect number of parts
+            items.Add(new StringItem // Create new string item
             {
-                if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue; // Skip empty lines and comments
-                var parts = line.Split('|'); // Split line into parts
-                if (parts.Length != 4) continue; // Skip lines with incorrect number of parts
-                items.Add(new StringItem // Create new string item
-                {
-                    StrId = parts[0].Trim(), // Extract string ID
-                    KeyHex = parts[1].Trim(), // Extract key hex
-                    KeyName = parts[2].Trim(), // Extract key name
-                    Text = parts[3].Trim() // Extract text
-                });
-            }
+                StrId = parts[0].Trim(), // Extract string ID
+                KeyHex = parts[1].Trim(), // Extract key hex
+                KeyName = parts[2].Trim(), // Extract key name
+                Text = parts[3].Trim() // Extract text
+            });
+        }
 
-            return items; // Return list of items
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred while deserializing the CSV file: {Path}", filePath); // Log errors
-            return []; // Return empty list on error
-        }
+        return items; // Return list of items
     }
 
     /// <summary>

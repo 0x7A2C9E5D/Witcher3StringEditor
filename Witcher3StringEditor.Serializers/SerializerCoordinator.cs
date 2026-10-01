@@ -45,6 +45,7 @@ public class SerializerCoordinator : ISerializerCoordinator
     ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
     /// <exception cref="NotSupportedException">Thrown when the file format is not supported</exception>
+    /// <exception cref="Exception">Thrown when the file could not be read</exception>
     public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
     {
         var items = await Resolve(FormatOf(filePath)).Deserialize(filePath);

@@ -31,20 +31,12 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     /// <param name="filePath">The path to the W3Strings file to deserialize</param>
     /// <returns>
     ///     A task that represents the asynchronous deserialize operation.
-    ///     The task result contains the deserialized The Witcher 3 string items, or an empty list if an error occurred
+    ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
+    /// <exception cref="Exception">Thrown when the file could not be read</exception>
     public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
     {
-        try
-        {
-            return await Task.Run(() => ReadItems(filePath)); // Decode the container off the calling thread
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred while deserializing W3Strings file: {Path}",
-                filePath); // Log any errors that occur during deserialization
-            return []; // Return an empty list in case of errors
-        }
+        return await Task.Run(() => ReadItems(filePath)); // Decode the container off the calling thread
     }
 
     /// <summary>
