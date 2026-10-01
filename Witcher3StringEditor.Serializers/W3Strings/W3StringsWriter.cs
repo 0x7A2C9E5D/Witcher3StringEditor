@@ -16,8 +16,9 @@ internal static class W3StringsWriter
     /// <param name="file">The container to encode</param>
     /// <returns>The slot of every entry, and the size of the buffer they occupy</returns>
     /// <remarks>
-    ///     The texts are laid out one behind the other, each closed by the terminator the format asks
-    ///     for, so the buffer holds exactly what they need and nothing more
+    ///     The texts are laid out one behind the other in the order they are listed, each closed by the
+    ///     terminator the format asks for, so the block of offsets comes out sorted and the buffer holds
+    ///     exactly what the texts need
     /// </remarks>
     private static Buffer BufferOf(W3StringsFile file)
     {
@@ -86,8 +87,9 @@ internal static class W3StringsWriter
         var unit = file.Unit;
         var magic = file.Magic;
 
-        foreach (var payload in file.Strings.Select(t => PayloadCodec.Encode(t.Value, magic, unit, out _)))
+        foreach (var entry in file.Strings)
         {
+            var payload = PayloadCodec.Encode(entry.Value, magic, unit, out _);
             writer.Write(payload);
             WriteZeros(writer, unit); // The terminator that closes the text
         }
@@ -123,8 +125,8 @@ internal static class W3StringsWriter
     /// <summary>
     ///     Where every text sits in the string buffer, and how large that buffer is
     /// </summary>
-    /// <param name="Lengths">The length of every entry, in units</param>
-    /// <param name="Offsets">The offset of every entry, in units</param>
+    /// <param name="Lengths">The length of every slot of the buffer, in units</param>
+    /// <param name="Offsets">The offset of every slot of the buffer, in units</param>
     /// <param name="Used">The size the entries and their terminators occupy, in units</param>
     /// <param name="Size">The size of the string buffer, in bytes</param>
     private readonly record struct Buffer(int[] Lengths, uint[] Offsets, uint Used, long Size);

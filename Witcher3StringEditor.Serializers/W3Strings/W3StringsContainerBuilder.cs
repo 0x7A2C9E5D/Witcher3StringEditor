@@ -87,14 +87,26 @@ internal static class W3StringsContainerBuilder
             mayWrite = false;
         }
 
+        // The keys are laid down before the container is judged, because whether there are any is what
+        // the game's own encoder cannot do without: it reads a container with an empty key block as a
+        // broken file and gives up on it. Every item of a mod carries a key name or a key hash, which is
+        // where the key block comes from.
+        foreach (var (hash, relatedIds) in idsByHash)
+            file.Keys.Add(new W3KeyEntry { KeyHash = hash, Id = relatedIds.First() });
+
+        if (file.Strings.Count > 0 && file.Keys.Count == 0)
+        {
+            logger.Error(
+                "None of the {Count} item(s) carries a key, and the game's encoder cannot read a container without a key block",
+                file.Strings.Count);
+            mayWrite = false;
+        }
+
         if (!mayWrite || file.Strings.Count == 0)
         {
             logger.Error("Refusing to write {Count} item(s): the container holds errors", items.Count);
             return null;
         }
-
-        foreach (var (hash, relatedIds) in idsByHash)
-            file.Keys.Add(new W3KeyEntry { KeyHash = hash, Id = relatedIds.First() });
 
         return file;
     }
