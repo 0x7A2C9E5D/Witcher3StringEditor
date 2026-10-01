@@ -5,7 +5,7 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 /// <summary>
 ///     Reads a w3strings container out of a stream
 ///     The container is read section by section and never held whole: the first block says where every
-///     text sits, so the payloads are fetched one at a time and only the model keeps them
+///     text sits, so the stored bytes are fetched one at a time and only the model keeps them
 /// </summary>
 internal static class W3StringsReader
 {
@@ -30,19 +30,19 @@ internal static class W3StringsReader
             using var reader = new BinaryReader(input, Encoding.UTF8, true); // The stream stays open for the caller
             var head = ReadHead(reader, input.Length);
 
-            // The layout of the payloads is needed before any text can be decoded.
+            // The layout of the stored bytes is needed before any text can be decoded.
             var entries = ReadStringEntries(reader, key2Offset);
             var keys = ReadKeys(reader, key2Offset);
             var buffer = ReadBuffer(reader, key2Offset, head.Unit);
 
-            var payloads = ReadPayloads(input, entries, buffer, head.Unit);
+            var storedTexts = ReadStoredTexts(input, entries, buffer, head.Unit);
 
             // The key closes the container with its tail half, and it is what the magic every id and
-            // payload was obfuscated with follows from.
+            // stored text was obfuscated with follows from.
             var key = head.Key | ReadKey2(reader, key2Offset);
             var magic = W3StringsFormat.MagicOf(key);
 
-            return ToFile(head with { Key = key }, magic, entries, keys, payloads, head.Unit);
+            return ToFile(head with { Key = key }, magic, entries, keys, storedTexts, head.Unit);
         }
         catch (Exception ex) when (ex is not W3StringsException)
         {
@@ -79,7 +79,7 @@ internal static class W3StringsReader
     /// </summary>
     /// <param name="reader">The reader the block comes from</param>
     /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
-    /// <returns>One entry per text, without its payload</returns>
+    /// <returns>One entry per text, without its stored bytes</returns>
     private static StringEntry[] ReadStringEntries(BinaryReader reader, long key2Offset)
     {
         var count = CheckBlockFits(reader.BaseStream.Position, VariableLengthCodec.Read(reader.BaseStream),
@@ -153,14 +153,14 @@ internal static class W3StringsReader
     ///     Builds the container out of the sections that were read, decoding every text on the way
     /// </summary>
     /// <param name="head">The head of the container, holding the version and the full language key</param>
-    /// <param name="magic">The magic every id and payload was obfuscated with</param>
+    /// <param name="magic">The magic every id and stored text was obfuscated with</param>
     /// <param name="entries">The entries of the first block</param>
     /// <param name="keys">The entries of the second block</param>
-    /// <param name="payloads">The stored bytes of every entry, in entry order, which decoding consumes</param>
+    /// <param name="storedTexts">The stored bytes of every entry, in entry order, which decoding consumes</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
     private static W3StringsFile ToFile(Head head, uint magic, StringEntry[] entries, KeyEntry[] keys,
-        byte[][] payloads, int unit)
+        byte[][] storedTexts, int unit)
     {
         var file = new W3StringsFile
         {
@@ -174,7 +174,7 @@ internal static class W3StringsReader
             file.Strings.Add(new W3StringEntry
             {
                 Id = entries[i].Id ^ magic,
-                Value = PayloadCodec.Decode(payloads[i], (int)entries[i].Length, magic, unit)
+                Value = StoredText.Decode(storedTexts[i], (int)entries[i].Length, magic, unit)
             });
 
         foreach (var entry in keys)
@@ -192,7 +192,7 @@ internal static class W3StringsReader
     /// <param name="key2Offset">The offset the language key at the end of the file starts at</param>
     /// <param name="name">The name of the block, used in the error message</param>
     /// <returns>The number of entries, as an index</returns>
-    /// <exception cref="W3StringsException">Thrown when the block does not fit before the payload limit</exception>
+    /// <exception cref="W3StringsException">Thrown when the block does not fit before the end of the file</exception>
     private static int CheckBlockFits(long start, uint count, int entrySize, long key2Offset, string name)
     {
         var end = start + count * entrySize;
@@ -206,7 +206,7 @@ internal static class W3StringsReader
     }
 
     /// <summary>
-    ///     Reads the text of every entry out of the string buffer
+    ///     Reads the stored bytes of every text out of the string buffer
     /// </summary>
     /// <param name="input">The stream to read from</param>
     /// <param name="entries">The entries of the first block, in entry order</param>
@@ -214,9 +214,9 @@ internal static class W3StringsReader
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The stored bytes of every entry, in entry order</returns>
     /// <exception cref="W3StringsException">Thrown when an entry points outside the string buffer</exception>
-    private static byte[][] ReadPayloads(Stream input, StringEntry[] entries, Buffer buffer, int unit)
+    private static byte[][] ReadStoredTexts(Stream input, StringEntry[] entries, Buffer buffer, int unit)
     {
-        var payloads = new byte[entries.Length][];
+        var storedTexts = new byte[entries.Length][];
         var cursor = buffer.Start;
 
         // Entries are fetched in the order they occupy the buffer, which is the order they are listed in
@@ -232,13 +232,13 @@ internal static class W3StringsReader
             if (at < cursor) input.Seek(at, SeekOrigin.Begin); // An entry out of order has to be sought
             else Skip(input, at - cursor); // A gap is read past, which keeps the read sequential
 
-            var payload = new byte[entries[i].Length * unit];
-            input.ReadExactly(payload);
-            payloads[i] = payload;
-            cursor = at + payload.Length;
+            var stored = new byte[entries[i].Length * unit];
+            input.ReadExactly(stored);
+            storedTexts[i] = stored;
+            cursor = at + stored.Length;
         }
 
-        return payloads;
+        return storedTexts;
     }
 
     /// <summary>

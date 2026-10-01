@@ -29,7 +29,7 @@ internal static class W3StringsWriter
 
         for (var i = 0; i < file.Strings.Count; i++)
         {
-            lengths[i] = PayloadCodec.Measure(file.Strings[i].Value, unit);
+            lengths[i] = StoredText.EncodedLength(file.Strings[i].Value, unit);
             offsets[i] = cursor;
             cursor += (uint)lengths[i] + 1;
         }
@@ -89,8 +89,8 @@ internal static class W3StringsWriter
 
         foreach (var entry in file.Strings)
         {
-            var payload = PayloadCodec.Encode(entry.Value, magic, unit, out _);
-            writer.Write(payload);
+            var stored = StoredText.Encode(entry.Value, magic, unit, out _);
+            writer.Write(stored);
             WriteZeros(writer, unit); // The terminator that closes the text
         }
 

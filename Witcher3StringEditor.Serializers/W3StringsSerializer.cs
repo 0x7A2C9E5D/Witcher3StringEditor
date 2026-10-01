@@ -92,7 +92,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
                 return false; // Leave the existing file alone when its backup could not be taken
 
             // The container is streamed straight into its destination, so the encoded file is never
-            // held in memory: only one payload exists at a time.
+            // held in memory: only one stored text exists at a time.
             await using (var stream = File.Create(outputW3StringsPath))
             {
                 await Task.Run(() => W3StringsWriter.Write(stream, container)); // Encode off the calling thread

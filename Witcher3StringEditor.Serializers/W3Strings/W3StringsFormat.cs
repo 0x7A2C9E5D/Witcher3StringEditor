@@ -60,7 +60,7 @@ internal static class W3StringsFormat
     /// <remarks>
     ///     Every language the game added after its release shares key 0, so a zero key identifies no
     ///     language but is not an error either: those containers are stored without obfuscation. Any
-    ///     other key that owns no language means the payload was obfuscated with a magic this build does
+    ///     other key that owns no language means the texts were obfuscated with a magic this build does
     ///     not know, and decoding it as if it were cleartext would turn every string into garbage
     ///     without a single error, which is worse than refusing the file
     /// </remarks>
@@ -70,7 +70,7 @@ internal static class W3StringsFormat
         if (language is not null) return language.Magic;
         if (key == 0) return 0;
         throw new W3StringsException(
-            $"unknown language key 0x{key:X8}, so the string payload cannot be decoded " +
+            $"unknown language key 0x{key:X8}, so the stored texts cannot be decoded " +
             "(the language is not supported by this build)");
     }
 
