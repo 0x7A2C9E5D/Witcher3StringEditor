@@ -67,23 +67,20 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     {
         try
         {
-            // The path is built first: every anomaly the container is checked for is logged with the
-            // file it is about, which is the only way to tell two runs apart in the log.
             var saveLang =
                 context.TargetLanguage.Code
                     .ToLowerInvariant(); // Lowercase content-file code of the target language for file naming
             var outputW3StringsPath =
                 Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings"); // Destination of the encoded container
-            var logger = Log.ForContext("Container", outputW3StringsPath); // Every line names its container
 
             // The container is assembled and checked by the codec before anything is written, so a save
             // that cannot be written leaves the destination exactly as it was. What makes an item
-            // unusable is a rule of the format, so it is not decided here.
+            // unusable is a rule of the format, so it is not decided here. The builder logs every
+            // anomaly it refuses the container for itself, one line per anomaly.
             var container = W3StringsContainerBuilder.Build(
                 w3StringItems,
                 ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
-                context.TargetLanguage.Key, // The language key is what every id and text is obfuscated by
-                logger);
+                context.TargetLanguage.Key); // The language key is what every id and text is obfuscated by
             if (container is null) return false; // The reasons are in the log, one per anomaly
 
             // Back the destination up before it is opened, because creating it truncates it.
