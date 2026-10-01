@@ -139,8 +139,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             filePath); // Log the container facts
 
         // Reading only decodes: what the container says about itself is not checked here, the check
-        // belongs to the save that would produce a w3strings file again. How its entries are shown as
-        // items is a rule of the format, so it is not decided here either.
-        return [.. W3StringsItemReader.ReadItems(container)];
+        // belongs to the save that would produce a w3strings file again.
+        return [.. W3StringsReader.ReadItems(container)];
     }
 }
