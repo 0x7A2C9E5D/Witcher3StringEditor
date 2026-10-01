@@ -94,6 +94,12 @@
     <data name="FileOpenedNoFoundCaption" xml:space="preserve">
     <value>Arquivo não encontrado</value>
   </data>
+    <data name="OpenFileFailedMessage" xml:space="preserve">
+    <value>Não foi possível abrir o arquivo.</value>
+  </data>
+    <data name="OpenFileFailedCaption" xml:space="preserve">
+    <value>Falha ao abrir o arquivo</value>
+  </data>
     <data name="UpdateBtnContent" xml:space="preserve">
     <value>Atualizar</value>
   </data>

@@ -201,6 +201,12 @@
     <data name="FileOpenedNoFoundCaption" xml:space="preserve">
     <value>ไม่พบไฟล์ที่เปิด</value>
   </data>
+    <data name="OpenFileFailedMessage" xml:space="preserve">
+    <value>ไม่สามารถเปิดไฟล์ได้</value>
+  </data>
+    <data name="OpenFileFailedCaption" xml:space="preserve">
+    <value>เปิดไฟล์ไม่สำเร็จ</value>
+  </data>
     <data name="UpdateBtnContent" xml:space="preserve">
     <value>อัปเดต</value>
   </data>

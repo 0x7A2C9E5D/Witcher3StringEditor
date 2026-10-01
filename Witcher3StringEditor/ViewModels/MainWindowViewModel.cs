@@ -307,6 +307,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         catch (Exception ex)
         {
             Log.Error(ex, "Failed to open file: {FileName}", fileName); // Log any errors during file opening
+            await dialogService.MessageBoxNotifyAsync(this, Strings.OpenFileFailedMessage,
+                Strings.OpenFileFailedCaption, MessageBoxIcon.Warning); // Tell the user the file could not be opened
         }
     }
 

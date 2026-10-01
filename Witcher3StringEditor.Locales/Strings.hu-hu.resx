@@ -94,6 +94,12 @@
     <data name="FileOpenedNoFoundCaption" xml:space="preserve">
     <value>A megnyitott fájl nem található</value>
   </data>
+    <data name="OpenFileFailedMessage" xml:space="preserve">
+    <value>A fájl nem nyitható meg.</value>
+  </data>
+    <data name="OpenFileFailedCaption" xml:space="preserve">
+    <value>A fájl megnyitása sikertelen</value>
+  </data>
     <data name="UpdateBtnContent" xml:space="preserve">
     <value>Frissítés</value>
   </data>

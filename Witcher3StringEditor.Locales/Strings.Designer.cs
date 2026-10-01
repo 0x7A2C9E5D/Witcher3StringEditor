@@ -500,6 +500,24 @@ namespace Witcher3StringEditor.Locales {
                 return ResourceManager.GetString("FileOpenedNoFoundMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open File Failed.
+        /// </summary>
+        public static string OpenFileFailedCaption {
+            get {
+                return ResourceManager.GetString("OpenFileFailedCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to open the file..
+        /// </summary>
+        public static string OpenFileFailedMessage {
+            get {
+                return ResourceManager.GetString("OpenFileFailedMessage", resourceCulture);
+            }
+        }
 
         
         /// <summary>
