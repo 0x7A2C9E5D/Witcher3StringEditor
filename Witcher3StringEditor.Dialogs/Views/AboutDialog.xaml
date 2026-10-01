@@ -27,7 +27,7 @@
         </ResourceDictionary>
     </Window.Resources>
     <!-- 
-        Main grid layout for the about dialog
+        Main grid layout for the about-dialog
         Contains two rows: title bar area and content area
     -->
     <Grid>
