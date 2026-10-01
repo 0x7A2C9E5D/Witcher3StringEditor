@@ -119,7 +119,7 @@ internal static class W3StringsWriter
 
     private static void WriteCount(BinaryWriter writer, uint value)
     {
-        writer.Write(VariableLengthCodec.Write(value));
+        writer.Write(SectionCount.Write(value));
     }
 
     /// <summary>

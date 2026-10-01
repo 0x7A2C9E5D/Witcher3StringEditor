@@ -82,7 +82,7 @@ internal static class W3StringsReader
     /// <returns>One entry per text, without its stored bytes</returns>
     private static StringEntry[] ReadStringEntries(BinaryReader reader, long key2Offset)
     {
-        var count = CheckBlockFits(reader.BaseStream.Position, VariableLengthCodec.Read(reader.BaseStream),
+        var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream),
             W3StringsFormat.Block1EntrySize, key2Offset, "block1");
 
         var entries = new StringEntry[count];
@@ -105,7 +105,7 @@ internal static class W3StringsReader
     /// <returns>One entry per key, still obfuscated</returns>
     private static KeyEntry[] ReadKeys(BinaryReader reader, long key2Offset)
     {
-        var count = CheckBlockFits(reader.BaseStream.Position, VariableLengthCodec.Read(reader.BaseStream),
+        var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream),
             W3StringsFormat.Block2EntrySize, key2Offset, "block2");
 
         var keys = new KeyEntry[count];
@@ -129,7 +129,7 @@ internal static class W3StringsReader
     /// <exception cref="W3StringsException">Thrown when the buffer reaches past the end of the file</exception>
     private static Buffer ReadBuffer(BinaryReader reader, long key2Offset, int unit)
     {
-        var units = VariableLengthCodec.Read(reader.BaseStream);
+        var units = SectionCount.Read(reader.BaseStream);
         var start = reader.BaseStream.Position;
         var end = start + units * unit;
         return end > key2Offset

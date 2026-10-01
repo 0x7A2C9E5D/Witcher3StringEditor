@@ -1,12 +1,17 @@
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
-///     Encodes and decodes the bit6 counts the w3strings sections are introduced by
+///     The count that introduces each section of a w3strings container: how many entries or units follow
 /// </summary>
-internal static class VariableLengthCodec
+/// <remarks>
+///     Every section of a container is introduced by its size, written in the bit6 framing the format uses
+///     for small numbers. A reader has to know that size before it can read the section, which is why the
+///     three of them are read before anything else
+/// </remarks>
+internal static class SectionCount
 {
     /// <summary>
-    ///     Reads a bit6 encoded count from a stream
+    ///     Reads the count that introduces a section from a stream
     /// </summary>
     /// <param name="input">The stream to read from</param>
     /// <returns>The count</returns>
@@ -21,7 +26,7 @@ internal static class VariableLengthCodec
             count[length - 1] = (byte)next;
 
             // A count is complete as soon as the framing stops inside the bytes read so far.
-            if (TryDecode(count[..length], 0, out var value, out var end) && end == length) return value;
+            if (TryRead(count[..length], 0, out var value, out var end) && end == length) return value;
         }
 
         throw new W3StringsException(
@@ -29,7 +34,7 @@ internal static class VariableLengthCodec
     }
 
     /// <summary>
-    ///     Encodes a count
+    ///     Writes a count the way a container stores it
     /// </summary>
     /// <param name="value">The count to encode</param>
     /// <returns>The encoded count</returns>
@@ -45,7 +50,7 @@ internal static class VariableLengthCodec
                 // framing the reader cannot stop inside is merely the wrong one, not a broken file.
                 // Probing with the throwing Read instead abandoned the search for counts such as
                 // 8192, which a file can easily reach.
-                if (TryDecode(candidate, 0, out var decoded, out _) && decoded == value) return candidate;
+                if (TryRead(candidate, 0, out var decoded, out _) && decoded == value) return candidate;
             }
 
         // Six groups carry 6 + 7 * 4 + 8 = 42 bits, so every 32-bit value is encodable. Reaching this
@@ -61,7 +66,7 @@ internal static class VariableLengthCodec
     /// <param name="value">Receives the count</param>
     /// <param name="nextOffset">Receives the offset that follows the count</param>
     /// <returns>True when a count was read</returns>
-    private static bool TryDecode(ReadOnlySpan<byte> data, int offset, out uint value, out int nextOffset)
+    private static bool TryRead(ReadOnlySpan<byte> data, int offset, out uint value, out int nextOffset)
     {
         value = 0;
         nextOffset = offset;
