@@ -37,12 +37,11 @@ internal static class W3StringsReader
 
             var storedTexts = ReadStoredTexts(input, entries, buffer, head.Unit);
 
-            // The key closes the container with its tail half, and it is what the magic every id and
-            // stored text was obfuscated with follows from.
+            // The key closes the container with its tail half, and the magic every id and stored text was
+            // obfuscated with follows from it.
             var key = head.Key | ReadKey2(reader, key2Offset);
-            var magic = W3StringsFormat.MagicOf(key);
 
-            return ToFile((head.Version, key, head.Unit), magic, entries, keys, storedTexts, head.Unit);
+            return Assemble(head.Version, key, entries, keys, storedTexts);
         }
         catch (Exception ex) when (ex is not W3StringsException)
         {
@@ -157,22 +156,23 @@ internal static class W3StringsReader
     }
 
     /// <summary>
-    ///     Builds the container out of the sections that were read, decoding every text on the way
+    ///     Assembles the container out of the sections that were read, decoding every id and text on the way
     /// </summary>
-    /// <param name="head">The head of the container, holding the version and the full language key</param>
-    /// <param name="magic">The magic every id and stored text was obfuscated with</param>
+    /// <param name="version">The version the container was written with</param>
+    /// <param name="key">The full language key, which the magic every id and stored text was obfuscated with follows from</param>
     /// <param name="entries">The entries of the first block, whose ids are still obfuscated and whose texts not yet decoded</param>
     /// <param name="keys">The entries of the second block, whose ids are still obfuscated</param>
     /// <param name="storedTexts">The stored bytes of every entry, in entry order, which decoding consumes</param>
-    /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
-    private static W3StringsFile ToFile((uint Version, uint Key, int Unit) head, uint magic, W3StringEntry[] entries,
-        W3KeyEntry[] keys, byte[][] storedTexts, int unit)
+    private static W3StringsFile Assemble(uint version, uint key, W3StringEntry[] entries, W3KeyEntry[] keys,
+        byte[][] storedTexts)
     {
+        var magic = W3StringsFormat.MagicOf(key); // The magic every id and stored text was obfuscated with
+        var unit = W3StringsFormat.OffsetUnitSize(version); // The number of bytes one character takes
         var file = new W3StringsFile
         {
-            Version = head.Version,
-            Key = head.Key
+            Version = version,
+            Key = key
         };
 
         // The id is decoded and the text fetched, which is what turns every entry of the block into the
