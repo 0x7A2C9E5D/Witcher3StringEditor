@@ -22,7 +22,7 @@ internal static class W3StringsWriter
     ///     carries the offsets that point at its own text: the order of the block of offsets is then free,
     ///     and the buffer holds exactly what the texts need
     /// </remarks>
-    private static Buffer BufferOf(W3StringsFile file)
+    private static (uint Used, long Size) BufferOf(W3StringsFile file)
     {
         var unit = file.Unit;
         uint cursor = 0;
@@ -34,7 +34,7 @@ internal static class W3StringsWriter
             cursor += entry.Length + 1; // The terminator that closes the text
         }
 
-        return new Buffer(cursor, cursor * (uint)unit);
+        return (cursor, cursor * (uint)unit);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ internal static class W3StringsWriter
     /// <param name="writer">The writer the buffer goes to</param>
     /// <param name="file">The container to encode</param>
     /// <param name="buffer">The sizes the buffer is written with</param>
-    private static void WriteBuffer(BinaryWriter writer, W3StringsFile file, Buffer buffer)
+    private static void WriteBuffer(BinaryWriter writer, W3StringsFile file, (uint Used, long Size) buffer)
     {
         var unit = file.Unit;
         var magic = file.Magic;
@@ -126,11 +126,4 @@ internal static class W3StringsWriter
     {
         writer.Write(SectionCount.Write(value));
     }
-
-    /// <summary>
-    ///     How large the string buffer is and how much of it the texts and their terminators occupy
-    /// </summary>
-    /// <param name="Used">The size the entries and their terminators occupy, in units</param>
-    /// <param name="Size">The size of the string buffer, in bytes</param>
-    private readonly record struct Buffer(uint Used, long Size);
 }

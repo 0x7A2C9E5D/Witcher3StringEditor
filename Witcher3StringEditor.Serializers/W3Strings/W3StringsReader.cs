@@ -43,7 +43,7 @@ internal static class W3StringsReader
             var key = head.Key | ReadKey2(reader, key2Offset);
             var magic = W3StringsFormat.MagicOf(key);
 
-            return ToFile(head with { Key = key }, magic, entries, keys, storedTexts, head.Unit);
+            return ToFile((head.Version, key, head.Unit), magic, entries, keys, storedTexts, head.Unit);
         }
         catch (Exception ex) when (ex is not W3StringsException)
         {
@@ -88,9 +88,12 @@ internal static class W3StringsReader
     /// </summary>
     /// <param name="reader">The reader the head comes from</param>
     /// <param name="length">The length of the container</param>
-    /// <returns>The head of the container</returns>
+    /// <returns>
+    ///     The version the container was written with, the language key with its head half in place and
+    ///     still waiting for its tail half, and the number of bytes one character takes in it
+    /// </returns>
     /// <exception cref="W3StringsException">Thrown when the stream is too short, or is not a container at all</exception>
-    private static Head ReadHead(BinaryReader reader, long length)
+    private static (uint Version, uint Key, int Unit) ReadHead(BinaryReader reader, long length)
     {
         if (length < W3StringsFormat.MinSize)
             throw new W3StringsException($"file too small to be a w3strings container ({length} byte(s))");
@@ -103,7 +106,7 @@ internal static class W3StringsReader
 
         var version = reader.ReadUInt32();
         var key = (uint)reader.ReadUInt16() << 16; // The head half: the tail half closes the container
-        return new Head(version, key, W3StringsFormat.OffsetUnitSize(version));
+        return (version, key, W3StringsFormat.OffsetUnitSize(version));
     }
 
     /// <summary>
@@ -157,16 +160,20 @@ internal static class W3StringsReader
     /// <param name="reader">The reader the size comes from</param>
     /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
-    /// <returns>Where the string buffer starts, and how large the container says it is</returns>
+    /// <returns>The offset the buffer starts at, in bytes, and the size the container gives it, in units</returns>
     /// <exception cref="W3StringsException">Thrown when the buffer reaches past the end of the file</exception>
-    private static Buffer ReadBuffer(BinaryReader reader, long key2Offset, int unit)
+    /// <remarks>
+    ///     The size is what holds every entry inside the buffer, and it is dropped as soon as the texts have
+    ///     been read: the writer works the size of the buffer out from the texts it lays out in it
+    /// </remarks>
+    private static (long Start, uint Units) ReadBuffer(BinaryReader reader, long key2Offset, int unit)
     {
         var units = SectionCount.Read(reader.BaseStream);
         var start = reader.BaseStream.Position;
         var end = start + units * unit;
         return end > key2Offset
             ? throw new W3StringsException($"string buffer overruns file ({end} > {key2Offset})")
-            : new Buffer(start, units);
+            : (start, units);
     }
 
     /// <summary>
@@ -191,8 +198,8 @@ internal static class W3StringsReader
     /// <param name="storedTexts">The stored bytes of every entry, in entry order, which decoding consumes</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
-    private static W3StringsFile ToFile(Head head, uint magic, W3StringEntry[] entries, W3KeyEntry[] keys,
-        byte[][] storedTexts, int unit)
+    private static W3StringsFile ToFile((uint Version, uint Key, int Unit) head, uint magic, W3StringEntry[] entries,
+        W3KeyEntry[] keys, byte[][] storedTexts, int unit)
     {
         var file = new W3StringsFile
         {
@@ -250,7 +257,8 @@ internal static class W3StringsReader
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The stored bytes of every entry, in entry order</returns>
     /// <exception cref="W3StringsException">Thrown when an entry points outside the string buffer</exception>
-    private static byte[][] ReadStoredTexts(Stream input, W3StringEntry[] entries, Buffer buffer, int unit)
+    private static byte[][] ReadStoredTexts(Stream input, W3StringEntry[] entries, (long Start, uint Units) buffer,
+        int unit)
     {
         var storedTexts = new byte[entries.Length][];
         var cursor = buffer.Start;
@@ -294,23 +302,4 @@ internal static class W3StringsReader
             count -= chunk;
         }
     }
-
-    /// <summary>
-    ///     The head of a container
-    /// </summary>
-    /// <param name="Version">The version the container was written with</param>
-    /// <param name="Key">The language key with its head half in place, waiting for the tail half</param>
-    /// <param name="Unit">The number of bytes one character takes in the container</param>
-    private readonly record struct Head(uint Version, uint Key, int Unit);
-
-    /// <summary>
-    ///     The string buffer the entries of a container are read out of
-    /// </summary>
-    /// <param name="Start">The offset the buffer starts at, in bytes</param>
-    /// <param name="Units">The size the container gives the buffer, in units</param>
-    /// <remarks>
-    ///     The size is what holds every entry inside the buffer, and it is dropped as soon as the texts
-    ///     have been read: the writer works the size of the buffer out from the texts it lays out in it
-    /// </remarks>
-    private readonly record struct Buffer(long Start, uint Units);
 }
