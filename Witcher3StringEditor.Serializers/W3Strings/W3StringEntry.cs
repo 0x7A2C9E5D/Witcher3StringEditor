@@ -32,6 +32,12 @@ internal sealed class W3StringEntry
     /// </summary>
     public uint Length { get; set; }
 
+    /// <summary>
+    ///     Returns a string that represents the current object
+    /// </summary>
+    /// <returns>
+    ///     A string that represents the current object
+    /// </returns>
     public override string ToString()
     {
         return $"{Id}: {Value}";

@@ -1,5 +1,12 @@
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
+/// <summary>
+///     The container of strings
+/// </summary>
+/// <remarks>
+///     The container is what is written to disk, and is what is read from disk
+/// </remarks>
+/// <exception cref="W3StringsException">Thrown when the container is not one this build knows</exception>
 internal sealed class W3StringsFile
 {
     /// <summary>
@@ -42,9 +49,24 @@ internal sealed class W3StringsFile
     /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
     public uint Magic => W3StringsFormat.MagicOf(Key);
 
+    /// <summary>
+    ///     The size of the offset unit in bytes, which is the size of the id and the length of the text
+    /// </summary>
+    /// <remarks>
+    ///     The offset unit is the size of the id and the length of the text, in bytes
+    /// </remarks>
     public int Unit => W3StringsFormat.OffsetUnitSize(Version);
 
+    /// <summary>
+    ///     The strings of the container, in the order they are stored
+    /// </summary>
     public List<W3StringEntry> Strings { get; } = [];
 
+    /// <summary>
+    ///     The keys of the container, in the order they are stored
+    /// </summary>
+    /// <remarks>
+    ///     The keys are what resolve the ids of the strings to the strings themselves
+    ///     </remarks>
     public List<W3KeyEntry> Keys { get; } = [];
 }

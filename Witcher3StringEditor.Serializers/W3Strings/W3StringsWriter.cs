@@ -106,6 +106,10 @@ internal static class W3StringsWriter
     ///     Writes a run of zero bytes, which the terminator and the room a larger buffer leaves over
     ///     are made of
     /// </summary>
+    /// <summary>
+    ///     Writes a run of zero bytes, which the terminator and the room a larger buffer leaves over
+    ///     are made of
+    /// </summary>
     /// <param name="writer">The writer the zeroes go to</param>
     /// <param name="count">The number of zero bytes to write</param>
     private static void WriteZeros(BinaryWriter writer, long count)
@@ -121,6 +125,11 @@ internal static class W3StringsWriter
         }
     }
 
+    /// <summary>
+    ///     Writes a count of the given value to the given writer
+    /// </summary>
+    /// <param name="writer">The writer the count goes to</param>
+    /// <param name="value">The value to write as a count</param>
     private static void WriteCount(BinaryWriter writer, uint value)
     {
         writer.Write(SectionCount.Write(value));

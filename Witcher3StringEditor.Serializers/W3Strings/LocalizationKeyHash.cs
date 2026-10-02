@@ -2,8 +2,18 @@ using System.Text;
 
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
+/// <summary>
+///     Computes the hash value of a localization key.
+/// </summary>
+/// <param name="key">The localization key.</param>
+/// <returns>The hash value.</returns>
 internal static class LocalizationKeyHash
 {
+    /// <summary>
+    ///     Computes the hash value of a localization key.
+    /// </summary>
+    /// <param name="key">The localization key.</param>
+    /// <returns>The hash value.</returns>
     public static uint Compute(string key)
     {
         ArgumentNullException.ThrowIfNull(key);
