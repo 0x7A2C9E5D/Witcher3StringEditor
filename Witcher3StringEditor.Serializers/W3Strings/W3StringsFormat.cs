@@ -9,9 +9,15 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 internal static class W3StringsFormat
 {
     /// <summary>
-    ///     The size a file has to reach before it can hold the fixed head and tail of a container at all
+    ///     The size a file has to reach before it can hold a container at all: the head (the magic, the
+    ///     version and the head half of the language key), the count that introduces each of the three
+    ///     sections, one byte at the least, and the tail half of the language key that closes it
     /// </summary>
-    public const int MinSize = 16;
+    /// <remarks>
+    ///     The smallest container, the one that holds no entry at all, is exactly this size: writing one has
+    ///     to leave a file this reader can read back
+    /// </remarks>
+    public const int MinSize = 15;
 
     /// <summary>
     ///     The version of the UTF-8 generation: one byte per character, so every offset and length
