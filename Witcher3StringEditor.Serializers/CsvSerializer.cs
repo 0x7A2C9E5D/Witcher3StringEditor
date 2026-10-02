@@ -41,13 +41,16 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
         {
             if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue; // Skip empty lines and comments
             var parts = line.Split('|'); // Split line into parts
-            if (parts.Length != 4) continue; // Skip lines with incorrect number of parts
+            if (parts.Length < 4) continue; // Skip lines that hold no text at all
             items.Add(new StringItem // Create new string item
             {
                 StrId = parts[0].Trim(), // Extract string ID
                 KeyHex = parts[1].Trim(), // Extract key hex
                 KeyName = parts[2].Trim(), // Extract key name
-                Text = parts[3].Trim() // Extract text
+                // A text can hold the separator itself, which a line splits at as well, so everything after
+                // the key name is the text: the parts beyond the fourth are joined back into it. It is kept
+                // as it is written, down to its spaces: a text is the one field a caller owns
+                Text = string.Join('|', parts, 3, parts.Length - 3) // Extract text
             });
         }
 
