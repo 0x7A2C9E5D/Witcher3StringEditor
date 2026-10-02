@@ -165,7 +165,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private bool IsDictionaryAvailable()
     {
         // Dictionary is only supported for Microsoft Translator when the source language is English
-        return Translator.Name == "MicrosoftTranslator" && IsEnglishCulture(FormLanguage);
+        return Translator is MicrosoftTranslator && IsEnglishCulture(FormLanguage);
     }
 
     /// <summary>
@@ -208,18 +208,14 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     /// <param name="translator">The translator to get supported languages for</param>
     /// <returns>A collection of supported languages</returns>
+    /// <remarks>
+    ///     The translator answers for itself which languages it takes, which keeps this list from having to
+    ///     name the services beside it: a translator that is registered and answers for itself cannot fall
+    ///     out of step with it, and no language it does not take is offered
+    /// </remarks>
     private static IEnumerable<ILanguage> GetSupportedLanguages(ITranslator translator)
     {
-        return translator.Name switch // Return languages based on translator type
-        {
-            "MicrosoftTranslator" => Language.LanguageDictionary.Values.Where(x => // Microsoft supported languages
-                x.SupportedServices.HasFlag(TranslationServices.Microsoft)),
-            "GoogleTranslator" => Language.LanguageDictionary.Values.Where(x => // Google supported languages
-                x.SupportedServices.HasFlag(TranslationServices.Google)),
-            "YandexTranslator" => Language.LanguageDictionary.Values.Where(x => // Yandex supported languages
-                x.SupportedServices.HasFlag(TranslationServices.Yandex)),
-            _ => Language.LanguageDictionary.Values // Default to all languages
-        };
+        return Language.LanguageDictionary.Values.Where(translator.IsLanguageSupported);
     }
 
     /// <summary>
