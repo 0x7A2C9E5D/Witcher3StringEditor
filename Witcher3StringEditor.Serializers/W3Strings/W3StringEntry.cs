@@ -1,17 +1,36 @@
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
+/// <summary>
+///     One string of a container: the id it is stored under, its text, and the slot of the string buffer
+///     the text occupies
+/// </summary>
+/// <remarks>
+///     The fields are filled in the order the container holds them rather than at construction: the slot of
+///     a text is needed before the text can be fetched, and the id is obfuscated until the language key of
+///     the container is known, so a reader records the stored facts first and decodes them once the whole
+///     container has been read. A writer records the slot of every text as it lays the buffer out
+/// </remarks>
 internal sealed class W3StringEntry
 {
     /// <summary>
     ///     The id the text is stored under, which a key of the key block resolves to
     /// </summary>
-    public uint Id { get; init; }
+    public uint Id { get; set; }
 
     /// <summary>
-    ///     The decoded text, which is the only form of it this model keeps: where the container put it
-    ///     and how long it said it was are facts of the encoding, not of the text
+    ///     The decoded text
     /// </summary>
-    public string Value { get; init; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The offset the text is stored at in the string buffer, in units of the container's version
+    /// </summary>
+    public uint Offset { get; set; }
+
+    /// <summary>
+    ///     The length the text is stored with in the string buffer, in units of the container's version
+    /// </summary>
+    public uint Length { get; set; }
 
     public override string ToString()
     {

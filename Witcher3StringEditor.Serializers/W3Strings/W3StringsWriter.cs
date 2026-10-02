@@ -11,30 +11,30 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 internal static class W3StringsWriter
 {
     /// <summary>
-    ///     Measures every text and places it in the string buffer, encoding nothing
+    ///     Measures every text, records the slot it takes in the string buffer, and answers how large that
+    ///     buffer is, encoding nothing
     /// </summary>
     /// <param name="file">The container to encode</param>
-    /// <returns>The slot of every entry, and the size of the buffer they occupy</returns>
+    /// <returns>The size the entries and their terminators occupy, and the size of the buffer in bytes</returns>
     /// <remarks>
     ///     The texts are laid out one behind the other in the order they are listed, each closed by the
-    ///     terminator the format asks for, so the block of offsets comes out sorted and the buffer holds
-    ///     exactly what the texts need
+    ///     terminator the format asks for, so the slot is recorded as the buffer is laid out and every entry
+    ///     carries the offsets that point at its own text: the order of the block of offsets is then free,
+    ///     and the buffer holds exactly what the texts need
     /// </remarks>
     private static Buffer BufferOf(W3StringsFile file)
     {
         var unit = file.Unit;
-        var lengths = new int[file.Strings.Count];
-        var offsets = new uint[file.Strings.Count];
         uint cursor = 0;
 
-        for (var i = 0; i < file.Strings.Count; i++)
+        foreach (var entry in file.Strings)
         {
-            lengths[i] = StoredText.EncodedLength(file.Strings[i].Value, unit);
-            offsets[i] = cursor;
-            cursor += (uint)lengths[i] + 1;
+            entry.Length = (uint)StoredText.EncodedLength(entry.Value, unit);
+            entry.Offset = cursor;
+            cursor += entry.Length + 1; // The terminator that closes the text
         }
 
-        return new Buffer(lengths, offsets, cursor, cursor * (uint)unit);
+        return new Buffer(cursor, cursor * (uint)unit);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ internal static class W3StringsWriter
         // error, but most of its keys stop resolving, and the game shows the menu the raw "##key" it
         // asked for instead of the text.
         WriteCount(writer, (uint)file.Strings.Count);
-        foreach (var entry in EntriesById(file.Strings, buffer))
+        foreach (var entry in file.Strings.OrderBy(entry => entry.Id))
         {
             writer.Write(entry.Id ^ magic);
             writer.Write(entry.Offset);
@@ -81,31 +81,12 @@ internal static class W3StringsWriter
     }
 
     /// <summary>
-    ///     Pairs every entry with the slot of the string buffer that holds its text, ordered by string id
-    /// </summary>
-    /// <param name="entries">The entries of the container</param>
-    /// <param name="buffer">The slot of every entry, in the order the entries are listed</param>
-    /// <returns>The entries with their slots, ordered by string id</returns>
-    /// <remarks>
-    ///     The buffer is laid out in the order the entries are listed, so the slots are paired before the
-    ///     entries are ordered: ordering the slots as well would move a text away from the bytes written
-    ///     for it, while the offsets make the order of the block itself free
-    /// </remarks>
-    private static IEnumerable<(uint Id, uint Offset, uint Length)> EntriesById(
-        IReadOnlyList<W3StringEntry> entries, Buffer buffer)
-    {
-        return entries
-            .Select((entry, index) => (entry.Id, Offset: buffer.Offsets[index], Length: (uint)buffer.Lengths[index]))
-            .OrderBy(entry => entry.Id);
-    }
-
-    /// <summary>
     ///     Writes the string buffer: every text, closed by its terminator, and the zeroes the size the
     ///     container gives the buffer leaves over
     /// </summary>
     /// <param name="writer">The writer the buffer goes to</param>
     /// <param name="file">The container to encode</param>
-    /// <param name="buffer">The slot of every entry, and the sizes the buffer is written with</param>
+    /// <param name="buffer">The sizes the buffer is written with</param>
     private static void WriteBuffer(BinaryWriter writer, W3StringsFile file, Buffer buffer)
     {
         var unit = file.Unit;
@@ -147,11 +128,9 @@ internal static class W3StringsWriter
     }
 
     /// <summary>
-    ///     Where every text sits in the string buffer, and how large that buffer is
+    ///     How large the string buffer is and how much of it the texts and their terminators occupy
     /// </summary>
-    /// <param name="Lengths">The length of every slot of the buffer, in units</param>
-    /// <param name="Offsets">The offset of every slot of the buffer, in units</param>
     /// <param name="Used">The size the entries and their terminators occupy, in units</param>
     /// <param name="Size">The size of the string buffer, in bytes</param>
-    private readonly record struct Buffer(int[] Lengths, uint[] Offsets, uint Used, long Size);
+    private readonly record struct Buffer(uint Used, long Size);
 }

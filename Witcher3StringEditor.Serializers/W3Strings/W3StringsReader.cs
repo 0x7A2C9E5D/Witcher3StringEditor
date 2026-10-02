@@ -111,19 +111,19 @@ internal static class W3StringsReader
     /// </summary>
     /// <param name="reader">The reader the block comes from</param>
     /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
-    /// <returns>One entry per text, without its stored bytes</returns>
-    private static StringEntry[] ReadStringEntries(BinaryReader reader, long key2Offset)
+    /// <returns>One entry per text, without its stored bytes: the id is still obfuscated and the text not yet decoded</returns>
+    private static W3StringEntry[] ReadStringEntries(BinaryReader reader, long key2Offset)
     {
         var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream),
             W3StringsFormat.Block1EntrySize, key2Offset, "block1");
 
-        var entries = new StringEntry[count];
+        var entries = new W3StringEntry[count];
         for (var i = 0; i < count; i++)
         {
             var id = reader.ReadUInt32();
             var offset = reader.ReadUInt32();
             var length = reader.ReadUInt32();
-            entries[i] = new StringEntry(id, offset, length);
+            entries[i] = new W3StringEntry { Id = id, Offset = offset, Length = length };
         }
 
         return entries;
@@ -186,12 +186,12 @@ internal static class W3StringsReader
     /// </summary>
     /// <param name="head">The head of the container, holding the version and the full language key</param>
     /// <param name="magic">The magic every id and stored text was obfuscated with</param>
-    /// <param name="entries">The entries of the first block</param>
+    /// <param name="entries">The entries of the first block, whose ids are still obfuscated and whose texts not yet decoded</param>
     /// <param name="keys">The entries of the second block, whose ids are still obfuscated</param>
     /// <param name="storedTexts">The stored bytes of every entry, in entry order, which decoding consumes</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
-    private static W3StringsFile ToFile(Head head, uint magic, StringEntry[] entries, W3KeyEntry[] keys,
+    private static W3StringsFile ToFile(Head head, uint magic, W3StringEntry[] entries, W3KeyEntry[] keys,
         byte[][] storedTexts, int unit)
     {
         var file = new W3StringsFile
@@ -200,14 +200,16 @@ internal static class W3StringsReader
             Key = head.Key
         };
 
-        // Only the id and the text survive: where the container put a text and how long it said it was
-        // are facts of the encoding, and the writer works both out again for itself.
+        // The id is decoded and the text fetched, which is what turns every entry of the block into the
+        // entry the container holds. Where a text sits and how long it was said to be stay on the entry:
+        // they are what the block stores, and a writer records them the same way as it lays the buffer out.
         for (var i = 0; i < entries.Length; i++)
-            file.Strings.Add(new W3StringEntry
-            {
-                Id = entries[i].Id ^ magic,
-                Value = StoredText.Decode(storedTexts[i], (int)entries[i].Length, magic, unit)
-            });
+        {
+            var entry = entries[i];
+            entry.Id ^= magic;
+            entry.Value = StoredText.Decode(storedTexts[i], (int)entry.Length, magic, unit);
+            file.Strings.Add(entry);
+        }
 
         // The ids of the keys are decoded the way those of the strings are, which is what makes every
         // entry of the container hold what it says it holds.
@@ -248,7 +250,7 @@ internal static class W3StringsReader
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The stored bytes of every entry, in entry order</returns>
     /// <exception cref="W3StringsException">Thrown when an entry points outside the string buffer</exception>
-    private static byte[][] ReadStoredTexts(Stream input, StringEntry[] entries, Buffer buffer, int unit)
+    private static byte[][] ReadStoredTexts(Stream input, W3StringEntry[] entries, Buffer buffer, int unit)
     {
         var storedTexts = new byte[entries.Length][];
         var cursor = buffer.Start;
@@ -311,12 +313,4 @@ internal static class W3StringsReader
     ///     have been read: the writer works the size of the buffer out from the texts it lays out in it
     /// </remarks>
     private readonly record struct Buffer(long Start, uint Units);
-
-    /// <summary>
-    ///     One entry of the first block, as it is stored
-    /// </summary>
-    /// <param name="Id">The id of the entry, still obfuscated</param>
-    /// <param name="Offset">The offset of the text, in units</param>
-    /// <param name="Length">The length of the text, in units</param>
-    private readonly record struct StringEntry(uint Id, uint Offset, uint Length);
 }
