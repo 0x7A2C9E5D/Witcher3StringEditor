@@ -208,7 +208,7 @@ internal static class W3StringsReader
         };
 
         // The id is decoded and the text fetched, which is what turns every entry of the block into the
-        // entry the container holds. Where a text sits and how long it was said to be stay on the entry:
+        // entry the container holds. Where a text sits and how long it was said to be stayed on the entry:
         // they are what the block stores, and a writer records them the same way as it lays the buffer out.
         for (var i = 0; i < entries.Length; i++)
         {
