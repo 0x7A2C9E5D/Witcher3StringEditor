@@ -134,18 +134,18 @@ internal static class W3StringsReader
     /// </summary>
     /// <param name="reader">The reader the block comes from</param>
     /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
-    /// <returns>One entry per key, still obfuscated</returns>
-    private static KeyEntry[] ReadKeys(BinaryReader reader, long key2Offset)
+    /// <returns>One entry per key, whose id is still obfuscated</returns>
+    private static W3KeyEntry[] ReadKeys(BinaryReader reader, long key2Offset)
     {
         var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream),
             W3StringsFormat.Block2EntrySize, key2Offset, "block2");
 
-        var keys = new KeyEntry[count];
+        var keys = new W3KeyEntry[count];
         for (var i = 0; i < count; i++)
         {
             var hash = reader.ReadUInt32();
             var id = reader.ReadUInt32();
-            keys[i] = new KeyEntry(hash, id);
+            keys[i] = new W3KeyEntry { KeyHash = hash, Id = id }; // The stored id is decoded with the rest
         }
 
         return keys;
@@ -187,11 +187,11 @@ internal static class W3StringsReader
     /// <param name="head">The head of the container, holding the version and the full language key</param>
     /// <param name="magic">The magic every id and stored text was obfuscated with</param>
     /// <param name="entries">The entries of the first block</param>
-    /// <param name="keys">The entries of the second block</param>
+    /// <param name="keys">The entries of the second block, whose ids are still obfuscated</param>
     /// <param name="storedTexts">The stored bytes of every entry, in entry order, which decoding consumes</param>
     /// <param name="unit">The number of bytes one character takes in the container</param>
     /// <returns>The container</returns>
-    private static W3StringsFile ToFile(Head head, uint magic, StringEntry[] entries, KeyEntry[] keys,
+    private static W3StringsFile ToFile(Head head, uint magic, StringEntry[] entries, W3KeyEntry[] keys,
         byte[][] storedTexts, int unit)
     {
         var file = new W3StringsFile
@@ -209,8 +209,10 @@ internal static class W3StringsReader
                 Value = StoredText.Decode(storedTexts[i], (int)entries[i].Length, magic, unit)
             });
 
+        // The ids of the keys are decoded the way those of the strings are, which is what makes every
+        // entry of the container hold what it says it holds.
         foreach (var entry in keys)
-            file.Keys.Add(new W3KeyEntry { KeyHash = entry.Hash, Id = entry.Id ^ magic });
+            file.Keys.Add(new W3KeyEntry { KeyHash = entry.KeyHash, Id = entry.Id ^ magic });
 
         return file;
     }
@@ -317,11 +319,4 @@ internal static class W3StringsReader
     /// <param name="Offset">The offset of the text, in units</param>
     /// <param name="Length">The length of the text, in units</param>
     private readonly record struct StringEntry(uint Id, uint Offset, uint Length);
-
-    /// <summary>
-    ///     One entry of the second block, as it is stored
-    /// </summary>
-    /// <param name="Hash">The hash of the key</param>
-    /// <param name="Id">The id of the string the key resolves to, still obfuscated</param>
-    private readonly record struct KeyEntry(uint Hash, uint Id);
 }
