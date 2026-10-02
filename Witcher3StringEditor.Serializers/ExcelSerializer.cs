@@ -31,6 +31,11 @@ public class ExcelSerializer(IBackupService backupService) : ISerializer
     ///     A task that represents the asynchronous deserialize operation.
     ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
+    /// <remarks>
+    ///     The OldText column of the workbook is not read: OldText is the text an entry had before it was
+    ///     edited, so it is this session's baseline and not something a workbook can hand back. Importing it
+    ///     would make every row look edited the moment the file is opened
+    /// </remarks>
     /// <exception cref="Exception">Thrown when the file could not be read</exception>
     public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
     {
@@ -39,8 +44,11 @@ public class ExcelSerializer(IBackupService backupService) : ISerializer
             using var excelEngine = new ExcelEngine(); // Auto-cleanup engine
             var worksheet = excelEngine.Excel.Workbooks.Open(filePath).Worksheets[0]; // Get 1st sheet
             var usedRange = worksheet.UsedRange; // Get data range
-            return worksheet.ExportData<StringItem>(1, 1, usedRange.LastRow,
+            var items = worksheet.ExportData<StringItem>(1, 1, usedRange.LastRow,
                 usedRange.LastColumn); // Export data
+            foreach (var item in items)
+                item.OldText = string.Empty; // Read every column, but keep no baseline
+            return items;
         }).ConfigureAwait(false);
     }
 
