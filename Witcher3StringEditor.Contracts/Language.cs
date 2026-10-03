@@ -1,3 +1,4 @@
+using System.Globalization;
 using JetBrains.Annotations;
 
 namespace Witcher3StringEditor.Contracts;
@@ -99,6 +100,28 @@ public sealed class Language
         return All.FirstOrDefault(language =>
             string.Equals(language.Code, code, StringComparison.OrdinalIgnoreCase) ||
             string.Equals(language.CultureCode, code, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    ///     Gets the language a culture names
+    /// </summary>
+    /// <param name="culture">The culture to look the language up by</param>
+    /// <returns>The language that answers to the culture, or null when the table holds none for it</returns>
+    /// <remarks>
+    ///     The table names the cultures the containers are written for rather than every culture that
+    ///     resolves to them, so a culture is looked up along itself and its parents: a machine installed
+    ///     as zh-CN, pl-PL or es-ES names the language of the culture it descends from
+    /// </remarks>
+    public static Language? FromCulture(CultureInfo culture)
+    {
+        // The invariant culture ends the walk: it has no name and its parent is itself.
+        for (var current = culture; !string.IsNullOrEmpty(current.Name); current = current.Parent)
+        {
+            var language = FromCode(current.Name);
+            if (language is not null) return language;
+        }
+
+        return null;
     }
 
     public override string ToString()

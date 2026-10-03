@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -40,8 +41,20 @@ internal partial class AppSettings : ObservableObject, IAppSettings
         BackupItems = [.. backupItems];
         RecentItems = [.. recentItems];
         PreferredFileType = preferredFileType;
-        PreferredLanguage = preferredLanguage ?? Contracts.Language.Default; // Settings may predate the language
+        PreferredLanguage = preferredLanguage ?? DefaultPreferredLanguage; // Settings may predate the language
     }
+
+    /// <summary>
+    ///     The language the settings start from when they carry none: the one the machine was installed in,
+    ///     and English when the language table holds no language for it
+    /// </summary>
+    /// <remarks>
+    ///     Following the machine keeps a first run from offering to translate into a language its user may
+    ///     not read, and the table decides what counts as a match, so a machine installed in a language no
+    ///     container is written for falls back to English
+    /// </remarks>
+    private static Language DefaultPreferredLanguage =>
+        Contracts.Language.FromCulture(CultureInfo.InstalledUICulture) ?? Contracts.Language.Default;
 
     /// <summary>
     ///     Gets or sets the path to the game executable
@@ -68,7 +81,7 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
-    public partial Language PreferredLanguage { get; set; }
+    public partial Language PreferredLanguage { get; set; } = DefaultPreferredLanguage;
 
     /// <summary>
     ///     Gets or sets the preferred payload encoding written for .w3strings files
