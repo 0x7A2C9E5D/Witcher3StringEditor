@@ -68,6 +68,7 @@
                 <ColumnDefinition Width="*" MinWidth="400" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <!-- ReSharper disable once UnusedMember.Global -->
                 <ColumnDefinition x:Name="RightPaddingColumn" Width="0" />
             </Grid.ColumnDefinitions>
             <!-- Application title text -->

@@ -44,6 +44,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <!-- Padding column kept clear of the system caption buttons -->
+                <!-- ReSharper disable once UnusedMember.Global -->
                 <ColumnDefinition x:Name="RightPaddingColumn" Width="0" />
             </Grid.ColumnDefinitions>
             <!-- Dialog title text -->
