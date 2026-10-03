@@ -11,26 +11,61 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 internal static class SectionCount
 {
     /// <summary>
+    ///     The byte that introduces a section holding nothing
+    /// </summary>
+    /// <remarks>
+    ///     An empty section is spelled with the top bit of its only byte set rather than as a plain zero,
+    ///     which is how every container that holds one spells it. The reader takes the six data bits of that
+    ///     byte and nothing else, and those are zero either way, so both spellings read as the same count
+    /// </remarks>
+    private const byte Empty = 0x80;
+
+    /// <summary>
+    ///     The number of bytes a count takes at most: six data bits in the first byte and seven in each of
+    ///     the four that can follow carry the 32 bits of a count with room to spare
+    /// </summary>
+    private const int MaxLength = 5;
+
+    /// <summary>
     ///     Reads the count that introduces a section from a stream
     /// </summary>
     /// <param name="input">The stream to read from</param>
     /// <returns>The count</returns>
     /// <exception cref="W3StringsException">Thrown when the stream ends inside the count, or holds no valid one</exception>
+    /// <remarks>
+    ///     The first byte carries six data bits and, in bit 6, whether another byte follows it; every byte
+    ///     after it carries seven data bits and says the same in bit 7. The first byte whose flag is clear
+    ///     therefore closes the count, which is what makes the first byte six bits wide and every later one
+    ///     seven, and what lets an empty section be spelled <see cref="Empty" />
+    /// </remarks>
     public static uint Read(Stream input)
     {
-        Span<byte> count = stackalloc byte[6]; // Six groups are the most a bit6 count can take
-        for (var length = 1; length <= count.Length; length++)
+        var first = input.ReadByte();
+        if (first < 0)
+            throw new W3StringsException("bit6: the stream ends where a count has to stand");
+
+        if ((first & 0x40) == 0) return (uint)(first & 0x3F); // The flag is clear: the count is this byte
+
+        // Every byte after the first one holds seven bits, shifted past the bits the bytes before it held.
+        var value = (ulong)(first & 0x3F);
+        for (var length = 2; length <= MaxLength; length++)
         {
             var next = input.ReadByte();
-            if (next < 0) break; // The stream ended inside the count
-            count[length - 1] = (byte)next;
+            if (next < 0)
+                throw new W3StringsException("bit6: the stream ends inside a count");
 
-            // A count is complete as soon as the framing stops inside the bytes read so far.
-            if (TryRead(count[..length], 0, out var value, out var end) && end == length) return value;
+            value |= (ulong)(next & 0x7F) << (6 + 7 * (length - 2));
+
+            // The flag of this byte is clear, so the count ends here.
+            if ((next & 0x80) == 0)
+                return value <= uint.MaxValue
+                    ? (uint)value
+                    : throw new W3StringsException(
+                        $"bit6: the count {value} does not fit a 32-bit unsigned integer");
         }
 
         throw new W3StringsException(
-            "bit6: the stream does not hold a readable count here, it ends inside one or it does not fit a 32-bit unsigned integer");
+            $"bit6: the count does not end inside the {MaxLength} bytes a count can take");
     }
 
     /// <summary>
@@ -38,119 +73,40 @@ internal static class SectionCount
     /// </summary>
     /// <param name="value">The count to encode</param>
     /// <returns>The encoded count</returns>
-    /// <exception cref="W3StringsException">Thrown when no framing holds the value</exception>
+    /// <remarks>
+    ///     The first byte takes the six lowest bits and marks that another byte follows it, every byte
+    ///     between takes seven bits and marks the same, and the last byte takes the bits that are left and
+    ///     leaves its flag clear. A count that fits the six bits of the first byte is that byte alone, and
+    ///     an empty section is <see cref="Empty" />
+    /// </remarks>
     public static byte[] Write(uint value)
     {
-        for (var groupCount = 1; groupCount <= 6; groupCount++)
-            foreach (var terminatorBits in new[] { 6, 7, 8 })
-            {
-                var candidate = Build(value, groupCount, terminatorBits);
-                if (candidate is null) continue;
-                // Probing has to be able to reject a framing, so it decodes without throwing: a
-                // framing the reader cannot stop inside is merely the wrong one, not a broken file.
-                // Probing with the throwing Read instead abandoned the search for counts such as
-                // 8192, which a file can easily reach.
-                if (TryRead(candidate, 0, out var decoded, out _) && decoded == value) return candidate;
-            }
+        if (value == 0) return [Empty];
 
-        // Six groups carry 6 + 7 * 4 + 8 = 42 bits, so every 32-bit value is encodable. Reaching this
-        // line means the framing above is wrong, which is a bug and not a property of any input.
-        throw new W3StringsException($"bit6: cannot encode {value}");
+        var bytes = new byte[LengthOf(value)];
+        bytes[0] = (byte)(value & 0x3F); // The six lowest bits
+        if (bytes.Length > 1) bytes[0] |= 0x40; // More bytes follow
+
+        var remaining = value >> 6;
+        for (var i = 1; i < bytes.Length - 1; i++)
+        {
+            bytes[i] = (byte)((remaining & 0x7F) | 0x80); // Seven bits, and more bytes follow
+            remaining >>= 7;
+        }
+
+        if (bytes.Length > 1) bytes[^1] = (byte)remaining; // Seven bits, and the count ends here
+        return bytes;
     }
 
     /// <summary>
-    ///     Reads a bit6 encoded count without throwing
+    ///     Counts the bytes a count is written in
     /// </summary>
-    /// <param name="data">The data to read from</param>
-    /// <param name="offset">The offset the count starts at</param>
-    /// <param name="value">Receives the count</param>
-    /// <param name="nextOffset">Receives the offset that follows the count</param>
-    /// <returns>True when a count was read</returns>
-    private static bool TryRead(ReadOnlySpan<byte> data, int offset, out uint value, out int nextOffset)
+    /// <param name="value">The count to measure</param>
+    /// <returns>The number of bytes the count takes</returns>
+    private static int LengthOf(uint value)
     {
-        value = 0;
-        nextOffset = offset;
-
-        ulong raw = 0;
-        var shift = 0;
-        var index = 1;
-        var p = offset;
-        while (true)
-        {
-            if ((uint)p >= (uint)data.Length) return false;
-
-            var x = data[p++];
-            uint mask;
-            int step;
-
-            switch (x)
-            {
-                case > 127:
-                    mask = 0x7F;
-                    step = 7;
-                    break;
-                case > 63 when index == 1:
-                    mask = 0x3F;
-                    step = 6;
-                    break;
-                default:
-                    mask = 0xFF;
-                    step = 6;
-                    break;
-            }
-
-            raw |= (ulong)(x & mask) << shift;
-            shift += step;
-
-            if (x < 64 || (index >= 3 && x < 128)) break;
-            index++;
-        }
-
-        if (raw > uint.MaxValue) return false;
-
-        value = (uint)raw;
-        nextOffset = p;
-        return true;
-    }
-
-    /// <summary>
-    ///     Frames one count out of the given number of groups
-    /// </summary>
-    /// <param name="value">The count to frame</param>
-    /// <param name="groupCount">The number of bytes to use</param>
-    /// <param name="terminatorBits">The number of data bits the last byte carries</param>
-    /// <returns>The framed count, or null when this framing cannot hold the value</returns>
-    private static byte[]? Build(uint value, int groupCount, int terminatorBits)
-    {
-        if (groupCount == 1)
-            // A lone byte is read with the 8-bit mask and must stop immediately,
-            return value < 64 ? [(byte)value] : null;
-
-        // Bit budget: 6 in byte 0, 7 per interior byte, terminatorBits in the last.
-        var totalBits = 6 + 7 * (groupCount - 2) + terminatorBits;
-        if ((ulong)value >> totalBits != 0) return null;
-
-        var bytes = new byte[groupCount];
-        ulong v = value;
-
-        bytes[0] = (byte)(v & 0x3F); // 6 data bits
-        v >>= 6;
-        for (var i = 1; i < groupCount - 1; i++) // 7 data bits each
-        {
-            bytes[i] = (byte)(v & 0x7F);
-            v >>= 7;
-        }
-
-        bytes[groupCount - 1] = (byte)(v & ((1u << terminatorBits) - 1));
-        v >>= terminatorBits;
-        if (v != 0) return null;
-
-        // Frame the groups so the decoder picks the intended masks.
-        bytes[0] |= 0x40; // byte 0: continuation flag
-        for (var i = 1; i < groupCount - 1; i++) // interior: 7-bit mask
-            bytes[i] |= 0x80;
-
-        // The terminator must stop the decoder.
-        return (bytes[^1] & 0x40) != 0 ? null : bytes;
+        var length = 1;
+        for (var remaining = value >> 6; remaining > 0; remaining >>= 7) length++;
+        return length;
     }
 }
