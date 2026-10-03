@@ -58,7 +58,7 @@ internal static class StoredText
     /// </remarks>
     public static string Decode(ReadOnlySpan<byte> stored, int length, uint magic, int unit)
     {
-        return DecodeFromBytes(Deobfuscate(stored.ToArray(), length, magic, unit), length, unit);
+        return DecodeFromBytes(Deobfuscate([.. stored], length, magic, unit), length, unit);
     }
 
     /// <summary>
