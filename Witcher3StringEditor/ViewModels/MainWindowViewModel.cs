@@ -42,19 +42,6 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private readonly IShellOpenService shellOpenService; // Get explorer service
     private readonly ITranslatorProvider translatorProvider; // Get translator provider
 
-    /// <summary>
-    ///     Gets or sets the collection of The Witcher 3 string items
-    ///     Notifies multiple commands when this property changes
-    /// </summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AddCommand))]
-    [NotifyCanExecuteChangedFor(nameof(EditCommand))]
-    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
-    [NotifyCanExecuteChangedFor(nameof(MergeDataCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ShowSaveDialogCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
-    private ObservableCollection<StringItem>? w3StringItems;
-
 
     /// <summary>
     ///     Initializes a new instance of the MainWindowViewModel class
@@ -90,6 +77,19 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
         RegisterMessengerHandlers(); // Register all message handlers
     }
+
+    /// <summary>
+    ///     Gets or sets the collection of The Witcher 3 string items
+    ///     Notifies multiple commands when this property changes
+    /// </summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AddCommand))]
+    [NotifyCanExecuteChangedFor(nameof(EditCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(MergeDataCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowSaveDialogCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
+    public partial ObservableCollection<StringItem>? W3StringItems { get; set; }
 
     /// <summary>
     ///     Registers a message handler to listen for translator changes and update dictionary support status
