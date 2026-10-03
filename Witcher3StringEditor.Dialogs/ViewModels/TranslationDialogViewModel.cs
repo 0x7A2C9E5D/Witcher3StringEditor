@@ -103,14 +103,16 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
             {
                 await CleanupCurrentViewModelAsync(); // Clean up current view model
                 await DisposeCurrentViewModelAsync(); // Dispose current view model
-                var formLange = CurrentViewModel.FormLanguage; // Save current source language
+                var formLanguage = CurrentViewModel.FormLanguage; // Save current source language
+                var toLanguage = CurrentViewModel.ToLanguage; // Save current target language
                 CurrentViewModel = CurrentViewModel is BatchItemsTranslationViewModel // Switch view model type
                     ? new SingleItemTranslationViewModel(appSettings, translator, w3StringItems,
                         ((BatchItemsTranslationViewModel)CurrentViewModel).StartIndex - 1, dialogService)
                     : new BatchItemsTranslationViewModel(appSettings, translator,
                         w3StringItems, ((SingleItemTranslationViewModel)CurrentViewModel).CurrentItemIndex + 1,
                         dialogService, dictionaryService);
-                CurrentViewModel.FormLanguage = formLange; // Restore source language
+                CurrentViewModel.FormLanguage = formLanguage; // Restore source language
+                CurrentViewModel.ToLanguage = toLanguage; // Restore target language
                 Title = CurrentViewModel is BatchItemsTranslationViewModel // Update dialog title
                     ? Strings.BatchTranslateDialogTitle
                     : Strings.TranslateDialogTitle;
