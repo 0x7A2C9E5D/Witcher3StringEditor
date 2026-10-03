@@ -67,6 +67,6 @@ internal sealed class W3StringsFile
     /// </summary>
     /// <remarks>
     ///     The keys are what resolve the ids of the strings to the strings themselves
-    ///     </remarks>
+    /// </remarks>
     public List<W3KeyEntry> Keys { get; } = [];
 }
