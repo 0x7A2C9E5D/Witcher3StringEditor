@@ -54,13 +54,16 @@ internal static class W3StringsWriter
         writer.Write(file.Version);
         writer.Write(file.Key1);
 
-        // The game resolves both blocks by binary search: entries by string id in the first block, and
-        // keys by localization-key hash in the second. Each block is therefore written in ascending
-        // order of the value it is searched by. A key block in any other order still loads without an
-        // error, but most of its keys stop resolving, and the game shows the menu the raw "##key" it
-        // asked for instead of the text.
+        // The game resolves both blocks by binary search, and it searches them in the form they are stored
+        // in: the second block by localization-key hash, which is stored as it is, and the first by string
+        // id, which is stored obfuscated. Each block is therefore written in ascending order of the value
+        // it holds. Ordering the entries by the clear ids is not the same order, because the obfuscating
+        // xor does not keep the order of the values it is applied to: every language that has a magic then
+        // stops resolving, while the containers of the languages without one keep working, and the game
+        // shows the raw "##key" it asked for instead of the text. A block in the wrong order still loads
+        // without an error.
         WriteCount(writer, (uint)file.Strings.Count);
-        foreach (var entry in file.Strings.OrderBy(entry => entry.Id))
+        foreach (var entry in file.Strings.OrderBy(entry => entry.Id ^ magic))
         {
             writer.Write(entry.Id ^ magic);
             writer.Write(entry.Offset);
