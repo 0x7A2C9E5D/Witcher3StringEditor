@@ -52,19 +52,19 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     ///     Gets or sets the count of failed translations
     /// </summary>
     [ObservableProperty]
-    public partial int FailureCount { get; set; }
+    public partial int FailureCount { get; private set; }
 
     /// <summary>
     ///     Gets or sets the maximum value for indices (typically the total item count)
     /// </summary>
     [ObservableProperty]
-    public partial int MaxValue { get; set; }
+    public partial int MaxValue { get; private set; }
 
     /// <summary>
     ///     Gets or sets the count of pending translations
     /// </summary>
     [ObservableProperty]
-    public partial int PendingCount { get; set; }
+    public partial int PendingCount { get; private set; }
 
     /// <summary>
     ///     Gets or sets the start index for batch translation
@@ -76,7 +76,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     ///     Gets or sets the count of successful translations
     /// </summary>
     [ObservableProperty]
-    public partial int SuccessCount { get; set; }
+    public partial int SuccessCount { get; private set; }
 
     /// <summary>
     ///     Gets a value indicating whether the Cancel command can be executed

@@ -73,13 +73,13 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     ///     Gets or sets the current translation view model (either single or batch)
     /// </summary>
     [ObservableProperty]
-    public partial TranslationViewModelBase CurrentViewModel { get; set; }
+    public partial TranslationViewModelBase CurrentViewModel { get; private set; }
 
     /// <summary>
     ///     Gets or sets the title of the dialog window
     /// </summary>
     [ObservableProperty]
-    public partial string Title { get; set; } = Strings.TranslateDialogTitle;
+    public partial string Title { get; private set; } = Strings.TranslateDialogTitle;
 
     /// <summary>
     ///     Gets the dialog result value

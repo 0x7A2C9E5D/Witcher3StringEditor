@@ -28,7 +28,7 @@ internal partial class RecentItem : ObservableObject, IRecentFileEntry
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
-    public partial string FilePath { get; set; }
+    public partial string FilePath { get; private set; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the item is marked

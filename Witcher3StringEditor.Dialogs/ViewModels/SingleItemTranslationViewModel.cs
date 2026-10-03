@@ -49,13 +49,13 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PreviousCommand))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
-    public partial int CurrentItemIndex { get; set; }
+    public partial int CurrentItemIndex { get; private set; }
 
     /// <summary>
     ///     Gets or sets the current translate item model containing the text to translate
     /// </summary>
     [ObservableProperty]
-    public partial TranslateItemModel? CurrentTranslateItemModel { get; set; }
+    public partial TranslateItemModel? CurrentTranslateItemModel { get; private set; }
 
     /// <summary>
     ///     Gets a value indicating whether the Save command can be executed

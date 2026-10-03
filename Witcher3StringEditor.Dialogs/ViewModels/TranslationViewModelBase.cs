@@ -85,7 +85,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     ///     Gets or sets the collection of supported languages for the current translator
     /// </summary>
     [ObservableProperty]
-    public partial IEnumerable<ILanguage> Languages { get; set; }
+    public partial IEnumerable<ILanguage> Languages { get; private set; }
 
     /// <summary>
     ///     Gets or sets the selected dictionary for translation
