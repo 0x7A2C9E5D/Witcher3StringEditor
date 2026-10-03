@@ -77,6 +77,8 @@ public partial class SaveDialogViewModel
     ///     Gets or sets the output directory where the file will be saved
     /// </summary>
     [ObservableProperty]
+    // Resharper disable once MemberCanBeMadeStatic.Local
+    // Resharper disable once PropertyCanBeMadeInitOnly.Local
     private partial string OutputDirectory { get; set; }
 
     /// <summary>

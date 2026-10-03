@@ -28,6 +28,7 @@ internal partial class RecentItem : ObservableObject, IRecentFileEntry
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
+    // Resharper disable once PropertyCanBeMadeInitOnly.Local
     public partial string FilePath { get; private set; }
 
     /// <summary>

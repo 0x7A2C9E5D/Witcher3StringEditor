@@ -58,6 +58,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     ///     Gets or sets the maximum value for indices (typically the total item count)
     /// </summary>
     [ObservableProperty]
+    // Resharper disable once PropertyCanBeMadeInitOnly.Local
     public partial int MaxValue { get; private set; }
 
     /// <summary>

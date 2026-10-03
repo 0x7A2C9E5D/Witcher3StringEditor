@@ -109,6 +109,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(OpenWorkingFolderCommand))]
+    // Resharper disable once MemberCanBeMadeStatic.Local
     private partial string OutputFolder { get; set; } = string.Empty;
 
     /// <summary>
@@ -122,6 +123,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
+    // Resharper disable once MemberCanBeMadeStatic.Local
     private partial IList<StringItem>? PagedSource { get; set; }
 
     /// <summary>
