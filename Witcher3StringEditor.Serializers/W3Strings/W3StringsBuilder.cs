@@ -44,21 +44,27 @@ internal static class W3StringsBuilder
     /// <summary>
     ///     Resolves the key of an IStringItem and adds the entry to the W3StringsFile
     /// </summary>
-    /// <param name="file">The W3StringsFile to add the entry to</param>
-    /// <param name="id">The id of the entry</param>
-    /// <param name="item">The IStringItem to process</param>
+    /// <param name="file">
+    ///     The W3StringsFile to add the entry to
+    ///     The W3StringsFile to add the key to
+    /// </param>
+    /// <param name="id">
+    ///     The id of the entry
+    ///     The ID of the key
+    /// </param>
+    /// <param name="item">
+    ///     The IStringItem to process
+    ///     The IStringItem to resolve the key for
+    /// </param>
     /// <summary>
     ///     Resolves the key for the given IStringItem and adds it to the W3StringsFile
     /// </summary>
-    /// <param name="file">The W3StringsFile to add the key to</param>
-    /// <param name="id">The ID of the key</param>
-    /// <param name="item">The IStringItem to resolve the key for</param>
     private static void ResolveKeyAndAddEntry(W3StringsFile file, uint id, IStringItem item)
     {
         ResolveKey(item);
         AddEntry(file, id, item);
     }
-    
+
     /// <summary>
     ///     Adds the key entry for the given IStringItem to the W3StringsFile
     /// </summary>
@@ -184,12 +190,14 @@ internal static class W3StringsBuilder
     /// <summary>
     ///     Gets the key hash carried in the given IStringItem
     /// </summary>
-    /// <param name="item">The IStringItem to get the key hash from</param>
+    /// <param name="item">
+    ///     The IStringItem to get the key hash from
+    ///     The IStringItem to get the key hash for
+    /// </param>
     /// <returns>The key hash carried in the IStringItem, or null if none is carried</returns>
     /// <summary>
     ///     Gets the key hash of the given IStringItem, if it is a valid 32-bit hexadecimal number
     /// </summary>
-    /// <param name="item">The IStringItem to get the key hash for</param>
     /// <returns>The key hash of the IStringItem, or null if it is not a valid 32-bit hexadecimal number</returns>
     private static uint? GetCarriedKeyHash(IStringItem item)
     {
