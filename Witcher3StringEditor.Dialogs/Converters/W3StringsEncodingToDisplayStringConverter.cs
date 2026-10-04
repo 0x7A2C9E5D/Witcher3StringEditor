@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using System.Windows.Data;
+using Witcher3StringEditor.Serializers;
 
 namespace Witcher3StringEditor.Dialogs.Converters;
 
@@ -21,8 +22,10 @@ public class W3StringsEncodingToDisplayStringConverter : IValueConverter
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not Encoding encoding) return string.Empty;
-        // Only the two encodings a container can store are offered, each named after the game version that uses it
-        return encoding.CodePage == Encoding.UTF8.CodePage ? "Remastered" : "Classic / Next-Gen";
+        // Only the two encodings a container can store are offered, each named after the game version that
+        // uses it. Which of the two an encoding is decided by the payload itself, the same way the save
+        // decides the version of the container it writes.
+        return W3StringsPayload.IsUtf8(encoding) ? "Remastered" : "Classic / Next-Gen";
     }
 
     /// <summary>
