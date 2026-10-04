@@ -144,13 +144,13 @@
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.MergeCall}" />
                 </ui:AppBarButton.Icon>
             </ui:AppBarButton>
-            <!-- Add entry button -->
-            <ui:AppBarButton Command="{Binding AddCommand}" Label="{I18N {x:Static l:LangKeys.AddBtnLabel}}">
+            <!-- Add entry button (the edit command adds a new entry while it is given no item) -->
+            <ui:AppBarButton Command="{Binding EditCommand}" Label="{I18N {x:Static l:LangKeys.AddBtnLabel}}">
                 <ui:AppBarButton.Icon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Add}" />
                 </ui:AppBarButton.Icon>
             </ui:AppBarButton>
-            <!-- Edit entry button -->
+            <!-- Edit entry button (adds a new entry while no data row is selected) -->
             <ui:AppBarButton
                 Command="{Binding EditCommand}"
                 CommandParameter="{Binding SelectedItem, ElementName=SfDataGrid}"
@@ -158,16 +158,6 @@
                 <ui:AppBarButton.Icon>
                     <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Edit}" />
                 </ui:AppBarButton.Icon>
-                <ui:AppBarButton.Style>
-                    <Style TargetType="ui:AppBarButton">
-                        <Style.Triggers>
-                            <!-- Disable button when no item is selected -->
-                            <DataTrigger Binding="{Binding ElementName=SfDataGrid, Path=SelectedItem}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ui:AppBarButton.Style>
             </ui:AppBarButton>
             <!-- Delete entry button -->
             <ui:AppBarButton
