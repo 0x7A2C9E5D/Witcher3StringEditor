@@ -13,14 +13,17 @@ internal static class W3StringsReader
     ///     Reads a container from a file stream
     /// </summary>
     /// <param name="input">The stream to read from, which a caller opens over a file</param>
-    /// <returns>The container</returns>
+    /// <returns>
+    ///     The container, which holds the texts and their keys, and the version the file declares, which
+    ///     the container itself does not hold: it is a fact of the file that was read
+    /// </returns>
     /// <exception cref="W3StringsException">Thrown when the stream does not hold a container this build can decode</exception>
     /// <remarks>
     ///     The offsets of the first block point into a buffer that follows it, and the tail half of the
     ///     language key sits in the last two bytes of the container. Reaching both out of order is why
     ///     the stream is read by offset: over a file that is what a stream is there for
     /// </remarks>
-    public static W3StringsFile Read(Stream input)
+    public static (W3StringsFile Container, uint Version) Read(Stream input)
     {
         try
         {
@@ -41,7 +44,7 @@ internal static class W3StringsReader
             // obfuscated with follows from it.
             var key = head.Key | ReadKey2(reader, key2Offset);
 
-            return Assemble(head.Version, key, entries, keys, storedTexts);
+            return (Assemble(key, entries, keys, storedTexts, head.Unit), head.Version);
         }
         catch (Exception ex) when (ex is not W3StringsException)
         {
@@ -158,20 +161,18 @@ internal static class W3StringsReader
     /// <summary>
     ///     Assembles the container out of the sections that were read, decoding every id and text on the way
     /// </summary>
-    /// <param name="version">The version the container was written with</param>
     /// <param name="key">The full language key, which the magic every id and stored text was obfuscated with follows from</param>
     /// <param name="entries">The entries of the first block, whose ids are still obfuscated and whose texts not yet decoded</param>
     /// <param name="keys">The entries of the second block, whose ids are still obfuscated</param>
     /// <param name="storedTexts">The stored bytes of every entry, in entry order, which decoding consumes</param>
-    /// <returns>The container</returns>
-    private static W3StringsFile Assemble(uint version, uint key, W3StringEntry[] entries, W3KeyEntry[] keys,
-        byte[][] storedTexts)
+    /// <param name="unit">The number of bytes one character takes in the version the file declares</param>
+    /// <returns>The container, which holds the texts and their keys and no version of its own</returns>
+    private static W3StringsFile Assemble(uint key, W3StringEntry[] entries, W3KeyEntry[] keys,
+        byte[][] storedTexts, int unit)
     {
         var magic = W3StringsFormat.MagicOf(key); // The magic every id and stored text was obfuscated with
-        var unit = W3StringsFormat.OffsetUnitSize(version); // The number of bytes one character takes
         var file = new W3StringsFile
         {
-            Version = version,
             Key = key
         };
 

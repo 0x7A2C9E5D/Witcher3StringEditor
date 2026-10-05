@@ -15,6 +15,7 @@ internal static class W3StringsWriter
     ///     buffer is, encoding nothing
     /// </summary>
     /// <param name="file">The container to encode</param>
+    /// <param name="unit">The number of bytes one character takes in the version being written</param>
     /// <returns>The size the entries and their terminators occupy, and the size of the buffer in bytes</returns>
     /// <remarks>
     ///     The texts are laid out one behind the other in the order they are listed, each closed by the
@@ -22,9 +23,8 @@ internal static class W3StringsWriter
     ///     carries the offsets that point at its own text: the order of the block of offsets is then free,
     ///     and the buffer holds exactly what the texts need
     /// </remarks>
-    private static (uint Used, long Size) BufferOf(W3StringsFile file)
+    private static (uint Used, long Size) BufferOf(W3StringsFile file, int unit)
     {
-        var unit = file.Unit;
         uint cursor = 0;
 
         foreach (var entry in file.Strings)
@@ -42,16 +42,24 @@ internal static class W3StringsWriter
     /// </summary>
     /// <param name="output">The stream the container is written to</param>
     /// <param name="file">The container to encode</param>
-    public static void Write(Stream output, W3StringsFile file)
+    /// <param name="version">The version to write it with, which the caller chose for the game it is for</param>
+    /// <remarks>
+    ///     The version is a parameter rather than a fact of the container, because the same texts are
+    ///     written for either generation of the game: it decides how they are encoded and how their offsets,
+    ///     lengths and buffer size are counted. A container built once can therefore be written for either
+    ///     generation without being rebuilt, and the version it is written with is never a guess
+    /// </remarks>
+    public static void Write(Stream output, W3StringsFile file, uint version)
     {
+        var unit = W3StringsFormat.OffsetUnitSize(version); // The bytes one character takes in that version
         // The layout has to be known before the first byte is written, because the block of offsets and
         // lengths sits before the string buffer it points into.
-        var buffer = BufferOf(file);
+        var buffer = BufferOf(file, unit);
         var magic = file.Magic;
         using var writer = new BinaryWriter(output, Encoding.UTF8, true); // The stream stays open for the caller
 
         writer.Write(W3StringsFormat.MagicBytes);
-        writer.Write(file.Version);
+        writer.Write(version);
         writer.Write(file.Key1);
 
         // The game resolves both blocks by binary search, and it searches them in the form they are stored
@@ -81,8 +89,8 @@ internal static class W3StringsWriter
             writer.Write(key.Id ^ magic);
         }
 
-        WriteCount(writer, (uint)(buffer.Size / file.Unit));
-        WriteBuffer(writer, file, buffer);
+        WriteCount(writer, (uint)(buffer.Size / unit));
+        WriteBuffer(writer, file, buffer, unit);
 
         writer.Write(file.Key2);
     }
@@ -94,9 +102,9 @@ internal static class W3StringsWriter
     /// <param name="writer">The writer the buffer goes to</param>
     /// <param name="file">The container to encode</param>
     /// <param name="buffer">The sizes the buffer is written with</param>
-    private static void WriteBuffer(BinaryWriter writer, W3StringsFile file, (uint Used, long Size) buffer)
+    /// <param name="unit">The number of bytes one character takes in the version being written</param>
+    private static void WriteBuffer(BinaryWriter writer, W3StringsFile file, (uint Used, long Size) buffer, int unit)
     {
-        var unit = file.Unit;
         var magic = file.Magic;
 
         foreach (var stored in file.Strings.Select(entry => StoredText.Encode(entry.Value, magic, unit, out _)))

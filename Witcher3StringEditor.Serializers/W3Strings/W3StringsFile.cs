@@ -4,20 +4,15 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 ///     The container of strings
 /// </summary>
 /// <remarks>
-///     The container is what is written to disk, and is what is read from disk
+///     The container is what is written to disk, and is what is read from disk. It holds the texts and
+///     the keys that resolve them, and no version: the version is a fact of the file rather than of the
+///     container, because the same texts are written for either generation of the game and the encoding
+///     they are stored in is the choice of whoever writes them. A writer is therefore told the version to
+///     write, and a reader answers with the version it found
 /// </remarks>
 /// <exception cref="W3StringsException">Thrown when the container is not one this build knows</exception>
 internal sealed class W3StringsFile
 {
-    /// <summary>
-    ///     The version the container is written with, which decides how its texts are encoded
-    /// </summary>
-    /// <remarks>
-    ///     There is no default: the version is what a caller knows about the container it is building,
-    ///     and a container written with a version nobody chose is a container nobody meant to write
-    /// </remarks>
-    public required uint Version { get; init; }
-
     /// <summary>
     ///     The full 32-bit language key the container is written with, which is what identifies the
     ///     language. The container stores it in two halves: the head one in its header, the tail one in
@@ -48,14 +43,6 @@ internal sealed class W3StringsFile
     /// </remarks>
     /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
     public uint Magic => W3StringsFormat.MagicOf(Key);
-
-    /// <summary>
-    ///     The size of the offset unit in bytes, which is the size of the id and the length of the text
-    /// </summary>
-    /// <remarks>
-    ///     The offset unit is the size of the id and the length of the text, in bytes
-    /// </remarks>
-    public int Unit => W3StringsFormat.OffsetUnitSize(Version);
 
     /// <summary>
     ///     The strings of the container, in the order they are stored

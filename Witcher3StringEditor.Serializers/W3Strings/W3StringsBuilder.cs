@@ -13,13 +13,17 @@ internal static class W3StringsBuilder
     ///     Builds a W3StringsFile from a list of IStringItems
     /// </summary>
     /// <param name="items">The list of IStringItems to build the W3StringsFile from</param>
-    /// <param name="version">The version of the W3StringsFile</param>
     /// <param name="key">The language key of the W3StringsFile</param>
     /// <returns>The built W3StringsFile</returns>
-    public static W3StringsFile? Build(IReadOnlyList<IStringItem> items, uint version, uint key)
+    /// <remarks>
+    ///     The version the container is written with is not asked for here: it is chosen when the container
+    ///     is written, because the texts of a container are the same whichever generation of the game it is
+    ///     for, and only the bytes they are stored in differ
+    /// </remarks>
+    public static W3StringsFile? Build(IReadOnlyList<IStringItem> items, uint key)
     {
         if (HasDuplicateStrIds(items)) return null;
-        var file = new W3StringsFile { Version = version, Key = key };
+        var file = new W3StringsFile { Key = key };
         return items.Any(item => !ProcessItem(item, file)) ? null : file;
     }
 
