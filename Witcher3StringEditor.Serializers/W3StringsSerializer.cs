@@ -1,3 +1,4 @@
+using System.Text;
 using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
@@ -68,7 +69,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             // that cannot be written leaves the destination exactly as it was. What makes an item
             // unusable is a rule of the format, so it is not decided here. The builder logs every
             // anomaly it refuses the container for itself, one line per anomaly.
-            var version = W3StringsPayload.ContainerVersion(context.Encoding); // The chosen payload as a version
+            var version = ContainerVersion(context.Encoding); // Container version that stores the chosen encoding
             var container = W3StringsBuilder.Build(
                 w3StringItems,
                 context.TargetLanguage.Key); // The language key is what every id and text is obfuscated by
@@ -98,6 +99,18 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
                 "An error occurred while serializing W3Strings"); // Log any errors that occur during serialization
             return false; // Return false to indicate serialization failure
         }
+    }
+
+    /// <summary>
+    ///     Gets the container version that stores the given payload encoding
+    /// </summary>
+    /// <param name="encoding">The payload encoding to store</param>
+    /// <returns>
+    ///     The version of the UTF-8 generation, or the classic UTF-16LE one for every other encoding
+    /// </returns>
+    private static uint ContainerVersion(Encoding encoding)
+    {
+        return encoding.Equals(Encoding.UTF8) ? W3StringsFormat.FirstUtf8Version : W3StringsFormat.Utf16LeVersion;
     }
 
     /// <summary>
