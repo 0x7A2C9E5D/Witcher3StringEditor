@@ -25,7 +25,7 @@ public class W3StringsEncodingToDisplayStringConverter : IValueConverter
         // Only the two encodings a container can store are offered, each named after the game version that
         // uses it. Which of the two an encoding is decided by the payload itself, the same way the save
         // decides the version of the container it writes.
-        return W3StringsSerializer.IsUtf8Payload(encoding) ? "Remastered" : "Classic / Next-Gen";
+        return W3StringsPayload.IsUtf8(encoding) ? "Remastered" : "Classic / Next-Gen";
     }
 
     /// <summary>

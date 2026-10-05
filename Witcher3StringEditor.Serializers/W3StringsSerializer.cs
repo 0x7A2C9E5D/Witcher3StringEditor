@@ -1,4 +1,3 @@
-using System.Text;
 using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Contracts.Abstractions;
@@ -69,7 +68,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             // that cannot be written leaves the destination exactly as it was. What makes an item
             // unusable is a rule of the format, so it is not decided here. The builder logs every
             // anomaly it refuses the container for itself, one line per anomaly.
-            var version = ContainerVersion(context.Encoding); // The chosen payload as a version
+            var version = W3StringsPayload.ContainerVersion(context.Encoding); // The chosen payload as a version
             var container = W3StringsBuilder.Build(
                 w3StringItems,
                 context.TargetLanguage.Key); // The language key is what every id and text is obfuscated by
@@ -99,35 +98,6 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
                 "An error occurred while serializing W3Strings"); // Log any errors that occur during serialization
             return false; // Return false to indicate serialization failure
         }
-    }
-
-    /// <summary>
-    ///     Answers whether the given payload encoding is the UTF-8 one, which the Remastered game reads
-    /// </summary>
-    /// <param name="encoding">The payload encoding a caller chose</param>
-    /// <returns>True when the encoding stores its characters as UTF-8</returns>
-    /// <remarks>
-    ///     The code page is what tells the two payloads apart, not the identity of the encoding object:
-    ///     several UTF-8 encodings differ only in whether they write a byte order mark, which a container
-    ///     does not store, so asking whether two encoding objects are equal would make the file that is
-    ///     written depend on which of them a caller happened to build
-    /// </remarks>
-    public static bool IsUtf8Payload(Encoding encoding)
-    {
-        return encoding.CodePage == Encoding.UTF8.CodePage;
-    }
-
-    /// <summary>
-    ///     Gets the version of the container that stores the given payload encoding
-    /// </summary>
-    /// <param name="encoding">The payload encoding a caller chose</param>
-    /// <returns>
-    ///     The version of the UTF-8 generation, or the version of the classic UTF-16LE generation for
-    ///     every other encoding
-    /// </returns>
-    private static uint ContainerVersion(Encoding encoding)
-    {
-        return IsUtf8Payload(encoding) ? W3StringsFormat.FirstUtf8Version : W3StringsFormat.Utf16LeVersion;
     }
 
     /// <summary>
