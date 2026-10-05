@@ -13,16 +13,13 @@ internal static class W3StringsBuilder
     ///     Builds a W3StringsFile from a list of IStringItems
     /// </summary>
     /// <param name="items">The list of IStringItems to build the W3StringsFile from</param>
+    /// <param name="version">The version of the W3StringsFile</param>
     /// <param name="key">The language key of the W3StringsFile</param>
     /// <returns>The built W3StringsFile</returns>
-    /// <remarks>
-    ///     The version the container is written with is not asked for here: it is chosen when the container is
-    ///     written, because the texts of a container are the same whichever generation of the game it is for
-    /// </remarks>
-    public static W3StringsFile? Build(IReadOnlyList<IStringItem> items, uint key)
+    public static W3StringsFile? Build(IReadOnlyList<IStringItem> items, uint version, uint key)
     {
         if (HasDuplicateStrIds(items)) return null;
-        var file = new W3StringsFile { Key = key };
+        var file = new W3StringsFile { Version = version, Key = key };
         return items.Any(item => !ProcessItem(item, file)) ? null : file;
     }
 
@@ -69,18 +66,14 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Adds the entries of the given IStringItem to the W3StringsFile
+    ///     Adds the key entry for the given IStringItem to the W3StringsFile
     /// </summary>
-    /// <param name="file">The W3StringsFile to add the entries to</param>
-    /// <param name="id">The ID of the entries</param>
-    /// <param name="item">The IStringItem to add the entries for</param>
+    /// <param name="file">The W3StringsFile to add the key entry to</param>
+    /// <param name="id">The ID of the key entry</param>
+    /// <param name="item">The IStringItem to add the key entry for</param>
     private static void AddEntry(W3StringsFile file, uint id, IStringItem item)
     {
-        // A key entry is what resolves a localization key to an id, so an item that carries no key has no
-        // key entry to write. Writing one with a hash of zero instead leaves an entry no key can resolve
-        // to, which is what makes a container whose entries carry no keys come back out of a save with a
-        // key entry per entry.
-        if (GetCarriedKeyHash(item) is > 0) AddKeyEntry(file, id, item);
+        AddKeyEntry(file, id, item);
         AddStringEntry(file, id, item);
     }
 
@@ -195,10 +188,17 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Gets the key hash carried in the given IStringItem, if it is a valid 32-bit hexadecimal number
+    ///     Gets the key hash carried in the given IStringItem
     /// </summary>
-    /// <param name="item">The IStringItem to get the key hash from</param>
+    /// <param name="item">
+    ///     The IStringItem to get the key hash from
+    ///     The IStringItem to get the key hash for
+    /// </param>
     /// <returns>The key hash carried in the IStringItem, or null if none is carried</returns>
+    /// <summary>
+    ///     Gets the key hash of the given IStringItem, if it is a valid 32-bit hexadecimal number
+    /// </summary>
+    /// <returns>The key hash of the IStringItem, or null if it is not a valid 32-bit hexadecimal number</returns>
     private static uint? GetCarriedKeyHash(IStringItem item)
     {
         return uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hash)

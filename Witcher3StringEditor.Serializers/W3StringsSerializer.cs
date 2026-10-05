@@ -69,9 +69,9 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             // that cannot be written leaves the destination exactly as it was. What makes an item
             // unusable is a rule of the format, so it is not decided here. The builder logs every
             // anomaly it refuses the container for itself, one line per anomaly.
-            var version = ContainerVersion(context.Encoding); // Container version that stores the chosen encoding
             var container = W3StringsBuilder.Build(
                 w3StringItems,
+                ContainerVersion(context.Encoding), // Container version that stores the chosen encoding
                 context.TargetLanguage.Key); // The language key is what every id and text is obfuscated by
             if (container is null) return false; // The reasons are in the log, one per anomaly
 
@@ -81,16 +81,14 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
                 return false; // Leave the existing file alone when its backup could not be taken
 
             // The container is streamed straight into its destination, so the encoded file is never
-            // held in memory: only one stored text exists at a time. The version is handed to the writer,
-            // because it is the save that chooses the generation the container is written for.
+            // held in memory: only one stored text exists at a time.
             await using (var stream = File.Create(outputW3StringsPath))
             {
-                await Task.Run(() =>
-                    W3StringsWriter.Write(stream, container, version)); // Encode off the calling thread
+                await Task.Run(() => W3StringsWriter.Write(stream, container)); // Encode off the calling thread
             }
 
             Log.Information("Encoded {Count} item(s) as W3Strings v{Version} to {Path}", w3StringItems.Count,
-                version, outputW3StringsPath); // Log the encoded container
+                ContainerVersion(context.Encoding), outputW3StringsPath); // Log the encoded container
             return true; // Return true to indicate successful serialization
         }
         catch (Exception ex)
@@ -121,7 +119,13 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     private static List<IStringItem> ReadItems(string filePath)
     {
         using var stream = File.OpenRead(filePath); // The codec reads a stream, the serializer knows the path
-        var container = W3StringsReader.Read(stream); // Parse the container, which logs its version itself
+        var container = W3StringsReader.Read(stream); // Parse the container
+
+        // The magic is all the container says about the language it was written for, and it is what the
+        // ids and texts were decoded with.
+        Log.Information("Read W3Strings v{Version} container (magic {Magic}) from {Path}", container.Version,
+            container.Magic == 0 ? "none" : $"0x{container.Magic:X8}",
+            filePath); // Log the container facts
 
         // Reading only decodes: what the container says about itself is not checked here, the check
         // belongs to the save that would produce a w3strings file again.

@@ -23,12 +23,12 @@ internal sealed class W3StringEntry
     public string Value { get; set; } = string.Empty;
 
     /// <summary>
-    ///     The offset the text is stored at in the string buffer, in the units the container counts in
+    ///     The offset the text is stored at in the string buffer, in units of the container's version
     /// </summary>
     public uint Offset { get; set; }
 
     /// <summary>
-    ///     The length the text is stored with in the string buffer, in the units the container counts in
+    ///     The length the text is stored with in the string buffer, in units of the container's version
     /// </summary>
     public uint Length { get; set; }
 

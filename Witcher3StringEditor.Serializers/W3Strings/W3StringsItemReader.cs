@@ -19,12 +19,10 @@ internal static class W3StringsItemReader
     /// <returns>The items of the container, in container order</returns>
     public static List<StringItem> Read(W3StringsFile file)
     {
-        // Block 2 maps a localization-key hash to the id it resolves to. A hash of zero is how the format
-        // says "no key", which resolves nothing and is never written, so it is passed over here instead of
-        // being shown as the key of its entry. An id can carry several keys, so the first hash found is the
-        // one shown next to the entry.
+        // Block 2 maps a localization-key hash to the id it resolves to. An id can carry several keys,
+        // so the first hash found is the one shown next to the entry.
         var keyHashes = new Dictionary<uint, uint>(file.Keys.Count);
-        foreach (var key in file.Keys.Where(key => key.KeyHash != 0))
+        foreach (var key in file.Keys)
             keyHashes.TryAdd(key.Id, key.KeyHash);
 
         var items = new List<StringItem>(file.Strings.Count);
