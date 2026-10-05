@@ -70,8 +70,12 @@ internal static class W3StringsWriter
             writer.Write(entry.Length);
         }
 
-        WriteCount(writer, (uint)file.Keys.Count);
-        foreach (var key in file.Keys.OrderBy(key => key.KeyHash))
+        // A key entry whose hash is zero is not written: zero is how the format says "no key", so such an
+        // entry is one no key can ever resolve to, and the container is smaller by everything the entries
+        // that say nothing but that take up.
+        var keys = file.Keys.Where(key => key.KeyHash != 0).OrderBy(key => key.KeyHash).ToList();
+        WriteCount(writer, (uint)keys.Count);
+        foreach (var key in keys)
         {
             writer.Write(key.KeyHash);
             writer.Write(key.Id ^ magic);

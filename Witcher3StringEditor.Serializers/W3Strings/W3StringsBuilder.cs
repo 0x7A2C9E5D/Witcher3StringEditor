@@ -66,14 +66,18 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Adds the key entry for the given IStringItem to the W3StringsFile
+    ///     Adds the entries of the given IStringItem to the W3StringsFile
     /// </summary>
-    /// <param name="file">The W3StringsFile to add the key entry to</param>
-    /// <param name="id">The ID of the key entry</param>
-    /// <param name="item">The IStringItem to add the key entry for</param>
+    /// <param name="file">The W3StringsFile to add the entries to</param>
+    /// <param name="id">The ID of the entries</param>
+    /// <param name="item">The IStringItem to add the entries for</param>
     private static void AddEntry(W3StringsFile file, uint id, IStringItem item)
     {
-        AddKeyEntry(file, id, item);
+        // A key entry is what resolves a localization key to an id, so an item that carries no key has no
+        // key entry to write. Writing one with a hash of zero instead leaves an entry no key can resolve
+        // to, which is what makes a container whose entries carry no keys come back out of a save with a
+        // key entry per entry.
+        if (GetCarriedKeyHash(item) is > 0) AddKeyEntry(file, id, item);
         AddStringEntry(file, id, item);
     }
 
