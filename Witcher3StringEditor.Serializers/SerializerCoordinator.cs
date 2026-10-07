@@ -64,8 +64,19 @@ public class SerializerCoordinator : ISerializerCoordinator
     ///     The task result indicates whether the serialization was successful
     /// </returns>
     /// <exception cref="NotSupportedException">Thrown when the target file format is not supported</exception>
+    /// <remarks>
+    ///     The text of every item is saved into the item itself first, through the item's own
+    ///     <see cref="IStringItem.Text" />: the serializer that writes it asks no questions about line breaks,
+    ///     and a caller that holds its items sees what a save wrote
+    /// </remarks>
     public async Task<bool> Serialize(IReadOnlyList<IStringItem> w3StringItems, SerializationContext context)
     {
+        // The text a file holds is written back into its items before anything is written: a line break of a
+        // text is not what a saved text carries it as, and the save is the place that has both the items and
+        // the rule, so no serializer has to know about it. The items then show what a save wrote.
+        foreach (var item in w3StringItems)
+            item.Text = SavedText.NormalizeLineBreaks(item.Text);
+
         var succeeded = await Resolve(context.TargetFileFormat).Serialize(w3StringItems, context);
         if (succeeded)
             Log.Information("Serialized {Count} item(s) as {FileFormat} to {Directory}", w3StringItems.Count,
