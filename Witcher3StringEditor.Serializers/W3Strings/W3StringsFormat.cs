@@ -20,16 +20,20 @@ internal static class W3StringsFormat
     public const int MinSize = 15;
 
     /// <summary>
-    ///     The version of the UTF-8 generation: one byte per character, so every offset and length
-    ///     counts bytes
+    ///     The version of the UTF-8 generation: one byte per character, so every offset and length counts
+    ///     bytes. Every version from this one on is read that way
     /// </summary>
     public const uint FirstUtf8Version = 164;
 
     /// <summary>
-    ///     The version the classic UTF-16LE generation is written with: two bytes per character, so
-    ///     every offset and length counts characters. Every version below the UTF-8 generation is read
-    ///     that way
+    ///     The version the classic UTF-16LE generation is written with: two bytes per character, so every
+    ///     offset and length counts characters
     /// </summary>
+    /// <remarks>
+    ///     It is the version a save writes for that generation, and the one every version below the UTF-8
+    ///     generation is read as: a container of the game declares 162 or 163, and both count their offsets,
+    ///     lengths and buffer size in characters of two bytes
+    /// </remarks>
     public const uint Utf16LeVersion = 162;
 
     /// <summary>
@@ -71,12 +75,36 @@ internal static class W3StringsFormat
     }
 
     /// <summary>
-    ///     The size of the offset unit in bytes: 1 byte for UTF-8, 2 bytes for UTF-16LE
+    ///     The size of the offset unit in bytes: 1 byte for a container of the UTF-8 generation, 2 bytes for
+    ///     one of the UTF-16LE generation
     /// </summary>
     /// <param name="version">The version of the container</param>
     /// <returns>The size of the offset unit in bytes</returns>
+    /// <remarks>
+    ///     Everything below the UTF-8 generation is counted in characters of two bytes, so 162 and 163 are
+    ///     answered for alike: the older generation of the game is one layout, and the version a container of
+    ///     it declares is an upper bound rather than a difference. A reader asks it for the version it worked
+    ///     out the container is really stored in, which is the one it declares unless it declares one
+    ///     generation and holds the other: see W3StringsReader for those
+    /// </remarks>
     public static int OffsetUnitSize(uint version)
     {
         return version >= FirstUtf8Version ? 1 : 2;
+    }
+
+    /// <summary>
+    ///     Gets the version a container asked to be written with a version is written as
+    /// </summary>
+    /// <param name="version">The version the container is asked to be written with</param>
+    /// <returns>The version the container is written as</returns>
+    /// <remarks>
+    ///     The older generation of the game has one layout, which is the one version 162 describes, so every
+    ///     version below the UTF-8 generation is written as 162: a file that declared another version of that
+    ///     generation, 163 among them, would only make a reader guess at a difference that is not there. The
+    ///     UTF-8 generation is written with the version it is asked for
+    /// </remarks>
+    public static uint WrittenVersion(uint version)
+    {
+        return version >= FirstUtf8Version ? version : Utf16LeVersion;
     }
 }

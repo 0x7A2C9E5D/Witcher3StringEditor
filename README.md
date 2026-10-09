@@ -11,10 +11,12 @@ as dialogues, quest descriptions, and UI elements.
 - **File Compatibility & Handling**: Support for `.w3strings` (Witcher 3 native), `.csv`, and `.xlsx` formats, with
   drag-and-drop functionality for easy access.
 - **Built-in `.w3strings` Codec**: `.w3strings` files are decoded and encoded in-process — no external encoder tool is
-  needed. Containers of the UTF-8 generation the current game ships (`v164`) are fully supported; the older UTF-16LE
-  generation (`v162`/`v163`) is decoded as well, but a few community-made containers of it are not readable yet, so
-  please report one that fails to open. Saves are written as `v162` or `v164`, whichever is selected in the save
-  dialog.
+  needed. Containers of the UTF-8 generation the current game ships (`v164`) are fully supported, and the older
+  generation (`v162`/`v163`) is decoded as well, including the community containers that store UTF-8 while declaring
+  one of those versions: those are read as UTF-8, a warning is written to the log, and saving such a container writes
+  the version its contents belong to, so re-saving one fixes its declaration. A container that declares more text than
+  the file holds is read up to what is there, with a warning, and the entries whose text is missing are dropped. Saves
+  are otherwise written as `v162` or `v164`, whichever is selected in the save dialog.
 - **Recent Files**: Quick access to recently opened files through the "Recent" dialog.
 - **Localization**: The interface is available in ten languages (English, German, French, Hungarian, Japanese, Polish,
   Brazilian Portuguese, Thai, Simplified Chinese and Traditional Chinese). The system language picks one on first run,

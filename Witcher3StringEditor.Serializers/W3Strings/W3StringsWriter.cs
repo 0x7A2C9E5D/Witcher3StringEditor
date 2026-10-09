@@ -44,13 +44,15 @@ internal static class W3StringsWriter
     /// <param name="file">The container to encode</param>
     /// <param name="version">The version to write it with, which the caller chose for the game it is for</param>
     /// <remarks>
-    ///     The version is a parameter rather than a fact of the container, because the same texts are
-    ///     written for either generation of the game: it decides how they are encoded and how their offsets,
-    ///     lengths and buffer size are counted. A container built once can therefore be written for either
-    ///     generation without being rebuilt, and the version it is written with is never a guess
+    ///     The version is a parameter rather than a fact of the container, because the same texts are written
+    ///     for either generation of the game: it decides how they are encoded and how their offsets, lengths
+    ///     and buffer size are counted. A version below the UTF-8 generation is written as 162, the version
+    ///     that generation is described by, so a container is never written with a version this build only
+    ///     reads by guessing
     /// </remarks>
     public static void Write(Stream output, W3StringsFile file, uint version)
     {
+        version = W3StringsFormat.WrittenVersion(version); // The older generation is always written as 162
         var unit = W3StringsFormat.OffsetUnitSize(version); // The bytes one character takes in that version
         // The layout has to be known before the first byte is written, because the block of offsets and
         // lengths sits before the string buffer it points into.
@@ -79,8 +81,8 @@ internal static class W3StringsWriter
         }
 
         // A key entry whose hash is zero is not written: zero is how the format says "no key", so such an
-        // entry is one no key can ever resolve to, and the container is smaller by everything the entries
-        // that say nothing but that take up.
+        // entry is one no key can ever resolve to, and a container that holds one holds an entry the game
+        // can do nothing with.
         var keys = file.Keys.Where(key => key.KeyHash != 0).OrderBy(key => key.KeyHash).ToList();
         WriteCount(writer, (uint)keys.Count);
         foreach (var key in keys)

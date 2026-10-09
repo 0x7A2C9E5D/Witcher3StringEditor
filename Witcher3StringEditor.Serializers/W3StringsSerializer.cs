@@ -126,8 +126,9 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
         var (container, version) = W3StringsReader.Read(stream); // Parse the container
 
         // The magic is all the container says about the language it was written for, and it is what the
-        // ids and texts were decoded with. The version is what the file declared, which the container
-        // itself does not hold: it is a fact of this file rather than of the texts that were read.
+        // ids and texts were decoded with. The version is the one its texts are stored in, which is the
+        // one the file declares unless it declares one generation and holds the other: the container
+        // itself holds no version, because the same texts are written for either generation.
         Log.Information("Read W3Strings v{Version} container (magic {Magic}) from {Path}", version,
             container.Magic == 0 ? "none" : $"0x{container.Magic:X8}",
             filePath); // Log the container facts

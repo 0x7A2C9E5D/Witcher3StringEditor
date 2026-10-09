@@ -196,17 +196,10 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Gets the key hash carried in the given IStringItem
+    ///     Gets the key hash carried in the given IStringItem, if it is a valid 32-bit hexadecimal number
     /// </summary>
-    /// <param name="item">
-    ///     The IStringItem to get the key hash from
-    ///     The IStringItem to get the key hash for
-    /// </param>
+    /// <param name="item">The IStringItem to get the key hash from</param>
     /// <returns>The key hash carried in the IStringItem, or null if none is carried</returns>
-    /// <summary>
-    ///     Gets the key hash of the given IStringItem, if it is a valid 32-bit hexadecimal number
-    /// </summary>
-    /// <returns>The key hash of the IStringItem, or null if it is not a valid 32-bit hexadecimal number</returns>
     private static uint? GetCarriedKeyHash(IStringItem item)
     {
         return uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hash)
