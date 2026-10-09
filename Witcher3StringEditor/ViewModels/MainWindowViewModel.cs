@@ -305,6 +305,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
             OutputFolder = Path.GetDirectoryName(fileName)!; // Set output folder based on file location
             recentFilesService.AddOrUpdateRecentFile(fileName); // Update recent items list
             SearchText = string.Empty; // Clear search text
+            await RequestDataGridPagedSource(); // Take over the paged source of the file that was opened
         }
         catch (Exception ex)
         {
