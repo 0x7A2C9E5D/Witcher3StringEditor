@@ -70,6 +70,9 @@
         <EmbeddedResource Update="Strings.th-TH.resx">
             <DependentUpon>Strings.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Strings.uk-ua.resx">
+          <DependentUpon>Strings.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>

@@ -334,10 +334,10 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Шлях до гри</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>Загальні налаштування</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>Програми за замовчуванням</value>
   </data>
-    <data name="PathSettingsHeader" xml:space="preserve">
+  <data name="PathSettingsHeader" xml:space="preserve">
     <value>Налаштування шляхів</value>
   </data>
     <data name="SaveSettingsHeader" xml:space="preserve">
@@ -495,5 +495,11 @@
   </data>
     <data name="MergeDataConfirmMessage" xml:space="preserve">
       <value>Об’єднати дані з файлу, оновивши лише елементи з однаковим ID.</value>
+  </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>Асоціація файлів</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>Відкривати файли .w3strings за допомогою цієї програми</value>
   </data>
 </root>
