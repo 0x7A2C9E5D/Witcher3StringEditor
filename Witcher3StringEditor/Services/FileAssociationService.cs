@@ -18,14 +18,20 @@ internal sealed class FileAssociationService : IFileAssociationService
 
     /// <summary>
     ///     Gets a value indicating whether the file association is currently registered
+    ///     The association only counts as registered while it points at the executable that is running now
     /// </summary>
     public bool IsRegistered
     {
         get
         {
             using var extensionKey = Registry.CurrentUser.OpenSubKey($@"{ClassesPath}\{Extension}");
-            using var programKey = Registry.CurrentUser.OpenSubKey($@"{ClassesPath}\{ProgramId}");
-            return programKey is not null && extensionKey?.GetValue(string.Empty) as string == ProgramId;
+            if (extensionKey?.GetValue(string.Empty) as string != ProgramId) return false; // The extension is not ours
+            using var commandKey = Registry.CurrentUser.OpenSubKey($@"{ClassesPath}\{ProgramId}\shell\open\command");
+            var registeredPath = GetExecutablePathFromCommand(commandKey?.GetValue(string.Empty) as string);
+            var currentPath = Environment.ProcessPath;
+            // A stale association (for example after the application is moved) does not count as registered
+            return currentPath is not null && registeredPath is not null &&
+                   string.Equals(registeredPath, currentPath, StringComparison.OrdinalIgnoreCase);
         }
     }
 
@@ -86,5 +92,17 @@ internal sealed class FileAssociationService : IFileAssociationService
     {
         return Environment.ProcessPath ??
                throw new InvalidOperationException("The current process path could not be determined.");
+    }
+
+    /// <summary>
+    ///     Gets the executable path stored in a shell open command value
+    /// </summary>
+    /// <param name="command">The command value, for example <c>"C:\app.exe" "%1"</c></param>
+    /// <returns>The executable path, or null when the command is empty or malformed</returns>
+    private static string? GetExecutablePathFromCommand(string? command)
+    {
+        if (string.IsNullOrWhiteSpace(command) || !command.StartsWith('"')) return null;
+        var endQuote = command.IndexOf('"', 1);
+        return endQuote > 1 ? command[1..endQuote] : null;
     }
 }
