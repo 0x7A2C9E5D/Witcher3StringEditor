@@ -91,7 +91,8 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
             serviceProvider.GetRequiredService<IAppSettings>(),
             serviceProvider.GetRequiredService<IDialogService>(),
             translatorNames,
-            serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures);
+            serviceProvider.GetRequiredService<ICultureResolver>().SupportedCultures,
+            serviceProvider.GetRequiredService<IFileAssociationService>());
     }
 
     /// <summary>

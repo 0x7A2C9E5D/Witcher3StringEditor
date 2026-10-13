@@ -334,8 +334,8 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Ścieżka gry</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>Ustawienia ogólne</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>Domyślne aplikacje</value>
   </data>
     <data name="PathSettingsHeader" xml:space="preserve">
     <value>Ustawienia ścieżki</value>
@@ -495,5 +495,11 @@
   </data>
     <data name="MergeDataConfirmMessage" xml:space="preserve">
     <value>Scal dane z pliku, aktualizując tylko elementy o tym samym ID.</value>
+  </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>Skojarzenie plików</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>Otwieraj pliki .w3strings za pomocą tej aplikacji</value>
   </data>
 </root>

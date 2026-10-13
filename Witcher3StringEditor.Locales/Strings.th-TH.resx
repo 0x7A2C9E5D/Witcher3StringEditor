@@ -441,8 +441,8 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>เส้นทางตัวเกม (Game Path)</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>การตั้งค่าทั่วไป</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>แอปเริ่มต้น</value>
   </data>
     <data name="PathSettingsHeader" xml:space="preserve">
     <value>การตั้งค่าเส้นทาง</value>
@@ -602,5 +602,11 @@
   </data>
     <data name="MergeDataConfirmMessage" xml:space="preserve">
     <value>ผสานข้อมูลจากไฟล์ โดยอัปเดตเฉพาะรายการที่มี ID ตรงกัน</value>
+  </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>การเชื่อมโยงไฟล์</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>เปิดไฟล์ .w3strings ด้วยแอปพลิเคชันนี้</value>
   </data>
 </root>

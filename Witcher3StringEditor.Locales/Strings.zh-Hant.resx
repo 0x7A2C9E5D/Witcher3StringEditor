@@ -441,8 +441,8 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>遊戲路徑</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>通用設定</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>預設應用程式</value>
   </data>
     <data name="PathSettingsHeader" xml:space="preserve">
     <value>路徑設定</value>
@@ -603,4 +603,10 @@
     <data name="MergeDataConfirmMessage" xml:space="preserve">
       <value>從檔案合併資料，僅更新相同 ID 的項目。</value>
     </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>檔案關聯</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>使用本程式開啟 .w3strings 檔案</value>
+  </data>
 </root>

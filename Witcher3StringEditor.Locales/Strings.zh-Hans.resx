@@ -441,8 +441,8 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>游戏路径</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>通用设置</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>默认应用</value>
   </data>
     <data name="PathSettingsHeader" xml:space="preserve">
     <value>路径设置</value>
@@ -603,4 +603,10 @@
     <data name="MergeDataConfirmMessage" xml:space="preserve">
       <value>从文件合并数据，仅更新相同 ID 的条目。</value>
     </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>文件关联</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>使用本程序打开 .w3strings 文件</value>
+  </data>
 </root>

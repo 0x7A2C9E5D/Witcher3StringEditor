@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Reflection;
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Wpf;
@@ -17,6 +18,7 @@ using Witcher3StringEditor.Dialogs.Views;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Dictionary.Implementation;
 using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Serializers;
@@ -34,6 +36,9 @@ namespace Witcher3StringEditor;
 /// </summary>
 public sealed partial class App : IDisposable
 {
+    // The file extensions a command-line path may carry (for example through "Open with")
+    private static readonly string[] SupportedExtensions = [".csv", ".w3strings", ".xlsx"];
+
     private bool disposedValue; // Flag to indicate whether the object has been disposed
     private ObserverBase<LogEvent>? logObserver; // Observer for log events
     private SingleInstanceManager? singleInstanceManager; // Single instance manager
@@ -48,15 +53,26 @@ public sealed partial class App : IDisposable
 
     /// <summary>
     ///     Handles the startup of the application
-    ///     Checks for existing instances and initializes the application if none is running
+    ///     Checks for existing instances, forwards any file passed on the command line to a
+    ///     running instance, and initializes the application if none is running
     /// </summary>
     /// <param name="e">Startup event arguments</param>
     protected override void OnStartup(StartupEventArgs e)
     {
+        var filePath = GetStartupFile(e.Args); // File passed on the command line, if any
         singleInstanceManager = new SingleInstanceManager(DebugHelper.IsDebug);
         // Check if another instance is already running
         if (singleInstanceManager.IsAnotherInstanceRunning())
         {
+            // A launch carrying a file opens it in the running instance instead of asking the user
+            if (filePath is not null)
+            {
+                singleInstanceManager.TrySendFileToExistingInstance(filePath); // Forward the file to the running instance
+                singleInstanceManager.ActivateExistingInstance();
+                Shutdown();
+                return;
+            }
+
             // If another instance is running, ask user if they want to activate it
             if (MessageBox.Show(Strings.MultipleInstanceMessage, Strings.MultipleInstanceCaption,
                     MessageBoxButton.YesNo,
@@ -68,7 +84,32 @@ public sealed partial class App : IDisposable
         {
             // If no other instance is running, initialize the application
             InitializeApplication();
+            // Accept files forwarded by later launches (for example through "Open with")
+            singleInstanceManager.StartFileReceiver(path => Dispatcher.Invoke(() => OpenFile(path)));
+            if (filePath is not null) OpenFile(filePath); // Open the file this launch was started with
         }
+    }
+
+    /// <summary>
+    ///     Gets the supported file path passed on the command line
+    /// </summary>
+    /// <param name="args">The command-line arguments</param>
+    /// <returns>The first existing argument with a supported extension, or null when there is none</returns>
+    private static string? GetStartupFile(string[] args)
+    {
+        return args.FirstOrDefault(arg =>
+            SupportedExtensions.Contains(Path.GetExtension(arg), StringComparer.OrdinalIgnoreCase) &&
+            File.Exists(arg));
+    }
+
+    /// <summary>
+    ///     Requests the main window to open the specified file
+    /// </summary>
+    /// <param name="filePath">The path of the file to open</param>
+    private static void OpenFile(string filePath)
+    {
+        WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<string, bool>(filePath),
+            MessageTokens.RecentFileOpened);
     }
 
     /// <summary>
@@ -200,6 +241,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IDictionaryManager, DictionaryManager>()
             .AddSingleton<IDictionaryProvider, DictionaryProvider>()
             .AddSingleton<IShellOpenService, ShellOpenService>()
+            .AddSingleton<IFileAssociationService, FileAssociationService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
             .AddTransient<ICultureMatcher, CultureMatcher>()

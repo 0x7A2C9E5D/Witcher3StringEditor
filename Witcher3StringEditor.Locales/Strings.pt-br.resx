@@ -334,8 +334,8 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Pasta do Jogo</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>Configurações Gerais</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>Aplicativos padrão</value>
   </data>
     <data name="PathSettingsHeader" xml:space="preserve">
     <value>Configurações de caminho</value>
@@ -495,5 +495,11 @@
   </data>
     <data name="MergeDataConfirmMessage" xml:space="preserve">
     <value>Mesclar apenas os dados que tiverem o mesmo ID.</value>
+  </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>Associação de arquivos</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>Abrir arquivos .w3strings com este aplicativo</value>
   </data>
 </root>

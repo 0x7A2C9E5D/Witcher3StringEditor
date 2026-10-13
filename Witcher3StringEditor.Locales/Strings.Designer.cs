@@ -539,11 +539,11 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to General Settings.
+        ///   Looks up a localized string similar to Default Apps.
         /// </summary>
-        public static string GeneralSettingsHeader {
+        public static string DefaultAppsSettingsHeader {
             get {
-                return ResourceManager.GetString("GeneralSettingsHeader", resourceCulture);
+                return ResourceManager.GetString("DefaultAppsSettingsHeader", resourceCulture);
             }
         }
         
@@ -1504,6 +1504,24 @@ namespace Witcher3StringEditor.Locales {
         public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File association.
+        /// </summary>
+        public static string FileAssociation {
+            get {
+                return ResourceManager.GetString("FileAssociation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open .w3strings files with this application.
+        /// </summary>
+        public static string FileAssociationDescription {
+            get {
+                return ResourceManager.GetString("FileAssociationDescription", resourceCulture);
             }
         }
 

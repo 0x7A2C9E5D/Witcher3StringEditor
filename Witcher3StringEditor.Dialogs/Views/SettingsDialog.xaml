@@ -199,6 +199,18 @@
                         <ui:FontIcon Glyph="&#xe71e;" />
                     </Button>
                 </ui:SettingsCard>
+                <!-- Default apps settings group header -->
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                           Text="{I18N {x:Static l:LangKeys.DefaultAppsSettingsHeader}}" />
+                <!-- File association settings card -->
+                <!-- Registers or removes the .w3strings association so the app appears in the "Open with" list -->
+                <ui:SettingsCard Description="{I18N {x:Static l:LangKeys.FileAssociationDescription}}"
+                                 Header="{I18N {x:Static l:LangKeys.FileAssociation}}">
+                    <ui:SettingsCard.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.OpenFile}" />
+                    </ui:SettingsCard.HeaderIcon>
+                    <ui:ToggleSwitch IsOn="{Binding IsFileAssociated, Mode=TwoWay}" />
+                </ui:SettingsCard>
                 <!-- User interface settings section header -->
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                            Text="{I18N {x:Static l:LangKeys.UserInterfaceSettingsHeader}}" />

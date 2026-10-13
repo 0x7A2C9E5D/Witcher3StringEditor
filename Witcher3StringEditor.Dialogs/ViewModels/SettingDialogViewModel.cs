@@ -19,11 +19,13 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 /// <param name="dialogService">Dialog service for showing file dialogs</param>
 /// <param name="translators">Collection of available translators</param>
 /// <param name="supportedCultures">Collection of supported cultures for localization</param>
+/// <param name="fileAssociationService">Service used to register and remove the .w3strings file association</param>
 public partial class SettingDialogViewModel(
     IAppSettings appSettings,
     IDialogService dialogService,
     IEnumerable<string> translators,
-    IEnumerable<CultureInfo> supportedCultures)
+    IEnumerable<CultureInfo> supportedCultures,
+    IFileAssociationService fileAssociationService)
     : ObservableObject, IModalDialogViewModel
 {
     /// <summary>
@@ -48,10 +50,34 @@ public partial class SettingDialogViewModel(
     public IReadOnlyList<Encoding> Encodings { get; } = [Encoding.Unicode, Encoding.UTF8];
 
     /// <summary>
+    ///     Gets or sets whether the .w3strings file association is registered
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsFileAssociated { get; set; } = fileAssociationService.IsRegistered;
+
+    /// <summary>
     ///     Gets the dialog result value
     ///     Returns true to indicate that the dialog was closed successfully
     /// </summary>
     public bool? DialogResult => true;
+
+    /// <summary>
+    ///     Handles the change of the IsFileAssociated property
+    ///     Registers or unregisters the .w3strings file association
+    /// </summary>
+    /// <param name="value">The new value of IsFileAssociated</param>
+    partial void OnIsFileAssociatedChanging(bool value)
+    {
+        try
+        {
+            if (value) fileAssociationService.Register();
+            else fileAssociationService.Unregister();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to change the .w3strings file association");
+        }
+    }
 
     /// <summary>
     ///     Sets the path to the witcher3.exe file

@@ -334,8 +334,8 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Játék útvonal</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>Általános beállítások</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>Alapértelmezett alkalmazások</value>
   </data>
     <data name="PathSettingsHeader" xml:space="preserve">
     <value>Útvonal beállítások</value>
@@ -495,5 +495,11 @@
   </data>
     <data name="MergeDataConfirmMessage" xml:space="preserve">
     <value>Adatok összevonása fájlból, csak azonos ID-jű elemek frissítése.</value>
+  </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>Fájltársítás</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>.w3strings fájlok megnyitása ezzel az alkalmazással</value>
   </data>
 </root>

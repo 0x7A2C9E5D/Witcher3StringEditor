@@ -441,8 +441,8 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>ゲームパス</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>一般設定</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>既定のアプリ</value>
   </data>
     <data name="PathSettingsHeader" xml:space="preserve">
     <value>パス設定</value>
@@ -603,4 +603,10 @@
     <data name="MergeDataConfirmMessage" xml:space="preserve">
       <value>ファイルからデータを統合し、同じ ID の項目のみを更新します。</value>
     </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>ファイルの関連付け</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>このアプリで .w3strings ファイルを開く</value>
+  </data>
 </root>

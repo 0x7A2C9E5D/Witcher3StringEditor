@@ -441,8 +441,8 @@
     <data name="GameSettingCardHeader" xml:space="preserve">
     <value>Game Path</value>
   </data>
-    <data name="GeneralSettingsHeader" xml:space="preserve">
-    <value>General Settings</value>
+    <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>Default Apps</value>
   </data>
     <data name="PathSettingsHeader" xml:space="preserve">
     <value>Path Settings</value>
@@ -603,4 +603,10 @@
     <data name="MergeDataConfirmMessage" xml:space="preserve">
       <value>Merge data from file, update only items with the same ID.</value>
     </data>
+    <data name="FileAssociation" xml:space="preserve">
+    <value>File association</value>
+  </data>
+    <data name="FileAssociationDescription" xml:space="preserve">
+    <value>Open .w3strings files with this application</value>
+  </data>
 </root>
