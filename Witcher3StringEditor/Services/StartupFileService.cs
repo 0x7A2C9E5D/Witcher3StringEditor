@@ -31,12 +31,9 @@ internal sealed class StartupFileService : IStartupFileService
     ///     Opens the specified file.
     /// </summary>
     /// <param name="filePath">The file path to open.</param>
-    /// <returns>
-    ///     Returns true if the file was successfully opened, false otherwise.
-    /// </returns>  
-    public bool OpenFile(string filePath)
+    public void OpenFile(string filePath)
     {
-        return WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<string, bool>(filePath),
+        WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<string, bool>(filePath),
             MessageTokens.RecentFileOpened);
     }
 }

@@ -57,6 +57,7 @@ public sealed partial class App : IDisposable
         // Initialize dependency injection first so the startup file service can be resolved below
         InitializeServices();
         var startupFileService = Ioc.Default.GetRequiredService<IStartupFileService>();
+        var fileTransferService = Ioc.Default.GetRequiredService<IInterProcessFileTransfer>();
         var filePath = startupFileService.GetStartupFile(e.Args); // File passed on the command line, if any
         singleInstanceManager = new SingleInstanceManager(DebugHelper.IsDebug);
         // Check if another instance is already running
@@ -65,7 +66,7 @@ public sealed partial class App : IDisposable
             // A launch carrying a file opens it in the running instance instead of asking the user
             if (filePath is not null)
             {
-                singleInstanceManager.TrySendFileToExistingInstance(filePath); // Forward the file to the running instance
+                fileTransferService.TrySendFileToExistingInstance(filePath); // Forward the file to the running instance
                 singleInstanceManager.ActivateExistingInstance();
                 Shutdown();
                 return;
@@ -83,9 +84,10 @@ public sealed partial class App : IDisposable
             // If no other instance is running, initialize the application
             InitializeApplication();
             // Accept files forwarded by later launches (for example through "Open with")
-            singleInstanceManager.StartFileReceiver(path =>
+            fileTransferService.StartFileReceiver(path =>
                 Dispatcher.Invoke(() => startupFileService.OpenFile(path)));
-            if (filePath is not null) startupFileService.OpenFile(filePath); // Open the file this launch was started with
+            if (filePath is not null)
+                startupFileService.OpenFile(filePath); // Open the file this launch was started with
         }
     }
 
@@ -219,6 +221,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IShellOpenService, ShellOpenService>()
             .AddSingleton<IFileAssociationService, FileAssociationService>()
             .AddSingleton<IStartupFileService, StartupFileService>()
+            .AddSingleton<IInterProcessFileTransfer, InterProcessFileTransferService>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
             .AddTransient<ICultureMatcher, CultureMatcher>()
