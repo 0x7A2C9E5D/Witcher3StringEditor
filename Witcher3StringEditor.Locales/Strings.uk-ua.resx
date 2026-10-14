@@ -337,7 +337,7 @@
     <data name="DefaultAppsSettingsHeader" xml:space="preserve">
     <value>Програми за замовчуванням</value>
   </data>
-  <data name="PathSettingsHeader" xml:space="preserve">
+    <data name="PathSettingsHeader" xml:space="preserve">
     <value>Налаштування шляхів</value>
   </data>
     <data name="SaveSettingsHeader" xml:space="preserve">
