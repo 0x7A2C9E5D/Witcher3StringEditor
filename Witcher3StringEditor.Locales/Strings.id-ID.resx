@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Runtime" xml:space="preserve">
+    <value>Runtime:</value>
+  </data>
+  <data name="OpenFileBtnLabel" xml:space="preserve">
+    <value>Buka Berkas</value>
+  </data>
+  <data name="AppTitle" xml:space="preserve">
+    <value>The Witcher 3 String Editor</value>
+  </data>
+  <data name="SearchBoxPlaceholderText" xml:space="preserve">
+    <value>Cari</value>
+  </data>
+  <data name="AddBtnLabel" xml:space="preserve">
+    <value>Tambah Entri</value>
+  </data>
+  <data name="EditBtnLabel" xml:space="preserve">
+    <value>Edit Entri</value>
+  </data>
+  <data name="DeleteBtnLabel" xml:space="preserve">
+    <value>Hapus Entri</value>
+  </data>
+  <data name="SaveBtnLabel" xml:space="preserve">
+    <value>Simpan</value>
+  </data>
+  <data name="BackupBtnLabel" xml:space="preserve">
+    <value>Cadangkan</value>
+  </data>
+  <data name="LogBtnLabel" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="SettingsBtnLabel" xml:space="preserve">
+    <value>Pengaturan</value>
+  </data>
+  <data name="PlayBtnLabel" xml:space="preserve">
+    <value>Mainkan Permainan</value>
+  </data>
+  <data name="TranslateBtnLabel" xml:space="preserve">
+    <value>Terjemahkan</value>
+  </data>
+  <data name="OpenWorkingFolderBtnLabel" xml:space="preserve">
+    <value>Buka Folder Kerja</value>
+  </data>
+  <data name="UpdateAvailable" xml:space="preserve">
+    <value>Pembaruan Tersedia</value>
+  </data>
+  <data name="RecentBtnLabel" xml:space="preserve">
+    <value>Terbaru</value>
+  </data>
+  <data name="AboutBtnLabel" xml:space="preserve">
+    <value>Tentang</value>
+  </data>
+  <data name="FileFormatSupported" xml:space="preserve">
+    <value>Semua Format yang Didukung</value>
+  </data>
+  <data name="FileFormatTextFile" xml:space="preserve">
+    <value>Berkas Teks</value>
+  </data>
+  <data name="FileFormatWitcher3StringsFile" xml:space="preserve">
+    <value>Berkas String The Witcher 3</value>
+  </data>
+  <data name="AppExitMessage" xml:space="preserve">
+    <value>Apakah kamu yakin ingin keluar? Semua data yang belum disimpan akan hilang.</value>
+  </data>
+  <data name="AppExitCaption" xml:space="preserve">
+    <value>Keluar</value>
+  </data>
+  <data name="FileOpenedNoFoundMessage" xml:space="preserve">
+    <value>Berkas yang dibuka tidak ditemukan. Apakah kamu ingin menghapus entri terkait?</value>
+  </data>
+  <data name="ReOpenFileMessage" xml:space="preserve">
+    <value>Membuka berkas ini akan menyebabkan data yang belum disimpan hilang. Apakah kamu ingin melanjutkan?</value>
+  </data>
+  <data name="ReOpenFileCaption" xml:space="preserve">
+    <value>Buka Berkas</value>
+  </data>
+  <data name="FileOpenedNoFoundCaption" xml:space="preserve">
+    <value>Berkas yang Dibuka Tidak Ditemukan</value>
+  </data>
+  <data name="OpenFileFailedMessage" xml:space="preserve">
+    <value>Gagal membuka berkas.</value>
+  </data>
+  <data name="OpenFileFailedCaption" xml:space="preserve">
+    <value>Gagal Membuka Berkas</value>
+  </data>
+  <data name="UpdateBtnContent" xml:space="preserve">
+    <value>Perbarui</value>
+  </data>
+  <data name="DropHereTxt" xml:space="preserve">
+    <value>Seret dan Lepas Satu Berkas ke Sini untuk Membukanya</value>
+  </data>
+  <data name="FileFormatExcelWorkbook" xml:space="preserve">
+    <value>Excel Workbook</value>
+  </data>
+  <data name="MultipleInstanceMessage" xml:space="preserve">
+    <value>Menjalankan beberapa instansi sekaligus dapat menyebabkan data tertimpa secara keliru. Hanya operasi instans tunggal yang didukung. Apakah kamu ingin menampilkan jendela yang sudah terbuka?</value>
+  </data>
+  <data name="MultipleInstanceCaption" xml:space="preserve">
+    <value>Aplikasi sudah berjalan</value>
+  </data>
+  <data name="BackupRestoreMessage" xml:space="preserve">
+    <value>Operasi ini akan menimpa berkas dan tidak dapat dibatalkan. Apakah kamu yakin ingin melanjutkan?</value>
+  </data>
+  <data name="BackupDeleteMessage" xml:space="preserve">
+    <value>Operasi ini akan menghapus berkas secara permanen dan tidak dapat dibatalkan. Apakah kamu yakin ingin melanjutkan?</value>
+  </data>
+  <data name="SaveSuccess" xml:space="preserve">
+    <value>Berhasil Menyimpan</value>
+  </data>
+  <data name="SaveFailure" xml:space="preserve">
+    <value>Gagal Menyimpan</value>
+  </data>
+  <data name="SaveResult" xml:space="preserve">
+    <value>Hasil Penyimpanan</value>
+  </data>
+  <data name="AddDialogTitle" xml:space="preserve">
+    <value>Tambah</value>
+  </data>
+  <data name="EditDialogTitle" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="SelectGameExe" xml:space="preserve">
+    <value>Pilih witcher3.exe</value>
+  </data>
+  <data name="SubmitBtnContent" xml:space="preserve">
+    <value>Kirim</value>
+  </data>
+  <data name="CancelBtnContent" xml:space="preserve">
+    <value>Batal</value>
+  </data>
+  <data name="DeleteDialogTitle" xml:space="preserve">
+    <value>Hapus</value>
+  </data>
+  <data name="DeleteDialogMessage" xml:space="preserve">
+    <value>Kamu akan menghapus entri berikut:</value>
+  </data>
+  <data name="DeleteBtnContent" xml:space="preserve">
+    <value>Hapus</value>
+  </data>
+  <data name="TranslateDialogTitle" xml:space="preserve">
+    <value>Terjemahkan</value>
+  </data>
+  <data name="PreviousBtnContent" xml:space="preserve">
+    <value>Sebelumnya</value>
+  </data>
+  <data name="NextBtnContent" xml:space="preserve">
+    <value>Berikutnya</value>
+  </data>
+  <data name="TranslateBtnContent" xml:space="preserve">
+    <value>Terjemahkan</value>
+  </data>
+  <data name="SaveBtnContent" xml:space="preserve">
+    <value>Simpan</value>
+  </data>
+  <data name="SrcTxt" xml:space="preserve">
+    <value>Teks</value>
+  </data>
+  <data name="TranslatedTxt" xml:space="preserve">
+    <value>Teks Terjemahan</value>
+  </data>
+  <data name="SaveDialogTitle" xml:space="preserve">
+    <value>Simpan</value>
+  </data>
+  <data name="TargetFiletype" xml:space="preserve">
+    <value>Tipe Berkas Tujuan</value>
+  </data>
+  <data name="TargetLanguage" xml:space="preserve">
+    <value>Bahasa Tujuan</value>
+  </data>
+  <data name="BackupDialogTitle" xml:space="preserve">
+    <value>Cadangan</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>Nama Berkas</value>
+  </data>
+  <data name="Hash" xml:space="preserve">
+    <value>Hash</value>
+  </data>
+  <data name="OriginPath" xml:space="preserve">
+    <value>Jalur Asal</value>
+  </data>
+  <data name="BackupPath" xml:space="preserve">
+    <value>Jalur Cadangan</value>
+  </data>
+  <data name="BackupTime" xml:space="preserve">
+    <value>Waktu Cadangan</value>
+  </data>
+  <data name="RestoreBtnContent" xml:space="preserve">
+    <value>Pulihkan</value>
+  </data>
+  <data name="CloseBtnContent" xml:space="preserve">
+    <value>Tutup</value>
+  </data>
+  <data name="LogDialogTitle" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="LogTime" xml:space="preserve">
+    <value>Waktu Log</value>
+  </data>
+  <data name="LogLevel" xml:space="preserve">
+    <value>Tingkat Log</value>
+  </data>
+  <data name="LogMessage" xml:space="preserve">
+    <value>Pesan Log</value>
+  </data>
+  <data name="SettingsDialogTitle" xml:space="preserve">
+    <value>Pengaturan</value>
+  </data>
+  <data name="GameExePath" xml:space="preserve">
+    <value>Silakan pilih witcher3.exe</value>
+  </data>
+  <data name="PreferredFileType" xml:space="preserve">
+    <value>Tipe Berkas Pilihan</value>
+  </data>
+  <data name="PreferredLanguage" xml:space="preserve">
+    <value>Bahasa Pilihan</value>
+  </data>
+  <data name="RecentDialogTitle" xml:space="preserve">
+    <value>Terbaru</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Jalur</value>
+  </data>
+  <data name="OpenedTime" xml:space="preserve">
+    <value>Waktu Dibuka</value>
+  </data>
+  <data name="Mark" xml:space="preserve">
+    <value>Tanda</value>
+  </data>
+  <data name="RecordDeletingMessage" xml:space="preserve">
+    <value>Operasi ini akan menghapus entri yang dipilih secara permanen dan tidak dapat dibatalkan. Apakah kamu yakin ingin melanjutkan?</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Buka</value>
+  </data>
+  <data name="StartIndex" xml:space="preserve">
+    <value>Indeks Awal</value>
+  </data>
+  <data name="EndIndex" xml:space="preserve">
+    <value>Indeks Akhir</value>
+  </data>
+  <data name="BatchTranslateDialogTitle" xml:space="preserve">
+    <value>Terjemahan Massal</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Menunggu</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Berhasil</value>
+  </data>
+  <data name="Failure" xml:space="preserve">
+    <value>Gagal</value>
+  </data>
+  <data name="TranslatedTextInvalidMessage" xml:space="preserve">
+    <value>Teks terjemahan tidak valid. Silakan tinjau dan perbaiki sebelum menyimpan.</value>
+  </data>
+  <data name="BackupFileNoFoundMessage" xml:space="preserve">
+    <value>Berkas cadangan tidak ada. Apakah kamu ingin melanjutkan untuk menghapus entri ini?</value>
+  </data>
+  <data name="BackupFileNoFoundCaption" xml:space="preserve">
+    <value>Berkas Cadangan Tidak Ditemukan</value>
+  </data>
+  <data name="BackupDeleteCaption" xml:space="preserve">
+    <value>Hapus Cadangan</value>
+  </data>
+  <data name="BackupRestoreCaption" xml:space="preserve">
+    <value>Pulihkan Cadangan</value>
+  </data>
+  <data name="TranslatedTextInvalidCaption" xml:space="preserve">
+    <value>Teks Terjemahan Tidak Valid</value>
+  </data>
+  <data name="TranslateErrorCaption" xml:space="preserve">
+    <value>Kesalahan Penerjemahan</value>
+  </data>
+  <data name="TextLanguage" xml:space="preserve">
+    <value>Bahasa Teks</value>
+  </data>
+  <data name="TranslatedTextNoSavedMessage" xml:space="preserve">
+    <value>Terjemahan belum disimpan. Simpan sekarang?</value>
+  </data>
+  <data name="TranslatedTextNoSavedCaption" xml:space="preserve">
+    <value>Terjemahan Belum Disimpan</value>
+  </data>
+  <data name="OperationResultCaption" xml:space="preserve">
+    <value>Hasil Operasi</value>
+  </data>
+  <data name="OperationFailureMessage" xml:space="preserve">
+    <value>Operasi Gagal</value>
+  </data>
+  <data name="RecordDeletingCaption" xml:space="preserve">
+    <value>Entri Sedang Dihapus</value>
+  </data>
+  <data name="AboutDialogTitle" xml:space="preserve">
+    <value>Tentang</value>
+  </data>
+  <data name="Encoding" xml:space="preserve">
+    <value>Encoding:</value>
+  </data>
+  <data name="GameVersion" xml:space="preserve">
+    <value>Versi Permainan</value>
+  </data>
+  <data name="PreferredGameVersion" xml:space="preserve">
+    <value>Versi Permainan Pilihan</value>
+  </data>
+  <data name="PreferredGameVersionDescription" xml:space="preserve">
+    <value>Pilih versi permainan yang digunakan saat menyimpan berkas string The Witcher 3</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Versi:</value>
+  </data>
+  <data name="OS" xml:space="preserve">
+    <value>OS:</value>
+  </data>
+  <data name="AppBuildTime" xml:space="preserve">
+    <value>Waktu Build:</value>
+  </data>
+  <data name="GameSettingCardHeader" xml:space="preserve">
+    <value>Jalur Permainan</value>
+  </data>
+  <data name="DefaultAppsSettingsHeader" xml:space="preserve">
+    <value>Aplikasi Default</value>
+  </data>
+  <data name="PathSettingsHeader" xml:space="preserve">
+    <value>Pengaturan Jalur</value>
+  </data>
+  <data name="SaveSettingsHeader" xml:space="preserve">
+    <value>Pengaturan Penyimpanan</value>
+  </data>
+  <data name="TranslationSettingsHeader" xml:space="preserve">
+    <value>Pengaturan Terjemahan</value>
+  </data>
+  <data name="TranslatorTranslatingMessage" xml:space="preserve">
+    <value>Penerjemah sedang bekerja keras menerjemahkan. Apakah kamu benar-benar ingin keluar?</value>
+  </data>
+  <data name="TranslatorTranslatingCaption" xml:space="preserve">
+    <value>Penerjemahan Sedang Berlangsung</value>
+  </data>
+  <data name="Translating" xml:space="preserve">
+    <value>Menerjemahkan...</value>
+  </data>
+  <data name="TranslationModeSwitchCaption" xml:space="preserve">
+    <value>Konfirmasi Ganti Mode Terjemahan</value>
+  </data>
+  <data name="TranslationModeSwitchMessage" xml:space="preserve">
+    <value>Sedang menerjemahkan. Mengganti mode terjemahan akan menghentikan proses ini. Apakah kamu ingin melanjutkan peralihan?</value>
+  </data>
+  <data name="TranslationNotEmptyMessage" xml:space="preserve">
+    <value>Terjemahan sudah ada. Apakah kamu ingin menimpa hasil yang ada saat ini?</value>
+  </data>
+  <data name="TranslationNotEmptyCaption" xml:space="preserve">
+    <value>Terjemahan Sudah Ada</value>
+  </data>
+  <data name="TranslatorSelection" xml:space="preserve">
+    <value>Penerjemah</value>
+  </data>
+  <data name="UserInterfaceSettingsHeader" xml:space="preserve">
+    <value>Pengaturan Antarmuka Pengguna</value>
+  </data>
+  <data name="LanguageHelpText" xml:space="preserve">
+    <value>Bahasa</value>
+  </data>
+  <data name="PageSize" xml:space="preserve">
+    <value>Ukuran Halaman</value>
+  </data>
+  <data name="PreferredFileTypeDescription" xml:space="preserve">
+    <value>Pilih format berkas default untuk menyimpan berkas string The Witcher 3</value>
+  </data>
+  <data name="PreferredLanguageDescription" xml:space="preserve">
+    <value>Pilih bahasa tujuan penerjemahan dan bahasa default yang digunakan saat menyimpan berkas string The Witcher 3</value>
+  </data>
+  <data name="LanguageDescription" xml:space="preserve">
+    <value>Pilih bahasa untuk tampilan antarmuka aplikasi</value>
+  </data>
+  <data name="PageSizeDescription" xml:space="preserve">
+    <value>Atur jumlah item yang ditampilkan per halaman pada kisi data antarmuka utama</value>
+  </data>
+  <data name="TranslatorSelectionDescription" xml:space="preserve">
+    <value>Pilih layanan terjemahan yang digunakan untuk menerjemahkan teks</value>
+  </data>
+  <data name="PathInvalidCaption" xml:space="preserve">
+    <value>Jalur Tidak Valid</value>
+  </data>
+  <data name="PathInvalidMessage" xml:space="preserve">
+    <value>Jalur permainan yang disetel saat ini tidak valid. Silakan periksa pengaturanmu.</value>
+  </data>
+  <data name="PathInvalidIndicatorText" xml:space="preserve">
+    <value>(Tidak Valid)</value>
+  </data>
+  <data name="PackageName" xml:space="preserve">
+    <value>Dependensi</value>
+  </data>
+  <data name="PackageVersion" xml:space="preserve">
+    <value>Versi</value>
+  </data>
+  <data name="LogsNoNeedToCleanMessage" xml:space="preserve">
+    <value>Tidak perlu membersihkan berkas log.</value>
+  </data>
+  <data name="LogsCleanedMessage" xml:space="preserve">
+    <value>Berkas log telah dibersihkan.</value>
+  </data>
+  <data name="LogCleanupCaption" xml:space="preserve">
+    <value>Pembersihan Log</value>
+  </data>
+  <data name="LogFilesCollectedCaption" xml:space="preserve">
+    <value>Berkas Log Telah Dikumpulkan</value>
+  </data>
+  <data name="LogFilesCollectedMessage" xml:space="preserve">
+    <value>Berkas log telah dikumpulkan. Berkas tersebut telah dibuat di desktop-mu.</value>
+  </data>
+  <data name="LogManagementDescription" xml:space="preserve">
+    <value>Jelajahi folder log, bersihkan log yang kedaluwarsa, dan kumpulkan log</value>
+  </data>
+  <data name="LogManagement" xml:space="preserve">
+    <value>Manajemen Log</value>
+  </data>
+  <data name="SwitchTranslationModeBtnContent" xml:space="preserve">
+    <value>Ganti Mode Terjemahan</value>
+  </data>
+  <data name="NoDictionary" xml:space="preserve">
+    <value>Tanpa Kamus</value>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Kamus</value>
+  </data>
+  <data name="DictionaryBtnLabel" xml:space="preserve">
+    <value>Manajemen Kamus</value>
+  </data>
+  <data name="DictionaryDialogTitle" xml:space="preserve">
+    <value>Manajemen Kamus</value>
+  </data>
+  <data name="ImportDictionary" xml:space="preserve">
+    <value>Impor Kamus</value>
+  </data>
+  <data name="SourceLanguage" xml:space="preserve">
+    <value>Bahasa Sumber</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Hapus</value>
+  </data>
+  <data name="TermCount" xml:space="preserve">
+    <value>Jumlah Istilah</value>
+  </data>
+  <data name="ImportDictionaryFailedMessage" xml:space="preserve">
+    <value>Format kamus tidak valid. Silakan periksa isi berkas.</value>
+  </data>
+  <data name="ImportDictionaryFailedCaption" xml:space="preserve">
+    <value>Gagal Mengimpor Kamus</value>
+  </data>
+  <data name="RemoveDictionary" xml:space="preserve">
+    <value>Hapus Kamus</value>
+  </data>
+  <data name="RemoveDictionaryConfirmMessage" xml:space="preserve">
+    <value>Apakah kamu yakin ingin menghapus kamus ini?</value>
+  </data>
+  <data name="RemoveDictionaryConfirmCaption" xml:space="preserve">
+    <value>Konfirmasi Hapus Kamus</value>
+  </data>
+  <data name="DictionaryOverwriteConfirmMessage" xml:space="preserve">
+    <value>Kamus sudah ada. Apakah kamu ingin menimpanya?</value>
+  </data>
+  <data name="DictionaryOverwriteConfirmCaption" xml:space="preserve">
+    <value>Konfirmasi Timpa Kamus</value>
+  </data>
+  <data name="DictionaryImportedCaption" xml:space="preserve">
+    <value>Impor Selesai</value>
+  </data>
+  <data name="DictionaryImportedMessage" xml:space="preserve">
+    <value>Kamus berhasil diimpor.</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>Tidak ada deskripsi yang diberikan</value>
+  </data>
+  <data name="MergeBtnLabel" xml:space="preserve">
+    <value>Gabungkan Data</value>
+  </data>
+  <data name="MergeDataConfirmCaption" xml:space="preserve">
+    <value>Konfirmasi Penggabungan Data</value>
+  </data>
+  <data name="MergeDataConfirmMessage" xml:space="preserve">
+    <value>Gabungkan data dari berkas, hanya perbarui item dengan ID yang sama.</value>
+  </data>
+  <data name="FileAssociation" xml:space="preserve">
+    <value>Asosiasi berkas</value>
+  </data>
+  <data name="FileAssociationDescription" xml:space="preserve">
+    <value>Buka berkas .w3strings dengan aplikasi ini</value>
+  </data>
+</root>

@@ -73,6 +73,9 @@
         <EmbeddedResource Update="Strings.uk-ua.resx">
           <DependentUpon>Strings.resx</DependentUpon>
         </EmbeddedResource>
+        <EmbeddedResource Update="Strings.id-ID.resx">
+          <DependentUpon>Strings.resx</DependentUpon>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>
