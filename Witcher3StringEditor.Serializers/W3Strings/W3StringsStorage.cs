@@ -282,7 +282,7 @@ internal sealed class W3StringsStorage
         var entries = ReadStringEntries(reader, key2Offset);
         var keys = ReadKeys(reader, key2Offset);
 
-        var units = SectionCount.Read(input); // The size the container gives its string buffer
+        var units = SectionCount.Read(input).Value; // The size the container gives its string buffer
         var start = input.Position; // Where the buffer begins
         var version = StoredVersion(declared, start, units, key2Offset); // The version it is really stored in
         var held = FitBuffer(start, units, version, key2Offset); // The size of the buffer the file holds
@@ -470,7 +470,7 @@ internal sealed class W3StringsStorage
     /// <returns>One entry per text, with the id still obfuscated and the text not yet decoded</returns>
     private static List<W3StringEntry> ReadStringEntries(BinaryReader reader, long key2Offset)
     {
-        var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream),
+        var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream).Value,
             Block1EntrySize, key2Offset, "block1");
 
         var entries = new List<W3StringEntry>(count);
@@ -493,7 +493,7 @@ internal sealed class W3StringsStorage
     /// <returns>One entry per key, whose id is still obfuscated</returns>
     private static List<W3KeyEntry> ReadKeys(BinaryReader reader, long key2Offset)
     {
-        var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream),
+        var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream).Value,
             Block2EntrySize, key2Offset, "block2");
 
         var keys = new List<W3KeyEntry>(count);
@@ -673,6 +673,6 @@ internal sealed class W3StringsStorage
     /// <param name="value">The value to write as a count</param>
     private static void WriteCount(BinaryWriter writer, uint value)
     {
-        writer.Write(SectionCount.Write(value));
+        writer.Write(SectionCount.Of(value).Bytes);
     }
 }

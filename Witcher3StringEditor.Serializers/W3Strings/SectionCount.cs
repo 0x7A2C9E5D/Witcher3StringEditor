@@ -1,14 +1,16 @@
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
-///     The count that introduces each section of a w3strings container: how many entries or units follow
+///     The count that introduces one section of a container: how many entries or units follow, and the bytes
+///     it is stored as
 /// </summary>
 /// <remarks>
 ///     Every section of a container is introduced by its size, written in the bit6 framing the format uses
 ///     for small numbers. A reader has to know that size before it can read the section, which is why the
-///     three of them are read before anything else
+///     three of them are read before anything else; a writer knows the size of the section it is about to
+///     lay down, and asks for the bytes to put in front of it
 /// </remarks>
-internal static class SectionCount
+internal sealed class SectionCount
 {
     /// <summary>
     ///     The byte that introduces a section holding nothing
@@ -27,10 +29,35 @@ internal static class SectionCount
     private const int MaxLength = 5;
 
     /// <summary>
+    ///     Holds the number a section is introduced by, and the bytes it is stored as
+    /// </summary>
+    /// <param name="value">The count: how many entries or units the section holds</param>
+    /// <param name="bytes">The bytes the count is stored as</param>
+    private SectionCount(uint value, byte[] bytes)
+    {
+        Value = value;
+        Bytes = bytes;
+    }
+
+    /// <summary>
+    ///     The count: how many entries or units the section it introduces holds
+    /// </summary>
+    public uint Value { get; }
+
+    /// <summary>
+    ///     The bytes the count is stored as
+    /// </summary>
+    /// <remarks>
+    ///     A count that was read carries the spelling it was found in, because the reader accepts the two
+    ///     ways an empty section can stand; one that was computed carries the spelling this build writes
+    /// </remarks>
+    public byte[] Bytes { get; }
+
+    /// <summary>
     ///     Reads the count that introduces a section from a stream
     /// </summary>
-    /// <param name="input">The stream to read from</param>
-    /// <returns>The count</returns>
+    /// <param name="input">The stream to read from, which is left after the count</param>
+    /// <returns>The count, with the bytes it was stored as</returns>
     /// <exception cref="W3StringsException">Thrown when the stream ends inside the count, or holds no valid one</exception>
     /// <remarks>
     ///     The first byte carries six data bits and, in bit 6, whether another byte follows it; every byte
@@ -38,30 +65,33 @@ internal static class SectionCount
     ///     therefore closes the count, which is what makes the first byte six bits wide and every later one
     ///     seven, and what lets an empty section be spelled <see cref="Empty" />
     /// </remarks>
-    public static uint Read(Stream input)
+    public static SectionCount Read(Stream input)
     {
+        var bytes = new byte[MaxLength]; // At most as many as a count can take
         var first = input.ReadByte();
         if (first < 0)
             throw new W3StringsException("bit6: the stream ends where a count has to stand");
 
-        if ((first & 0x40) == 0) return (uint)(first & 0x3F); // The flag is clear: the count is this byte
+        bytes[0] = (byte)first;
+        var value = (ulong)(first & 0x3F); // The six lowest bits of the first byte
+        if ((first & 0x40) == 0) return new SectionCount((uint)value, bytes[..1]); // The flag is clear
 
         // Every byte after the first one holds seven bits, shifted past the bits the bytes before it held.
-        var value = (ulong)(first & 0x3F);
         for (var length = 2; length <= MaxLength; length++)
         {
             var next = input.ReadByte();
             if (next < 0)
                 throw new W3StringsException("bit6: the stream ends inside a count");
 
+            bytes[length - 1] = (byte)next;
             value |= (ulong)(next & 0x7F) << (6 + 7 * (length - 2));
 
             // The flag of this byte is clear, so the count ends here.
-            if ((next & 0x80) == 0)
-                return value <= uint.MaxValue
-                    ? (uint)value
-                    : throw new W3StringsException(
-                        $"bit6: the count {value} does not fit a 32-bit unsigned integer");
+            if ((next & 0x80) != 0) continue;
+            if (value > uint.MaxValue)
+                throw new W3StringsException(
+                    $"bit6: the count {value} does not fit a 32-bit unsigned integer");
+            return new SectionCount((uint)value, bytes[..length]);
         }
 
         throw new W3StringsException(
@@ -69,19 +99,19 @@ internal static class SectionCount
     }
 
     /// <summary>
-    ///     Writes a count the way a container stores it
+    ///     Gets the count of a number, encoded the way a container stores it
     /// </summary>
-    /// <param name="value">The count to encode</param>
-    /// <returns>The encoded count</returns>
+    /// <param name="value">The number of entries or units a section holds</param>
+    /// <returns>The count, with the bytes it is stored as</returns>
     /// <remarks>
     ///     The first byte takes the six lowest bits and marks that another byte follows it, every byte
     ///     between takes seven bits and marks the same, and the last byte takes the bits that are left and
     ///     leaves its flag clear. A count that fits the six bits of the first byte is that byte alone, and
     ///     an empty section is <see cref="Empty" />
     /// </remarks>
-    public static byte[] Write(uint value)
+    public static SectionCount Of(uint value)
     {
-        if (value == 0) return [Empty];
+        if (value == 0) return new SectionCount(0, [Empty]);
 
         var bytes = new byte[LengthOf(value)];
         bytes[0] = (byte)(value & 0x3F); // The six lowest bits
@@ -95,7 +125,7 @@ internal static class SectionCount
         }
 
         if (bytes.Length > 1) bytes[^1] = (byte)remaining; // Seven bits, and the count ends here
-        return bytes;
+        return new SectionCount(value, bytes);
     }
 
     /// <summary>
