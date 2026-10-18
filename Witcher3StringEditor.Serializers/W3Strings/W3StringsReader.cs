@@ -255,11 +255,11 @@ internal static class W3StringsReader
     /// <param name="key">The full language key, which the magic every id and stored text was obfuscated with follows from</param>
     /// <param name="entries">The entries of the first block, whose ids are still obfuscated and whose texts not yet decoded</param>
     /// <param name="keys">The entries of the second block, whose ids are still obfuscated</param>
-    /// <param name="storedTexts">The stored bytes of every entry, in entry order, which decoding consumes</param>
+    /// <param name="storedTexts">The stored text of every entry, in entry order, which decoding consumes</param>
     /// <param name="unit">The number of bytes one character takes in the version the container is stored in</param>
     /// <returns>The container</returns>
     private static W3StringsFile Assemble(uint key, W3StringEntry[] entries, W3KeyEntry[] keys,
-        byte[][] storedTexts, int unit)
+        StoredText[] storedTexts, int unit)
     {
         var magic = W3StringsFormat.MagicOf(key); // The magic every id and stored text was obfuscated with
         var file = new W3StringsFile { Key = key };
@@ -271,7 +271,7 @@ internal static class W3StringsReader
         {
             var entry = entries[i];
             entry.Id ^= magic;
-            entry.Value = StoredText.Decode(storedTexts[i], (int)entry.Length, magic, unit);
+            entry.Value = storedTexts[i].Decode(magic, unit);
             file.Strings.Add(entry);
         }
 
@@ -346,16 +346,16 @@ internal static class W3StringsReader
     }
 
     /// <summary>
-    ///     Reads the stored bytes of every text out of the string buffer
+    ///     Reads the stored text of every entry out of the string buffer
     /// </summary>
     /// <param name="input">The stream to read from</param>
     /// <param name="entries">The entries of the first block, in entry order, every one of them inside the buffer</param>
     /// <param name="buffer">The extent of the string buffer, and the version its texts are stored in</param>
-    /// <returns>The stored bytes of every entry, in entry order</returns>
-    private static byte[][] ReadStoredTexts(Stream input, W3StringEntry[] entries,
+    /// <returns>The stored text of every entry, in entry order</returns>
+    private static StoredText[] ReadStoredTexts(Stream input, W3StringEntry[] entries,
         (long Start, uint Units, uint Version) buffer)
     {
-        var storedTexts = new byte[entries.Length][];
+        var storedTexts = new StoredText[entries.Length];
         var cursor = buffer.Start;
         var unit = W3StringsFormat.OffsetUnitSize(buffer.Version); // The bytes one character takes
 
@@ -370,7 +370,7 @@ internal static class W3StringsReader
 
             var stored = new byte[entries[i].Length * unit];
             input.ReadExactly(stored);
-            storedTexts[i] = stored;
+            storedTexts[i] = StoredText.FromBytes(stored, (int)entries[i].Length, unit);
             cursor = at + stored.Length;
         }
 

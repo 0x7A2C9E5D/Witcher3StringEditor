@@ -109,9 +109,9 @@ internal static class W3StringsWriter
     {
         var magic = file.Magic;
 
-        foreach (var stored in file.Strings.Select(entry => StoredText.Encode(entry.Value, magic, unit, out _)))
+        foreach (var stored in file.Strings.Select(entry => StoredText.From(entry.Value, magic, unit)))
         {
-            writer.Write(stored);
+            writer.Write(stored.Bytes);
             WriteZeros(writer, unit); // The terminator that closes the text
         }
 
