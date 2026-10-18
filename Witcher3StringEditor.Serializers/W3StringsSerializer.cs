@@ -112,7 +112,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     /// </returns>
     private static uint ContainerVersion(Encoding encoding)
     {
-        return encoding.Equals(Encoding.UTF8) ? W3StringsFormat.FirstUtf8Version : W3StringsFormat.Utf16LeVersion;
+        return encoding.Equals(Encoding.UTF8) ? W3StringsStorage.FirstUtf8Version : W3StringsStorage.Utf16LeVersion;
     }
 
     /// <summary>
