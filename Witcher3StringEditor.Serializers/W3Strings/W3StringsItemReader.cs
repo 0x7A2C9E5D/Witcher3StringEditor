@@ -3,26 +3,19 @@ using System.Globalization;
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
-///     Reads the items a container is shown as out of it
+///     Reads the items a container is shown as out of it, the reverse of <see cref="W3StringsBuilder" />.
 /// </summary>
-/// <remarks>
-///     The reverse of what <see cref="W3StringsBuilder" /> does, and the only place the ids and key hashes of
-///     a container are written out as text: a caller that reads a file gets items back and never has to know
-///     how either of them is stored
-/// </remarks>
 internal static class W3StringsItemReader
 {
     /// <summary>
-    ///     Reads the entries of a container into the items they are shown as
+    ///     Reads the entries of a container into the items they are shown as.
     /// </summary>
-    /// <param name="file">The container to read the items of</param>
-    /// <returns>The items of the container, in container order</returns>
+    /// <param name="file">The container to read the items of.</param>
+    /// <returns>The items of the container, in container order.</returns>
     public static List<StringItem> Read(W3StringsFile file)
     {
-        // Block 2 maps a localization-key hash to the id it resolves to. A hash of zero is how the format
-        // says "no key", which resolves nothing and is never written, so it is passed over here instead of
-        // being shown as the key of its entry. An id can carry several keys, so the first hash found is the
-        // one shown next to the entry.
+        // Block 2 maps a localization-key hash to an id. A hash of zero means "no key" and is passed over,
+        // and an id can carry several keys, so the first hash found is the one shown next to the entry.
         var keyHashes = new Dictionary<uint, uint>(file.Keys.Count);
         foreach (var key in file.Keys.Where(key => key.KeyHash != 0))
             keyHashes.TryAdd(key.Id, key.KeyHash);

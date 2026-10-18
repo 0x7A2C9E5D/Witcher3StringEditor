@@ -5,204 +5,150 @@ using Witcher3StringEditor.Contracts;
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
-///     The storage model of the w3strings format: the facts the format fixes for every file, and the stored
-///     form of one container
+///     The storage model of the w3strings format: the fixed facts of the format, and the stored form of one
+///     container.
 /// </summary>
 /// <remarks>
-///     <para>
-///         The format itself comes first: its magic, the size of its sections, the versions it is written in
-///         and what each of them means. Those are the same for every file, so they are constants and static
-///         rules of this class rather than facts of the container being read or written.
-///     </para>
-///     <para>
-///         On top of them sits the stored form of one container, which is the one place the layout of a file
-///         is written down: the head (the magic, the version and the head half of the language key), the
-///         block of strings, the block of keys, the string buffer, and the tail half of the language key
-///         that closes the file.
-///     </para>
-///     <para>
-///         The entries themselves are the container's own: the strings are <see cref="W3StringEntry" /> and
-///         the keys are <see cref="W3KeyEntry" />, so a string or a key is defined once and answered for in
-///         both directions. What belongs to this class is where they sit and how they are stored: an id is
-///         obfuscated with the magic of the language, an offset and a length are counted in the units the
-///         version counts in, and a text is a run of obfuscated bytes of its encoding.
-///     </para>
-///     <para>
-///         It is built one of two ways. <see cref="Read" /> reads a container off a stream, and works out
-///         the layout of the bytes the file really holds: the version the texts are stored in is measured
-///         against the file rather than taken from what it declares, and a buffer that reaches past the end
-///         of the file is read up to what is there. <see cref="Of" /> lays a container out for writing, so
-///         the slot of every text is recorded as the buffer is laid out, and both blocks are ordered the way
-///         the game searches them.
-///     </para>
-///     <para>
-///         The reading and writing classes hold no layout of their own: <see cref="W3StringsReader" /> reads
-///         this model off a stream and fetches the stored bytes of every text from where it says they sit,
-///         and <see cref="W3StringsWriter" /> writes the bytes it lays down in the order it holds them.
-///     </para>
+///     The format itself (magic, section sizes, versions) is the same for every file, so it lives here as
+///     constants and static rules. On top of it sits the stored form of one container: the head (magic,
+///     version and the head half of the language key), the block of strings, the block of keys, the string
+///     buffer and the tail half of the language key. The entries are the container's own
+///     (<see cref="W3StringEntry" />, <see cref="W3KeyEntry" />); this class only says where they sit and
+///     how they are stored. <see cref="W3StringsReader" /> and <see cref="W3StringsWriter" /> hold no layout
+///     of their own.
 /// </remarks>
 internal sealed class W3StringsStorage
 {
     /// <summary>
-    ///     The size a file has to reach before it can hold a container at all: the head (the magic, the
-    ///     version and the head half of the language key), the count that introduces each of the three
-    ///     sections, one byte at the least, and the tail half of the language key that closes it
+    ///     The smallest size a file can have and still hold a container: the head, the three section counts
+    ///     (one byte at the least) and the tail half of the language key.
     /// </summary>
-    /// <remarks>
-    ///     The smallest container, the one that holds no entry at all, is exactly this size: writing one has
-    ///     to leave a file this model can read back
-    /// </remarks>
     private const int MinSize = 15;
 
     /// <summary>
-    ///     The version of the UTF-8 generation: one byte per character, so every offset and length counts
-    ///     bytes. Every version from this one on is read that way
+    ///     The version of the UTF-8 generation: one byte per character, so offsets and lengths count bytes.
     /// </summary>
     public const uint FirstUtf8Version = 164;
 
     /// <summary>
-    ///     The version the classic UTF-16LE generation is written with: two bytes per character, so every
-    ///     offset and length counts characters
+    ///     The version the classic UTF-16LE generation is written with: two bytes per character, so offsets
+    ///     and lengths count characters.
     /// </summary>
-    /// <remarks>
-    ///     It is the version a save writes for that generation, and the one every version below the UTF-8
-    ///     generation is read as: a container of the game declares 162 or 163, and both count their offsets,
-    ///     lengths and buffer size in characters of two bytes
-    /// </remarks>
     public const uint Utf16LeVersion = 162;
 
     /// <summary>
-    ///     The size of the first block of entries: 12 bytes
+    ///     The size of the first block of entries: 12 bytes.
     /// </summary>
     private const int Block1EntrySize = 12;
 
     /// <summary>
-    ///     The size of the second block of entries: 8 bytes
+    ///     The size of the second block of entries: 8 bytes.
     /// </summary>
     private const int Block2EntrySize = 8;
 
     /// <summary>
-    ///     The offset the string buffer was found at, which a container laid out for writing does not
-    ///     record: its buffer starts where the bytes before it leave off
+    ///     The offset the string buffer was found at, which a container laid out for writing does not record.
     /// </summary>
     private long? bufferStart;
 
     /// <summary>
-    ///     The bytes a container holds before its string buffer, built the first time they are asked for
+    ///     The bytes a container holds before its string buffer, built the first time they are asked for.
     /// </summary>
     private byte[]? preamble;
 
     /// <summary>
-    ///     A storage model is built by reading a container or by laying one out, which are the two places
-    ///     the facts of the layout are known
+    ///     A storage model is built either by reading a container or by laying one out, the two places the
+    ///     layout is known.
     /// </summary>
     private W3StringsStorage()
     {
     }
 
     /// <summary>
-    ///     The magic bytes of the container: "RTSW"
+    ///     The magic bytes of the container: "RTSW".
     /// </summary>
     private static ReadOnlySpan<byte> MagicBytes => "RTSW"u8;
 
     /// <summary>
-    ///     The strings of the container, in the order the container holds them
+    ///     The strings of the container, in the order the container holds them.
     /// </summary>
-    /// <remarks>
-    ///     A container that was read holds the entries the file holds, with the ids still obfuscated and no
-    ///     text decoded yet; one laid out for writing holds the entries of the container itself, in the order
-    ///     the model lists them, which is the order their texts are laid out in the buffer
-    /// </remarks>
     public List<W3StringEntry> Strings { get; private init; } = [];
 
     /// <summary>
-    ///     The keys of the container, in the order the container holds them
+    ///     The keys of the container, in the order the container holds them.
     /// </summary>
     /// <remarks>
-    ///     A container laid out for writing holds the entries of the model itself, and the ones whose hash
-    ///     is zero are not written: zero is how the format says "no key", so such an entry is one no key can
-    ///     ever resolve to
+    ///     Entries whose hash is zero are not written: zero is how the format says "no key".
     /// </remarks>
     public List<W3KeyEntry> Keys { get; private init; } = [];
 
     /// <summary>
-    ///     The version the texts are stored in
+    ///     The version the texts are stored in.
     /// </summary>
     /// <remarks>
-    ///     A container that was read is stored in the version that was measured against it rather than in
-    ///     the one it declared, which are the same except for a container that declares one generation and
-    ///     holds the other; one laid out for writing is stored in the version it was asked for, with the
-    ///     older generation written as the version 162 describes it
+    ///     A read container holds the version measured against the file rather than the one it declares;
+    ///     one laid out for writing holds the version it was asked for.
     /// </remarks>
     public uint Version { get; private init; }
 
     /// <summary>
-    ///     The full 32-bit language key of the container
+    ///     The full 32-bit language key of the container.
     /// </summary>
     /// <remarks>
-    ///     The container stores it in two halves: the head one in its header, the tail one in It's very last
-    ///     two bytes. It is what identifies the language, and the magic every id and text is obfuscated
-    ///     with follows from it
+    ///     Stored in two halves, the head one in the header and the tail one in its last two bytes. The
+    ///     magic every id and text is obfuscated with follows from it.
     /// </remarks>
     public uint Key { get; private init; }
 
     /// <summary>
-    ///     The magic every id and text of the container is obfuscated with
+    ///     The magic every id and text of the container is obfuscated with.
     /// </summary>
     private uint Magic { get; init; }
 
     /// <summary>
     ///     The number of bytes one unit takes in the version the texts are stored in: one for UTF-8, two for
-    ///     UTF-16LE
+    ///     UTF-16LE.
     /// </summary>
     private int Unit => OffsetUnitSize(Version);
 
     /// <summary>
-    ///     The size the string buffer is stored with, in units
+    ///     The size the string buffer is stored with, in units.
     /// </summary>
     /// <remarks>
-    ///     A container laid out for writing gives it the size the texts and their terminators take, so it
-    ///     holds nothing else; one that was read gives it the size the file really holds, which is the
-    ///     declared one unless the buffer reaches past the end of the file
+    ///     A container laid out for writing gives it the size the texts and their terminators take; one that
+    ///     was read gives the size the file really holds.
     /// </remarks>
     private uint BufferUnits { get; init; }
 
     /// <summary>
-    ///     The offset the string buffer starts at, in bytes
+    ///     The offset the string buffer starts at, in bytes.
     /// </summary>
-    /// <remarks>
-    ///     A container that was read records where the buffer was found; one laid out for writing starts it
-    ///     where the bytes it holds before it leave off
-    /// </remarks>
     public long BufferOffset => bufferStart ?? Preamble.Length;
 
     /// <summary>
     ///     The bytes a container holds before its string buffer: the head, the two blocks of entries and the
-    ///     size of the buffer, which the format lays out in that order
+    ///     size of the buffer.
     /// </summary>
     /// <remarks>
-    ///     The texts themselves are not part of them: the buffer is streamed one text at a time, so a
-    ///     container is never held whole in memory
+    ///     The texts themselves are not part of them, so a container is never held whole in memory.
     /// </remarks>
     public byte[] Preamble => preamble ??= BuildPreamble();
 
     /// <summary>
-    ///     The two bytes of the tail half of the language key, which close a container
+    ///     The two bytes of the tail half of the language key, which close a container.
     /// </summary>
     public byte[] Tail => [(byte)Key, (byte)(Key >> 8)];
 
     /// <summary>
-    ///     Gets the magic a container of the given language key obfuscates its ids and texts with
+    ///     Gets the magic a container of the given language key obfuscates its ids and texts with.
     /// </summary>
-    /// <param name="key">The full 32-bit language key, both halves together</param>
-    /// <returns>The magic of the language that owns the key, or zero for a key no language owns</returns>
-    /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
+    /// <param name="key">The full 32-bit language key, both halves together.</param>
+    /// <returns>The magic of the language that owns the key, or zero for a key no language owns.</returns>
+    /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows.</exception>
     /// <remarks>
-    ///     Every language the game added after its release shares key 0, so a zero key identifies no
-    ///     language but is not an error either: those containers are stored without obfuscation. Any
-    ///     other key that owns no language means the texts were obfuscated with a magic this build does
-    ///     not know, and decoding it as if it were cleartext would turn every string into garbage
-    ///     without a single error, which is worse than refusing the file
+    ///     Every language the game added after release shares key 0, which identifies no language but is
+    ///     not an error either: those containers are stored without obfuscation. Any other unknown key
+    ///     means the texts were obfuscated with a magic this build does not know.
     /// </remarks>
     public static uint MagicOf(uint key)
     {
@@ -215,33 +161,23 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     The size of the offset unit in bytes: 1 byte for a container of the UTF-8 generation, 2 bytes for
-    ///     one of the UTF-16LE generation
+    ///     The size of the offset unit in bytes: 1 for the UTF-8 generation, 2 for the UTF-16LE generation.
     /// </summary>
-    /// <param name="version">The version of the container</param>
-    /// <returns>The size of the offset unit in bytes</returns>
-    /// <remarks>
-    ///     Everything below the UTF-8 generation is counted in characters of two bytes, so 162 and 163 are
-    ///     answered for alike: the older generation of the game is one layout, and the version a container of
-    ///     it declares is an upper bound rather than a difference. The version a container is really stored
-    ///     in is worked out when it is read, which is the one it declares unless it declares one generation
-    ///     and holds the other: see <see cref="StoredVersion" />
-    /// </remarks>
+    /// <param name="version">The version of the container.</param>
+    /// <returns>The size of the offset unit in bytes.</returns>
     private static int OffsetUnitSize(uint version)
     {
         return version >= FirstUtf8Version ? 1 : 2;
     }
 
     /// <summary>
-    ///     Gets the version a container asked to be written with a version is written as
+    ///     Gets the version a container asked to be written with a version is written as.
     /// </summary>
-    /// <param name="version">The version the container is asked to be written with</param>
-    /// <returns>The version the container is written as</returns>
+    /// <param name="version">The version the container is asked to be written with.</param>
+    /// <returns>The version the container is written as.</returns>
     /// <remarks>
-    ///     The older generation of the game has one layout, which is the one version 162 describes, so every
-    ///     version below the UTF-8 generation is written as 162: a file that declared another version of that
-    ///     generation, 163 among them, would only make a reader guess at a difference that is not there. The
-    ///     UTF-8 generation is written with the version it is asked for
+    ///     Every version below the UTF-8 generation is written as 162, the single version that generation is
+    ///     described by. The UTF-8 generation is written with the version it is asked for.
     /// </remarks>
     private static uint WrittenVersion(uint version)
     {
@@ -249,17 +185,15 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Reads the stored form of a container out of a stream
+    ///     Reads the stored form of a container out of a stream.
     /// </summary>
-    /// <param name="input">The stream to read from, which a caller opens over a file</param>
-    /// <returns>The stored form of the container, and the version its texts are really stored in</returns>
-    /// <exception cref="W3StringsException">Thrown when the stream does not hold a container this build can decode</exception>
+    /// <param name="input">The stream to read from.</param>
+    /// <returns>The stored form of the container, with the version its texts are really stored in.</returns>
+    /// <exception cref="W3StringsException">Thrown when the stream does not hold a container this build can decode.</exception>
     /// <remarks>
-    ///     The offsets of the first block point into a buffer that follows it, and the tail half of the
-    ///     language key sits in the last two bytes of the container. Reaching both out of order is why the
-    ///     stream is read by offset: over a file that is what a stream is there for. The stored bytes of the
-    ///     texts themselves are not read here: the slot of every one of them is recorded, and a reader
-    ///     fetches them one at a time
+    ///     The first block points into a buffer that follows it, and the tail half of the language key sits
+    ///     in the last two bytes, so the stream is read by offset. The stored bytes of the texts are not read
+    ///     here: only the slot of each is recorded.
     /// </remarks>
     public static W3StringsStorage Read(Stream input)
     {
@@ -304,17 +238,16 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Lays the stored form of a container out for writing
+    ///     Lays the stored form of a container out for writing.
     /// </summary>
-    /// <param name="file">The container to lay out, whose entries the slots are recorded on</param>
-    /// <param name="version">The version to write it with, which the caller chose for the game it is for</param>
-    /// <returns>The stored form of the container, ready to be written out</returns>
-    /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
+    /// <param name="file">The container to lay out, whose entries the slots are recorded on.</param>
+    /// <param name="version">The version to write it with.</param>
+    /// <returns>The stored form of the container, ready to be written out.</returns>
+    /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows.</exception>
     /// <remarks>
-    ///     The texts are laid out one behind the other in the order the container lists them, each closed by
-    ///     the terminator the format asks for, so the slot is recorded as the buffer is laid out and the
-    ///     buffer holds exactly what the texts need. The block of offsets and lengths sits before the buffer,
-    ///     which is why the whole layout is known before the first byte is written
+    ///     The texts are laid out one behind the other, each closed by its terminator, so the buffer holds
+    ///     exactly what the texts need. The block of offsets and lengths sits before the buffer, which is
+    ///     why the whole layout is known before the first byte is written.
     /// </remarks>
     public static W3StringsStorage Of(W3StringsFile file, uint version)
     {
@@ -341,37 +274,36 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     The offset the text of an entry is stored at, in bytes
+    ///     The offset the text of an entry is stored at, in bytes.
     /// </summary>
-    /// <param name="entry">The string to locate</param>
-    /// <returns>The offset the stored bytes of its text start at, in bytes</returns>
+    /// <param name="entry">The string to locate.</param>
+    /// <returns>The offset the stored bytes of its text start at, in bytes.</returns>
     public long ByteOffsetOf(W3StringEntry entry)
     {
         return BufferOffset + entry.Offset * Unit;
     }
 
     /// <summary>
-    ///     The size the text of an entry is stored with, in bytes
+    ///     The size the text of an entry is stored with, in bytes.
     /// </summary>
-    /// <param name="entry">The string to measure</param>
-    /// <returns>The size of the stored bytes of its text, in bytes</returns>
+    /// <param name="entry">The string to measure.</param>
+    /// <returns>The size of the stored bytes of its text, in bytes.</returns>
     public int ByteLengthOf(W3StringEntry entry)
     {
         return checked((int)(entry.Length * (uint)Unit));
     }
 
     /// <summary>
-    ///     Reads the text of an entry out of the bytes a container stores it as
+    ///     Reads the text of an entry out of the bytes a container stores it as.
     /// </summary>
-    /// <param name="entry">The string the text belongs to, which says how long it is</param>
-    /// <param name="stored">The stored bytes of the text, exactly as the container holds them</param>
-    /// <returns>The text</returns>
+    /// <param name="entry">The string the text belongs to, which says how long it is.</param>
+    /// <param name="stored">The stored bytes of the text, exactly as the container holds them.</param>
+    /// <returns>The text.</returns>
     /// <exception cref="ArgumentOutOfRangeException">
-    ///     Thrown when the stored bytes do not hold exactly the characters the entry says the text has
+    ///     Thrown when the stored bytes do not hold exactly the characters the entry says the text has.
     /// </exception>
     /// <remarks>
-    ///     Deobfuscating changes the bytes in place, so the stored bytes are decoded on a copy and stay as
-    ///     they were read
+    ///     The bytes are decoded on a copy, so the stored bytes stay as they were read.
     /// </remarks>
     public string TextOf(W3StringEntry entry, byte[] stored)
     {
@@ -379,32 +311,32 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     The id a string is stored under, decoded
+    ///     The id a string is stored under, decoded.
     /// </summary>
-    /// <param name="entry">The string whose id is decoded</param>
-    /// <returns>The id the string is stored under</returns>
+    /// <param name="entry">The string whose id is decoded.</param>
+    /// <returns>The id the string is stored under.</returns>
     public uint IdOf(W3StringEntry entry)
     {
         return entry.Id ^ Magic;
     }
 
     /// <summary>
-    ///     The id a key resolves to, decoded
+    ///     The id a key resolves to, decoded.
     /// </summary>
-    /// <param name="key">The key whose id is decoded</param>
-    /// <returns>The id the key resolves to</returns>
+    /// <param name="key">The key whose id is decoded.</param>
+    /// <returns>The id the key resolves to.</returns>
     public uint IdOf(W3KeyEntry key)
     {
         return key.Id ^ Magic;
     }
 
     /// <summary>
-    ///     The bytes one text occupies in the string buffer: the stored bytes of the text and the
-    ///     terminator that closes it
+    ///     The bytes one text occupies in the string buffer: the stored bytes of the text and the terminator
+    ///     that closes it.
     /// </summary>
-    /// <param name="text">The text to store</param>
-    /// <returns>The bytes the text takes in the buffer</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the version counts in neither one nor two bytes</exception>
+    /// <param name="text">The text to store.</param>
+    /// <returns>The bytes the text takes in the buffer.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the version counts in neither one nor two bytes.</exception>
     public byte[] BufferBytesOf(string text)
     {
         var stored = StoredText.From(text, Magic, Unit).Bytes;
@@ -414,20 +346,15 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Builds the bytes a container holds before its string buffer, every section in the order the
-    ///     format prescribes
+    ///     Builds the bytes a container holds before its string buffer, every section in the order the format
+    ///     prescribes.
     /// </summary>
-    /// <returns>The head, both blocks and the size of the string buffer, one after the other</returns>
+    /// <returns>The head, both blocks and the size of the string buffer, one after the other.</returns>
     /// <remarks>
-    ///     The ids are obfuscated as they are written, so this is the layout of a container that is about to
-    ///     be written rather than one that was read. The game resolves both blocks by binary search, and it
-    ///     searches them in the form they are stored in: the block of keys by localization-key hash, which
-    ///     is stored as it is, and the block of strings by string id, which is stored obfuscated. Each block
-    ///     is therefore written in ascending order of the value it holds. Ordering the strings by their
-    ///     clear ids is not the same order, because the obfuscating xor does not keep the order of the
-    ///     values it is applied to: every language that has a magic then stops resolving, while the
-    ///     containers of the languages without one keep working, and the game shows the raw "##key" it asked
-    ///     for instead of the text. A block in the wrong order still loads without an error.
+    ///     The game resolves both blocks by binary search in the form they are stored in, so each block is
+    ///     written in ascending order of the value it holds: the keys by key hash, the strings by id. Because
+    ///     the id is stored obfuscated, ordering by clear id is a different order, and a block in the wrong
+    ///     order makes the game show the raw "##key" instead of the text (though it still loads).
     /// </remarks>
     private byte[] BuildPreamble()
     {
@@ -446,9 +373,7 @@ internal sealed class W3StringsStorage
             writer.Write(entry.Length);
         }
 
-        // A key entry whose hash is zero is not written: zero is how the format says "no key", so such an
-        // entry is one no key can ever resolve to, and a container that holds one holds an entry the game
-        // can do nothing with.
+        // A key entry whose hash is zero is not written: zero is how the format says "no key".
         var keys = Keys.Where(key => key.KeyHash != 0).OrderBy(key => key.KeyHash).ToList();
         WriteCount(writer, (uint)keys.Count);
         foreach (var key in keys)
@@ -463,11 +388,11 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Reads the first block: where every text sits in the string buffer
+    ///     Reads the first block: where every text sits in the string buffer.
     /// </summary>
-    /// <param name="reader">The reader the block comes from</param>
-    /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
-    /// <returns>One entry per text, with the id still obfuscated and the text not yet decoded</returns>
+    /// <param name="reader">The reader the block comes from.</param>
+    /// <param name="key2Offset">The offset the language key at the end of the container starts at.</param>
+    /// <returns>One entry per text, with the id still obfuscated and the text not yet decoded.</returns>
     private static List<W3StringEntry> ReadStringEntries(BinaryReader reader, long key2Offset)
     {
         var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream).Value,
@@ -486,11 +411,11 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Reads the second block: which key resolves to which id
+    ///     Reads the second block: which key resolves to which id.
     /// </summary>
-    /// <param name="reader">The reader the block comes from</param>
-    /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
-    /// <returns>One entry per key, whose id is still obfuscated</returns>
+    /// <param name="reader">The reader the block comes from.</param>
+    /// <param name="key2Offset">The offset the language key at the end of the container starts at.</param>
+    /// <returns>One entry per key, whose id is still obfuscated.</returns>
     private static List<W3KeyEntry> ReadKeys(BinaryReader reader, long key2Offset)
     {
         var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream).Value,
@@ -508,22 +433,17 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Works out the version a container is really stored in
+    ///     Works out the version a container is really stored in.
     /// </summary>
-    /// <param name="version">The version the container declares</param>
-    /// <param name="start">The offset the string buffer starts at</param>
-    /// <param name="units">The size the container gives its string buffer, in units</param>
-    /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
-    /// <returns>The version the container is stored in, which is the declared one unless it holds the other generation</returns>
+    /// <param name="version">The version the container declares.</param>
+    /// <param name="start">The offset the string buffer starts at.</param>
+    /// <param name="units">The size the container gives its string buffer, in units.</param>
+    /// <param name="key2Offset">The offset the language key at the end of the container starts at.</param>
+    /// <returns>The version the container is stored in.</returns>
     /// <remarks>
-    ///     The declared version answers how the buffer is counted for every container that declares it
-    ///     honestly: a container of the UTF-8 generation counts it in bytes, one of the older generation in
-    ///     characters of two bytes. Some community containers declare the older version while storing UTF-8,
-    ///     which makes every offset, length and buffer size of them twice the number they are, so the
-    ///     declaration is measured against the file instead of being taken for granted: the buffer of a
-    ///     well-formed container ends exactly where the language key that closes the file begins, and a
-    ///     container that only reaches that byte when its buffer is counted in bytes holds UTF-8 whatever it
-    ///     declares. Both corrections are logged
+    ///     Some community containers declare the older version while storing UTF-8, so the declaration is
+    ///     measured against the file: a container whose buffer only ends where the language key begins when
+    ///     counted in bytes holds UTF-8 whatever it declares. The correction is logged.
     /// </remarks>
     private static uint StoredVersion(uint version, long start, uint units, long key2Offset)
     {
@@ -548,16 +468,13 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Answers the version a container of the older generation is read as, which is the one that generation
-    ///     is described by
+    ///     Answers the version a container of the older generation is read as.
     /// </summary>
-    /// <param name="version">The version the container declares</param>
-    /// <returns>The version 162, which the older generation of the game has one layout for</returns>
+    /// <param name="version">The version the container declares.</param>
+    /// <returns>The version 162, the single layout the older generation has.</returns>
     /// <remarks>
-    ///     The older generation has a single layout, and 162 is the version that describes it: a container
-    ///     that declares another version of it, 163 among them, is read as 162 and the correction is logged,
-    ///     because only the layout matters to a reader and the difference between those versions is not one
-    ///     this build could tell
+    ///     A container that declares another version of that generation, 163 among them, is read as 162 and
+    ///     the correction is logged.
     /// </remarks>
     private static uint OlderGeneration(uint version)
     {
@@ -571,21 +488,20 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Answers the size of the string buffer the file really holds
+    ///     Answers the size of the string buffer the file really holds.
     /// </summary>
-    /// <param name="start">The offset the string buffer starts at</param>
-    /// <param name="units">The size the container gives its string buffer, in units</param>
-    /// <param name="version">The version the container is stored in</param>
-    /// <param name="key2Offset">The offset the language key at the end of the container starts at</param>
-    /// <returns>The size of the buffer, in units, which is the declared one unless the file holds less</returns>
+    /// <param name="start">The offset the string buffer starts at.</param>
+    /// <param name="units">The size the container gives its string buffer, in units.</param>
+    /// <param name="version">The version the container is stored in.</param>
+    /// <param name="key2Offset">The offset the language key at the end of the container starts at.</param>
+    /// <returns>The size of the buffer, in units.</returns>
     /// <exception cref="W3StringsException">
-    ///     Thrown when the buffer reaches past the end of the file and the container are not one to read up
-    ///     to what the file holds
+    ///     Thrown when the buffer reaches past the end of the file and the container is not one to read up
+    ///     to what the file holds.
     /// </exception>
     /// <remarks>
-    ///     A container of the UTF-8 generation that declares a larger buffer than the file holds is read up
-    ///     to the end of the file with a warning, because that generation has a single reading: what is not
-    ///     there cannot be decoded, and what is their stays readable
+    ///     A UTF-8 container that declares a larger buffer than the file holds is read up to the end of the
+    ///     file with a warning; the older generation refuses it instead.
     /// </remarks>
     private static uint FitBuffer(long start, uint units, uint version, long key2Offset)
     {
@@ -605,21 +521,20 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Keeps the entries whose text the string buffer holds
+    ///     Keeps the entries whose text the string buffer holds.
     /// </summary>
-    /// <param name="entries">The entries of the first block, in entry order</param>
-    /// <param name="units">The size of the string buffer the file holds, in units</param>
-    /// <param name="version">The version the container is stored in</param>
-    /// <returns>The entries whose text lies inside the buffer, in entry order</returns>
+    /// <param name="entries">The entries of the first block, in entry order.</param>
+    /// <param name="units">The size of the string buffer the file holds, in units.</param>
+    /// <param name="version">The version the container is stored in.</param>
+    /// <returns>The entries whose text lies inside the buffer, in entry order.</returns>
     /// <exception cref="W3StringsException">
     ///     Thrown when an entry points outside the buffer of a container that is not read up to what the file
-    ///     holds
+    ///     holds.
     /// </exception>
     /// <remarks>
-    ///     A container of the older generation has two readings, so a text that is not inside the buffer it
-    ///     declared is not one to drop: the reading may be the wrong one, and the file is refused instead.
-    ///     The UTF-8 generation has a single reading, so an entry the file does not hold is dropped with one
-    ///     warning for all of them, which leaves every text that is there readable
+    ///     The older generation has two readings, so a text outside the buffer is not one to drop: the file
+    ///     is refused instead. The UTF-8 generation has a single reading, so such entries are dropped with a
+    ///     warning.
     /// </remarks>
     private static List<W3StringEntry> KeepEntriesInBuffer(List<W3StringEntry> entries, uint units, uint version)
     {
@@ -640,19 +555,19 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Checks that a block of fixed-size entries fits the file, and answers how many there are
+    ///     Checks that a block of fixed-size entries fits the file, and answers how many there are.
     /// </summary>
-    /// <param name="start">The offset the block starts at</param>
-    /// <param name="count">The number of entries the container declares</param>
-    /// <param name="entrySize">The size of one entry in bytes</param>
-    /// <param name="key2Offset">The offset the language key at the end of the file starts at</param>
-    /// <param name="name">The name of the block, used in the error message</param>
-    /// <returns>The number of entries, as an index</returns>
-    /// <exception cref="W3StringsException">Thrown when the block does not fit before the end of the file</exception>
+    /// <param name="start">The offset the block starts at.</param>
+    /// <param name="count">The number of entries the container declares.</param>
+    /// <param name="entrySize">The size of one entry in bytes.</param>
+    /// <param name="key2Offset">The offset the language key at the end of the file starts at.</param>
+    /// <param name="name">The name of the block, used in the error message.</param>
+    /// <returns>The number of entries, as an index.</returns>
+    /// <exception cref="W3StringsException">Thrown when the block does not fit before the end of the file.</exception>
     /// <remarks>
-    ///     A block is not read up to what the file holds the way the string buffer is: every section after it
-    ///     starts where the block ends, so an entry count that does not fit leaves anything to read the rest
-    ///     of the container with, and the file is refused instead of being guessed at
+    ///     Unlike the string buffer, a block is not read up to what the file holds: every later section
+    ///     starts where the block ends, so a count that does not fit makes the file refused rather than
+    ///     guessed at.
     /// </remarks>
     private static int CheckBlockFits(long start, uint count, int entrySize, long key2Offset, string name)
     {
@@ -667,10 +582,10 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Writes a count the way a container stores it
+    ///     Writes a count the way a container stores it.
     /// </summary>
-    /// <param name="writer">The writer the count goes to</param>
-    /// <param name="value">The value to write as a count</param>
+    /// <param name="writer">The writer the count goes to.</param>
+    /// <param name="value">The value to write as a count.</param>
     private static void WriteCount(BinaryWriter writer, uint value)
     {
         writer.Write(SectionCount.Of(value).Bytes);

@@ -5,20 +5,18 @@ using Witcher3StringEditor.Contracts.Abstractions;
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
-///     Builds a W3StringsFile from a list of IStringItems
+///     Builds a <see cref="W3StringsFile" /> from a list of string items.
 /// </summary>
 internal static class W3StringsBuilder
 {
     /// <summary>
-    ///     Builds a W3StringsFile from a list of IStringItems
+    ///     Builds a container from the given items, or null when they cannot be written.
     /// </summary>
-    /// <param name="items">The list of IStringItems to build the W3StringsFile from</param>
-    /// <param name="key">The language key of the W3StringsFile</param>
-    /// <returns>The built W3StringsFile</returns>
+    /// <param name="items">The items to build the container from.</param>
+    /// <param name="key">The language key of the container.</param>
+    /// <returns>The built container, or null when the items are invalid.</returns>
     /// <remarks>
-    ///     The version the container is written with is not asked for here: it is chosen when the container
-    ///     is written, because the texts of a container are the same whichever generation of the game it is
-    ///     for, and only the bytes they are stored in differ
+    ///     The version is not asked for here: it is chosen when the container is written.
     /// </remarks>
     public static W3StringsFile? Build(IReadOnlyList<IStringItem> items, uint key)
     {
@@ -28,11 +26,11 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Processes an IStringItem and adds it to the W3StringsFile
+    ///     Parses the id of an item and adds its entries to the container.
     /// </summary>
-    /// <param name="item">The IStringItem to process</param>
-    /// <param name="file">The W3StringsFile to add the item to</param>
-    /// <returns>True if the item is valid, false otherwise</returns>
+    /// <param name="item">The item to process.</param>
+    /// <param name="file">The container to add the item to.</param>
+    /// <returns>True if the item is valid.</returns>
     private static bool ProcessItem(IStringItem item, W3StringsFile file)
     {
         if (uint.TryParse(item.StrId, out var id))
@@ -46,23 +44,11 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Resolves the key of an IStringItem and adds the entry to the W3StringsFile
+    ///     Resolves the key of an item and adds its entries to the container.
     /// </summary>
-    /// <param name="file">
-    ///     The W3StringsFile to add the entry to
-    ///     The W3StringsFile to add the key to
-    /// </param>
-    /// <param name="id">
-    ///     The id of the entry
-    ///     The ID of the key
-    /// </param>
-    /// <param name="item">
-    ///     The IStringItem to process
-    ///     The IStringItem to resolve the key for
-    /// </param>
-    /// <summary>
-    ///     Resolves the key for the given IStringItem and adds it to the W3StringsFile
-    /// </summary>
+    /// <param name="file">The container to add the entries to.</param>
+    /// <param name="id">The id of the entries.</param>
+    /// <param name="item">The item to add the entries for.</param>
     private static void ResolveKeyAndAddEntry(W3StringsFile file, uint id, IStringItem item)
     {
         ResolveKey(item);
@@ -70,49 +56,47 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Adds the entries of the given IStringItem to the W3StringsFile
+    ///     Adds the string entry of an item, and its key entry when it carries a key.
     /// </summary>
-    /// <param name="file">The W3StringsFile to add the entries to</param>
-    /// <param name="id">The ID of the entries</param>
-    /// <param name="item">The IStringItem to add the entries for</param>
+    /// <param name="file">The container to add the entries to.</param>
+    /// <param name="id">The id of the entries.</param>
+    /// <param name="item">The item to add the entries for.</param>
     private static void AddEntry(W3StringsFile file, uint id, IStringItem item)
     {
-        // A key entry is what resolves a localization key to an id, so an item that carries no key has no
-        // key entry to write. Writing one with a hash of zero instead leaves an entry no key can resolve
-        // to, which is what makes a container whose entries carry no keys come back out of a save with a
-        // key entry per entry.
+        // An item with no key gets no key entry: writing one with a hash of zero would leave an entry no
+        // key can resolve to.
         if (GetCarriedKeyHash(item) is > 0) AddKeyEntry(file, id, item);
         AddStringEntry(file, id, item);
     }
 
     /// <summary>
-    ///     Adds the string entry for the given IStringItem to the W3StringsFile
+    ///     Adds the string entry of an item to the container.
     /// </summary>
-    /// <param name="file">The W3StringsFile to add the string entry to</param>
-    /// <param name="id">The ID of the string entry</param>
-    /// <param name="item">The IStringItem to add the string entry for</param>
+    /// <param name="file">The container to add the entry to.</param>
+    /// <param name="id">The id of the entry.</param>
+    /// <param name="item">The item to add the entry for.</param>
     private static void AddStringEntry(W3StringsFile file, uint id, IStringItem item)
     {
         file.Strings.Add(CreateStringEntry(id, item));
     }
 
     /// <summary>
-    ///     Adds the key entry for the given IStringItem to the W3StringsFile
+    ///     Adds the key entry of an item to the container.
     /// </summary>
-    /// <param name="file">The W3StringsFile to add the key entry to</param>
-    /// <param name="id">The ID of the key entry</param>
-    /// <param name="item">The IStringItem to add the key entry for</param>
+    /// <param name="file">The container to add the entry to.</param>
+    /// <param name="id">The id of the entry.</param>
+    /// <param name="item">The item to add the entry for.</param>
     private static void AddKeyEntry(W3StringsFile file, uint id, IStringItem item)
     {
         file.Keys.Add(CreateKeyEntry(id, item));
     }
 
     /// <summary>
-    ///     Creates a W3StringEntry from an IStringItem
+    ///     Creates a string entry from an item.
     /// </summary>
-    /// <param name="id">The ID of the string entry</param>
-    /// <param name="item">The IStringItem to create the string entry from</param>
-    /// <returns>The created W3StringEntry</returns>
+    /// <param name="id">The id of the entry.</param>
+    /// <param name="item">The item to create the entry from.</param>
+    /// <returns>The created entry.</returns>
     private static W3StringEntry CreateStringEntry(uint id, IStringItem item)
     {
         return new W3StringEntry
@@ -123,11 +107,11 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Creates a W3KeyEntry from an IStringItem
+    ///     Creates a key entry from an item.
     /// </summary>
-    /// <param name="id">The ID of the key entry</param>
-    /// <param name="item">The IStringItem to create the key entry from</param>
-    /// <returns>The created W3KeyEntry</returns>
+    /// <param name="id">The id of the entry.</param>
+    /// <param name="item">The item to create the entry from.</param>
+    /// <returns>The created entry.</returns>
     private static W3KeyEntry CreateKeyEntry(uint id, IStringItem item)
     {
         return new W3KeyEntry
@@ -141,10 +125,10 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Checks if the given list of IStringItems has duplicate string ids
+    ///     Checks whether the items hold duplicate string ids.
     /// </summary>
-    /// <param name="items">The list of IStringItems to check</param>
-    /// <returns>True if the list has duplicate string ids, false otherwise</returns>
+    /// <param name="items">The items to check.</param>
+    /// <returns>True when two items share a string id.</returns>
     private static bool HasDuplicateStrIds(IReadOnlyList<IStringItem> items)
     {
         if (items.DistinctBy(x => x.StrId).Count() >= items.Count) return false;
@@ -153,9 +137,9 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Resolves the key of an IStringItem
+    ///     Resolves the key of an item, from its name when it has one and otherwise from its hash.
     /// </summary>
-    /// <param name="item">The IStringItem to resolve the key for</param>
+    /// <param name="item">The item to resolve the key for.</param>
     private static void ResolveKey(IStringItem item)
     {
         if (!string.IsNullOrWhiteSpace(item.KeyName))
@@ -165,9 +149,9 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Resolves the key of an IStringItem from the key name
+    ///     Resolves the key of an item from its key name.
     /// </summary>
-    /// <param name="item">The IStringItem to resolve the key for</param>
+    /// <param name="item">The item to resolve the key for.</param>
     private static void ResolveKeyFromName(IStringItem item)
     {
         var named = LocalizationKeyHash.Of(item.KeyName);
@@ -176,30 +160,30 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Warns if the key hash of the given IStringItem is inconsistent with the key name
+    ///     Warns when an item carries both a key name and an inconsistent key hash.
     /// </summary>
-    /// <param name="item">The IStringItem to check</param>
-    /// <param name="named">The hash of the key name</param>
+    /// <param name="item">The item to check.</param>
+    /// <param name="named">The hash of the key name.</param>
     private static void WarnIfPreExistingKeyHashInconsistent(IStringItem item, uint named)
     {
         if (!string.IsNullOrWhiteSpace(item.KeyHex)) WarnIfKeyHashInconsistent(item, named);
     }
 
     /// <summary>
-    ///     Warns if the key hash of the given IStringItem is inconsistent with the key name
+    ///     Warns that the carried key hash does not match the hash of the key name.
     /// </summary>
-    /// <param name="item">The IStringItem to check</param>
-    /// <param name="named">The hash of the key name</param>
+    /// <param name="item">The item to check.</param>
+    /// <param name="named">The hash of the key name.</param>
     private static void WarnIfKeyHashInconsistent(IStringItem item, uint named)
     {
         LogInconsistentKeyHash(item, named, GetCarriedKeyHash(item));
     }
 
     /// <summary>
-    ///     Gets the key hash carried in the given IStringItem, if it is a valid 32-bit hexadecimal number
+    ///     Gets the key hash an item carries, when it is a valid 32-bit hexadecimal number.
     /// </summary>
-    /// <param name="item">The IStringItem to get the key hash from</param>
-    /// <returns>The key hash carried in the IStringItem, or null if none is carried</returns>
+    /// <param name="item">The item to read the key hash from.</param>
+    /// <returns>The key hash, or null when none is carried.</returns>
     private static uint? GetCarriedKeyHash(IStringItem item)
     {
         return uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hash)
@@ -208,11 +192,11 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Logs a warning if the key hash of the given IStringItem is inconsistent with the key name
+    ///     Logs a warning when an item carries a key hash that disagrees with its key name.
     /// </summary>
-    /// <param name="item">The IStringItem to check</param>
-    /// <param name="named">The hash of the key name</param>
-    /// <param name="carried">The key hash carried in the IStringItem, or null if none is carried</param>
+    /// <param name="item">The item to check.</param>
+    /// <param name="named">The hash of the key name.</param>
+    /// <param name="carried">The key hash the item carries, or null when none is carried.</param>
     private static void LogInconsistentKeyHash(IStringItem item, uint named, uint? carried)
     {
         if (carried != 0 && carried != named)
@@ -222,9 +206,9 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Resolves the key of an IStringItem from the key hash
+    ///     Resolves the key of an item from the hash it carries.
     /// </summary>
-    /// <param name="item">The IStringItem to resolve the key for</param>
+    /// <param name="item">The item to resolve the key for.</param>
     private static void ResolveKeyFromHash(IStringItem item)
     {
         if (string.IsNullOrWhiteSpace(item.KeyHex))
@@ -246,10 +230,10 @@ internal static class W3StringsBuilder
     }
 
     /// <summary>
-    ///     Sets the key hash of the given IStringItem to the given hash
+    ///     Sets the key hash of an item to the given hash.
     /// </summary>
-    /// <param name="item">The IStringItem to set the key hash for</param>
-    /// <param name="hash">The hash to set the key hash to</param>
+    /// <param name="item">The item to set the key hash for.</param>
+    /// <param name="hash">The hash to set the key hash to.</param>
     private static void SetKeyHexFromHash(IStringItem item, uint hash)
     {
         item.KeyHex = hash != 0
