@@ -3,7 +3,7 @@ using System.Text;
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
-///     The hash of one localization key, which the game resolves keys by.
+///     The hash of one localization key, which the game resolves key by.
 /// </summary>
 internal sealed class LocalizationKeyHash
 {

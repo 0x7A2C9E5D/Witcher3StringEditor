@@ -13,7 +13,7 @@ internal static class W3StringsReader
     ///     Reads a container from a file stream.
     /// </summary>
     /// <param name="input">The stream to read from.</param>
-    /// <returns>The container, and the version its texts are stored in.</returns>
+    /// <returns>The container and the version its texts are stored in.</returns>
     /// <exception cref="W3StringsException">Thrown when the stream does not hold a container this build can decode.</exception>
     public static (W3StringsFile Container, uint Version) Read(Stream input)
     {
@@ -73,7 +73,7 @@ internal static class W3StringsReader
         var file = new W3StringsFile { Key = storage.Key };
 
         // The id is decoded and the text fetched, turning each entry of the block into the entry the
-        // container holds. Where a text sits and how long it was said to be stay on the entry.
+        // container holds. Where a text sits and how long it was said to be stayed on the entry.
         for (var i = 0; i < storage.Strings.Count; i++)
         {
             var entry = storage.Strings[i];

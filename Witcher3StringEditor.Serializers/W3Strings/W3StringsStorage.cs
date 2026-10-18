@@ -496,7 +496,7 @@ internal sealed class W3StringsStorage
     /// <param name="key2Offset">The offset the language key at the end of the container starts at.</param>
     /// <returns>The size of the buffer, in units.</returns>
     /// <exception cref="W3StringsException">
-    ///     Thrown when the buffer reaches past the end of the file and the container is not one to read up
+    ///     Thrown when the buffer reaches past the end of the file and the container are not one to read up
     ///     to what the file holds.
     /// </exception>
     /// <remarks>
