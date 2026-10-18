@@ -82,68 +82,6 @@ internal sealed class W3StringsStorage
     private const int Block2EntrySize = 8;
 
     /// <summary>
-    ///     The magic bytes of the container: "RTSW"
-    /// </summary>
-    private static ReadOnlySpan<byte> MagicBytes => "RTSW"u8;
-
-    /// <summary>
-    ///     Gets the magic a container of the given language key obfuscates its ids and texts with
-    /// </summary>
-    /// <param name="key">The full 32-bit language key, both halves together</param>
-    /// <returns>The magic of the language that owns the key, or zero for a key no language owns</returns>
-    /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
-    /// <remarks>
-    ///     Every language the game added after its release shares key 0, so a zero key identifies no
-    ///     language but is not an error either: those containers are stored without obfuscation. Any
-    ///     other key that owns no language means the texts were obfuscated with a magic this build does
-    ///     not know, and decoding it as if it were cleartext would turn every string into garbage
-    ///     without a single error, which is worse than refusing the file
-    /// </remarks>
-    public static uint MagicOf(uint key)
-    {
-        var language = Language.FromKey(key);
-        if (language is not null) return language.Magic;
-        if (key == 0) return 0;
-        throw new W3StringsException(
-            $"unknown language key 0x{key:X8}, so the stored texts cannot be decoded " +
-            "(the language is not supported by this build)");
-    }
-
-    /// <summary>
-    ///     The size of the offset unit in bytes: 1 byte for a container of the UTF-8 generation, 2 bytes for
-    ///     one of the UTF-16LE generation
-    /// </summary>
-    /// <param name="version">The version of the container</param>
-    /// <returns>The size of the offset unit in bytes</returns>
-    /// <remarks>
-    ///     Everything below the UTF-8 generation is counted in characters of two bytes, so 162 and 163 are
-    ///     answered for alike: the older generation of the game is one layout, and the version a container of
-    ///     it declares is an upper bound rather than a difference. The version a container is really stored
-    ///     in is worked out when it is read, which is the one it declares unless it declares one generation
-    ///     and holds the other: see <see cref="StoredVersion" />
-    /// </remarks>
-    private static int OffsetUnitSize(uint version)
-    {
-        return version >= FirstUtf8Version ? 1 : 2;
-    }
-
-    /// <summary>
-    ///     Gets the version a container asked to be written with a version is written as
-    /// </summary>
-    /// <param name="version">The version the container is asked to be written with</param>
-    /// <returns>The version the container is written as</returns>
-    /// <remarks>
-    ///     The older generation of the game has one layout, which is the one version 162 describes, so every
-    ///     version below the UTF-8 generation is written as 162: a file that declared another version of that
-    ///     generation, 163 among them, would only make a reader guess at a difference that is not there. The
-    ///     UTF-8 generation is written with the version it is asked for
-    /// </remarks>
-    private static uint WrittenVersion(uint version)
-    {
-        return version >= FirstUtf8Version ? version : Utf16LeVersion;
-    }
-
-    /// <summary>
     ///     The offset the string buffer was found at, which a container laid out for writing does not
     ///     record: its buffer starts where the bytes before it leave off
     /// </summary>
@@ -161,6 +99,11 @@ internal sealed class W3StringsStorage
     private W3StringsStorage()
     {
     }
+
+    /// <summary>
+    ///     The magic bytes of the container: "RTSW"
+    /// </summary>
+    private static ReadOnlySpan<byte> MagicBytes => "RTSW"u8;
 
     /// <summary>
     ///     The strings of the container, in the order the container holds them
@@ -247,6 +190,63 @@ internal sealed class W3StringsStorage
     ///     The two bytes of the tail half of the language key, which close a container
     /// </summary>
     public byte[] Tail => [(byte)Key, (byte)(Key >> 8)];
+
+    /// <summary>
+    ///     Gets the magic a container of the given language key obfuscates its ids and texts with
+    /// </summary>
+    /// <param name="key">The full 32-bit language key, both halves together</param>
+    /// <returns>The magic of the language that owns the key, or zero for a key no language owns</returns>
+    /// <exception cref="W3StringsException">Thrown when the language key is not one this build knows</exception>
+    /// <remarks>
+    ///     Every language the game added after its release shares key 0, so a zero key identifies no
+    ///     language but is not an error either: those containers are stored without obfuscation. Any
+    ///     other key that owns no language means the texts were obfuscated with a magic this build does
+    ///     not know, and decoding it as if it were cleartext would turn every string into garbage
+    ///     without a single error, which is worse than refusing the file
+    /// </remarks>
+    public static uint MagicOf(uint key)
+    {
+        var language = Language.FromKey(key);
+        if (language is not null) return language.Magic;
+        if (key == 0) return 0;
+        throw new W3StringsException(
+            $"unknown language key 0x{key:X8}, so the stored texts cannot be decoded " +
+            "(the language is not supported by this build)");
+    }
+
+    /// <summary>
+    ///     The size of the offset unit in bytes: 1 byte for a container of the UTF-8 generation, 2 bytes for
+    ///     one of the UTF-16LE generation
+    /// </summary>
+    /// <param name="version">The version of the container</param>
+    /// <returns>The size of the offset unit in bytes</returns>
+    /// <remarks>
+    ///     Everything below the UTF-8 generation is counted in characters of two bytes, so 162 and 163 are
+    ///     answered for alike: the older generation of the game is one layout, and the version a container of
+    ///     it declares is an upper bound rather than a difference. The version a container is really stored
+    ///     in is worked out when it is read, which is the one it declares unless it declares one generation
+    ///     and holds the other: see <see cref="StoredVersion" />
+    /// </remarks>
+    private static int OffsetUnitSize(uint version)
+    {
+        return version >= FirstUtf8Version ? 1 : 2;
+    }
+
+    /// <summary>
+    ///     Gets the version a container asked to be written with a version is written as
+    /// </summary>
+    /// <param name="version">The version the container is asked to be written with</param>
+    /// <returns>The version the container is written as</returns>
+    /// <remarks>
+    ///     The older generation of the game has one layout, which is the one version 162 describes, so every
+    ///     version below the UTF-8 generation is written as 162: a file that declared another version of that
+    ///     generation, 163 among them, would only make a reader guess at a difference that is not there. The
+    ///     UTF-8 generation is written with the version it is asked for
+    /// </remarks>
+    private static uint WrittenVersion(uint version)
+    {
+        return version >= FirstUtf8Version ? version : Utf16LeVersion;
+    }
 
     /// <summary>
     ///     Reads the stored form of a container out of a stream

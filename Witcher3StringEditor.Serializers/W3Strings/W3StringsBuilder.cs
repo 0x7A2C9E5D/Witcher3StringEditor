@@ -170,9 +170,9 @@ internal static class W3StringsBuilder
     /// <param name="item">The IStringItem to resolve the key for</param>
     private static void ResolveKeyFromName(IStringItem item)
     {
-        var named = LocalizationKeyHash.Compute(item.KeyName);
-        WarnIfPreExistingKeyHashInconsistent(item, named);
-        SetKeyHexFromHash(item, named);
+        var named = LocalizationKeyHash.Of(item.KeyName);
+        WarnIfPreExistingKeyHashInconsistent(item, named.Hash);
+        SetKeyHexFromHash(item, named.Hash);
     }
 
     /// <summary>
