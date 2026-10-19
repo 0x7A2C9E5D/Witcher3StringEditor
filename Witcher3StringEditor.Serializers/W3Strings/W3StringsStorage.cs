@@ -59,11 +59,6 @@ internal sealed class W3StringsStorage
     private long? bufferStart;
 
     /// <summary>
-    ///     The bytes a container holds before its string buffer, built the first time they are asked for.
-    /// </summary>
-    private byte[]? preamble;
-
-    /// <summary>
     ///     A storage model is built either by reading a container or by laying one out, the two places the
     ///     layout is known.
     /// </summary>
@@ -139,7 +134,7 @@ internal sealed class W3StringsStorage
     /// <remarks>
     ///     The texts themselves are not part of them, so a container is never held whole in memory.
     /// </remarks>
-    public byte[] Preamble => preamble ??= BuildPreamble();
+    public byte[] Preamble => field ??= BuildPreamble();
 
     /// <summary>
     ///     The two bytes of the tail half of the language key, which close a container.
