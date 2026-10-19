@@ -17,5 +17,5 @@ public interface IInterProcessFileTransfer
     /// </summary>
     /// <param name="filePath">The path of the file to open in the running instance</param>
     /// <returns>True when the running instance received the file path, false otherwise</returns>
-    public bool TrySendFileToExistingInstance(string filePath);
+    public Task TrySendFileToExistingInstance(string filePath);
 }

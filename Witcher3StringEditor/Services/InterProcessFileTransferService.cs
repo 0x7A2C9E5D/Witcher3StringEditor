@@ -49,7 +49,7 @@ internal sealed class InterProcessFileTransferService : IInterProcessFileTransfe
     /// <param name="filePath">The path of the file to open in the running instance</param>
     /// <returns>True when the running instance received the file path, false otherwise</returns>
     /// <exception cref="ObjectDisposedException"></exception>
-    public bool TrySendFileToExistingInstance(string filePath)
+    public Task TrySendFileToExistingInstance(string filePath)
     {
         ObjectDisposedException.ThrowIf(disposedValue, this);
         try
@@ -59,13 +59,12 @@ internal sealed class InterProcessFileTransferService : IInterProcessFileTransfe
             using var writer = new StreamWriter(client);
             writer.AutoFlush = true;
             writer.WriteLine(filePath);
-            return true;
         }
         catch (Exception ex)
         {
             Log.Warning(ex, "Failed to forward file to the running instance: {FilePath}", filePath);
-            return false;
         }
+        return Task.CompletedTask;
     }
 
     /// <summary>
