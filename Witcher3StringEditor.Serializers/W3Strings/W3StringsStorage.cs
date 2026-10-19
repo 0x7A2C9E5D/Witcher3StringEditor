@@ -218,13 +218,13 @@ internal sealed class W3StringsStorage
             var key2Offset = length - 2; // The offset the tail half starts at, which no section may reach into
 
             // The layout of the stored bytes is needed before any text can be decoded.
-            var entries = ReadBlock(reader, Block1EntrySize, key2Offset, "block1", static r => new W3StringEntry
+            var entries = ReadBlock(reader, Block1EntrySize, "block1", static r => new W3StringEntry
             {
                 Id = r.ReadUInt32(),
                 Offset = r.ReadUInt32(),
                 Length = r.ReadUInt32()
             });
-            var keys = ReadBlock(reader, Block2EntrySize, key2Offset, "block2", static r => new W3KeyEntry
+            var keys = ReadBlock(reader, Block2EntrySize, "block2", static r => new W3KeyEntry
             {
                 KeyHash = r.ReadUInt32(),
                 Id = r.ReadUInt32()
@@ -405,6 +405,22 @@ internal sealed class W3StringsStorage
         WriteCount(writer, BufferUnits);
         writer.Flush();
         return buffer.ToArray();
+    }
+
+    /// <summary>
+    ///     Reads a block of fixed-size entries, whose end is the tail half of the language key that closes
+    ///     the container.
+    /// </summary>
+    /// <param name="reader">The reader the block comes from.</param>
+    /// <param name="entrySize">The size of one entry in bytes.</param>
+    /// <param name="name">The name of the block, used in the error message.</param>
+    /// <param name="readEntry">Reads one entry, in the order the format stores its fields.</param>
+    /// <returns>One entry per count the block declares.</returns>
+    private static List<T> ReadBlock<T>(BinaryReader reader, int entrySize, string name,
+        Func<BinaryReader, T> readEntry)
+    {
+        // The tail half of the language key is the last two bytes, so no section may reach into them.
+        return ReadBlock(reader, entrySize, reader.BaseStream.Length - 2, name, readEntry);
     }
 
     /// <summary>
