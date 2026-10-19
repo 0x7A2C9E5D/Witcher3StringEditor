@@ -218,8 +218,17 @@ internal sealed class W3StringsStorage
             var key2Offset = length - 2; // The offset the tail half starts at, which no section may reach into
 
             // The layout of the stored bytes is needed before any text can be decoded.
-            var entries = ReadStringEntries(reader, key2Offset);
-            var keys = ReadKeys(reader, key2Offset);
+            var entries = ReadBlock(reader, Block1EntrySize, key2Offset, "block1", static r => new W3StringEntry
+            {
+                Id = r.ReadUInt32(),
+                Offset = r.ReadUInt32(),
+                Length = r.ReadUInt32()
+            });
+            var keys = ReadBlock(reader, Block2EntrySize, key2Offset, "block2", static r => new W3KeyEntry
+            {
+                KeyHash = r.ReadUInt32(),
+                Id = r.ReadUInt32()
+            });
 
             var units = SectionCount.Read(input).Value; // The size the container gives its string buffer
             var start = input.Position; // Where the buffer begins
@@ -399,48 +408,23 @@ internal sealed class W3StringsStorage
     }
 
     /// <summary>
-    ///     Reads the first block: where every text sits in the string buffer.
+    ///     Reads a block of fixed-size entries from a container.
     /// </summary>
     /// <param name="reader">The reader the block comes from.</param>
+    /// <param name="entrySize">The size of one entry in bytes.</param>
     /// <param name="key2Offset">The offset the language key at the end of the container starts at.</param>
-    /// <returns>One entry per text, with the id still obfuscated and the text not yet decoded.</returns>
-    private static List<W3StringEntry> ReadStringEntries(BinaryReader reader, long key2Offset)
+    /// <param name="name">The name of the block, used in the error message.</param>
+    /// <param name="readEntry">Reads one entry, in the order the format stores its fields.</param>
+    /// <returns>One entry per count the block declares.</returns>
+    private static List<T> ReadBlock<T>(BinaryReader reader, int entrySize, long key2Offset, string name,
+        Func<BinaryReader, T> readEntry)
     {
         var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream).Value,
-            Block1EntrySize, key2Offset, "block1");
+            entrySize, key2Offset, name);
 
-        var entries = new List<W3StringEntry>(count);
-        for (var i = 0; i < count; i++)
-            entries.Add(new W3StringEntry
-            {
-                Id = reader.ReadUInt32(),
-                Offset = reader.ReadUInt32(),
-                Length = reader.ReadUInt32()
-            });
-
+        var entries = new List<T>(count);
+        for (var i = 0; i < count; i++) entries.Add(readEntry(reader));
         return entries;
-    }
-
-    /// <summary>
-    ///     Reads the second block: which key resolves to which id.
-    /// </summary>
-    /// <param name="reader">The reader the block comes from.</param>
-    /// <param name="key2Offset">The offset the language key at the end of the container starts at.</param>
-    /// <returns>One entry per key, whose id is still obfuscated.</returns>
-    private static List<W3KeyEntry> ReadKeys(BinaryReader reader, long key2Offset)
-    {
-        var count = CheckBlockFits(reader.BaseStream.Position, SectionCount.Read(reader.BaseStream).Value,
-            Block2EntrySize, key2Offset, "block2");
-
-        var keys = new List<W3KeyEntry>(count);
-        for (var i = 0; i < count; i++)
-            keys.Add(new W3KeyEntry
-            {
-                KeyHash = reader.ReadUInt32(),
-                Id = reader.ReadUInt32()
-            });
-
-        return keys;
     }
 
     /// <summary>

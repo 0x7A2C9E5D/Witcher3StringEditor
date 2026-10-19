@@ -186,9 +186,18 @@ internal static class W3StringsBuilder
     /// <returns>The key hash, or null when none is carried.</returns>
     private static uint? GetCarriedKeyHash(IStringItem item)
     {
-        return uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hash)
-            ? hash
-            : null;
+        return TryParseKeyHash(item.KeyHex, out var hash) ? hash : null;
+    }
+
+    /// <summary>
+    ///     Parses a key hash carried as hexadecimal text.
+    /// </summary>
+    /// <param name="keyHex">The hexadecimal text to parse.</param>
+    /// <param name="hash">The parsed key hash, or zero when the text is not one.</param>
+    /// <returns>True when the text is a valid 32-bit hexadecimal number.</returns>
+    private static bool TryParseKeyHash(string? keyHex, out uint hash)
+    {
+        return uint.TryParse(keyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hash);
     }
 
     /// <summary>
@@ -217,7 +226,7 @@ internal static class W3StringsBuilder
             return;
         }
 
-        if (uint.TryParse(item.KeyHex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var carried))
+        if (TryParseKeyHash(item.KeyHex, out var carried))
         {
             SetKeyHexFromHash(item, carried);
             return;
