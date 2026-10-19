@@ -88,7 +88,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             await using (var stream = File.Create(outputW3StringsPath))
             {
                 // Encode off the calling thread, with the version this save chose
-                await Task.Run(() => W3StringsWriter.Write(stream, container, version));
+                await Task.Run(() => W3StringsStorage.Of(container, version).Write(stream));
             }
 
             Log.Information("Encoded {Count} item(s) as W3Strings v{Version} to {Path}", w3StringItems.Count,
@@ -123,13 +123,14 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     private static List<IStringItem> ReadItems(string filePath)
     {
         using var stream = File.OpenRead(filePath); // The codec reads a stream, the serializer knows the path
-        var (container, version) = W3StringsReader.Read(stream); // Parse the container
+        var storage = W3StringsStorage.Read(stream); // The stored form: what the file holds, and where
+        var container = storage.ToContainer(stream); // The texts themselves, fetched out of the same stream
 
         // The magic is all the container says about the language it was written for, and it is what the
         // ids and texts were decoded with. The version is the one its texts are stored in, which is the
         // one the file declares unless it declares one generation and holds the other: the container
         // itself holds no version, because the same texts are written for either generation.
-        Log.Information("Read W3Strings v{Version} container (magic {Magic}) from {Path}", version,
+        Log.Information("Read W3Strings v{Version} container (magic {Magic}) from {Path}", storage.Version,
             container.Magic == 0 ? "none" : $"0x{container.Magic:X8}",
             filePath); // Log the container facts
 

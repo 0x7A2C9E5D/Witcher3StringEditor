@@ -1,32 +1,38 @@
 namespace Witcher3StringEditor.Serializers.W3Strings;
 
 /// <summary>
-///     Reads a w3strings container out of a stream and turns it into the container the editor works with.
+///     Reads a container out of the stream its stored form was read from.
 /// </summary>
 /// <remarks>
-///     The layout is the business of <see cref="W3StringsStorage" />; this fetches the stored bytes of every
-///     text and decodes them. The container is never held whole.
+///     The stored form is <see cref="W3StringsStorage" />, which says where every text sits; fetching the
+///     texts is what turns it into the container the editor works with. It is offered as an extension of the
+///     stored form so that it reads as an operation on it, and so the model never holds a stream of its own.
 /// </remarks>
 internal static class W3StringsReader
 {
     /// <summary>
-    ///     Reads a container from a file stream.
+    ///     Reads the texts of a stored form out of the string buffer of the stream it was read from, and
+    ///     answers the container they make.
     /// </summary>
-    /// <param name="input">The stream to read from.</param>
-    /// <returns>The container and the version its texts are stored in.</returns>
-    /// <exception cref="W3StringsException">Thrown when the stream does not hold a container this build can decode.</exception>
-    public static (W3StringsFile Container, uint Version) Read(Stream input)
+    /// <param name="storage">The stored form to read the container of.</param>
+    /// <param name="input">The stream the stored form was read from, which holds the string buffer.</param>
+    /// <returns>The container, which holds the texts and the keys that resolve them.</returns>
+    /// <exception cref="W3StringsException">Thrown when the stored bytes of a text cannot be read.</exception>
+    /// <remarks>
+    ///     The texts are fetched one at a time, in the order they occupy the buffer, so the container is never
+    ///     held whole: only the decoded texts are kept.
+    /// </remarks>
+    public static W3StringsFile ToContainer(this W3StringsStorage storage, Stream input)
     {
         try
         {
-            var storage = W3StringsStorage.Read(input); // The stored form, and the version its texts are in
-            var storedTexts = ReadTexts(input, storage); // The stored bytes of every text, in slot order
-            return (Assemble(storage, storedTexts), storage.Version);
+            var storedTexts = ReadTexts(input, storage); // The stored bytes of every text, in entry order
+            return Assemble(storage, storedTexts);
         }
         catch (Exception ex) when (ex is not W3StringsException)
         {
             // The codec answers with one exception type, with whatever went wrong below as its cause.
-            throw new W3StringsException("The stream does not hold a readable w3strings container", ex);
+            throw new W3StringsException(W3StringsStorage.UnreadableStream, ex);
         }
     }
 

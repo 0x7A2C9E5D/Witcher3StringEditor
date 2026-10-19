@@ -14,8 +14,9 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 ///     version and the head half of the language key), the block of strings, the block of keys, the string
 ///     buffer and the tail half of the language key. The entries are the container's own
 ///     (<see cref="W3StringEntry" />, <see cref="W3KeyEntry" />); this class only says where they sit and
-///     how they are stored. <see cref="W3StringsReader" /> and <see cref="W3StringsWriter" /> hold no layout
-///     of their own.
+///     how they are stored. The two operations that move its bytes are extensions of it — reading the texts
+///     into a container (<see cref="W3StringsReader.ToContainer" />) and writing the stored form out
+///     (<see cref="W3StringsWriter.Write" />) — so the model never holds a stream of its own.
 /// </remarks>
 internal sealed class W3StringsStorage
 {
@@ -45,6 +46,12 @@ internal sealed class W3StringsStorage
     ///     The size of the second block of entries: 8 bytes.
     /// </summary>
     private const int Block2EntrySize = 8;
+
+    /// <summary>
+    ///     The message a stream that does not hold a container this build can read is refused with: the codec
+    ///     answers with one exception type, whether the stored form or one of its texts is what cannot be read.
+    /// </summary>
+    internal const string UnreadableStream = "The stream does not hold a readable w3strings container";
 
     /// <summary>
     ///     The offset the string buffer was found at, which a container laid out for writing does not record.
@@ -197,44 +204,53 @@ internal sealed class W3StringsStorage
     /// </remarks>
     public static W3StringsStorage Read(Stream input)
     {
-        var length = input.Length;
-        if (length < MinSize)
-            throw new W3StringsException($"file too small to be a w3strings container ({length} byte(s))");
-
-        using var reader = new BinaryReader(input, Encoding.UTF8, true); // The stream stays open for the caller
-
-        // The magic is compared as it is stored, so the error can quote what was actually found.
-        var magic = reader.ReadBytes(MagicBytes.Length);
-        if (!magic.AsSpan().SequenceEqual(MagicBytes))
-            throw new W3StringsException($"bad magic: expected \"RTSW\", got \"{Encoding.ASCII.GetString(magic)}\"");
-
-        var declared = reader.ReadUInt32(); // The version the container declares
-        var key1 = (uint)reader.ReadUInt16() << 16; // The head half: the tail half closes the container
-        var key2Offset = length - 2; // The offset the tail half starts at, which no section may reach into
-
-        // The layout of the stored bytes is needed before any text can be decoded.
-        var entries = ReadStringEntries(reader, key2Offset);
-        var keys = ReadKeys(reader, key2Offset);
-
-        var units = SectionCount.Read(input).Value; // The size the container gives its string buffer
-        var start = input.Position; // Where the buffer begins
-        var version = StoredVersion(declared, start, units, key2Offset); // The version it is really stored in
-        var held = FitBuffer(start, units, version, key2Offset); // The size of the buffer the file holds
-        entries = KeepEntriesInBuffer(entries, held, version); // The entries whose text the file holds
-
-        reader.BaseStream.Seek(key2Offset, SeekOrigin.Begin);
-        var key = key1 | reader.ReadUInt16();
-
-        return new W3StringsStorage
+        try
         {
-            Version = version,
-            Key = key,
-            Magic = MagicOf(key),
-            BufferUnits = held,
-            bufferStart = start,
-            Strings = entries,
-            Keys = keys
-        };
+            var length = input.Length;
+            if (length < MinSize)
+                throw new W3StringsException($"file too small to be a w3strings container ({length} byte(s))");
+
+            using var reader = new BinaryReader(input, Encoding.UTF8, true); // The stream stays open for the caller
+
+            // The magic is compared as it is stored, so the error can quote what was actually found.
+            var magic = reader.ReadBytes(MagicBytes.Length);
+            if (!magic.AsSpan().SequenceEqual(MagicBytes))
+                throw new W3StringsException(
+                    $"bad magic: expected \"RTSW\", got \"{Encoding.ASCII.GetString(magic)}\"");
+
+            var declared = reader.ReadUInt32(); // The version the container declares
+            var key1 = (uint)reader.ReadUInt16() << 16; // The head half: the tail half closes the container
+            var key2Offset = length - 2; // The offset the tail half starts at, which no section may reach into
+
+            // The layout of the stored bytes is needed before any text can be decoded.
+            var entries = ReadStringEntries(reader, key2Offset);
+            var keys = ReadKeys(reader, key2Offset);
+
+            var units = SectionCount.Read(input).Value; // The size the container gives its string buffer
+            var start = input.Position; // Where the buffer begins
+            var version = StoredVersion(declared, start, units, key2Offset); // The version it is really stored in
+            var held = FitBuffer(start, units, version, key2Offset); // The size of the buffer the file holds
+            entries = KeepEntriesInBuffer(entries, held, version); // The entries whose text the file holds
+
+            reader.BaseStream.Seek(key2Offset, SeekOrigin.Begin);
+            var key = key1 | reader.ReadUInt16();
+
+            return new W3StringsStorage
+            {
+                Version = version,
+                Key = key,
+                Magic = MagicOf(key),
+                BufferUnits = held,
+                bufferStart = start,
+                Strings = entries,
+                Keys = keys
+            };
+        }
+        catch (Exception ex) when (ex is not W3StringsException)
+        {
+            // The codec answers with one exception type, with whatever went wrong below as its cause.
+            throw new W3StringsException(UnreadableStream, ex);
+        }
     }
 
     /// <summary>
