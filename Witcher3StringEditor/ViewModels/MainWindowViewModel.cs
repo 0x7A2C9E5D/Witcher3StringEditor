@@ -73,6 +73,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         this.serviceProvider = serviceProvider;
         this.translatorProvider = translatorProvider;
         this.serializer = serializer;
+        // Resolve the dictionary manager at startup so the dictionary directory is scanned while the window is opening
+        _ = serviceProvider.GetRequiredService<IDictionaryManager>();
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
