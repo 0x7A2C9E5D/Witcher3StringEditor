@@ -138,8 +138,10 @@
                 </ResourceDictionary>
             </sf:SfDataGrid.Resources>
             <sf:SfDataGrid.Columns>
-                <sf:GridTextColumn MappingName="Key" HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}" TextWrapping="WrapWithOverflow"/>
-                <sf:GridTextColumn MappingName="Value" HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}" TextWrapping="WrapWithOverflow"/>
+                <sf:GridTextColumn MappingName="Key" HeaderText="{I18N {x:Static l:LangKeys.SourceLanguage}}"
+                                   TextWrapping="WrapWithOverflow" />
+                <sf:GridTextColumn MappingName="Value" HeaderText="{I18N {x:Static l:LangKeys.TargetLanguage}}"
+                                   TextWrapping="WrapWithOverflow" />
             </sf:SfDataGrid.Columns>
             <i:Interaction.Behaviors>
                 <b2:SfDataGridQueryRowHeightBehavior />

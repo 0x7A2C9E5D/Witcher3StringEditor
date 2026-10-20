@@ -64,6 +64,7 @@ internal sealed class InterProcessFileTransferService : IInterProcessFileTransfe
         {
             Log.Warning(ex, "Failed to forward file to the running instance: {FilePath}", filePath);
         }
+
         return Task.CompletedTask;
     }
 
