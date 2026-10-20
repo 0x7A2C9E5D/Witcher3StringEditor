@@ -1,3 +1,8 @@
 ﻿ShowWindow
 SetForegroundWindow
 GetWindowPlacement
+GetWindowThreadProcessId
+AttachThreadInput
+GetCurrentThreadId
+GetForegroundWindow
+BringWindowToTop

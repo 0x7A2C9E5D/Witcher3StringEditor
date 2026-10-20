@@ -73,7 +73,14 @@ internal sealed class SingleInstanceManager(bool isDebug) : IDisposable
         if (PInvoke.GetWindowPlacement(mainWindowHandle, ref placement).Value == 0) return;
         if (placement.showCmd == SHOW_WINDOW_CMD.SW_SHOWMINIMIZED)
             PInvoke.ShowWindow(mainWindowHandle, SHOW_WINDOW_CMD.SW_RESTORE);
+        // SetForegroundWindow is rejected unless the calling thread shares the foreground input queue.
+        // Attach this thread to the current foreground window's thread, bring the window up, then detach.
+        var foregroundThreadId = PInvoke.GetWindowThreadProcessId(PInvoke.GetForegroundWindow(), out _);
+        var currentThreadId = PInvoke.GetCurrentThreadId();
+        PInvoke.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+        PInvoke.BringWindowToTop(mainWindowHandle);
         PInvoke.SetForegroundWindow(mainWindowHandle);
+        PInvoke.AttachThreadInput(foregroundThreadId, currentThreadId, false);
     }
 
     /// <summary>

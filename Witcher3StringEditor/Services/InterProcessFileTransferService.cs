@@ -47,7 +47,6 @@ internal sealed class InterProcessFileTransferService : IInterProcessFileTransfe
     ///     Sends a file path to an already running instance of the application
     /// </summary>
     /// <param name="filePath">The path of the file to open in the running instance</param>
-    /// <returns>True when the running instance received the file path, false otherwise</returns>
     /// <exception cref="ObjectDisposedException"></exception>
     public void TrySendFileToExistingInstance(string filePath)
     {
