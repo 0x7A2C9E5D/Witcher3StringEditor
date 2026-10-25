@@ -16,7 +16,7 @@ namespace Witcher3StringEditor.Serializers.W3Strings;
 ///     (<see cref="W3StringEntry" />, <see cref="W3KeyEntry" />); this class only says where they sit and
 ///     how they are stored. The two operations that move its bytes are extensions of it — reading the texts
 ///     into a container (<see cref="W3StringsReader.ToContainer" />) and writing the stored form out
-///     (<see cref="W3StringsWriter.Write" />) — so the model never holds a stream of its own.
+///     (<see cref="W3StringsWriter.WriteAsync" />) — so the model never holds a stream of its own.
 /// </remarks>
 internal sealed class W3StringsStorage
 {

@@ -88,7 +88,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             await using (var stream = File.Create(outputW3StringsPath))
             {
                 // Encode off the calling thread, with the version this save chose
-                await Task.Run(() => W3StringsStorage.Of(container, version).Write(stream));
+                await W3StringsStorage.Of(container, version).WriteAsync(stream);
             }
 
             Log.Information("Encoded {Count} item(s) as W3Strings v{Version} to {Path}", w3StringItems.Count,

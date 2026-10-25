@@ -21,13 +21,14 @@ internal static class W3StringsWriter
     ///     decided how the texts are encoded and how their offsets, lengths and buffer size are counted. A
     ///     version below the UTF-8 generation was laid out as 162.
     /// </remarks>
-    public static void Write(this W3StringsStorage storage, Stream output)
+    public static async Task WriteAsync(this W3StringsStorage storage, Stream output)
     {
-        output.Write(storage.Preamble); // The head, both blocks and the size of the string buffer
+        await output.WriteAsync(storage.Preamble); // The head, both blocks and the size of the string buffer
 
         // The texts are laid out in entry order, each closed by the terminator the format asks for.
-        foreach (var entry in storage.Strings) output.Write(storage.BufferBytesOf(entry.Value));
-
-        output.Write(storage.Tail); // The tail half of the language key, which closes the container
+        foreach (var entry in storage.Strings) 
+           await output.WriteAsync(storage.BufferBytesOf(entry.Value));
+        
+        await output.WriteAsync(storage.Tail); // The tail half of the language key, which closes the container
     }
 }

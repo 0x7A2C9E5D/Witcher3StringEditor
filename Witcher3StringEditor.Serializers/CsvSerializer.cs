@@ -77,7 +77,7 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
                 ? "cleartext" // Special case: unobfuscated languages
                 : languageName; // Default: use language name
             await WriteFileWithBackup(Path.Combine(context.OutputDirectory, $"{languageName}.csv"),
-                BuildCsvContent(w3StringItems, csvLanguageIdentifier)); // Write CSV with backup
+                BuildCsvContent(w3StringItems, csvLanguageIdentifier)); // WriteAsync CSV with backup
             return true; // Return success
         }
         catch (Exception ex)
@@ -97,7 +97,7 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
     {
         if (File.Exists(filePath)) // If file exists
             Guard.IsTrue(await backupService.Backup(filePath)); // Create backup
-        await File.WriteAllTextAsync(filePath, content); // Write file
+        await File.WriteAllTextAsync(filePath, content); // WriteAsync file
     }
 
     /// <summary>
