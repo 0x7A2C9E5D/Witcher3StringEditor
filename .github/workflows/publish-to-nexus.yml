@@ -1,9 +1,19 @@
 name: Publish to Nexus Mods
 
-# Manual run: build on a Windows runner, then upload the zip straight to Nexus Mods (v3 API).
-# Two jobs, run in order: Build produces the zip, Upload pushes it. No GitHub Release is created.
+# Manual run, pick the tasks: Build only, Upload only (which builds first), or both.
 on:
   workflow_dispatch:
+    inputs:
+      build:
+        description: "Build"
+        required: false
+        type: boolean
+        default: true
+      upload:
+        description: "Upload to Nexus Mods (implies Build)"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -11,6 +21,7 @@ permissions:
 jobs:
   build:
     name: Build
+    if: ${{ inputs.build || inputs.upload }}
     runs-on: windows-latest
     outputs:
       version: ${{ steps.nbgv.outputs.version }}
@@ -91,6 +102,7 @@ jobs:
   upload:
     name: Upload
     needs: build
+    if: ${{ inputs.upload }}
     runs-on: windows-latest
     # Queue instead of racing: two uploads into the same file chain would both create versions
     concurrency:
