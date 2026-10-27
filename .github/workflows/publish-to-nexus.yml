@@ -1,16 +1,9 @@
 name: Publish to Nexus Mods
 
 # Manual run: build on a Windows runner, then upload the zip straight to Nexus Mods (v3 API).
-# Split into two jobs so the build stays reusable and observable, and the publish can be skipped
-# (dry run) or retried without rebuilding. No GitHub Release is created.
+# Two jobs, run in order: Build produces the zip, Upload pushes it. No GitHub Release is created.
 on:
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: "Build only, skip the publish job"
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -95,10 +88,9 @@ jobs:
           path: dist/*.zip
           if-no-files-found: error
 
-  publish:
+  upload:
     name: Upload
     needs: build
-    if: ${{ !inputs.dry_run }}
     runs-on: windows-latest
     # Queue instead of racing: two uploads into the same file chain would both create versions
     concurrency:
