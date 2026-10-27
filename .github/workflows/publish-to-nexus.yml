@@ -43,12 +43,13 @@ jobs:
 
       # Witcher3StringEditor.NexusIntegration generates its GraphQL client through the ZeroQL
       # CLI at build time (ZeroQL.props runs `dotnet zeroql` and fails the build when it is
-      # missing). Keep this version in sync with the ZeroQL PackageReference.
-      - name: Install ZeroQL CLI
+      # missing). The tool is a local tool declared in .config/dotnet-tools.json: a global
+      # install is not enough, because the SDK only resolves `dotnet zeroql` from the manifest.
+      - name: Restore ZeroQL CLI
         shell: pwsh
         run: |
-          dotnet tool install --global ZeroQL.CLI --version 8.0.0
-          "$env:USERPROFILE\.dotnet\tools" >> $env:GITHUB_PATH
+          dotnet tool restore
+          dotnet zeroql --version
 
       # SimpleVersion is the x.y.z base with the height, the prerelease tag and the -g<hash>
       # suffix stripped: "2.0.5" for version.json "2.0.5" (for a two-part "2.0" it is 2.0.<height>).
