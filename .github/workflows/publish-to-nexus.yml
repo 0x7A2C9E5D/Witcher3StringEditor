@@ -59,17 +59,29 @@ jobs:
           "version=$v" >> $env:GITHUB_OUTPUT
           "NBGV SimpleVersion: $v"
 
-      # The licence lives only in a secret (base64). It is restored byte-for-byte here,
-      # so neither the repository nor the logs ever contain it in plain text.
+      # The licence lives only in a secret, so neither the repository nor the logs contain it.
+      # Preferred: SYNCFUSION_LICENSE_B64 (byte-for-byte restore). Fallback: SYNCFUSION_LICENSE
+      # as plain text, for when the key was pasted straight from the portal.
       - name: Restore Syncfusion licence
         shell: pwsh
         env:
           SYNCFUSION_LICENSE_B64: ${{ secrets.SYNCFUSION_LICENSE_B64 }}
+          SYNCFUSION_LICENSE: ${{ secrets.SYNCFUSION_LICENSE }}
         run: |
-          if (-not $env:SYNCFUSION_LICENSE_B64) { throw "Secret SYNCFUSION_LICENSE_B64 is not configured" }
-          $bytes = [Convert]::FromBase64String($env:SYNCFUSION_LICENSE_B64)
-          [IO.File]::WriteAllBytes((Join-Path $PWD 'Witcher3StringEditor\Syncfusion.lic'), $bytes)
-          "Licence restored: $($bytes.Length) bytes"
+          $path = Join-Path $PWD 'Witcher3StringEditor\Syncfusion.lic'
+          if ($env:SYNCFUSION_LICENSE_B64) {
+            $bytes = [Convert]::FromBase64String($env:SYNCFUSION_LICENSE_B64)
+            [IO.File]::WriteAllBytes($path, $bytes)
+            "Licence restored from base64: $($bytes.Length) bytes"
+          }
+          elseif ($env:SYNCFUSION_LICENSE) {
+            $text = $env:SYNCFUSION_LICENSE.Trim()
+            Set-Content -Path $path -Value $text -NoNewline
+            "Licence restored from plain text: $($text.Length) chars"
+          }
+          else {
+            throw "Neither SYNCFUSION_LICENSE_B64 nor SYNCFUSION_LICENSE is configured"
+          }
 
       - name: Publish
         run: dotnet publish Witcher3StringEditor\Witcher3StringEditor.csproj -c Release -o dist\app
