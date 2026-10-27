@@ -358,10 +358,3 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-
-# Fody - auto-generated XML schema
-FodyWeavers.xsd
-/Witcher3StringEditor/License.txt
-/.idea/.idea.Witcher3StringEditor/.idea
-*.yaml
-/Witcher3StringEditor/NexusApiKey.txt
