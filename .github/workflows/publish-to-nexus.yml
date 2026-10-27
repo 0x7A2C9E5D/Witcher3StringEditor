@@ -1,0 +1,134 @@
+name: Publish to Nexus Mods
+
+# Manual run: build on a Windows runner, then upload the zip straight to Nexus Mods (v3 API).
+# Split into two jobs so the build stays reusable and observable, and the publish can be skipped
+# (dry run) or retried without rebuilding. No GitHub Release is created.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build only, skip the publish job"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.nbgv.outputs.version }}
+      changelog: ${{ steps.cl.outputs.changelog }}
+    env:
+      DOTNET_NOLOGO: "true"
+      DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # NBGV derives the version height from the commit count; a shallow clone miscounts it
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # SimpleVersion is the x.y.z base with the height, the prerelease tag and the -g<hash>
+      # suffix stripped: "2.0.5" for version.json "2.0.5" (for a two-part "2.0" it is 2.0.<height>).
+      # Nexus must keep this shape: the app compares the Nexus version with AssemblyFileVersion
+      # through System.Version, so a prerelease string there silently disables the update check.
+      # Because the suffix is stripped, every branch yields the same number: publish from master.
+      - name: Read version from NBGV
+        id: nbgv
+        shell: pwsh
+        run: |
+          $toolPath = Join-Path $env:RUNNER_TEMP 'nbgv'
+          dotnet tool install nbgv --version 3.10.94 --tool-path $toolPath | Out-Null
+          $v = (& (Join-Path $toolPath 'nbgv.exe') get-version -v SimpleVersion).Trim()
+          if ($v -notmatch '^\d+(\.\d+){1,3}$') {
+            throw "Unexpected NBGV version '$v': Nexus needs a numeric version because the app compares it with AssemblyFileVersion via System.Version"
+          }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          "NBGV SimpleVersion: $v"
+
+      # The licence lives only in a secret (base64). It is restored byte-for-byte here,
+      # so neither the repository nor the logs ever contain it in plain text.
+      - name: Restore Syncfusion licence
+        shell: pwsh
+        env:
+          SYNCFUSION_LICENSE_B64: ${{ secrets.SYNCFUSION_LICENSE_B64 }}
+        run: |
+          if (-not $env:SYNCFUSION_LICENSE_B64) { throw "Secret SYNCFUSION_LICENSE_B64 is not configured" }
+          $bytes = [Convert]::FromBase64String($env:SYNCFUSION_LICENSE_B64)
+          [IO.File]::WriteAllBytes((Join-Path $PWD 'Witcher3StringEditor\Syncfusion.lic'), $bytes)
+          "Licence restored: $($bytes.Length) bytes"
+
+      - name: Publish
+        run: dotnet publish Witcher3StringEditor\Witcher3StringEditor.csproj -c Release -o dist\app
+
+      - name: Create release zip
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.nbgv.outputs.version }}
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path dist\app\* -DestinationPath "dist\Witcher3StringEditor-$env:VERSION.zip"
+
+      - name: Generate changelog
+        id: cl
+        shell: pwsh
+        run: |
+          $body = "Released on " + (Get-Date -Format 'yyyy-MM-dd') + "`n`n" +
+                  (git log -n 20 --no-merges --pretty=format:'- %s')
+          "changelog<<EOF" | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
+          $body            | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
+          "EOF"            | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Witcher3StringEditor-${{ steps.nbgv.outputs.version }}
+          path: dist/*.zip
+          if-no-files-found: error
+
+  publish:
+    name: Upload
+    needs: build
+    if: ${{ !inputs.dry_run }}
+    runs-on: windows-latest
+    # Queue instead of racing: two uploads into the same file chain would both create versions
+    concurrency:
+      group: nexus-publish
+      cancel-in-progress: false
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Witcher3StringEditor-${{ needs.build.outputs.version }}
+          path: dist
+
+      - name: Upload to Nexus Mods
+        id: nexus
+        uses: Nexus-Mods/upload-action@v1.0.0-beta.11
+        with:
+          api_key: ${{ secrets.NEXUSMODS_API_KEY }}
+          file_id: ${{ secrets.NEXUSMODS_FILE_ID }}   # Files tab -> Advanced -> "Short Unique File ID" (e.g. Hby1OzHut)
+          mod_id: ${{ secrets.NEXUSMODS_MOD_ID }}     # same dialog -> "Unique Mod ID" (e.g. 408808875824); required for the changelog
+          filename: dist/Witcher3StringEditor-${{ needs.build.outputs.version }}.zip
+          display_name: Witcher3StringEditor ${{ needs.build.outputs.version }}
+          version: ${{ needs.build.outputs.version }}
+          category: main                        # file_category
+          primary_mod_manager_download: false   # not the default download for mod managers
+          allow_mod_manager_download: false     # this is a desktop app, not a game mod: no "Download with Manager"
+          update_mod_version: true              # mod page version follows the file version
+          changelog: ${{ needs.build.outputs.changelog }}
+
+      - name: Write job summary
+        shell: pwsh
+        run: |
+          "Version: ${{ needs.build.outputs.version }}" >> $env:GITHUB_STEP_SUMMARY
+          "Nexus file version id: ${{ steps.nexus.outputs.version_id }}" >> $env:GITHUB_STEP_SUMMARY
