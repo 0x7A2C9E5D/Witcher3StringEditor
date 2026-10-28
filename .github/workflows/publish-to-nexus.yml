@@ -137,11 +137,14 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $headers = @{ apikey = $env:API_KEY }
           try {
-            $files = (Invoke-RestMethod -Uri "https://api.nexusmods.com/v3/mods/$env:MOD_ID/files" -Headers $headers).data
+            $raw = (Invoke-RestMethod -Uri "https://api.nexusmods.com/v3/mods/$env:MOD_ID/files" -Headers $headers).data
           }
           catch {
             throw "GET /mods/<MOD_ID>/files failed: $($_.Exception.Message). Check NEXUSMODS_MOD_ID (the 'Unique Mod ID', e.g. 408808875824)."
           }
+          # The payload is { data: { mod_files: [ { id, name } ] } }
+          $files = @($raw.mod_files)
+          if ($files.Count -eq 0) { $files = @($raw) }
           "Mod has $($files.Count) file(s):"
           $files | ForEach-Object { "  id=$($_.id)  name=$($_.name)" }
           if (-not ($files | Where-Object { [string]$_.id -eq $env:FILE_ID })) {
