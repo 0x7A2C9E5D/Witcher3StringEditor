@@ -51,23 +51,22 @@ jobs:
           dotnet tool restore
           dotnet zeroql --version
 
-      # SimpleVersion is the x.y.z base with the height, the prerelease tag and the -g<hash>
-      # suffix stripped: "2.0.5" for version.json "2.0.5" (for a two-part "2.0" it is 2.0.<height>).
-      # Nexus must keep this shape: the app compares the Nexus version with AssemblyFileVersion
-      # through System.Version, so a prerelease string there silently disables the update check.
-      # Because the suffix is stripped, every branch yields the same number: publish from master.
+      # Use NBGV's AssemblyFileVersion: the four-part version the app itself reports
+      # (version.json "2.0.5" plus the git height as the revision, e.g. 2.0.5.1).
+      # That matches the versions already on the Nexus page (2.0.5.1, 2.0.4.1) and keeps the
+      # value comparable, because the app compares the Nexus version with System.Version.
       - name: Read version from NBGV
         id: nbgv
         shell: pwsh
         run: |
           $toolPath = Join-Path $env:RUNNER_TEMP 'nbgv'
           dotnet tool install nbgv --version 3.10.94 --tool-path $toolPath | Out-Null
-          $v = (& (Join-Path $toolPath 'nbgv.exe') get-version -v SimpleVersion).Trim()
+          $v = (& (Join-Path $toolPath 'nbgv.exe') get-version -v AssemblyFileVersion).Trim()
           if ($v -notmatch '^\d+(\.\d+){1,3}$') {
             throw "Unexpected NBGV version '$v': Nexus needs a numeric version because the app compares it with AssemblyFileVersion via System.Version"
           }
           "version=$v" >> $env:GITHUB_OUTPUT
-          "NBGV SimpleVersion: $v"
+          "NBGV AssemblyFileVersion: $v"
 
       # The licence lives only in the SYNCFUSION_LICENSE secret, so neither the repository
       # nor the logs ever contain it. The value is the raw key text from Syncfusion.lic.
