@@ -28,7 +28,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="35.1.41" />
+        <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="35.1.42" />
         <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
         <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.14" />
         <PackageReference Include="ZString" Version="2.6.0"/>
