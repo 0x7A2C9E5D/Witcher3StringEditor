@@ -125,6 +125,30 @@ jobs:
           name: Witcher3StringEditor-${{ needs.build.outputs.version }}
           path: dist
 
+      # Fail before uploading ~20 MB: a wrong NEXUSMODS_FILE_ID otherwise surfaces as a 404
+      # only after the upload session has been created. On mismatch, print the ids that do exist.
+      - name: Verify Nexus target
+        shell: pwsh
+        env:
+          API_KEY: ${{ secrets.NEXUSMODS_API_KEY }}
+          MOD_ID: ${{ secrets.NEXUSMODS_MOD_ID }}
+          FILE_ID: ${{ secrets.NEXUSMODS_FILE_ID }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $headers = @{ apikey = $env:API_KEY }
+          try {
+            $files = (Invoke-RestMethod -Uri "https://api.nexusmods.com/v3/mods/$env:MOD_ID/files" -Headers $headers).data
+          }
+          catch {
+            throw "GET /mods/<MOD_ID>/files failed: $($_.Exception.Message). Check NEXUSMODS_MOD_ID (the 'Unique Mod ID', e.g. 408808875824)."
+          }
+          "Mod has $($files.Count) file(s):"
+          $files | ForEach-Object { "  id=$($_.id)  name=$($_.name)" }
+          if (-not ($files | Where-Object { [string]$_.id -eq $env:FILE_ID })) {
+            throw "NEXUSMODS_FILE_ID does not match any id above; pick one of them."
+          }
+          "NEXUSMODS_FILE_ID matches a file of this mod."
+
       - name: Upload to Nexus Mods
         id: nexus
         uses: Nexus-Mods/upload-action@v1.0.0-beta.11
