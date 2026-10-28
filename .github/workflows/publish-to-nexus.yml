@@ -147,7 +147,7 @@ jobs:
           if ($files.Count -eq 0) { $files = @($raw) }
           "Mod has $($files.Count) file(s):"
           $files | ForEach-Object { "  id=$($_.id)  name=$($_.name)" }
-          if (-not ($files | Where-Object { [string]$_.id -eq $env:FILE_ID })) {
+          if (-not ($files | Where-Object { [string]$_.id -eq $env:FILE_ID.Trim() })) {
             throw "NEXUSMODS_FILE_ID does not match any id above; pick one of them."
           }
           "NEXUSMODS_FILE_ID matches a file of this mod."
