@@ -159,12 +159,13 @@ jobs:
           file_id: ${{ secrets.NEXUSMODS_FILE_ID }}   # Files tab -> Advanced -> "Short Unique File ID" (e.g. Hby1OzHut)
           mod_id: ${{ secrets.NEXUSMODS_MOD_ID }}     # same dialog -> "Unique Mod ID" (e.g. 408808875824); required for the changelog
           filename: dist/Witcher3StringEditor-${{ needs.build.outputs.version }}.zip
-          display_name: Witcher3StringEditor ${{ needs.build.outputs.version }}
+          display_name: The Witcher3 String Editor   # no version in the name; the version field carries it
           version: ${{ needs.build.outputs.version }}
           category: main                        # file_category
           primary_mod_manager_download: false   # not the default download for mod managers
           allow_mod_manager_download: false     # this is a desktop app, not a game mod: no "Download with Manager"
           update_mod_version: true              # mod page version follows the file version
+          archive_existing_version: true        # move the previous version to "old" instead of leaving it active
           changelog: ${{ needs.build.outputs.changelog }}
 
       - name: Write job summary
