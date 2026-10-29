@@ -26,9 +26,9 @@ internal static class W3StringsWriter
         await output.WriteAsync(storage.Preamble); // The head, both blocks and the size of the string buffer
 
         // The texts are laid out in entry order, each closed by the terminator the format asks for.
-        foreach (var entry in storage.Strings) 
-           await output.WriteAsync(storage.BufferBytesOf(entry.Value));
-        
+        foreach (var entry in storage.Strings)
+            await output.WriteAsync(storage.BufferBytesOf(entry.Value));
+
         await output.WriteAsync(storage.Tail); // The tail half of the language key, which closes the container
     }
 }
