@@ -69,14 +69,14 @@ internal sealed class InstanceRegistry : IInstanceRegistry
     public void Register(Guid instanceId, string address)
     {
         Directory.CreateDirectory(AppPaths.ClusterRegistryDirectory);
-        WithRegistryLock(() =>
+        WithMutexLock(() =>
         {
-            var registrations = Load();
+            var registrations = LoadRegistrations();
             registrations.RemoveAll(x => !IsAlive(x));
             registrations.RemoveAll(x => x.InstanceId == instanceId);
             registrations.Add(new InstanceRegistration(instanceId, address,
                 Environment.ProcessId, DateTime.UtcNow));
-            Save(registrations);
+            SaveRegistrations(registrations);
         });
         StartHeartbeat(instanceId);
     }
@@ -88,11 +88,11 @@ internal sealed class InstanceRegistry : IInstanceRegistry
     {
         if (!File.Exists(filePath)) return [];
         IReadOnlyList<InstanceRegistration> live = [];
-        WithRegistryLock(() =>
+        WithMutexLock(() =>
         {
-            var registrations = Load();
+            var registrations = LoadRegistrations();
             live = [.. registrations.Where(IsAlive)];
-            if (live.Count != registrations.Count) Save(live);
+            if (live.Count != registrations.Count) SaveRegistrations(live);
         });
         return live;
     }
@@ -104,11 +104,11 @@ internal sealed class InstanceRegistry : IInstanceRegistry
     {
         StopHeartbeat();
         if (!File.Exists(filePath)) return;
-        WithRegistryLock(() =>
+        WithMutexLock(() =>
         {
-            var registrations = Load();
+            var registrations = LoadRegistrations();
             if (registrations.RemoveAll(x => x.InstanceId == instanceId) > 0)
-                Save(registrations);
+                SaveRegistrations(registrations);
         });
     }
 
@@ -119,7 +119,7 @@ internal sealed class InstanceRegistry : IInstanceRegistry
     private void StartHeartbeat(Guid instanceId)
     {
         StopHeartbeat();
-        heartbeat = new Timer(_ => Touch(instanceId), null, HeartbeatInterval, HeartbeatInterval);
+        heartbeat = new Timer(_ => Heartbeat(instanceId), null, HeartbeatInterval, HeartbeatInterval);
     }
 
     private void StopHeartbeat()
@@ -127,20 +127,20 @@ internal sealed class InstanceRegistry : IInstanceRegistry
         Interlocked.Exchange(ref heartbeat, null)?.Dispose();
     }
 
-    private void Touch(Guid instanceId)
+    private void Heartbeat(Guid instanceId)
     {
         if (!File.Exists(filePath)) return;
-        WithRegistryLock(() =>
+        WithMutexLock(() =>
         {
-            var registrations = Load();
+            var registrations = LoadRegistrations();
             var index = registrations.FindIndex(x => x.InstanceId == instanceId);
             if (index < 0) return;
             registrations[index] = registrations[index] with { UpdatedAtUtc = DateTime.UtcNow };
-            Save(registrations);
+            SaveRegistrations(registrations);
         });
     }
 
-    private void WithRegistryLock(Action action)
+    private void WithMutexLock(Action action)
     {
         using var mutex = new Mutex(false, mutexName);
         var acquired = false;
@@ -163,7 +163,7 @@ internal sealed class InstanceRegistry : IInstanceRegistry
         }
     }
 
-    private List<InstanceRegistration> Load()
+    private List<InstanceRegistration> LoadRegistrations()
     {
         try
         {
@@ -178,7 +178,7 @@ internal sealed class InstanceRegistry : IInstanceRegistry
         }
     }
 
-    private void Save(IReadOnlyCollection<InstanceRegistration> registrations)
+    private void SaveRegistrations(IReadOnlyCollection<InstanceRegistration> registrations)
     {
         try
         {

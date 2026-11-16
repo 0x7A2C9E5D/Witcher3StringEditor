@@ -58,20 +58,33 @@ internal sealed class RaftNodeHost
 
         var wal = new WriteAheadLog(
             new WriteAheadLog.Options { Location = stateDirectory.FullName }, machine);
-        var configuration = new RaftCluster.TcpConfiguration(localEndpoint)
+
+        RaftCluster? raftNode = null;
+        try
         {
-            ColdStart = coldStart,
-            ConfigurationStorage = null, // in-memory membership, rebuilt from the instance registry
-            LowerElectionTimeout = 500,
-            UpperElectionTimeout = 1200,
-            RequestTimeout = TimeSpan.FromSeconds(5),
-            GracefulShutdownTimeout = TimeSpan.FromSeconds(2)
-        };
+            raftNode = new RaftCluster(new RaftCluster.TcpConfiguration(localEndpoint)
+            {
+                ColdStart = coldStart,
+                ConfigurationStorage = null, // in-memory membership, rebuilt from the instance registry
+                LowerElectionTimeout = 500,
+                UpperElectionTimeout = 1200,
+                RequestTimeout = TimeSpan.FromSeconds(5),
+                GracefulShutdownTimeout = TimeSpan.FromSeconds(2)
+            }) { AuditTrail = wal };
+            raftNode.LeaderChanged += OnLeaderChanged;
 
-        var raftNode = new RaftCluster(configuration) { AuditTrail = wal };
-        raftNode.LeaderChanged += OnLeaderChanged;
-
-        await raftNode.StartAsync(token).ConfigureAwait(false);
+            await raftNode.StartAsync(token).ConfigureAwait(false);
+        }
+        catch
+        {
+            // A failed start leaves the log handles and the snapshot subscription behind;
+            // releasing them keeps a later start from hitting a file this process still holds.
+            if (raftNode is not null) raftNode.LeaderChanged -= OnLeaderChanged;
+            machine.SnapshotProduced -= OnSnapshotProduced;
+            stateMachine = null;
+            await wal.DisposeAsync().ConfigureAwait(false);
+            throw;
+        }
 
         auditTrail = wal;
         Volatile.Write(ref node, raftNode);
