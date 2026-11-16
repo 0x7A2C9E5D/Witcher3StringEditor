@@ -50,13 +50,13 @@ internal static class SharedRecordCodec
         return BackupPrefix + backupPath.Trim().ToLowerInvariant();
     }
 
-    public static string EncodeRecent(IRecentFileEntry entry, Guid origin)
+    public static string EncodeRecent(IRecentFileEntry entry)
     {
         return JsonSerializer.Serialize(new RecentFilePayload(
             entry.FilePath, entry.OpenedTime, entry.IsMarked));
     }
 
-    public static string EncodeBackup(IBackupItem item, Guid origin)
+    public static string EncodeBackup(IBackupItem item)
     {
         return JsonSerializer.Serialize(new BackupPayload(
             item.FileName, item.Hash, item.OrginPath, item.BackupPath, item.BackupTime));
@@ -66,7 +66,7 @@ internal static class SharedRecordCodec
     ///     Tombstone for a deleted recent file. Kept as a normal LWW value so late joiners
     ///     receive a versioned deletion instead of re-seeding a stale record from disk.
     /// </summary>
-    public static string EncodeDeletedRecent(string filePath, Guid origin)
+    public static string EncodeDeletedRecent(string filePath)
     {
         return JsonSerializer.Serialize(new RecentFilePayload(
             filePath, DateTime.UtcNow, false, true));
@@ -75,7 +75,7 @@ internal static class SharedRecordCodec
     /// <summary>
     ///     Tombstone for a deleted backup record.
     /// </summary>
-    public static string EncodeDeletedBackup(IBackupItem item, Guid origin)
+    public static string EncodeDeletedBackup(IBackupItem item)
     {
         return JsonSerializer.Serialize(new BackupPayload(
             item.FileName, item.Hash, item.OrginPath, item.BackupPath, DateTime.UtcNow, true));

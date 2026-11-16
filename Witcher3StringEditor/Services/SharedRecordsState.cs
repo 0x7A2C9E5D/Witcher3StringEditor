@@ -54,10 +54,10 @@ internal sealed class SharedRecordsState(IAppSettings appSettings, ISettingsPers
         {
             foreach (var item in RecentItems)
                 recent[SharedRecordCodec.RecentKey(item.FilePath)] =
-                    SharedRecordCodec.EncodeRecent(item, InstanceId);
+                    SharedRecordCodec.EncodeRecent(item);
             foreach (var item in BackupItems)
                 backups[SharedRecordCodec.BackupKey(item.BackupPath)] =
-                    SharedRecordCodec.EncodeBackup(item, InstanceId);
+                    SharedRecordCodec.EncodeBackup(item);
         });
         return new SharedRecordsSnapshot(recent, backups);
     }
@@ -72,13 +72,13 @@ internal sealed class SharedRecordsState(IAppSettings appSettings, ISettingsPers
             if (existing is not null)
             {
                 existing.OpenedTime = openedTime;
-                value = SharedRecordCodec.EncodeRecent(existing, InstanceId);
+                value = SharedRecordCodec.EncodeRecent(existing);
             }
             else
             {
                 var item = new RecentItem(filePath, openedTime);
                 RecentItems.Add(item);
-                value = SharedRecordCodec.EncodeRecent(item, InstanceId);
+                value = SharedRecordCodec.EncodeRecent(item);
             }
         });
         Publish(SharedRecordCodec.RecentKey(filePath),
@@ -92,7 +92,7 @@ internal sealed class SharedRecordsState(IAppSettings appSettings, ISettingsPers
         Publish(SharedRecordCodec.RecentKey(entry.FilePath),
             new DeleteSharedRecord(
                 SharedRecordCodec.RecentKey(entry.FilePath),
-                SharedRecordCodec.EncodeDeletedRecent(entry.FilePath, InstanceId), false));
+                SharedRecordCodec.EncodeDeletedRecent(entry.FilePath), false));
         ScheduleSave();
     }
 
@@ -115,7 +115,7 @@ internal sealed class SharedRecordsState(IAppSettings appSettings, ISettingsPers
         Publish(SharedRecordCodec.BackupKey(item.BackupPath),
             new UpsertSharedRecord(
                 SharedRecordCodec.BackupKey(item.BackupPath),
-                SharedRecordCodec.EncodeBackup(item, InstanceId), true));
+                SharedRecordCodec.EncodeBackup(item), true));
         ScheduleSave();
     }
 
@@ -130,7 +130,7 @@ internal sealed class SharedRecordsState(IAppSettings appSettings, ISettingsPers
         Publish(SharedRecordCodec.BackupKey(item.BackupPath),
             new DeleteSharedRecord(
                 SharedRecordCodec.BackupKey(item.BackupPath),
-                SharedRecordCodec.EncodeDeletedBackup(item, InstanceId), true));
+                SharedRecordCodec.EncodeDeletedBackup(item), true));
         ScheduleSave();
     }
 
@@ -316,7 +316,7 @@ internal sealed class SharedRecordsState(IAppSettings appSettings, ISettingsPers
             {
                 FileName = payload.FileName,
                 Hash = payload.Hash,
-                OrginPath = payload.OrginPath,
+                OrginPath = payload.OriginPath,
                 BackupPath = payload.BackupPath,
                 BackupTime = payload.BackupTime
             };

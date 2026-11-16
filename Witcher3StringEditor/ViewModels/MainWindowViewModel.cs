@@ -303,7 +303,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         {
             if (!await HandleReOpenFile()) return; // Handle reopening file logic
             W3StringItems = (await DeserializeW3StringItems(fileName))
-                .OrderBy(x => x.StrId, StringComparer.InvariantCulture).ToObservableCollection(); // Deserialize file contents
+                .OrderBy(x => x.StrId, StringComparer.InvariantCulture)
+                .ToObservableCollection(); // Deserialize file contents
             OutputFolder = Path.GetDirectoryName(fileName)!; // Set output folder based on file location
             recentFilesService.AddOrUpdateRecentFile(fileName); // Update recent items list
             SearchText = string.Empty; // Clear search text

@@ -9,8 +9,6 @@ namespace Witcher3StringEditor.Services;
 /// </summary>
 internal interface ISharedRecordsState
 {
-    Guid InstanceId { get; }
-
     ObservableCollection<IRecentFileEntry> RecentItems { get; }
 
     ObservableCollection<IBackupItem> BackupItems { get; }
