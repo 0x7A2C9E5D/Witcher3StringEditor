@@ -157,7 +157,7 @@ internal sealed class ClusterMembership(
     /// <summary>
     ///     Adds every live peer that is not a cluster member yet.
     /// </summary>
-    private static async Task AddMissingMembersAsync(RaftCluster node, IReadOnlySet<string> liveAddresses,
+    private static async Task AddMissingMembersAsync(RaftCluster node, HashSet<string> liveAddresses,
         IReadOnlyList<IClusterMember> remoteMembers, CancellationToken token)
     {
         var memberAddresses = remoteMembers
@@ -175,7 +175,7 @@ internal sealed class ClusterMembership(
     /// <summary>
     ///     Removes the cluster members whose instance is no longer live.
     /// </summary>
-    private static async Task RemoveStaleMembersAsync(RaftCluster node, IReadOnlySet<string> liveAddresses,
+    private static async Task RemoveStaleMembersAsync(RaftCluster node, HashSet<string> liveAddresses,
         IReadOnlyList<IClusterMember> remoteMembers, CancellationToken token)
     {
         foreach (var endpoint in remoteMembers
