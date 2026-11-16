@@ -1,6 +1,6 @@
 using GTranslate.Translators;
 
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Providers;
 
 /// <summary>
 ///     Provides access to the registered translation services

@@ -4,7 +4,7 @@ using System.Text.Json;
 using Serilog;
 using Witcher3StringEditor.Miscellaneous;
 
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Cluster;
 
 /// <summary>
 ///     Metadata describing one running instance of the application.

@@ -11,7 +11,7 @@ namespace Witcher3StringEditor.Services;
 /// <summary>
 ///     Provides backup functionality for files, with records replicated across instances.
 /// </summary>
-internal class BackupService(ISharedRecordsState sharedRecords) : IBackupService
+internal class BackupService(ISharedRecordsService sharedRecords) : IBackupService
 {
     /// <summary>
     ///     Creates a backup of the specified file.

@@ -1,11 +1,22 @@
 using Akka.Actor;
-using Akka.Cluster;
 using Akka.DistributedData;
 using Serilog;
+using Witcher3StringEditor.Services;
 using static Akka.DistributedData.Dsl;
+using AkkaCluster = Akka.Cluster.Cluster;
 using ReadConsistency = Akka.DistributedData.ReadLocal;
 
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Cluster;
+
+/// <summary>
+///     Local write to a shared record in the CRDT map.
+/// </summary>
+internal sealed record UpsertSharedRecord(string Key, string Value, bool IsBackup);
+
+/// <summary>
+///     Local delete of a shared record, carried as a versioned tombstone value.
+/// </summary>
+internal sealed record DeleteSharedRecord(string Key, string Value, bool IsBackup);
 
 /// <summary>
 ///     Akka actor that owns the two in-memory LWW maps. It seeds records loaded from
@@ -23,24 +34,24 @@ internal sealed class SharedRecordsCoordinator : ReceiveActor
     // propagates deletions instead of leaving the last quitter with stale records.
     private static readonly IWriteConsistency WriteAll = new WriteAll(TimeSpan.FromSeconds(2));
     private readonly Dictionary<string, string> backups = new(StringComparer.Ordinal);
-    private readonly Cluster cluster;
+    private readonly AkkaCluster cluster;
     private readonly Dictionary<string, string> pendingBackupSeeds = new(StringComparer.Ordinal);
     private readonly Dictionary<string, string> pendingRecentSeeds = new(StringComparer.Ordinal);
     private readonly Dictionary<string, string> recent = new(StringComparer.Ordinal);
 
     private readonly IActorRef replicator;
-    private readonly ISharedRecordsState state;
+    private readonly ISharedRecordsService state;
     private int initializationCount;
     private bool initialized;
 
     public SharedRecordsCoordinator(
-        ISharedRecordsState state,
+        ISharedRecordsService state,
         IActorRef replicator,
         SharedRecordsSnapshot initialSnapshot)
     {
         this.state = state;
         this.replicator = replicator;
-        cluster = Cluster.Get(Context.System);
+        cluster = AkkaCluster.Get(Context.System);
 
         foreach (var pair in initialSnapshot.RecentFiles)
             pendingRecentSeeds[pair.Key] = pair.Value;

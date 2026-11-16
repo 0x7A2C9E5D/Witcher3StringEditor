@@ -3,28 +3,19 @@ using System.Text;
 using System.Windows;
 using Akka.Actor;
 using Serilog;
+using Witcher3StringEditor.Cluster;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Models;
 
 namespace Witcher3StringEditor.Services;
 
 /// <summary>
-///     Local write to a shared record in the CRDT map.
-/// </summary>
-internal sealed record UpsertSharedRecord(string Key, string Value, bool IsBackup);
-
-/// <summary>
-///     Local delete of a shared record, carried as a versioned tombstone value.
-/// </summary>
-internal sealed record DeleteSharedRecord(string Key, string Value, bool IsBackup);
-
-/// <summary>
 ///     Main-thread facade over the settings collections. Local writes update the collections
 ///     immediately and are sent to the coordinator actor; remote snapshots are materialized
 ///     idempotently on the UI thread.
 /// </summary>
-internal sealed class SharedRecordsState(IAppSettings appSettings, ISettingsPersistenceService settingsPersistence)
-    : ISharedRecordsState
+internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPersistenceService settingsPersistence)
+    : ISharedRecordsService
 {
     private static readonly TimeSpan SaveDebounce = TimeSpan.FromSeconds(2);
     private readonly Lock flushLock = new();
@@ -34,8 +25,6 @@ internal sealed class SharedRecordsState(IAppSettings appSettings, ISettingsPers
     private string? lastSavedSignature;
     private int pendingWrites;
     private CancellationTokenSource? saveDebounceSource;
-
-    public Guid InstanceId { get; } = Guid.NewGuid();
 
     public ObservableCollection<IRecentFileEntry> RecentItems => appSettings.RecentItems;
 

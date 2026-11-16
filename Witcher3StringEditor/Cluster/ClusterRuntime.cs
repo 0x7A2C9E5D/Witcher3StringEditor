@@ -1,10 +1,11 @@
 using Akka.Actor;
-using Akka.Cluster;
 using Akka.Configuration;
 using Akka.DistributedData;
 using Serilog;
+using Witcher3StringEditor.Services;
+using AkkaCluster = Akka.Cluster.Cluster;
 
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Cluster;
 
 /// <summary>
 ///     Owns the lifecycle of the local Akka cluster used for shared record replication.
@@ -21,7 +22,7 @@ internal interface IClusterRuntime
 ///     metadata-only registry, and hosts the shared-records coordinator actor.
 /// </summary>
 internal sealed class ClusterRuntime(
-    ISharedRecordsState state,
+    ISharedRecordsService state,
     InstanceRegistry registry) : IClusterRuntime
 {
     private const string SystemName = "Witcher3StringEditor";
@@ -54,7 +55,7 @@ internal sealed class ClusterRuntime(
     {
         instanceId = Guid.NewGuid();
         system = ActorSystem.Create(SystemName, ClusterConfig);
-        var cluster = Cluster.Get(system);
+        var cluster = AkkaCluster.Get(system);
         var selfAddress = WaitForBoundAddress(cluster);
 
         var peers = registry.Register(instanceId, selfAddress.ToString());
@@ -78,7 +79,7 @@ internal sealed class ClusterRuntime(
             await state.FlushAsync(TimeSpan.FromSeconds(3)).ConfigureAwait(false);
             await Task.Delay(500).ConfigureAwait(false);
             registry.Unregister(instanceId);
-            var cluster = Cluster.Get(system);
+            var cluster = AkkaCluster.Get(system);
             cluster.Leave(cluster.SelfAddress);
             await system.Terminate().WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
         }
@@ -92,7 +93,7 @@ internal sealed class ClusterRuntime(
         }
     }
 
-    private static Address WaitForBoundAddress(Cluster cluster)
+    private static Address WaitForBoundAddress(AkkaCluster cluster)
     {
         var deadline = DateTime.UtcNow.AddSeconds(10);
         while (DateTime.UtcNow < deadline)
@@ -104,7 +105,7 @@ internal sealed class ClusterRuntime(
         return cluster.SelfAddress;
     }
 
-    private static void JoinCluster(Cluster cluster, IReadOnlyList<InstanceRegistration> peers)
+    private static void JoinCluster(AkkaCluster cluster, IReadOnlyList<InstanceRegistration> peers)
     {
         foreach (var address in peers.Select(peer => peer.Address))
             try

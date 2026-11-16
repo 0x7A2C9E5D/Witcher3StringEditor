@@ -7,7 +7,7 @@ using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Serializers.Abstractions;
 
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Factories;
 
 /// <summary>
 ///     Creates dialog view models by resolving their service dependencies from the DI container

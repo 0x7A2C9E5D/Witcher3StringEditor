@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using Akka.Actor;
+using Witcher3StringEditor.Cluster;
 using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Services;
@@ -7,7 +8,7 @@ namespace Witcher3StringEditor.Services;
 /// <summary>
 ///     Bridge between the application settings collections and the Akka DistributedData replicas.
 /// </summary>
-internal interface ISharedRecordsState
+internal interface ISharedRecordsService
 {
     ObservableCollection<IRecentFileEntry> RecentItems { get; }
 

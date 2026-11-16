@@ -1,7 +1,7 @@
 using GTranslate.Translators;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Providers;
 
 /// <summary>
 ///     Resolves translator instances from the dependency injection container on demand

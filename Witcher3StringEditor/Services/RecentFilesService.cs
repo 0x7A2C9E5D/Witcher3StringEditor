@@ -8,7 +8,7 @@ namespace Witcher3StringEditor.Services;
 ///     Provides access to the recent files, backed by the replicated shared records state.
 /// </summary>
 /// <param name="sharedRecords">Shared records bridge.</param>
-internal class RecentFilesService(ISharedRecordsState sharedRecords) : IRecentFilesService
+internal class RecentFilesService(ISharedRecordsService sharedRecords) : IRecentFilesService
 {
     /// <summary>
     ///     Gets the collection of recent files.

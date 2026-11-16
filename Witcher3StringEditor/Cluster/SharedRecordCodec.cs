@@ -2,7 +2,7 @@ using System.Text.Json;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Cluster;
 
 /// <summary>
 ///     Serializable payload of a recently opened file stored in a CRDT map.

@@ -3,7 +3,7 @@
 /// <summary>
 ///     Provides application diagnostics functionality
 /// </summary>
-internal interface IAppDiagnostics
+internal interface IAppDiagnosticsService
 {
     /// <summary>
     ///     Logs information about the application startup

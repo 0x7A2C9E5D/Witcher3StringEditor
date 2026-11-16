@@ -11,14 +11,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Events;
 using Syncfusion.Licensing;
+using Witcher3StringEditor.Cluster;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dialogs.Views;
 using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Dictionary.Implementation;
+using Witcher3StringEditor.Factories;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Models;
+using Witcher3StringEditor.Providers;
 using Witcher3StringEditor.Serializers;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Services;
@@ -95,7 +98,7 @@ public sealed partial class App : IDisposable
     /// </summary>
     private static void LogStartupInfo()
     {
-        Ioc.Default.GetRequiredService<IAppDiagnostics>().LogStartupInfo();
+        Ioc.Default.GetRequiredService<IAppDiagnosticsService>().LogStartupInfo();
     }
 
     /// <summary>
@@ -207,7 +210,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IFileAssociationService, FileAssociationService>()
             .AddSingleton<IStartupFileService, StartupFileService>()
             .AddSingleton<InstanceRegistry>()
-            .AddSingleton<ISharedRecordsState, SharedRecordsState>()
+            .AddSingleton<ISharedRecordsService, SharedRecordsService>()
             .AddSingleton<IClusterRuntime, ClusterRuntime>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
@@ -220,7 +223,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IDialogViewModelFactory, DialogViewModelFactory>()
             .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()
-            .AddSingleton<IAppDiagnostics, AppDiagnostics>()
+            .AddSingleton<IAppDiagnosticsService, AppDiagnosticsService>()
             .AddSingleton<IRecentFilesService, RecentFilesService>()
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());

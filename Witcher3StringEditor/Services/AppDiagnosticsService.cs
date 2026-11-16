@@ -11,10 +11,10 @@ namespace Witcher3StringEditor.Services;
 /// </summary>
 /// <param name="appSettings"></param>
 /// <param name="cultureResolver"></param>
-internal class AppDiagnostics(
+internal class AppDiagnosticsService(
     IAppSettings appSettings,
     ICultureResolver cultureResolver)
-    : IAppDiagnostics
+    : IAppDiagnosticsService
 {
     /// <summary>
     ///     Logs information about the application startup

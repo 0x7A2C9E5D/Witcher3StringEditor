@@ -3,7 +3,7 @@ using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dictionary.Abstractions;
 
-namespace Witcher3StringEditor.Services;
+namespace Witcher3StringEditor.Factories;
 
 /// <summary>
 ///     Centralizes the creation of dialog view models
