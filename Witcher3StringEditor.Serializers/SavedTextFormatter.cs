@@ -16,7 +16,7 @@ namespace Witcher3StringEditor.Serializers;
 ///         wrote.
 ///     </para>
 /// </remarks>
-internal static class SavedTextFormat
+internal static class SavedTextFormatter
 {
     /// <summary>
     ///     The markup a line break is saved as
