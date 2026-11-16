@@ -23,8 +23,21 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
     private string? lastSavedSignature;
     private int pendingWrites;
     private ISharedRecordPublisher? recordPublisher;
-    private Func<bool>? writeAuthority;
     private CancellationTokenSource? saveDebounceSource;
+    private Func<bool>? writeAuthority;
+
+    /// <summary>
+    ///     Whether this instance owns the replicated collections in the settings file. Without a
+    ///     running cluster the instance is on its own, so it keeps writing the records locally.
+    /// </summary>
+    private bool HasWriteAuthority
+    {
+        get
+        {
+            var probe = Volatile.Read(ref writeAuthority);
+            return probe is null || probe();
+        }
+    }
 
     public ObservableCollection<IRecentFileEntry> RecentItems => appSettings.RecentItems;
 
@@ -38,19 +51,6 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
     public void AttachWriteAuthority(Func<bool> isLeader)
     {
         Volatile.Write(ref writeAuthority, isLeader);
-    }
-
-    /// <summary>
-    ///     Whether this instance owns the replicated collections in the settings file. Without a
-    ///     running cluster the instance is on its own, so it keeps writing the records locally.
-    /// </summary>
-    private bool HasWriteAuthority
-    {
-        get
-        {
-            var probe = Volatile.Read(ref writeAuthority);
-            return probe is null || probe();
-        }
     }
 
     public SharedRecordsSnapshot CreateCurrentSnapshot()
