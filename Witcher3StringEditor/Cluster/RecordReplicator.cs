@@ -165,6 +165,7 @@ internal sealed class RecordReplicator(
             refreshPeers();
             ownerId = resolveEndpointOwner(address);
         }
+
         return ownerId is { } id && await SendToPipeAsync(id, payload, token).ConfigureAwait(false);
     }
 

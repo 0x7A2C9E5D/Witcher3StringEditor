@@ -22,9 +22,6 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Update="Nerdbank.GitVersioning">
-            <Version>3.10.94</Version>
-        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
