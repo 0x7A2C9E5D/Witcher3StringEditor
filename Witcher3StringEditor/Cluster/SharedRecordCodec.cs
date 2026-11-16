@@ -47,7 +47,9 @@ internal readonly record struct SharedRecordVersion(long Timestamp, bool IsDelet
     ///     A tombstone wins against a live record created at the same instant.
     /// </summary>
     public bool Supersedes(SharedRecordVersion other)
-        => Timestamp > other.Timestamp || (Timestamp == other.Timestamp && IsDeleted && !other.IsDeleted);
+    {
+        return Timestamp > other.Timestamp || (Timestamp == other.Timestamp && IsDeleted && !other.IsDeleted);
+    }
 }
 
 /// <summary>

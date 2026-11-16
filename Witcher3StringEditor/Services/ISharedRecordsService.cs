@@ -25,7 +25,7 @@ internal interface ISharedRecordsService
 
     void DeleteBackup(IBackupItem item);
 
-    void TryApplyRemote(SharedRecordCommand command);
+    void ApplySnapshot(SharedRecordsSnapshot snapshot);
 
     void NotifyUpdateCompleted(string key);
 

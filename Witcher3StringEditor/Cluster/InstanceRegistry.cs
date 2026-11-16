@@ -33,6 +33,14 @@ internal sealed class InstanceRegistry : IDisposable
     private Timer? heartbeat;
 
     /// <summary>
+    ///     Stops the heartbeat timer.
+    /// </summary>
+    public void Dispose()
+    {
+        StopHeartbeat();
+    }
+
+    /// <summary>
     ///     Registers the current instance. The address is the named pipe through which peers
     ///     exchange shared records.
     /// </summary>
@@ -90,14 +98,6 @@ internal sealed class InstanceRegistry : IDisposable
     {
         StopHeartbeat();
         heartbeat = new Timer(_ => Touch(instanceId), null, HeartbeatInterval, HeartbeatInterval);
-    }
-
-    /// <summary>
-    ///     Stops the heartbeat timer.
-    /// </summary>
-    public void Dispose()
-    {
-        StopHeartbeat();
     }
 
     private void StopHeartbeat()

@@ -19,11 +19,10 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
     private static readonly TimeSpan SaveDebounce = TimeSpan.FromSeconds(2);
     private readonly Lock flushLock = new();
     private readonly HashSet<string> pendingKeys = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, SharedRecordVersion> tombstones = new(StringComparer.Ordinal);
-    private ISharedRecordPublisher? recordPublisher;
     private TaskCompletionSource<bool>? flushCompletion;
     private string? lastSavedSignature;
     private int pendingWrites;
+    private ISharedRecordPublisher? recordPublisher;
     private CancellationTokenSource? saveDebounceSource;
 
     public ObservableCollection<IRecentFileEntry> RecentItems => appSettings.RecentItems;
@@ -78,10 +77,9 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
     public void DeleteRecentFile(IRecentFileEntry entry)
     {
         RunOnUiThread(() => RecentItems.Remove(entry));
-        var key = SharedRecordCodec.RecentKey(entry.FilePath);
-        var value = SharedRecordCodec.EncodeDeletedRecent(entry.FilePath);
-        RememberTombstone(key, SharedRecordCodec.GetVersion(false, value));
-        Publish(new SharedRecordCommand(key, value, false));
+        Publish(new SharedRecordCommand(
+            SharedRecordCodec.RecentKey(entry.FilePath),
+            SharedRecordCodec.EncodeDeletedRecent(entry.FilePath), false));
         ScheduleSave();
     }
 
@@ -115,130 +113,24 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
                 string.Equals(x.BackupPath, item.BackupPath, StringComparison.OrdinalIgnoreCase));
             if (existing is not null) BackupItems.Remove(existing);
         });
-        var key = SharedRecordCodec.BackupKey(item.BackupPath);
-        var value = SharedRecordCodec.EncodeDeletedBackup(item);
-        RememberTombstone(key, SharedRecordCodec.GetVersion(true, value));
-        Publish(new SharedRecordCommand(key, value, true));
+        Publish(new SharedRecordCommand(
+            SharedRecordCodec.BackupKey(item.BackupPath),
+            SharedRecordCodec.EncodeDeletedBackup(item), true));
         ScheduleSave();
     }
 
     /// <summary>
-    ///     Applies a record received from another instance. Deletions are remembered for the
-    ///     session so a stale broadcast cannot resurrect a record that was already removed.
+    ///     Materializes the replicated state on the UI thread. Keys with a local write that has
+    ///     not reached the log yet are kept, because the snapshot may still be one step behind.
     /// </summary>
-    public void TryApplyRemote(SharedRecordCommand command)
+    public void ApplySnapshot(SharedRecordsSnapshot snapshot)
     {
-        var applied = false;
-        RunOnUiThread(() => applied = ApplyRemote(command));
-        if (applied) ScheduleSave();
-    }
-
-    private bool ApplyRemote(SharedRecordCommand command)
-    {
-        var incoming = SharedRecordCodec.GetVersion(command.IsBackup, command.Value);
-        if (IsTombstoned(command.Key, incoming)) return false;
-        return command.IsBackup
-            ? ApplyRemoteBackup(command, incoming)
-            : ApplyRemoteRecent(command, incoming);
-    }
-
-    private bool ApplyRemoteRecent(SharedRecordCommand command, SharedRecordVersion incoming)
-    {
-        var payload = SharedRecordCodec.DecodeRecent(command.Value);
-        if (payload is null) return false;
-
-        var existing = RecentItems.FirstOrDefault(x =>
-            string.Equals(SharedRecordCodec.RecentKey(x.FilePath), command.Key, StringComparison.Ordinal));
-
-        if (existing is not null)
+        RunOnUiThread(() =>
         {
-            var current = SharedRecordCodec.GetVersion(false, SharedRecordCodec.EncodeRecent(existing));
-            if (!incoming.Supersedes(current)) return false;
-
-            if (payload.IsDeleted)
-            {
-                RecentItems.Remove(existing);
-                RememberTombstone(command.Key, incoming);
-                return true;
-            }
-
-            existing.OpenedTime = payload.OpenedTime;
-            existing.IsMarked = payload.IsMarked;
-            return true;
-        }
-
-        if (payload.IsDeleted)
-        {
-            RememberTombstone(command.Key, incoming);
-            return false;
-        }
-
-        RecentItems.Add(new RecentItem(payload.FilePath, payload.OpenedTime, payload.IsMarked));
-        return true;
-    }
-
-    private bool ApplyRemoteBackup(SharedRecordCommand command, SharedRecordVersion incoming)
-    {
-        var payload = SharedRecordCodec.DecodeBackup(command.Value);
-        if (payload is null) return false;
-
-        var existing = BackupItems.FirstOrDefault(x =>
-            string.Equals(SharedRecordCodec.BackupKey(x.BackupPath), command.Key, StringComparison.Ordinal));
-
-        if (existing is not null)
-        {
-            var current = SharedRecordCodec.GetVersion(true, SharedRecordCodec.EncodeBackup(existing));
-            if (!incoming.Supersedes(current)) return false;
-
-            if (payload.IsDeleted)
-            {
-                BackupItems.Remove(existing);
-                RememberTombstone(command.Key, incoming);
-                return true;
-            }
-        }
-        else
-        {
-            if (payload.IsDeleted)
-            {
-                RememberTombstone(command.Key, incoming);
-                return false;
-            }
-
-            BackupItems.Add(CreateBackupItem(payload));
-            return true;
-        }
-
-        BackupItems[BackupItems.IndexOf(existing)] = CreateBackupItem(payload);
-        return true;
-    }
-
-    private static BackupItem CreateBackupItem(BackupPayload payload)
-    {
-        return new BackupItem
-        {
-            FileName = payload.FileName,
-            Hash = payload.Hash,
-            OrginPath = payload.OriginPath,
-            BackupPath = payload.BackupPath,
-            BackupTime = payload.BackupTime
-        };
-    }
-
-    private void RememberTombstone(string key, SharedRecordVersion version)
-    {
-        lock (tombstones)
-        {
-            tombstones[key] = version;
-        }
-    }
-
-    private bool IsTombstoned(string key, SharedRecordVersion incoming)
-    {
-        lock (tombstones)
-        {
-            return tombstones.TryGetValue(key, out var tombstone) && !incoming.Supersedes(tombstone);
-        }
+            MaterializeRecent(snapshot.RecentFiles);
+            MaterializeBackups(snapshot.Backups);
+        });
+        ScheduleSave();
     }
 
     public void NotifyUpdateCompleted(string key)
@@ -276,6 +168,75 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
         }
 
         return completion.Task.WaitAsync(timeout, CancellationToken.None);
+    }
+
+    private bool IsPending(string key)
+    {
+        lock (pendingKeys)
+        {
+            return pendingKeys.Contains(key);
+        }
+    }
+
+    private void MaterializeRecent(IReadOnlyDictionary<string, string> snapshot)
+    {
+        for (var i = RecentItems.Count - 1; i >= 0; i--)
+        {
+            var key = SharedRecordCodec.RecentKey(RecentItems[i].FilePath);
+            if (!snapshot.ContainsKey(key) && !IsPending(key))
+                RecentItems.RemoveAt(i);
+        }
+
+        foreach (var pair in snapshot)
+        {
+            var payload = SharedRecordCodec.DecodeRecent(pair.Value);
+            var existing = RecentItems.FirstOrDefault(x =>
+                string.Equals(SharedRecordCodec.RecentKey(x.FilePath), pair.Key, StringComparison.Ordinal));
+            if (payload is null || payload.IsDeleted)
+            {
+                if (existing is not null) RecentItems.Remove(existing);
+                continue;
+            }
+
+            if (existing is null)
+                RecentItems.Add(new RecentItem(payload.FilePath, payload.OpenedTime, payload.IsMarked));
+            else if (existing.OpenedTime != payload.OpenedTime) existing.OpenedTime = payload.OpenedTime;
+        }
+    }
+
+    private void MaterializeBackups(IReadOnlyDictionary<string, string> snapshot)
+    {
+        for (var i = BackupItems.Count - 1; i >= 0; i--)
+        {
+            var key = SharedRecordCodec.BackupKey(BackupItems[i].BackupPath);
+            if (!snapshot.ContainsKey(key) && !IsPending(key))
+                BackupItems.RemoveAt(i);
+        }
+
+        foreach (var pair in snapshot)
+        {
+            var payload = SharedRecordCodec.DecodeBackup(pair.Value);
+            var existing = BackupItems.FirstOrDefault(x =>
+                string.Equals(SharedRecordCodec.BackupKey(x.BackupPath), pair.Key, StringComparison.Ordinal));
+            if (payload is null || payload.IsDeleted)
+            {
+                if (existing is not null) BackupItems.Remove(existing);
+                continue;
+            }
+
+            var item = new BackupItem
+            {
+                FileName = payload.FileName,
+                Hash = payload.Hash,
+                OrginPath = payload.OriginPath,
+                BackupPath = payload.BackupPath,
+                BackupTime = payload.BackupTime
+            };
+            if (existing is null)
+                BackupItems.Add(item);
+            else if (existing.BackupTime != item.BackupTime || existing.Hash != item.Hash)
+                BackupItems[BackupItems.IndexOf(existing)] = item;
+        }
     }
 
     /// <summary>
