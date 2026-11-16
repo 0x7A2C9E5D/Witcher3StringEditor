@@ -27,7 +27,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
     /// <param name="dictionaryService">Dictionary service</param>
     public BatchItemsTranslationViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableStringItem> w3StringItems, int startIndex,
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int startIndex,
         IDialogService dialogService,
         IDictionaryService? dictionaryService = null) : base(appSettings, translator,
         w3StringItems, dialogService, dictionaryService)
@@ -178,7 +178,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     ///     It updates SuccessCount, FailureCount, and PendingCount properties as each item is processed.
     ///     Throws OperationCanceledException if cancellation is requested.
     /// </remarks>
-    private async Task ProcessTranslationItems(IEnumerable<ITrackableStringItem> items, ILanguage toLanguage,
+    private async Task ProcessTranslationItems(IEnumerable<ITrackableW3StringItem> items, ILanguage toLanguage,
         ILanguage fromLanguage,
         CancellationToken cancellationToken)
     {
@@ -218,7 +218,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// <returns>True if the translation was successful, false otherwise</returns>
     /// <exception cref="OperationCanceledException">Thrown when the operation is canceled</exception>
     private async Task<bool> ProcessSingleItemWithCancellation(
-        ITrackableStringItem item,
+        ITrackableW3StringItem item,
         ILanguage toLanguage,
         ILanguage fromLanguage,
         CancellationToken cancellationToken)

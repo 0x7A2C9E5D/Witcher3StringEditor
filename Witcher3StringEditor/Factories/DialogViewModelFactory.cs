@@ -5,7 +5,7 @@ using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Serializers.Abstractions;
+using Witcher3StringEditor.Serializers;
 
 namespace Witcher3StringEditor.Factories;
 
@@ -24,7 +24,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public EditDataDialogViewModel CreateEditDialog(ITrackableStringItem item)
+    public EditDataDialogViewModel CreateEditDialog(ITrackableW3StringItem item)
     {
         return new EditDataDialogViewModel(item);
     }
@@ -34,7 +34,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     /// </summary>
     /// <param name="items"></param>
     /// <returns></returns>
-    public DeleteDataDialogViewModel CreateDeleteDialog(IEnumerable<IStringItem> items)
+    public DeleteDataDialogViewModel CreateDeleteDialog(IEnumerable<IW3StringItem> items)
     {
         return new DeleteDataDialogViewModel(items);
     }
@@ -57,11 +57,11 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     /// <param name="items"></param>
     /// <param name="outputDirectory"></param>
     /// <returns></returns>
-    public SaveDialogViewModel CreateSaveDialog(IReadOnlyList<IStringItem> items, string outputDirectory)
+    public SaveDialogViewModel CreateSaveDialog(IReadOnlyList<IW3StringItem> items, string outputDirectory)
     {
         return new SaveDialogViewModel(
             serviceProvider.GetRequiredService<IAppSettings>(),
-            serviceProvider.GetRequiredService<ISerializerCoordinator>(),
+            serviceProvider.GetRequiredService<IW3StringSerializerCoordinator>(),
             serviceProvider.GetRequiredService<IDialogService>(),
             items,
             outputDirectory);
@@ -125,7 +125,7 @@ internal sealed class DialogViewModelFactory(IServiceProvider serviceProvider) :
     /// <param name="dictionaryService"></param>
     /// <returns></returns>
     public TranslationDialogViewModel CreateTranslationDialog(ITranslator translator,
-        IReadOnlyList<ITrackableStringItem> items, int index, IDictionaryService? dictionaryService)
+        IReadOnlyList<ITrackableW3StringItem> items, int index, IDictionaryService? dictionaryService)
     {
         return new TranslationDialogViewModel(
             serviceProvider.GetRequiredService<IAppSettings>(),

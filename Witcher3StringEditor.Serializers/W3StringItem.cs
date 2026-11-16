@@ -4,16 +4,16 @@ namespace Witcher3StringEditor.Serializers;
 
 /// <summary>
 ///     Represents The Witcher 3 string item with string-based properties
-///     Implements the IStringItem interface to provide a concrete implementation for The Witcher 3 string data
+///     Implements the IW3StringItem interface to provide a concrete implementation for The Witcher 3 string data
 ///     This record is used internally for serialization and deserialization operations
 /// </summary>
-internal record StringItem : IStringItem
+internal record W3StringItem : IW3StringItem
 {
     /// <summary>
-    ///     Initializes a new instance of the StringItem record
-    ///     Creates an empty StringItem with default values
+    ///     Initializes a new instance of the W3StringItem record
+    ///     Creates an empty W3StringItem with default values
     /// </summary>
-    public StringItem()
+    public W3StringItem()
     {
     }
 

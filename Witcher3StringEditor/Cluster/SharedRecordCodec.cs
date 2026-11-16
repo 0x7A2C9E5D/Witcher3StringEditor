@@ -54,7 +54,7 @@ internal readonly record struct SharedRecordVersion(long Timestamp, bool IsDelet
 
 /// <summary>
 ///     Encodes and decodes shared records into the payloads exchanged between instances.
-///     The application settings serializer is left untouched.
+///     The application settings iw3StringSerializer is left untouched.
 /// </summary>
 internal static class SharedRecordCodec
 {

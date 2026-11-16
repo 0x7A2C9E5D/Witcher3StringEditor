@@ -6,7 +6,6 @@ using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Serializers;
-using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Shared.Extensions;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
@@ -30,30 +29,30 @@ public partial class SaveDialogViewModel
     private readonly IDialogService dialogService;
 
     /// <summary>
-    ///     The serializer used to save The Witcher 3 string items
+    ///     The iw3StringSerializer used to save The Witcher 3 string items
     /// </summary>
-    private readonly ISerializerCoordinator serializer;
+    private readonly IW3StringSerializerCoordinator iw3StringSerializer;
 
     /// <summary>
     ///     The collection of The Witcher 3 string items to save
     /// </summary>
-    private readonly IReadOnlyList<IStringItem> w3StringItems;
+    private readonly IReadOnlyList<IW3StringItem> w3StringItems;
 
     /// <summary>
     ///     Initializes a new instance of the SaveDialogViewModel class
     /// </summary>
     /// <param name="appSettings">Application settings to get preferred language and file type</param>
-    /// <param name="serializer">The serializer to use for saving the items</param>
+    /// <param name="iw3StringSerializer">The iw3StringSerializer to use for saving the items</param>
     /// <param name="dialogService">The dialog service used to report the result of the save operation</param>
     /// <param name="w3StringItems">The collection of The Witcher 3 string items to save</param>
     /// <param name="outputDirectory">The initial output directory for saving</param>
-    public SaveDialogViewModel(IAppSettings appSettings, ISerializerCoordinator serializer,
+    public SaveDialogViewModel(IAppSettings appSettings, IW3StringSerializerCoordinator iw3StringSerializer,
         IDialogService dialogService,
-        IReadOnlyList<IStringItem> w3StringItems, string outputDirectory)
+        IReadOnlyList<IW3StringItem> w3StringItems, string outputDirectory)
     {
         OutputDirectory = outputDirectory;
         this.w3StringItems = w3StringItems;
-        this.serializer = serializer;
+        this.iw3StringSerializer = iw3StringSerializer;
         this.dialogService = dialogService;
         this.appSettings = appSettings;
         TargetW3Language = appSettings.PreferredW3Language;
@@ -119,17 +118,18 @@ public partial class SaveDialogViewModel
             appSettings.PreferredW3StringsEncoding = TargetEncoding; // Remember the chosen encoding
         }
 
-        var saveResult = await serializer.Serialize(w3StringItems, new SerializationContext // Serialize items
-        {
-            OutputDirectory = OutputDirectory, // Set output directory
-            TargetW3StringFileFormat = TargetW3StringFileFormat, // Set the file format
-            TargetW3Language = TargetW3Language, // Set language
-            Encoding = TargetEncoding // Set the payload encoding
-        });
+        var saveResult = await iw3StringSerializer.Serialize(w3StringItems,
+            new W3StringSerializationOptions // Serialize items
+            {
+                OutputDirectory = OutputDirectory, // Set output directory
+                TargetW3StringFileFormat = TargetW3StringFileFormat, // Set the file format
+                TargetW3Language = TargetW3Language, // Set language
+                Encoding = TargetEncoding // Set the payload encoding
+            });
         if (saveResult)
             Log.Information("Save completed successfully");
         else
-            Log.Warning("Save failed, see the serializer error log above for details");
+            Log.Warning("Save failed, see the iw3StringSerializer error log above for details");
         await dialogService.MessageBoxNotifyAsync(this, saveResult ? Strings.SaveSuccess : Strings.SaveFailure,
             Strings.SaveResult, saveResult ? MessageBoxIcon.Information : MessageBoxIcon.Error); // Report the result
         DialogResult = true; // Set dialog result

@@ -12,7 +12,7 @@ internal static class W3StringsItemReader
     /// </summary>
     /// <param name="file">The container to read the items of.</param>
     /// <returns>The items of the container, in container order.</returns>
-    public static List<StringItem> Read(W3StringsFile file)
+    public static List<W3StringItem> Read(W3StringsFile file)
     {
         // Block 2 maps a localization-key hash to an id. A hash of zero means "no key" and is passed over,
         // and an id can carry several keys, so the first hash found is the one shown next to the entry.
@@ -20,8 +20,8 @@ internal static class W3StringsItemReader
         foreach (var key in file.Keys.Where(key => key.KeyHash != 0))
             keyHashes.TryAdd(key.Id, key.KeyHash);
 
-        var items = new List<StringItem>(file.Strings.Count);
-        items.AddRange(file.Strings.Select(entry => new StringItem
+        var items = new List<W3StringItem>(file.Strings.Count);
+        items.AddRange(file.Strings.Select(entry => new W3StringItem
         {
             StrId = entry.Id.ToString(CultureInfo.InvariantCulture), // The string id, as text
             KeyName = string.Empty, // A container keeps hashes, not the names they were computed from

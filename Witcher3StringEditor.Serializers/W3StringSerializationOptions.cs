@@ -7,7 +7,7 @@ namespace Witcher3StringEditor.Serializers;
 ///     Represents the context information required for The Witcher 3 serialization operations
 ///     This record contains all the necessary parameters and settings needed to serialize The Witcher 3 string items
 /// </summary>
-public record SerializationContext
+public record W3StringSerializationOptions
 {
     /// <summary>
     ///     Gets the output directory where the serialized files will be saved

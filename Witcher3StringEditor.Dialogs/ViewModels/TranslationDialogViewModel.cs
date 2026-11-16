@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GTranslate;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
-using GTranslate;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Shared.Extensions;
@@ -42,7 +42,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <summary>
     ///     The collection of items to translate
     /// </summary>
-    private readonly IReadOnlyList<ITrackableStringItem> w3StringItems;
+    private readonly IReadOnlyList<ITrackableW3StringItem> w3StringItems;
 
     /// <summary>
     ///     Initializes a new instance of the TranslationDialogViewModel class
@@ -54,7 +54,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     /// <param name="dialogService">Dialog service used to inform or question the user</param>
     /// <param name="dictionaryService">Dictionary service</param>
     public TranslationDialogViewModel(IAppSettings appSettings, ITranslator translator,
-        IReadOnlyList<ITrackableStringItem> w3StringItems, int index, IDialogService dialogService,
+        IReadOnlyList<ITrackableW3StringItem> w3StringItems, int index, IDialogService dialogService,
         IDictionaryService? dictionaryService)
     {
         this.translator = translator;

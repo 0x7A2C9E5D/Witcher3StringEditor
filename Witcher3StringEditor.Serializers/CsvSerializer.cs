@@ -10,10 +10,10 @@ namespace Witcher3StringEditor.Serializers;
 ///     Provides CSV serialization functionality for The Witcher 3 string items
 ///     Implements ISerializer for the CSV file format
 /// </summary>
-public class CsvSerializer(IBackupService backupService) : ISerializer
+public class CsvSerializer(IBackupService backupService) : IW3StringFileSerializer
 {
     /// <summary>
-    ///     Determines whether this serializer reads and writes the given file format
+    ///     Determines whether this iw3StringSerializer reads and writes the given file format
     /// </summary>
     /// <param name="w3StringFileFormat">The file format to check</param>
     /// <returns>True when the format is CSV</returns>
@@ -31,17 +31,17 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
     ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
     /// <exception cref="Exception">Thrown when the file could not be read</exception>
-    public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
+    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
     {
         await using var fileStream = File.OpenRead(filePath); // Open file stream
         using var reader = new StreamReader(fileStream); // Create stream reader
-        var items = new List<IStringItem>(); // Create list to store items
+        var items = new List<IW3StringItem>(); // Create list to store items
         while (await reader.ReadLineAsync() is { } line) // Read lines
         {
             if (string.IsNullOrWhiteSpace(line) || line.StartsWith(';')) continue; // Skip empty lines and comments
             var parts = line.Split('|'); // Split line into parts
             if (parts.Length < 4) continue; // Skip lines that hold no text at all
-            items.Add(new StringItem // Create new string item
+            items.Add(new W3StringItem // Create new string item
             {
                 StrId = parts[0].Trim(), // Extract string ID
                 KeyHex = parts[1].Trim(), // Extract key hex
@@ -60,22 +60,22 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
     ///     Serializes The Witcher 3 string items to a CSV file
     /// </summary>
     /// <param name="w3StringItems">The Witcher 3 string items to serialize</param>
-    /// <param name="context">The serialization context containing output directory and target language information</param>
+    /// <param name="options">The serialization options containing output directory and target language information</param>
     /// <returns>
     ///     A task that represents the asynchronous serialize operation.
     ///     The task result indicates whether the serialization was successful
     /// </returns>
-    public async Task<bool> Serialize(IReadOnlyList<IStringItem> w3StringItems, SerializationContext context)
+    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3StringSerializationOptions options)
     {
         try
         {
             var languageName =
-                context.TargetW3Language.Code.ToLowerInvariant(); // Lowercase content-file code for the filename
+                options.TargetW3Language.Code.ToLowerInvariant(); // Lowercase content-file code for the filename
             // A magic of zero means the stored text is not obfuscated, so it is cleartext
-            var csvLanguageIdentifier = context.TargetW3Language.Magic == 0
+            var csvLanguageIdentifier = options.TargetW3Language.Magic == 0
                 ? "cleartext" // Special case: unobfuscated languages
                 : languageName; // Default: use language name
-            await WriteFileWithBackup(Path.Combine(context.OutputDirectory, $"{languageName}.csv"),
+            await WriteFileWithBackup(Path.Combine(options.OutputDirectory, $"{languageName}.csv"),
                 BuildCsvContent(w3StringItems, csvLanguageIdentifier)); // WriteAsync CSV with backup
             return true; // Return success
         }
@@ -105,7 +105,7 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
     /// <param name="w3StringItems">The Witcher 3 string items to include in the CSV content</param>
     /// <param name="lang">The language identifier for the CSV metadata</param>
     /// <returns>The complete CSV content as a string</returns>
-    private static string BuildCsvContent(IReadOnlyCollection<IStringItem> w3StringItems, string lang)
+    private static string BuildCsvContent(IReadOnlyCollection<IW3StringItem> w3StringItems, string lang)
     {
         using var stringBuilder = ZString.CreateStringBuilder(); // Efficient CSV content builder
         stringBuilder.AppendLine($";meta[language={lang}]"); // W3Language metadata header

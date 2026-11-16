@@ -9,12 +9,12 @@ namespace Witcher3StringEditor.Serializers;
 /// <summary>
 ///     Provides W3Strings serialization functionality for The Witcher 3 string items
 ///     Implements ISerializer for the W3Strings container format
-///     This serializer uses the built-in W3Strings codec, so no external encoder/decoder tool is required
+///     This iw3StringSerializer uses the built-in W3Strings codec, so no external encoder/decoder tool is required
 /// </summary>
-public class W3StringsSerializer(IBackupService backupService) : ISerializer
+public class W3StringsSerializer(IBackupService backupService) : IW3StringFileSerializer
 {
     /// <summary>
-    ///     Determines whether this serializer reads and writes the given file format
+    ///     Determines whether this iw3StringSerializer reads and writes the given file format
     /// </summary>
     /// <param name="w3StringFileFormat">The file format to check</param>
     /// <returns>True when the format is a W3Strings container</returns>
@@ -33,7 +33,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     ///     The task result contains the deserialized The Witcher 3 string items
     /// </returns>
     /// <exception cref="Exception">Thrown when the file could not be read</exception>
-    public async Task<IReadOnlyList<IStringItem>> Deserialize(string filePath)
+    public async Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath)
     {
         return await Task.Run(() => ReadItems(filePath)); // Decode the container off the calling thread
     }
@@ -45,8 +45,8 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     ///     always did, and reading a file only decodes it
     /// </summary>
     /// <param name="w3StringItems">The Witcher 3 string items to serialize</param>
-    /// <param name="context">
-    ///     The serialization context containing output directory, target language,
+    /// <param name="options">
+    ///     The serialization options containing output directory, target language,
     ///     container version, and other serialization parameters
     /// </param>
     /// <returns>
@@ -54,19 +54,19 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     ///     The task result indicates whether the serialization was successful, which it is not when the
     ///     container holds an entry the game could never reach
     /// </returns>
-    public async Task<bool> Serialize(IReadOnlyList<IStringItem> w3StringItems, SerializationContext context)
+    public async Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3StringSerializationOptions options)
     {
         try
         {
             var saveLang =
-                context.TargetW3Language.Code
+                options.TargetW3Language.Code
                     .ToLowerInvariant(); // Lowercase content-file code of the target language for file naming
             var outputW3StringsPath =
-                Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings"); // Destination of the encoded container
+                Path.Combine(options.OutputDirectory, $"{saveLang}.w3strings"); // Destination of the encoded container
 
             // The version is the choice of this save rather than a fact of the container: it is what the
             // bytes of the texts are stored in, and it is handed to the writer with them.
-            var version = ContainerVersion(context.Encoding); // Container version that stores the chosen encoding
+            var version = ContainerVersion(options.Encoding); // Container version that stores the chosen encoding
 
             // The container is assembled and checked by the codec before anything is written, so a save
             // that cannot be written leaves the destination exactly as it was. What makes an item
@@ -74,7 +74,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             // anomaly it refuses the container for itself, one line per anomaly.
             var container = W3StringsBuilder.Build(
                 w3StringItems,
-                context.TargetW3Language.Key); // The language key is what every id and text is obfuscated by
+                options.TargetW3Language.Key); // The language key is what every id and text is obfuscated by
             if (container is null) return false; // The reasons are in the log, one per anomaly
 
             // Back the destination up before it is opened, because creating it truncates it.
@@ -119,9 +119,9 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     /// </summary>
     /// <param name="filePath">The path to the W3Strings file to read</param>
     /// <returns>The string items of the container, in container order</returns>
-    private static List<IStringItem> ReadItems(string filePath)
+    private static List<IW3StringItem> ReadItems(string filePath)
     {
-        using var stream = File.OpenRead(filePath); // The codec reads a stream, the serializer knows the path
+        using var stream = File.OpenRead(filePath); // The codec reads a stream, the iw3StringSerializer knows the path
         var storage = W3StringsStorage.Read(stream); // The stored form: what the file holds, and where
         var container = storage.ToContainer(stream); // The texts themselves, fetched out of the same stream
 

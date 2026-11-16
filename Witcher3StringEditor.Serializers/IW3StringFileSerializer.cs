@@ -7,13 +7,13 @@ namespace Witcher3StringEditor.Serializers.Abstractions;
 ///     This interface provides the basic functionality for converting between The Witcher 3 string items and various file
 ///     formats
 /// </summary>
-public interface ISerializer
+public interface IW3StringFileSerializer
 {
     /// <summary>
-    ///     Determines whether this serializer reads and writes the given file format
+    ///     Determines whether this iw3StringSerializer reads and writes the given file format
     /// </summary>
     /// <param name="w3StringFileFormat">The file format to check</param>
-    /// <returns>True when this serializer handles that format</returns>
+    /// <returns>True when this iw3StringSerializer handles that format</returns>
     public bool CanHandle(W3StringFileFormat w3StringFileFormat);
 
     /// <summary>
@@ -25,16 +25,16 @@ public interface ISerializer
     ///     string items
     /// </returns>
     /// <exception cref="Exception">Thrown when the file could not be read</exception>
-    public Task<IReadOnlyList<IStringItem>> Deserialize(string filePath);
+    public Task<IReadOnlyList<IW3StringItem>> Deserialize(string filePath);
 
     /// <summary>
     ///     Serializes The Witcher 3 string items to a file
     /// </summary>
     /// <param name="w3StringItems">The Witcher 3 string items to serialize</param>
-    /// <param name="context">The serialization context containing file path and other serialization parameters</param>
+    /// <param name="options">The serialization options containing file path and other serialization parameters</param>
     /// <returns>
     ///     A task that represents the asynchronous serialize operation. The task result indicates whether the
     ///     serialization was successful
     /// </returns>
-    public Task<bool> Serialize(IReadOnlyList<IStringItem> w3StringItems, SerializationContext context);
+    public Task<bool> Serialize(IReadOnlyList<IW3StringItem> w3StringItems, W3StringSerializationOptions options);
 }

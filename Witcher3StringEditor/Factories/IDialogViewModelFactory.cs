@@ -16,13 +16,13 @@ internal interface IDialogViewModelFactory
     ///     Creates a view model for adding or editing a string item
     /// </summary>
     /// <param name="item">The item to edit, or a new item template for adding</param>
-    EditDataDialogViewModel CreateEditDialog(ITrackableStringItem item);
+    EditDataDialogViewModel CreateEditDialog(ITrackableW3StringItem item);
 
     /// <summary>
     ///     Creates a view model for the delete confirmation dialog
     /// </summary>
     /// <param name="items">The items to delete</param>
-    DeleteDataDialogViewModel CreateDeleteDialog(IEnumerable<IStringItem> items);
+    DeleteDataDialogViewModel CreateDeleteDialog(IEnumerable<IW3StringItem> items);
 
     /// <summary>
     ///     Creates a view model for the backup management dialog
@@ -34,7 +34,7 @@ internal interface IDialogViewModelFactory
     /// </summary>
     /// <param name="items">The items to save</param>
     /// <param name="outputDirectory">The initial output directory</param>
-    SaveDialogViewModel CreateSaveDialog(IReadOnlyList<IStringItem> items, string outputDirectory);
+    SaveDialogViewModel CreateSaveDialog(IReadOnlyList<IW3StringItem> items, string outputDirectory);
 
     /// <summary>
     ///     Creates a view model for the log viewer dialog
@@ -66,7 +66,7 @@ internal interface IDialogViewModelFactory
     /// <param name="index">The index of the initially selected item</param>
     /// <param name="dictionaryService">The dictionary service, or null if dictionaries are not supported</param>
     TranslationDialogViewModel CreateTranslationDialog(ITranslator translator,
-        IReadOnlyList<ITrackableStringItem> items, int index, IDictionaryService? dictionaryService);
+        IReadOnlyList<ITrackableW3StringItem> items, int index, IDictionaryService? dictionaryService);
 
     /// <summary>
     ///     Creates a view model for the dictionary management dialog

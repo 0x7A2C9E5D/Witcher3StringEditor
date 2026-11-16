@@ -6,29 +6,29 @@ namespace Witcher3StringEditor.Models;
 
 /// <summary>
 ///     Represents The Witcher 3 string item model
-///     Implements the ITrackableStringItem interface and provides observable properties for data binding
+///     Implements the ITrackableW3StringItem interface and provides observable properties for data binding
 ///     This class extends the basic The Witcher 3 string item with tracking capabilities and cloning functionality
 /// </summary>
-public partial class StringItem : ObservableObject, ITrackableStringItem
+public partial class W3StringItem : ObservableObject, ITrackableW3StringItem
 {
     /// <summary>
-    ///     Initializes a new instance of the StringItem class by copying values from another IStringItem
+    ///     Initializes a new instance of the W3StringItem class by copying values from another IW3StringItem
     /// </summary>
-    /// <param name="iw3StringItem">The source IStringItem to copy values from</param>
-    public StringItem(IStringItem iw3StringItem)
+    /// <param name="iw3Iw3StringItem">The source IW3StringItem to copy values from</param>
+    public W3StringItem(IW3StringItem iw3Iw3StringItem)
     {
-        StrId = iw3StringItem.StrId;
-        KeyHex = iw3StringItem.KeyHex;
-        KeyName = iw3StringItem.KeyName;
-        OldText = iw3StringItem.OldText;
-        Text = iw3StringItem.Text;
+        StrId = iw3Iw3StringItem.StrId;
+        KeyHex = iw3Iw3StringItem.KeyHex;
+        KeyName = iw3Iw3StringItem.KeyName;
+        OldText = iw3Iw3StringItem.OldText;
+        Text = iw3Iw3StringItem.Text;
     }
 
     /// <summary>
-    ///     Initializes a new instance of the StringItem class
-    ///     Creates an empty StringItem with default values
+    ///     Initializes a new instance of the W3StringItem class
+    ///     Creates an empty W3StringItem with default values
     /// </summary>
-    public StringItem()
+    public W3StringItem()
     {
     }
 
@@ -82,7 +82,7 @@ public partial class StringItem : ObservableObject, ITrackableStringItem
     public Guid TrackingId { get; } = Guid.NewGuid();
 
     /// <summary>
-    ///     Creates a shallow copy of the current StringItem
+    ///     Creates a shallow copy of the current W3StringItem
     /// </summary>
     /// <returns>A shallow copy of the current object</returns>
     public object Clone()

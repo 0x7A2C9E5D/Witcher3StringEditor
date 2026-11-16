@@ -49,7 +49,7 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
     private readonly string filePath;
 
     /// <summary>
-    ///     JSON serializer options
+    ///     JSON iw3StringSerializer options
     /// </summary>
     private readonly JsonSerializerOptions jsonSerializerOptions = new()
     {

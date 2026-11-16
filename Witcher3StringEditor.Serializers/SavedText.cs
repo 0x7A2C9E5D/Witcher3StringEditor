@@ -10,7 +10,7 @@ namespace Witcher3StringEditor.Serializers;
 ///         so the break an item carries is turned into the tag when the item is saved.
 ///     </para>
 ///     <para>
-///         The text a save writes is handed back to the item it came from rather than to the serializer that
+///         The text a save writes is handed back to the item it came from rather than to the iw3StringSerializer that
 ///         writes it: a save gives every one of its items the text of <see cref="NormalizeLineBreaks" />, so
 ///         every format writes the same text without knowing about the rule, and the items show what a save
 ///         wrote.
