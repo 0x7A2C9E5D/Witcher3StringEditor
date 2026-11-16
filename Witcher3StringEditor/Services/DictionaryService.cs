@@ -1,7 +1,5 @@
-﻿﻿using System.Globalization;
+﻿using System.Globalization;
 using Witcher3StringEditor.Dictionary;
-using Witcher3StringEditor.Dictionary.Abstractions;
-using Witcher3StringEditor.Dictionary.Implementation;
 
 namespace Witcher3StringEditor.Services;
 

@@ -8,7 +8,6 @@ using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Serilog;
 using Witcher3StringEditor.Dialogs.Models;
 using Witcher3StringEditor.Dictionary;
-using Witcher3StringEditor.Dictionary.Implementation;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Shared.Extensions;
 
