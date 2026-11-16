@@ -9,6 +9,34 @@ using Witcher3StringEditor.Models;
 namespace Witcher3StringEditor.Services;
 
 /// <summary>
+///     Bridge between the application settings collections and the replicated shared record log.
+/// </summary>
+internal interface ISharedRecordsService
+{
+    ObservableCollection<IRecentFileEntry> RecentItems { get; }
+
+    ObservableCollection<IBackupItem> BackupItems { get; }
+
+    SharedRecordsSnapshot CreateCurrentSnapshot();
+
+    void AttachPublisher(ISharedRecordPublisher publisher);
+
+    void UpsertRecentFile(string filePath, DateTime openedTime);
+
+    void DeleteRecentFile(IRecentFileEntry entry);
+
+    void UpsertBackup(IBackupItem item);
+
+    void DeleteBackup(IBackupItem item);
+
+    void ApplySnapshot(SharedRecordsSnapshot snapshot);
+
+    void NotifyUpdateCompleted(string key);
+
+    Task FlushAsync(TimeSpan timeout);
+}
+
+/// <summary>
 ///     Main-thread facade over the settings collections. Local writes update the collections
 ///     immediately and are handed to the publisher; replicated snapshots are materialized
 ///     idempotently on the UI thread.

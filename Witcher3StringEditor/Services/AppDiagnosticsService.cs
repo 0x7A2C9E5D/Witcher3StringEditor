@@ -9,6 +9,17 @@ namespace Witcher3StringEditor.Services;
 /// <summary>
 ///     Provides application diagnostics functionality
 /// </summary>
+internal interface IAppDiagnosticsService
+{
+    /// <summary>
+    ///     Logs information about the application startup
+    /// </summary>
+    void LogStartupInfo();
+}
+
+/// <summary>
+///     Provides application diagnostics functionality
+/// </summary>
 /// <param name="appSettings"></param>
 /// <param name="cultureResolver"></param>
 internal class AppDiagnosticsService(
