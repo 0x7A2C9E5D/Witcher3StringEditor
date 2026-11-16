@@ -1,4 +1,4 @@
-﻿namespace Witcher3StringEditor.Services;
+﻿﻿namespace Witcher3StringEditor.Services;
 
 /// <summary>
 ///     Defines a contract for configuration file saving and loading operations

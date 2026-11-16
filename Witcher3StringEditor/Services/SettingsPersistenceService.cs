@@ -110,21 +110,6 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
     }
 
     /// <summary>
-    ///     Loads settings from a configuration file
-    /// </summary>
-    /// <typeparam name="T">The type of settings to load</typeparam>
-    /// <returns>The loaded settings, or a new instance if the file does not exist</returns>
-    public T Load<T>() where T : new()
-    {
-        if (!File.Exists(filePath)) // Check if config file exists
-            return new T(); // Create new instance if file doesn't exist
-
-        var content = File.ReadAllText(filePath); // Read file content
-        var result = JsonSerializer.Deserialize<T>(content, jsonSerializerOptions); // Deserialize content
-        return result ?? new T(); // Return deserialized object or new instance if null
-    }
-
-    /// <summary>
     ///     Replaces the shared record arrays of the serialized settings with the ones already on
     ///     disk. A follower keeps the local settings it owns without overwriting the leader's records.
     /// </summary>
@@ -170,5 +155,20 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
 
                 Thread.Sleep(50 * attempt);
             }
+    }
+
+    /// <summary>
+    ///     Loads settings from a configuration file
+    /// </summary>
+    /// <typeparam name="T">The type of settings to load</typeparam>
+    /// <returns>The loaded settings, or a new instance if the file does not exist</returns>
+    public T Load<T>() where T : new()
+    {
+        if (!File.Exists(filePath)) // Check if config file exists
+            return new T(); // Create new instance if file doesn't exist
+
+        var content = File.ReadAllText(filePath); // Read file content
+        var result = JsonSerializer.Deserialize<T>(content, jsonSerializerOptions); // Deserialize content
+        return result ?? new T(); // Return deserialized object or new instance if null
     }
 }
