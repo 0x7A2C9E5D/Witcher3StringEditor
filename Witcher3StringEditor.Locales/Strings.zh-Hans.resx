@@ -609,4 +609,10 @@
     <data name="FileAssociationDescription" xml:space="preserve">
     <value>使用本程序打开 .w3strings 文件</value>
   </data>
+    <data name="StartupFailedCaption" xml:space="preserve">
+    <value>启动失败</value>
+  </data>
+    <data name="StartupFailedMessage" xml:space="preserve">
+    <value>应用程序启动失败：{0}&#10;详情请查看日志。</value>
+  </data>
 </root>

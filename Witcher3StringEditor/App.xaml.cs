@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reactive;
@@ -26,6 +27,7 @@ using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Services;
 using Witcher3StringEditor.ViewModels;
 using Witcher3StringEditor.Views;
+using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace Witcher3StringEditor;
 
@@ -36,6 +38,7 @@ namespace Witcher3StringEditor;
 public sealed partial class App : IDisposable
 {
     private bool disposedValue; // Flag to indicate whether the object has been disposed
+    private bool initialized; // Flag to indicate whether the startup got as far as holding resources to release
     private ObserverBase<LogEvent>? logObserver; // Observer for log events
 
     /// <summary>
@@ -54,12 +57,50 @@ public sealed partial class App : IDisposable
     /// <param name="e">Startup event arguments</param>
     protected override void OnStartup(StartupEventArgs e)
     {
-        InitializeServices();
-        var startupFileService = Ioc.Default.GetRequiredService<IStartupFileService>();
-        var filePath = startupFileService.GetStartupFile(e.Args);
-        InitializeApplication();
-        if (filePath is not null)
-            startupFileService.OpenFile(filePath);
+        // Set up logging before anything else: the full pipeline also feeds the in-app log view and
+        // depends on the service container, so failures before that point would otherwise be lost.
+        InitializeEarlyLogging();
+
+        // The whole startup is guarded here, because InitializeApplication installs the dispatcher
+        // handler that swallows exceptions: from that point on, a failure would never reach the
+        // caller, and WPF would keep the message loop running with no window shown and nothing to
+        // close, which is a process the user can neither see nor quit.
+        try
+        {
+            InitializeServices();
+            var startupFileService = Ioc.Default.GetRequiredService<IStartupFileService>();
+            var filePath = startupFileService.GetStartupFile(e.Args);
+            InitializeApplication();
+            if (filePath is not null)
+                startupFileService.OpenFile(filePath);
+        }
+        catch (Exception ex)
+        {
+            ReportStartupFailure(ex);
+        }
+    }
+
+    /// <summary>
+    ///     Reports a startup failure to the user and shuts the application down with a failing exit code
+    /// </summary>
+    /// <param name="exception">The exception that stopped the startup</param>
+    // CA1863 suggests caching the format template as a CompositeFormat, but the template is
+    // localized and the UI culture can change at runtime: a cache would pin it to one language.
+    // This is a cold path (startup failure only), so the repeated parse cost is irrelevant.
+    [SuppressMessage("Performance", "CA1863:Use 'CompositeFormat'",
+        Justification = "The format template is localized; caching would pin it to one language.")]
+    private void ReportStartupFailure(Exception exception)
+    {
+        Log.Error(exception, "Application failed to start");
+        // The message box is the only window on this path: with the default OnLastWindowClose, closing
+        // it would start a shutdown with exit code 0, and the Shutdown(1) below would then hit the
+        // "already shutting down" early return and lose the exit code. Pin the mode so this method owns
+        // the shutdown and the failing code is the one that reaches the process.
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        MessageBox.Show(
+            string.Format(CultureInfo.CurrentCulture, Strings.StartupFailedMessage, exception.Message),
+            Strings.StartupFailedCaption, MessageBoxButton.OK, MessageBoxImage.Error);
+        Shutdown(1);
     }
 
     /// <summary>
@@ -74,6 +115,11 @@ public sealed partial class App : IDisposable
         RegisterSyncfusionLicense(); // Register Syncfusion license for UI components
         LogStartupInfo(); // Log startup information
         StartClusterRuntime(); // Join the local cluster for shared record replication
+        // Set before the window is shown: the settings are loaded and the cluster is running by now,
+        // so OnExit has something to save and to stop even when showing the main window fails. A
+        // failure earlier leaves the instance uninitialized, and OnExit must not touch services it
+        // never got from a container that may not even have been configured.
+        initialized = true;
         ShowMainWindow(); // Show the main window
     }
 
@@ -132,6 +178,12 @@ public sealed partial class App : IDisposable
     /// </summary>
     private void InitializeLogging()
     {
+        // The early logger writes to the same file, and a file sink keeps its log file open for
+        // itself: the sink configured below cannot open it and would silently write nothing, so
+        // everything logged while the application runs would be lost. Closing the early logger
+        // first flushes what it captured and hands the file over.
+        Log.CloseAndFlush();
+
         // Get log access service from the IoC container
         var logAccessService = Ioc.Default.GetRequiredService<ILogAccessService>();
 
@@ -142,6 +194,19 @@ public sealed partial class App : IDisposable
         Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(AppPaths.LogDirectory, "log.txt"),
                 rollingInterval: RollingInterval.Day, formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.Observers(observable => observable.Subscribe(logObserver))
+            .CreateLogger();
+    }
+
+    /// <summary>
+    ///     Initializes a file-only logger, so that a failure during startup is still logged
+    /// </summary>
+    private static void InitializeEarlyLogging()
+    {
+        // Registering the services constructs none of them and loads no settings, but a failure there
+        // would otherwise be invisible: the pipeline that also feeds the in-app log view needs the
+        // container, which may not exist yet.
+        Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(AppPaths.LogDirectory, "log.txt"),
+                rollingInterval: RollingInterval.Day, formatProvider: CultureInfo.InvariantCulture)
             .CreateLogger();
     }
 
@@ -259,10 +324,14 @@ public sealed partial class App : IDisposable
     /// <param name="e">Exit event arguments</param>
     protected override void OnExit(ExitEventArgs e)
     {
-        // Save before the node stops: the persistence service writes the file only on the leader,
-        // and the node is no longer a leader once it has been stopped.
-        SaveAppSettings(); // Save application settings
-        StopClusterRuntime(); // Flush shared records and leave the cluster
+        if (initialized)
+        {
+            // Save before the node stops: the persistence service writes the file only on the leader,
+            // and the node is no longer a leader once it has been stopped.
+            SaveAppSettings(); // Save application settings
+            StopClusterRuntime(); // Flush shared records and leave the cluster
+        }
+
         Log.Information("Application exited"); // Log application exit
         Log.CloseAndFlush(); // Flush logs
         Dispose(); // Dispose of resources

@@ -609,4 +609,10 @@
     <data name="FileAssociationDescription" xml:space="preserve">
     <value>使用本程式開啟 .w3strings 檔案</value>
   </data>
+    <data name="StartupFailedCaption" xml:space="preserve">
+    <value>啟動失敗</value>
+  </data>
+    <data name="StartupFailedMessage" xml:space="preserve">
+    <value>應用程式啟動失敗：{0}&#10;詳情請查看日誌。</value>
+  </data>
 </root>

@@ -1247,6 +1247,24 @@ namespace Witcher3StringEditor.Locales {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Startup Failed.
+        /// </summary>
+        public static string StartupFailedCaption {
+            get {
+                return ResourceManager.GetString("StartupFailedCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application failed to start: {0}. See the log for details..
+        /// </summary>
+        public static string StartupFailedMessage {
+            get {
+                return ResourceManager.GetString("StartupFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Submit.
         /// </summary>
         public static string SubmitBtnContent {

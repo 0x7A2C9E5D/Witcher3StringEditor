@@ -609,4 +609,10 @@
     <data name="FileAssociationDescription" xml:space="preserve">
     <value>.w3strings-Dateien mit dieser Anwendung öffnen</value>
   </data>
+    <data name="StartupFailedCaption" xml:space="preserve">
+    <value>Startvorgang fehlgeschlagen</value>
+  </data>
+    <data name="StartupFailedMessage" xml:space="preserve">
+    <value>Die Anwendung konnte nicht gestartet werden: {0}&#10;Einzelheiten stehen im Protokoll.</value>
+  </data>
 </root>

@@ -502,4 +502,10 @@
     <data name="FileAssociationDescription" xml:space="preserve">
     <value>.w3strings fájlok megnyitása ezzel az alkalmazással</value>
   </data>
+    <data name="StartupFailedCaption" xml:space="preserve">
+    <value>A indítás sikertelen</value>
+  </data>
+    <data name="StartupFailedMessage" xml:space="preserve">
+    <value>Az alkalmazás nem tudott elindulni: {0}&#10;A részleteket lásd a naplóban.</value>
+  </data>
 </root>

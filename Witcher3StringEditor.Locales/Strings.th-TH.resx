@@ -609,4 +609,10 @@
     <data name="FileAssociationDescription" xml:space="preserve">
     <value>เปิดไฟล์ .w3strings ด้วยแอปพลิเคชันนี้</value>
   </data>
+    <data name="StartupFailedCaption" xml:space="preserve">
+    <value>เริ่มต้นทำงานไม่สำเร็จ</value>
+  </data>
+    <data name="StartupFailedMessage" xml:space="preserve">
+    <value>แอปพลิเคชันเริ่มทำงานไม่สำเร็จ: {0}&#10;โปรดดูรายละเอียดในบันทึกเหตุการณ์</value>
+  </data>
 </root>

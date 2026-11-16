@@ -609,4 +609,10 @@
     <data name="FileAssociationDescription" xml:space="preserve">
     <value>Buka berkas .w3strings dengan aplikasi ini</value>
   </data>
+    <data name="StartupFailedCaption" xml:space="preserve">
+    <value>Gagal Memulai</value>
+  </data>
+    <data name="StartupFailedMessage" xml:space="preserve">
+    <value>Aplikasi gagal dimulai: {0}&#10;Lihat log untuk detailnya.</value>
+  </data>
 </root>

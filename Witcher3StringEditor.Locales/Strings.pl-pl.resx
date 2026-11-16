@@ -502,4 +502,10 @@
     <data name="FileAssociationDescription" xml:space="preserve">
     <value>Otwieraj pliki .w3strings za pomocą tej aplikacji</value>
   </data>
+    <data name="StartupFailedCaption" xml:space="preserve">
+    <value>Uruchomienie nie powiodło się</value>
+  </data>
+    <data name="StartupFailedMessage" xml:space="preserve">
+    <value>Nie udało się uruchomić aplikacji: {0}&#10;Szczegóły znajdziesz w dzienniku.</value>
+  </data>
 </root>

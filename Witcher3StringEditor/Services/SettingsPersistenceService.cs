@@ -95,7 +95,12 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
     /// <param name="settings">The settings to save</param>
     public void Save<T>(T settings)
     {
-        var json = JsonSerializer.Serialize(settings, jsonSerializerOptions);
+        // Serialize the runtime type, not the type the caller was holding: callers pass the settings
+        // through IAppSettings, and the interface carries neither the persisted property names nor
+        // the ignored ones — all of that lives on the model. Serializing the interface would write
+        // names that Load<AppSettings> cannot read back, which silently reset those settings on the
+        // next start.
+        var json = JsonSerializer.Serialize(settings, settings!.GetType(), jsonSerializerOptions);
         using var mutex = new Mutex(false, mutexName);
         var acquired = false;
         try

@@ -502,4 +502,10 @@
     <data name="FileAssociationDescription" xml:space="preserve">
     <value>Відкривати файли .w3strings за допомогою цієї програми</value>
   </data>
+    <data name="StartupFailedCaption" xml:space="preserve">
+    <value>Не вдалося запустити</value>
+  </data>
+    <data name="StartupFailedMessage" xml:space="preserve">
+    <value>Не вдалося запустити програму: {0}&#10;Докладні відомості див. у журналі.</value>
+  </data>
 </root>
