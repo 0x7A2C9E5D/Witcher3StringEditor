@@ -13,7 +13,7 @@ internal interface IClusterLeadership
     bool IsLeader { get; }
 
     /// <summary>
-    ///     Registers the probe used to ask the cluster runtime for the current role.
+    ///     Registers the resolver that reports the role of the cluster runtime on demand.
     /// </summary>
     /// <param name="isLeader">Returns true when this instance is the Raft leader</param>
     void Attach(Func<bool> isLeader);
@@ -24,12 +24,12 @@ internal interface IClusterLeadership
 /// </summary>
 internal sealed class ClusterLeadership : IClusterLeadership
 {
-    private volatile Func<bool>? probe;
+    private volatile Func<bool>? leaderResolver;
 
-    public bool IsLeader => probe?.Invoke() ?? true;
+    public bool IsLeader => leaderResolver?.Invoke() ?? true;
 
     public void Attach(Func<bool> isLeader)
     {
-        probe = isLeader;
+        leaderResolver = isLeader;
     }
 }
