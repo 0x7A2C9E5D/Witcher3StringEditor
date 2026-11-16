@@ -66,7 +66,7 @@ internal sealed class ClusterRuntime(
         lastLeaderSeenUtc = DateTime.UtcNow;
         state.AttachPublisher(this);
 
-        registry.Register(instanceId, localEndpoint.ToString() ?? string.Empty);
+        registry.Register(instanceId, localEndpoint.ToString());
         var peers = registry.ReadLive();
         RememberPeers(peers);
         CleanupStateDirectories(peers);
@@ -218,7 +218,7 @@ internal sealed class ClusterRuntime(
         registry.Register(instanceId, node.LocalMemberAddress.ToString() ?? string.Empty);
 
         Log.Information(
-            "Raft node {InstanceId} started at {Address} (cold start: {ColdStart})",
+            "Raft node {InstanceId} started at {@Address} (cold s@tart: {ColdStart})",
             instanceId, node.LocalMemberAddress, coldStart);
     }
 
@@ -231,7 +231,7 @@ internal sealed class ClusterRuntime(
             return;
         }
 
-        Log.Information("Raft leader is {Address} (remote: {IsRemote})", leader.EndPoint, leader.IsRemote);
+        Log.Information("Raft leader is {@Address} (remo@te: {IsRemote})", leader.EndPoint, leader.IsRemote);
         if (!leader.IsRemote || lifetime is not { IsCancellationRequested: false } cancellation) return;
 
         // Re-publish the local records after joining a leader: anything written while this node
@@ -360,10 +360,8 @@ internal sealed class ClusterRuntime(
                 PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
             await client.ConnectAsync(timeout.Token).ConfigureAwait(false);
 
-            using var writer = new StreamWriter(client, new UTF8Encoding(false), leaveOpen: true)
-            {
-                AutoFlush = true
-            };
+            await using var writer = new StreamWriter(client, new UTF8Encoding(false), leaveOpen: true);
+            writer.AutoFlush = true;
             using var reader = new StreamReader(client, new UTF8Encoding(false), leaveOpen: true);
 
             await writer.WriteLineAsync(
@@ -414,10 +412,8 @@ internal sealed class ClusterRuntime(
             try
             {
                 using var reader = new StreamReader(server, new UTF8Encoding(false), leaveOpen: true);
-                using var writer = new StreamWriter(server, new UTF8Encoding(false), leaveOpen: true)
-                {
-                    AutoFlush = true
-                };
+                await using var writer = new StreamWriter(server, new UTF8Encoding(false), leaveOpen: true);
+                writer.AutoFlush = true;
 
                 var request = await reader.ReadLineAsync(token).ConfigureAwait(false);
                 var command = string.IsNullOrEmpty(request)
@@ -530,7 +526,7 @@ internal sealed class ClusterRuntime(
                          .Where(x => x.IsRemote && !liveAddresses.Contains(x.EndPoint.ToString() ?? string.Empty))
                          .Select(x => x.EndPoint))
             {
-                Log.Information("Removing stale Raft member {Address}", endpoint);
+                Log.Information("Removing stale Raft member {@Address}", endpoint);
                 await node.RemoveMemberAsync(endpoint, token).ConfigureAwait(false);
             }
         }
