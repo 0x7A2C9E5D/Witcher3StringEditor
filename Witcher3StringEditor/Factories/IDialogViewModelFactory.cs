@@ -1,13 +1,13 @@
 using GTranslate.Translators;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Dialogs.ViewModels;
-using Witcher3StringEditor.Dictionary.Abstractions;
+using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Factories;
 
 /// <summary>
 ///     Centralizes the creation of dialog view models
-///     View models are created here so that the main window view model only depends on this factory
+///     are created here so that the main window view model only depends on this factory
 ///     instead of knowing the concrete dialog view model types and their dependencies
 /// </summary>
 internal interface IDialogViewModelFactory
@@ -48,7 +48,7 @@ internal interface IDialogViewModelFactory
     SettingDialogViewModel CreateSettingsDialog(IEnumerable<string> translatorNames);
 
     /// <summary>
-    ///     Creates a view model for the about dialog
+    ///     Creates a view model for the about-dialog
     /// </summary>
     /// <param name="aboutInfo">The application information to display</param>
     AboutDialogViewModel CreateAboutDialog(IReadOnlyDictionary<string, object?> aboutInfo);

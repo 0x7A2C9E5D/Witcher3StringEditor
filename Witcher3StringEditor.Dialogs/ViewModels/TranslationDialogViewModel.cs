@@ -6,9 +6,9 @@ using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
-using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Shared.Extensions;
+using IDictionaryService = Witcher3StringEditor.Dictionary.IDictionaryService;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 

@@ -316,7 +316,6 @@ internal sealed class ClusterRuntime(
                 return await ForwardToLeaderAsync(node, payload, token).ConfigureAwait(false);
             await node.ReplicateAsync(payload, token: token).ConfigureAwait(false);
             return true;
-
         }
         catch (OperationCanceledException)
         {

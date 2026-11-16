@@ -1,10 +1,37 @@
 ﻿using System.Globalization;
 using Serilog;
-using Witcher3StringEditor.Dictionary.Abstractions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Miscellaneous;
 
-namespace Witcher3StringEditor.Dictionary.Implementation;
+namespace Witcher3StringEditor.Dictionary;
+
+/// <summary>
+///     Manages the dictionaries registered in the application.
+/// </summary>
+public interface IDictionaryManager
+{
+    /// <summary>
+    ///     Imports a dictionary from a file, replacing any dictionary stored under the same file name.
+    /// </summary>
+    Task<DictionaryInfo?> Import(string filePath);
+
+    /// <summary>
+    ///     Determines whether a dictionary with the same file name is already registered.
+    /// </summary>
+    /// <param name="filePath">The path of the dictionary file being imported.</param>
+    /// <returns><c>true</c> when importing would overwrite an existing dictionary.</returns>
+    bool ContainsDuplicate(string filePath);
+
+    /// <summary>
+    ///     Removes the specified dictionary.
+    /// </summary>
+    void Remove(DictionaryInfo dictionary);
+
+    /// <summary>
+    ///     Finds all dictionaries matching the specified language.
+    /// </summary>
+    IEnumerable<DictionaryInfo> Find(CultureInfo? language);
+}
 
 /// <summary>
 ///     Dictionary manager

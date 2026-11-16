@@ -1,7 +1,22 @@
 ﻿using System.Globalization;
-using Witcher3StringEditor.Dictionary.Abstractions;
 
-namespace Witcher3StringEditor.Dictionary.Implementation;
+namespace Witcher3StringEditor.Dictionary;
+
+/// <summary>
+///     A service that provides dictionary information and entries.
+/// </summary>
+public interface IDictionaryProvider
+{
+    /// <summary>
+    ///     Gets the dictionary information for the specified file path.
+    /// </summary>
+    Task<DictionaryInfo> GetDictionaryInfo(string filePath);
+
+    /// <summary>
+    ///     Gets the entries for the specified dictionary.
+    /// </summary>
+    Task<Dictionary<string, string>> GetEntries(DictionaryInfo dictionary);
+}
 
 /// <summary>
 ///     A dictionary provider for custom format dictionary files

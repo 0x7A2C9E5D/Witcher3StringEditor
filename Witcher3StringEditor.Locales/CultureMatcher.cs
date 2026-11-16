@@ -1,6 +1,20 @@
-﻿using System.Globalization;
+﻿﻿using System.Globalization;
 
 namespace Witcher3StringEditor.Locales;
+
+/// <summary>
+///     Defines a contract for culture matching functionality
+/// </summary>
+public interface ICultureMatcher
+{
+    /// <summary>
+    ///     Matches a target culture with available cultures
+    /// </summary>
+    /// <param name="targetCulture"></param>
+    /// <param name="availableCultures"></param>
+    /// <returns></returns>
+    IEnumerable<CultureInfo> Matches(CultureInfo targetCulture, IReadOnlyList<CultureInfo> availableCultures);
+}
 
 /// <summary>
 ///     Provides culture matching functionality for the application

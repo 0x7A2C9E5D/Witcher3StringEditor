@@ -3,9 +3,34 @@ using System.Net;
 using System.Text;
 using NReco.Text;
 using Serilog;
-using Witcher3StringEditor.Dictionary.Abstractions;
 
-namespace Witcher3StringEditor.Dictionary.Implementation;
+namespace Witcher3StringEditor.Dictionary;
+
+/// <summary>
+///     A service that provides dynamic dictionary functionality.
+/// </summary>
+public interface IDynamicDictionaryReplacer
+{
+    /// <summary>
+    ///     Indicates whether the service is ready to use.
+    /// </summary>
+    bool IsReady { get; }
+
+    /// <summary>
+    ///     The currently selected dictionary.
+    /// </summary>
+    DictionaryInfo? CurrentDictionary { get; }
+
+    /// <summary>
+    ///     Binds the service to the specified dictionary.
+    /// </summary>
+    Task Bind(DictionaryInfo dictionary);
+
+    /// <summary>
+    ///     Replaces the specified text with the corresponding translation.
+    /// </summary>
+    string Replace(string text);
+}
 
 /// <summary>
 ///     A service that provides dynamic dictionary functionality.
