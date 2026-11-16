@@ -159,12 +159,12 @@ internal sealed class RecordReplicator(
 
         var address = leader.EndPoint.ToString() ?? string.Empty;
         var ownerId = resolveEndpointOwner(address);
+        // ReSharper disable once InvertIf
         if (ownerId is null)
         {
             refreshPeers();
             ownerId = resolveEndpointOwner(address);
         }
-
         return ownerId is { } id && await SendToPipeAsync(id, payload, token).ConfigureAwait(false);
     }
 
