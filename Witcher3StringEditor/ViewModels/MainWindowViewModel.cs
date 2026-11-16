@@ -128,7 +128,9 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     // Resharper disable once MemberCanBeMadeStatic.Local
+#pragma warning disable CA1859
     private partial IList<StringItem>? PagedSource { get; set; }
+#pragma warning restore CA1859
 
     /// <summary>
     ///     Gets or sets the current search text used for filtering W3String items

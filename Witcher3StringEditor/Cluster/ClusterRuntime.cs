@@ -35,8 +35,6 @@ internal interface IClusterRuntime
 internal interface ISharedRecordPublisher
 {
     void Publish(SharedRecordCommand command);
-
-    void PublishAll(SharedRecordsSnapshot snapshot);
 }
 
 /// <summary>
@@ -63,8 +61,7 @@ internal sealed class ClusterRuntime(
     private IPEndPoint? localEndpoint;
     private int restarting;
 
-    public bool IsLeader => Volatile.Read(ref cluster) is { } node
-                            && !node.LeadershipToken.IsCancellationRequested;
+    public bool IsLeader => Volatile.Read(ref cluster) is { LeadershipToken.IsCancellationRequested: false };
 
     public void Start()
     {
@@ -319,13 +316,11 @@ internal sealed class ClusterRuntime(
         var payload = JsonSerializer.SerializeToUtf8Bytes(command);
         try
         {
-            if (!node.LeadershipToken.IsCancellationRequested)
-            {
-                await node.ReplicateAsync(payload, token: token).ConfigureAwait(false);
-                return true;
-            }
+            if (node.LeadershipToken.IsCancellationRequested)
+                return await ForwardToLeaderAsync(node, payload, token).ConfigureAwait(false);
+            await node.ReplicateAsync(payload, token: token).ConfigureAwait(false);
+            return true;
 
-            return await ForwardToLeaderAsync(node, payload, token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -350,11 +345,10 @@ internal sealed class ClusterRuntime(
         if (leader is null || !leader.IsRemote) return false;
 
         var address = leader.EndPoint.ToString() ?? string.Empty;
-        if (!endpointOwners.TryGetValue(address, out var ownerId))
-        {
-            RefreshPeers();
-            if (!endpointOwners.TryGetValue(address, out ownerId)) return false;
-        }
+        if (endpointOwners.TryGetValue(address, out var ownerId))
+            return await SendToPipeAsync(ownerId, payload, token).ConfigureAwait(false);
+        RefreshPeers();
+        if (!endpointOwners.TryGetValue(address, out ownerId)) return false;
 
         return await SendToPipeAsync(ownerId, payload, token).ConfigureAwait(false);
     }
