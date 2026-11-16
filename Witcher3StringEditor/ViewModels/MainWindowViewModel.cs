@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -127,6 +128,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// </summary>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
+    [SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance",
+        Justification = "The interface type is intentional: the fallback shares the live W3StringItems instance.")]
     // Resharper disable once MemberCanBeMadeStatic.Local
     private partial IList<W3StringItem>? PagedSource { get; set; }
 
