@@ -81,7 +81,7 @@ public class W3StringIw3StringSerializerCoordinator : IW3StringSerializerCoordin
         // text is not what a saved text carries it as, and the save is the place that has both the items and
         // the rule, so no iw3StringSerializer has to know about it. The items then show what a save wrote.
         foreach (var item in w3StringItems)
-            item.Text = SavedText.NormalizeLineBreaks(item.Text);
+            item.Text = SavedTextFormat.NormalizeLineBreaks(item.Text);
 
         var succeeded = await Resolve(options.TargetW3StringFileFormat).Serialize(w3StringItems, options);
         if (succeeded)
