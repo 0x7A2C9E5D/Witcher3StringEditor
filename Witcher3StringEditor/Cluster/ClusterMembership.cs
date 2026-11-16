@@ -39,7 +39,7 @@ internal sealed class ClusterMembership(
     /// </summary>
     public IReadOnlyList<InstanceRegistration> RefreshPeers()
     {
-        var live = registry.ReadLive();
+        var live = registry.GetLiveInstances();
         RememberPeers(live);
         return live;
     }

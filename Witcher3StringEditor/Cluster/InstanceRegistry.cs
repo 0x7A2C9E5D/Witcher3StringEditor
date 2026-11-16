@@ -29,7 +29,7 @@ internal interface IInstanceRegistry : IDisposable
     /// <summary>
     ///     Returns the live registrations and prunes entries whose process no longer exists.
     /// </summary>
-    IReadOnlyList<InstanceRegistration> ReadLive();
+    IReadOnlyList<InstanceRegistration> GetLiveInstances();
 
     /// <summary>
     ///     Removes the current instance from the registry.
@@ -84,7 +84,7 @@ internal sealed class InstanceRegistry : IInstanceRegistry
     /// <summary>
     ///     Returns the live registrations and prunes entries whose process no longer exists.
     /// </summary>
-    public IReadOnlyList<InstanceRegistration> ReadLive()
+    public IReadOnlyList<InstanceRegistration> GetLiveInstances()
     {
         if (!File.Exists(filePath)) return [];
         IReadOnlyList<InstanceRegistration> live = [];

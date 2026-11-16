@@ -58,7 +58,7 @@ internal sealed class ClusterRuntime(
         host.SnapshotProduced += OnSnapshotProduced;
 
         registry.Register(instanceId, localEndpoint.ToString());
-        var peers = registry.ReadLive();
+        var peers = registry.GetLiveInstances();
         membership.Initialize(peers);
 
         // The first live instance bootstraps the cluster; later ones stay frozen until the
