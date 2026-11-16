@@ -16,7 +16,7 @@ namespace Witcher3StringEditor.Services;
 internal sealed class SharedRecordsService(
     IAppSettings appSettings,
     ISettingsPersistenceService settingsPersistence,
-    ClusterLeadership leadership)
+    IClusterLeadership leadership)
     : ISharedRecordsService
 {
     private static readonly TimeSpan SaveDebounce = TimeSpan.FromSeconds(2);

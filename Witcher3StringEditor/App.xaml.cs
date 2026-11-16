@@ -209,8 +209,8 @@ public sealed partial class App : IDisposable
             .AddSingleton<IShellOpenService, ShellOpenService>()
             .AddSingleton<IFileAssociationService, FileAssociationService>()
             .AddSingleton<IStartupFileService, StartupFileService>()
-            .AddSingleton<InstanceRegistry>()
-            .AddSingleton<ClusterLeadership>()
+            .AddSingleton<IInstanceRegistry, InstanceRegistry>()
+            .AddSingleton<IClusterLeadership, ClusterLeadership>()
             .AddSingleton<ISharedRecordsService, SharedRecordsService>()
             .AddSingleton<IClusterRuntime, ClusterRuntime>()
             .AddScoped<IPlayGameService, PlayGameService>()
@@ -293,7 +293,7 @@ public sealed partial class App : IDisposable
     /// </summary>
     private static void SaveAppSettings()
     {
-        if (!Ioc.Default.GetRequiredService<ClusterLeadership>().IsLeader) return;
+        if (!Ioc.Default.GetRequiredService<IClusterLeadership>().IsLeader) return;
         var appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
         var configService = Ioc.Default.GetRequiredService<ISettingsPersistenceService>();
         configService.Save(appSettings);

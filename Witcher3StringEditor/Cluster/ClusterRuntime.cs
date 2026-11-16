@@ -39,8 +39,8 @@ internal interface ISharedRecordPublisher
 /// </summary>
 internal sealed class ClusterRuntime(
     ISharedRecordsService state,
-    InstanceRegistry registry,
-    ClusterLeadership leadership) : IClusterRuntime, ISharedRecordPublisher, IDisposable
+    IInstanceRegistry registry,
+    IClusterLeadership leadership) : IClusterRuntime, ISharedRecordPublisher, IDisposable
 {
     private const string PipePrefix = "Witcher3StringEditor.SharedRecords";
     private static readonly TimeSpan MaintenanceInterval = TimeSpan.FromSeconds(3);

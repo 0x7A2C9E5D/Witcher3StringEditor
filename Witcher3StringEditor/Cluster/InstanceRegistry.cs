@@ -19,7 +19,29 @@ internal sealed record InstanceRegistration(
 ///     Maintains a metadata-only registry of running instances so that new processes can find
 ///     peers to join. No application records are ever written to this registry.
 /// </summary>
-internal sealed class InstanceRegistry : IDisposable
+internal interface IInstanceRegistry : IDisposable
+{
+    /// <summary>
+    ///     Registers the current instance under the address peers use to reach it.
+    /// </summary>
+    void Register(Guid instanceId, string address);
+
+    /// <summary>
+    ///     Returns the live registrations and prunes entries whose process no longer exists.
+    /// </summary>
+    IReadOnlyList<InstanceRegistration> ReadLive();
+
+    /// <summary>
+    ///     Removes the current instance from the registry.
+    /// </summary>
+    void Unregister(Guid instanceId);
+}
+
+/// <summary>
+///     Maintains a metadata-only registry of running instances so that new processes can find
+///     peers to join. No application records are ever written to this registry.
+/// </summary>
+internal sealed class InstanceRegistry : IInstanceRegistry
 {
     private const string FileName = "instances.json";
     private static readonly TimeSpan StaleAfter = TimeSpan.FromMinutes(5);
