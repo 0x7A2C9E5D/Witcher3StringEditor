@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
 using DotNext.Net.Cluster;
-using DotNext.Net.Cluster.Consensus.Raft;
 using Serilog;
 using Witcher3StringEditor.Services;
 
@@ -27,11 +26,11 @@ internal sealed class ClusterRuntime(
     IClusterLeadership leadership) : IClusterRuntime, ISharedRecordPublisher, IDisposable
 {
     private readonly RaftNodeHost host = new();
-    private RecordReplicator? replicator;
-    private ClusterMembership? membership;
-    private CancellationTokenSource? lifetime;
     private Guid instanceId;
+    private CancellationTokenSource? lifetime;
     private IPEndPoint? localEndpoint;
+    private ClusterMembership? membership;
+    private RecordReplicator? replicator;
 
     public void Start()
     {
@@ -101,7 +100,10 @@ internal sealed class ClusterRuntime(
     /// <summary>
     ///     Queues a local record mutation for replication.
     /// </summary>
-    public void Publish(SharedRecordCommand command) => replicator?.Publish(command);
+    public void Publish(SharedRecordCommand command)
+    {
+        replicator?.Publish(command);
+    }
 
     private async Task RunAsync(bool coldStart, CancellationToken token)
     {

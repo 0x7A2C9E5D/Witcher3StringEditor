@@ -1,9 +1,10 @@
 using System.IO;
 using System.Net;
-using Witcher3StringEditor.Miscellaneous;
 using DotNext.Net.Cluster;
 using DotNext.Net.Cluster.Consensus.Raft;
 using DotNext.Net.Cluster.Consensus.Raft.StateMachine;
+using Serilog;
+using Witcher3StringEditor.Miscellaneous;
 
 namespace Witcher3StringEditor.Cluster;
 
@@ -12,9 +13,9 @@ namespace Witcher3StringEditor.Cluster;
 /// </summary>
 internal sealed class RaftNodeHost
 {
-    private SharedRecordsStateMachine? stateMachine;
     private WriteAheadLog? auditTrail;
     private RaftCluster? node;
+    private SharedRecordsStateMachine? stateMachine;
 
     /// <summary>
     ///     Gets the current Raft node, if it has been started.
@@ -93,7 +94,7 @@ internal sealed class RaftNodeHost
             }
             catch (Exception ex)
             {
-                Serilog.Log.Warning(ex, "Failed to stop the Raft node gracefully");
+                Log.Warning(ex, "Failed to stop the Raft node gracefully");
             }
         }
 
@@ -108,7 +109,7 @@ internal sealed class RaftNodeHost
             }
             catch (Exception ex)
             {
-                Serilog.Log.Warning(ex, "Failed to dispose the Raft write-ahead log");
+                Log.Warning(ex, "Failed to dispose the Raft write-ahead log");
             }
 
         stateMachine = null;
@@ -117,11 +118,18 @@ internal sealed class RaftNodeHost
     /// <summary>
     ///     Gets the endpoint other instances use to reach this node.
     /// </summary>
-    public string GetLocalAddress() => Node?.LocalMemberAddress.ToString() ?? string.Empty;
+    public string GetLocalAddress()
+    {
+        return Node?.LocalMemberAddress.ToString() ?? string.Empty;
+    }
 
-    private void OnLeaderChanged(ICluster sender, IClusterMember? leader) =>
+    private void OnLeaderChanged(ICluster sender, IClusterMember? leader)
+    {
         LeaderChanged?.Invoke(sender, leader);
+    }
 
-    private void OnSnapshotProduced(SharedRecordsSnapshot snapshot) =>
+    private void OnSnapshotProduced(SharedRecordsSnapshot snapshot)
+    {
         SnapshotProduced?.Invoke(snapshot);
+    }
 }

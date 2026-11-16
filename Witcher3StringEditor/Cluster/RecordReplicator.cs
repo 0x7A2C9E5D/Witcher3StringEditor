@@ -25,10 +25,18 @@ internal sealed class RecordReplicator(
     private readonly SemaphoreSlim publishSignal = new(0, int.MaxValue);
     private Guid instanceId = Guid.Empty;
 
+    public void Dispose()
+    {
+        publishSignal.Dispose();
+    }
+
     /// <summary>
     ///     Sets the instance identifier used to derive the named pipe endpoint.
     /// </summary>
-    public void Attach(Guid id) => instanceId = id;
+    public void Attach(Guid id)
+    {
+        instanceId = id;
+    }
 
     /// <summary>
     ///     Queues a single mutation for replication.
@@ -113,8 +121,6 @@ internal sealed class RecordReplicator(
             _ = Task.Run(() => HandleForwarderAsync(server, token), CancellationToken.None);
         }
     }
-
-    public void Dispose() => publishSignal.Dispose();
 
     private async Task<bool> TryPublishAsync(SharedRecordCommand command, CancellationToken token)
     {
@@ -233,6 +239,8 @@ internal sealed class RecordReplicator(
         }
     }
 
-    private static string PipeName(Guid id) =>
-        $"{PipePrefix}.{(DebugHelper.IsDebug ? "Debug" : "Release")}.{id:N}";
+    private static string PipeName(Guid id)
+    {
+        return $"{PipePrefix}.{(DebugHelper.IsDebug ? "Debug" : "Release")}.{id:N}";
+    }
 }
