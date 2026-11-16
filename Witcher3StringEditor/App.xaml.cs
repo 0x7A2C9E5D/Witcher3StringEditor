@@ -79,7 +79,7 @@ public sealed partial class App : IDisposable
     }
 
     /// <summary>
-    ///     Starts the Akka cluster runtime that replicates recent files and backups.
+    ///     Starts the peer runtime that synchronizes recent files and backups between instances.
     /// </summary>
     private static void StartClusterRuntime()
     {
@@ -267,7 +267,7 @@ public sealed partial class App : IDisposable
     }
 
     /// <summary>
-    ///     Stops the Akka cluster runtime, flushing local record writes first.
+    ///     Stops the peer runtime, flushing local record writes first.
     /// </summary>
     private static void StopClusterRuntime()
     {

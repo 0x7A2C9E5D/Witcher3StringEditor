@@ -341,7 +341,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <returns>True if the file can be reopened, false otherwise</returns>
     private async Task<bool> HandleReOpenFile()
     {
-        if (W3StringItems?.Any() != true) return true; // Return true if no items currently loaded
+        if (W3StringItems?.Count == 0) return true; // Return true if no items currently loaded
         return await dialogService.MessageBoxConfirmAsync(this, Strings.ReOpenFileMessage,
             Strings.ReOpenFileCaption); // Ask whether the currently loaded file may be replaced
     }
@@ -581,8 +581,8 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     private bool CanShowTranslateDialog()
     {
         if (PagedSource is not null) // Check if we have search results
-            return PagedSource.Any(); // Return true if search results exist
-        return W3StringItems?.Any() == true; // Otherwise check if we have any W3String items
+            return PagedSource.Count != 0; // Return true if search results exist
+        return W3StringItems?.Count == 0; // Otherwise check if we have any W3String items
     }
 
     /// <summary>
@@ -620,7 +620,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <returns></returns>
     private bool CanMergeData()
     {
-        return W3StringItems?.Any() == true;
+        return W3StringItems?.Count == 0;
     }
 
     /// <summary>

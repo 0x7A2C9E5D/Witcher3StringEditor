@@ -5,7 +5,7 @@ using Witcher3StringEditor.Contracts.Abstractions;
 namespace Witcher3StringEditor.Cluster;
 
 /// <summary>
-///     Serializable payload of a recently opened file stored in a CRDT map.
+///     Serializable payload of a recently opened file stored in the replicated log.
 /// </summary>
 internal sealed record RecentFilePayload(
     string FilePath,
@@ -14,7 +14,7 @@ internal sealed record RecentFilePayload(
     bool IsDeleted = false);
 
 /// <summary>
-///     Serializable payload of a backup record stored in a CRDT map.
+///     Serializable payload of a backup record stored in the replicated log.
 /// </summary>
 internal sealed record BackupPayload(
     string FileName,
@@ -25,14 +25,33 @@ internal sealed record BackupPayload(
     bool IsDeleted = false);
 
 /// <summary>
-///     Point-in-time view of the two CRDT maps, keyed by normalized record keys.
+///     Point-in-time view of the replicated records, keyed by normalized record keys.
 /// </summary>
 internal sealed record SharedRecordsSnapshot(
     IReadOnlyDictionary<string, string> RecentFiles,
     IReadOnlyDictionary<string, string> Backups);
 
 /// <summary>
-///     Encodes and decodes shared records into the string values stored by DistributedData.
+///     A record mutation broadcast to the other application instances. Upserts and tombstones
+///     share the same shape; tombstones carry an <c>IsDeleted</c> flag inside the encoded value.
+/// </summary>
+internal sealed record SharedRecordCommand(string Key, string Value, bool IsBackup);
+
+/// <summary>
+///     Conflict resolution metadata of an encoded record.
+/// </summary>
+internal readonly record struct SharedRecordVersion(long Timestamp, bool IsDeleted)
+{
+    /// <summary>
+    ///     Returns <see langword="true" /> when this version supersedes <paramref name="other" />.
+    ///     A tombstone wins against a live record created at the same instant.
+    /// </summary>
+    public bool Supersedes(SharedRecordVersion other)
+        => Timestamp > other.Timestamp || (Timestamp == other.Timestamp && IsDeleted && !other.IsDeleted);
+}
+
+/// <summary>
+///     Encodes and decodes shared records into the payloads exchanged between instances.
 ///     The application settings serializer is left untouched.
 /// </summary>
 internal static class SharedRecordCodec
@@ -63,7 +82,7 @@ internal static class SharedRecordCodec
     }
 
     /// <summary>
-    ///     Tombstone for a deleted recent file. Kept as a normal LWW value so late joiners
+    ///     Tombstone for a deleted recent file. Kept as a normal value so late joiners
     ///     receive a versioned deletion instead of re-seeding a stale record from disk.
     /// </summary>
     public static string EncodeDeletedRecent(string filePath)
@@ -92,28 +111,23 @@ internal static class SharedRecordCodec
     }
 
     /// <summary>
-    ///     LWW clock returning an ever-increasing timestamp: the business time for live records
-    ///     and the deletion time for tombstones, so a deletion always wins over an older value.
+    ///     Conflict resolution version: the business time for live records and the deletion
+    ///     time for tombstones.
     /// </summary>
-    public static long RecentClock(long currentTimestamp, string value)
+    public static SharedRecordVersion GetVersion(bool isBackup, string value)
     {
-        var payload = DecodeRecent(value);
-        return payload is null ? currentTimestamp : Timestamp(payload.OpenedTime, payload.IsDeleted, currentTimestamp);
-    }
+        if (isBackup)
+        {
+            var payload = DecodeBackup(value);
+            return payload is null
+                ? new SharedRecordVersion(0L, false)
+                : new SharedRecordVersion(payload.BackupTime.ToUniversalTime().Ticks, payload.IsDeleted);
+        }
 
-    /// <summary>
-    ///     LWW clock for backup records, using the backup time or the deletion time.
-    /// </summary>
-    public static long BackupClock(long currentTimestamp, string value)
-    {
-        var payload = DecodeBackup(value);
-        return payload is null ? currentTimestamp : Timestamp(payload.BackupTime, payload.IsDeleted, currentTimestamp);
-    }
-
-    private static long Timestamp(DateTime businessTime, bool isDeleted, long currentTimestamp)
-    {
-        var ticks = businessTime.ToUniversalTime().Ticks;
-        return isDeleted ? Math.Max(ticks, currentTimestamp + 1) : ticks;
+        var recent = DecodeRecent(value);
+        return recent is null
+            ? new SharedRecordVersion(0L, false)
+            : new SharedRecordVersion(recent.OpenedTime.ToUniversalTime().Ticks, recent.IsDeleted);
     }
 
     private static T? TryDecode<T>(string value)

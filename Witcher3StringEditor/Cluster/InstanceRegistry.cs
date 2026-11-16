@@ -19,7 +19,7 @@ internal sealed record InstanceRegistration(
 ///     Maintains a metadata-only registry of running instances so that new processes can find
 ///     peers to join. No application records are ever written to this registry.
 /// </summary>
-internal sealed class InstanceRegistry
+internal sealed class InstanceRegistry : IDisposable
 {
     private const string FileName = "instances.json";
     private static readonly TimeSpan StaleAfter = TimeSpan.FromMinutes(5);
@@ -33,28 +33,38 @@ internal sealed class InstanceRegistry
     private Timer? heartbeat;
 
     /// <summary>
-    ///     Registers the current instance and returns live peers that were already registered.
+    ///     Registers the current instance. The address is the named pipe through which peers
+    ///     exchange shared records.
     /// </summary>
-    public IReadOnlyList<InstanceRegistration> Register(Guid instanceId, string address)
+    public void Register(Guid instanceId, string address)
     {
         Directory.CreateDirectory(AppPaths.ClusterRegistryDirectory);
-        IReadOnlyList<InstanceRegistration> peers = [];
         WithRegistryLock(() =>
         {
             var registrations = Load();
-            peers =
-            [
-                .. registrations
-                    .Where(x => x.InstanceId != instanceId && IsAlive(x))
-            ];
-            var liveIds = peers.Select(x => x.InstanceId).ToHashSet();
-            registrations.RemoveAll(x => !liveIds.Contains(x.InstanceId));
+            registrations.RemoveAll(x => !IsAlive(x));
+            registrations.RemoveAll(x => x.InstanceId == instanceId);
             registrations.Add(new InstanceRegistration(instanceId, address,
                 Environment.ProcessId, DateTime.UtcNow));
             Save(registrations);
         });
         StartHeartbeat(instanceId);
-        return peers;
+    }
+
+    /// <summary>
+    ///     Returns the live registrations and prunes entries whose process no longer exists.
+    /// </summary>
+    public IReadOnlyList<InstanceRegistration> ReadLive()
+    {
+        if (!File.Exists(filePath)) return [];
+        IReadOnlyList<InstanceRegistration> live = [];
+        WithRegistryLock(() =>
+        {
+            var registrations = Load();
+            live = [.. registrations.Where(IsAlive)];
+            if (live.Count != registrations.Count) Save(live);
+        });
+        return live;
     }
 
     /// <summary>
@@ -80,6 +90,14 @@ internal sealed class InstanceRegistry
     {
         StopHeartbeat();
         heartbeat = new Timer(_ => Touch(instanceId), null, HeartbeatInterval, HeartbeatInterval);
+    }
+
+    /// <summary>
+    ///     Stops the heartbeat timer.
+    /// </summary>
+    public void Dispose()
+    {
+        StopHeartbeat();
     }
 
     private void StopHeartbeat()

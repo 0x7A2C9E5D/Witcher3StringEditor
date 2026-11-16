@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
-using Akka.Actor;
 using Witcher3StringEditor.Cluster;
 using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Services;
 
 /// <summary>
-///     Bridge between the application settings collections and the Akka DistributedData replicas.
+///     Bridge between the application settings collections and the replicated shared record log.
 /// </summary>
 internal interface ISharedRecordsService
 {
@@ -16,7 +15,7 @@ internal interface ISharedRecordsService
 
     SharedRecordsSnapshot CreateCurrentSnapshot();
 
-    void AttachCoordinator(IActorRef newCoordinator);
+    void AttachPublisher(ISharedRecordPublisher publisher);
 
     void UpsertRecentFile(string filePath, DateTime openedTime);
 
@@ -26,7 +25,7 @@ internal interface ISharedRecordsService
 
     void DeleteBackup(IBackupItem item);
 
-    void ApplySnapshot(SharedRecordsSnapshot snapshot);
+    void TryApplyRemote(SharedRecordCommand command);
 
     void NotifyUpdateCompleted(string key);
 

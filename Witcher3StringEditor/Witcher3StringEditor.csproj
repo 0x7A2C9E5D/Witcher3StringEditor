@@ -24,9 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Akka" Version="1.5.74"/>
-        <PackageReference Include="Akka.Cluster" Version="1.5.74"/>
-        <PackageReference Include="Akka.DistributedData" Version="1.5.74"/>
         <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.2"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
         <PackageReference Include="GTranslate" Version="2.4.0"/>
