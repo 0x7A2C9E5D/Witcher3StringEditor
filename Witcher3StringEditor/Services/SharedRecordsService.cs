@@ -170,55 +170,52 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
         return completion.Task.WaitAsync(timeout, CancellationToken.None);
     }
 
-    private bool IsPending(string key)
-    {
-        lock (pendingKeys)
-        {
-            return pendingKeys.Contains(key);
-        }
-    }
-
+    /// <summary>
+    ///     Applies one replicated recent file. A key that is missing from the snapshot is left
+    ///     untouched: the replicated state keeps tombstones forever, so an absent key means this
+    ///     instance simply has not received it yet, not that the record was deleted.
+    /// </summary>
     private void MaterializeRecent(IReadOnlyDictionary<string, string> snapshot)
     {
-        for (var i = RecentItems.Count - 1; i >= 0; i--)
-        {
-            var key = SharedRecordCodec.RecentKey(RecentItems[i].FilePath);
-            if (!snapshot.ContainsKey(key) && !IsPending(key))
-                RecentItems.RemoveAt(i);
-        }
-
         foreach (var pair in snapshot)
         {
             var payload = SharedRecordCodec.DecodeRecent(pair.Value);
+            if (payload is null) continue;
+
             var existing = RecentItems.FirstOrDefault(x =>
                 string.Equals(SharedRecordCodec.RecentKey(x.FilePath), pair.Key, StringComparison.Ordinal));
-            if (payload is null || payload.IsDeleted)
+            if (payload.IsDeleted)
             {
                 if (existing is not null) RecentItems.Remove(existing);
                 continue;
             }
 
             if (existing is null)
+            {
                 RecentItems.Add(new RecentItem(payload.FilePath, payload.OpenedTime, payload.IsMarked));
-            else if (existing.OpenedTime != payload.OpenedTime) existing.OpenedTime = payload.OpenedTime;
+                continue;
+            }
+
+            // Keep a newer local value that has not reached the log yet.
+            var incoming = SharedRecordCodec.GetVersion(false, pair.Value);
+            var current = SharedRecordCodec.GetVersion(false, SharedRecordCodec.EncodeRecent(existing));
+            if (!incoming.Supersedes(current)) continue;
+
+            existing.OpenedTime = payload.OpenedTime;
+            existing.IsMarked = payload.IsMarked;
         }
     }
 
     private void MaterializeBackups(IReadOnlyDictionary<string, string> snapshot)
     {
-        for (var i = BackupItems.Count - 1; i >= 0; i--)
-        {
-            var key = SharedRecordCodec.BackupKey(BackupItems[i].BackupPath);
-            if (!snapshot.ContainsKey(key) && !IsPending(key))
-                BackupItems.RemoveAt(i);
-        }
-
         foreach (var pair in snapshot)
         {
             var payload = SharedRecordCodec.DecodeBackup(pair.Value);
+            if (payload is null) continue;
+
             var existing = BackupItems.FirstOrDefault(x =>
                 string.Equals(SharedRecordCodec.BackupKey(x.BackupPath), pair.Key, StringComparison.Ordinal));
-            if (payload is null || payload.IsDeleted)
+            if (payload.IsDeleted)
             {
                 if (existing is not null) BackupItems.Remove(existing);
                 continue;
@@ -233,9 +230,17 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
                 BackupTime = payload.BackupTime
             };
             if (existing is null)
+            {
                 BackupItems.Add(item);
-            else if (existing.BackupTime != item.BackupTime || existing.Hash != item.Hash)
-                BackupItems[BackupItems.IndexOf(existing)] = item;
+                continue;
+            }
+
+            // Keep a newer local value that has not reached the log yet.
+            var incoming = SharedRecordCodec.GetVersion(true, pair.Value);
+            var current = SharedRecordCodec.GetVersion(true, SharedRecordCodec.EncodeBackup(existing));
+            if (!incoming.Supersedes(current)) continue;
+
+            BackupItems[BackupItems.IndexOf(existing)] = item;
         }
     }
 

@@ -188,7 +188,9 @@ internal sealed class ClusterRuntime(
             AppPaths.ClusterRegistryDirectory, "State", instanceId.ToString("N")));
         Directory.CreateDirectory(stateDirectory.FullName);
 
-        var stateMachine = new SharedRecordsStateMachine(stateDirectory);
+        // Snapshots live in their own folder so they never collide with the log segments.
+        var snapshotDirectory = stateDirectory.CreateSubdirectory("Snapshots");
+        var stateMachine = new SharedRecordsStateMachine(snapshotDirectory);
         await stateMachine.RestoreAsync(token).ConfigureAwait(false);
 
         var wal = new WriteAheadLog(
@@ -218,7 +220,7 @@ internal sealed class ClusterRuntime(
         registry.Register(instanceId, node.LocalMemberAddress.ToString() ?? string.Empty);
 
         Log.Information(
-            "Raft node {InstanceId} started at {@Address} (cold s@tart: {ColdStart})",
+            "Raft node {InstanceId} started at {@Address} (cold start: {ColdStart})",
             instanceId, node.LocalMemberAddress, coldStart);
     }
 
@@ -231,7 +233,7 @@ internal sealed class ClusterRuntime(
             return;
         }
 
-        Log.Information("Raft leader is {@Address} (remo@te: {IsRemote})", leader.EndPoint, leader.IsRemote);
+        Log.Information("Raft leader is {@Address} (remote: {IsRemote})", leader.EndPoint, leader.IsRemote);
         if (!leader.IsRemote || lifetime is not { IsCancellationRequested: false } cancellation) return;
 
         // Re-publish the local records after joining a leader: anything written while this node

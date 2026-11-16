@@ -24,7 +24,7 @@ internal sealed class SharedRecordsStateMachine(DirectoryInfo location) : Simple
     /// </summary>
     public event Action<SharedRecordsSnapshot>? SnapshotProduced;
 
-    public SharedRecordsSnapshot CreateSnapshot()
+    private SharedRecordsSnapshot CreateSnapshot()
     {
         lock (sync)
         {
@@ -81,11 +81,22 @@ internal sealed class SharedRecordsStateMachine(DirectoryInfo location) : Simple
 
     protected override ValueTask<bool> ApplyAsync(LogEntry entry, CancellationToken token)
     {
-        if (entry.IsConfiguration || !entry.TryGetPayload(out var payload))
+        // Raft appends an empty entry when a new leader takes over and configuration entries
+        // carry no record payload, so both must be ignored instead of failing the apply loop.
+        if (entry.IsConfiguration || !entry.TryGetPayload(out var payload) || payload.IsEmpty)
             return new ValueTask<bool>(false);
 
-        var bytes = payload.ToArray();
-        var command = JsonSerializer.Deserialize<SharedRecordCommand>(bytes);
+        SharedRecordCommand? command;
+        try
+        {
+            command = JsonSerializer.Deserialize<SharedRecordCommand>(payload.ToArray());
+        }
+        catch (JsonException ex)
+        {
+            Log.Warning(ex, "Ignoring an unreadable replicated shared record at index {Index}", entry.Index);
+            return new ValueTask<bool>(false);
+        }
+
         if (command is null)
             return new ValueTask<bool>(false);
 
