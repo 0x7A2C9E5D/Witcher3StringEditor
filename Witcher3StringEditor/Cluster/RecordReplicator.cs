@@ -211,15 +211,7 @@ internal sealed class RecordReplicator(
                 var command = string.IsNullOrEmpty(request)
                     ? null
                     : JsonSerializer.Deserialize<SharedRecordCommand>(request);
-                var node = getNode();
-                var committed = false;
-                if (command is not null && node is not null
-                                        && !node.LeadershipToken.IsCancellationRequested)
-                {
-                    await node.ReplicateAsync(JsonSerializer.SerializeToUtf8Bytes(command), token: token)
-                        .ConfigureAwait(false);
-                    committed = true;
-                }
+                var committed = await TryCommitAsync(command, token).ConfigureAwait(false);
 
                 await writer.WriteLineAsync(committed ? "1".AsMemory() : "0".AsMemory(), token)
                     .ConfigureAwait(false);
@@ -237,6 +229,19 @@ internal sealed class RecordReplicator(
                 Log.Debug(ex, "Failed to handle a forwarded shared record write");
             }
         }
+    }
+
+    /// <summary>
+    ///     Commits a command forwarded by a follower, or reports that this node cannot commit it.
+    /// </summary>
+    private async Task<bool> TryCommitAsync(SharedRecordCommand? command, CancellationToken token)
+    {
+        var node = getNode();
+        if (command is null || node is null || node.LeadershipToken.IsCancellationRequested) return false;
+
+        await node.ReplicateAsync(JsonSerializer.SerializeToUtf8Bytes(command), token: token)
+            .ConfigureAwait(false);
+        return true;
     }
 
     private static string PipeName(Guid id)
