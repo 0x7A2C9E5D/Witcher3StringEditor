@@ -69,7 +69,7 @@ internal sealed class SharedRecordsService(
     {
         var recent = new Dictionary<string, string>(StringComparer.Ordinal);
         var backups = new Dictionary<string, string>(StringComparer.Ordinal);
-        RunOnUiThread(() =>
+        InvokeOnUiThread(() =>
         {
             foreach (var item in RecentItems)
                 recent[SharedRecordCodec.RecentKey(item.FilePath)] =
@@ -84,7 +84,7 @@ internal sealed class SharedRecordsService(
     public void UpsertRecentFile(string filePath, DateTime openedTime)
     {
         var value = string.Empty;
-        RunOnUiThread(() =>
+        InvokeOnUiThread(() =>
         {
             var existing = RecentItems.FirstOrDefault(x =>
                 string.Equals(x.FilePath, filePath, StringComparison.OrdinalIgnoreCase));
@@ -107,7 +107,7 @@ internal sealed class SharedRecordsService(
 
     public void DeleteRecentFile(IRecentFileEntry entry)
     {
-        RunOnUiThread(() => RecentItems.Remove(entry));
+        InvokeOnUiThread(() => RecentItems.Remove(entry));
         Publish(new SharedRecordCommand(
             SharedRecordCodec.RecentKey(entry.FilePath),
             SharedRecordCodec.EncodeDeletedRecent(entry.FilePath), false));
@@ -116,7 +116,7 @@ internal sealed class SharedRecordsService(
 
     public void UpsertBackup(IBackupItem item)
     {
-        RunOnUiThread(() =>
+        InvokeOnUiThread(() =>
         {
             var existing = BackupItems.FirstOrDefault(x =>
                 string.Equals(x.BackupPath, item.BackupPath, StringComparison.OrdinalIgnoreCase));
@@ -138,7 +138,7 @@ internal sealed class SharedRecordsService(
 
     public void DeleteBackup(IBackupItem item)
     {
-        RunOnUiThread(() =>
+        InvokeOnUiThread(() =>
         {
             var existing = BackupItems.FirstOrDefault(x =>
                 string.Equals(x.BackupPath, item.BackupPath, StringComparison.OrdinalIgnoreCase));
@@ -156,7 +156,7 @@ internal sealed class SharedRecordsService(
     /// </summary>
     public void ApplySnapshot(SharedRecordsSnapshot snapshot)
     {
-        RunOnUiThread(() =>
+        InvokeOnUiThread(() =>
         {
             MaterializeRecent(snapshot.RecentFiles);
             MaterializeBackups(snapshot.Backups);
@@ -303,7 +303,7 @@ internal sealed class SharedRecordsService(
         if (!leadership.IsLeader) return; // A follower never writes the shared settings file
         try
         {
-            RunOnUiThread(() =>
+            InvokeOnUiThread(() =>
             {
                 var signature = CreateSignature();
                 if (string.Equals(signature, lastSavedSignature, StringComparison.Ordinal)) return;
@@ -342,7 +342,7 @@ internal sealed class SharedRecordsService(
         target.Publish(command);
     }
 
-    private static void RunOnUiThread(Action action)
+    private static void InvokeOnUiThread(Action action)
     {
         var dispatcher = Application.Current?.Dispatcher;
         if (dispatcher is null || dispatcher.CheckAccess()) action();
