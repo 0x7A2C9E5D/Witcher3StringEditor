@@ -30,30 +30,32 @@ internal sealed class ClusterMembership(
     /// </summary>
     public void Initialize(IReadOnlyList<InstanceRegistration> peers)
     {
-        RememberPeers(peers);
+        UpdateEndpointOwners(peers);
         CleanupStateDirectories(peers);
     }
 
     /// <summary>
     ///     Refreshes the endpoint-to-instance map and returns the live peers.
     /// </summary>
-    public IReadOnlyList<InstanceRegistration> RefreshPeers()
+    public IReadOnlyList<InstanceRegistration> GetLivePeers()
     {
         var live = registry.GetLiveInstances();
-        RememberPeers(live);
+        UpdateEndpointOwners(live);
         return live;
     }
 
     /// <summary>
     ///     Gets the instance identifier that owns a Raft endpoint, if known.
     /// </summary>
-    public Guid? ResolveOwner(string endpoint) =>
-        endpointOwners.TryGetValue(endpoint, out var owner) ? owner : null;
+    public Guid? ResolveOwner(string endpoint)
+    {
+        return endpointOwners.TryGetValue(endpoint, out var owner) ? owner : null;
+    }
 
     /// <summary>
     ///     Marks leader activity, or logs that consensus is unavailable.
     /// </summary>
-    public void ObserveLeader(IClusterMember? leader)
+    public void RecordLeaderSeen(IClusterMember? leader)
     {
         lastLeaderSeenUtc = DateTime.UtcNow;
         if (leader is null)
@@ -78,7 +80,7 @@ internal sealed class ClusterMembership(
 
             try
             {
-                var livePeers = RefreshPeers();
+                var livePeers = GetLivePeers();
                 var node = getNode();
                 if (node is null) continue;
 
@@ -87,7 +89,7 @@ internal sealed class ClusterMembership(
                 if (isLeader())
                     await SynchronizeMembershipAsync(node, livePeers, token).ConfigureAwait(false);
                 else
-                    await TrySelfHealAsync(livePeers, token).ConfigureAwait(false);
+                    await TryRestartAsStandaloneIfIsolatedAsync(livePeers, token).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -100,7 +102,7 @@ internal sealed class ClusterMembership(
         }
     }
 
-    private void RememberPeers(IReadOnlyList<InstanceRegistration> registrations)
+    private void UpdateEndpointOwners(IReadOnlyList<InstanceRegistration> registrations)
     {
         var ownId = getInstanceId();
         foreach (var registration in registrations)
@@ -152,7 +154,8 @@ internal sealed class ClusterMembership(
     ///     A follower cannot remove a dead leader from the membership, so a node left alone in a
     ///     two-node cluster restarts as a standalone cluster instead of blocking all writes.
     /// </summary>
-    private async Task TrySelfHealAsync(IReadOnlyList<InstanceRegistration> livePeers, CancellationToken token)
+    private async Task TryRestartAsStandaloneIfIsolatedAsync(IReadOnlyList<InstanceRegistration> livePeers,
+        CancellationToken token)
     {
         var ownId = getInstanceId();
         if (livePeers.Any(x => x.InstanceId != ownId)) return;

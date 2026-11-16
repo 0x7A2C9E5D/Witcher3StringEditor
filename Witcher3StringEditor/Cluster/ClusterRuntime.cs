@@ -42,7 +42,7 @@ internal sealed class ClusterRuntime(
         replicator = new RecordReplicator(
             () => host.Node,
             address => membership?.ResolveOwner(address),
-            () => { membership?.RefreshPeers(); });
+            () => { membership?.GetLivePeers(); });
         replicator.Attach(instanceId);
 
         membership = new ClusterMembership(
@@ -140,7 +140,7 @@ internal sealed class ClusterRuntime(
 
     private void OnLeaderChanged(ICluster sender, IClusterMember? leader)
     {
-        membership?.ObserveLeader(leader);
+        membership?.RecordLeaderSeen(leader);
         if (leader is null || !leader.IsRemote || lifetime is not { IsCancellationRequested: false } cancellation)
             return;
 
