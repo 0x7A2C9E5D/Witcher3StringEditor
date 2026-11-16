@@ -142,7 +142,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <summary>
     ///     Gets a value indicating whether there are The Witcher 3 string items
     /// </summary>
-    private bool HasW3StringItems => W3StringItems?.Any() == true;
+    private bool HasW3StringItems => W3StringItems?.Count == 0;
 
     /// <summary>
     ///     Gets a value indicating whether the working folder can be opened
@@ -303,7 +303,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         {
             if (!await HandleReOpenFile()) return; // Handle reopening file logic
             W3StringItems = (await DeserializeW3StringItems(fileName))
-                .OrderBy(x => x.StrId).ToObservableCollection(); // Deserialize file contents
+                .OrderBy(x => x.StrId, StringComparer.InvariantCulture).ToObservableCollection(); // Deserialize file contents
             OutputFolder = Path.GetDirectoryName(fileName)!; // Set output folder based on file location
             recentFilesService.AddOrUpdateRecentFile(fileName); // Update recent items list
             SearchText = string.Empty; // Clear search text
@@ -537,7 +537,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
                     {
                         "Package", DependencyContext.Default?
                             .RuntimeLibraries.Where(static x => x.Type == "package")
-                            .OrderBy(x => x.Name)
+                            .OrderBy(x => x.Name, StringComparer.InvariantCulture)
                     }
                 }));
     }

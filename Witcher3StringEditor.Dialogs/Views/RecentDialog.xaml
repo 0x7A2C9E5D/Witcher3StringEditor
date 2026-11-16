@@ -91,7 +91,6 @@
             x:Name="SfDataGrid"
             Grid.Row="1"
             Margin="16,16,16,0"
-            AllowDeleting="True"
             AllowResizingColumns="True"
             AutoGenerateColumns="False"
             ItemsSource="{Binding PagedSource, ElementName=SfDataPager, Mode=TwoWay}"
@@ -145,7 +144,6 @@
                     ColumnSizer="AutoWithLastColumnFill"
                     HeaderText="{I18N {x:Static l:LangKeys.Path}}"
                     MappingName="FilePath"
-                    MinimumWidth="700"
                     TextWrapping="WrapWithOverflow" />
                 <!-- Opened time column -->
                 <sf:GridDateTimeColumn
@@ -188,6 +186,28 @@
                                 Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.OpenCommand}"
                                 CommandParameter="{Binding}">
                                 <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Go}" />
+                            </Button>
+                        </DataTemplate>
+                    </sf:GridTemplateColumn.CellTemplate>
+                </sf:GridTemplateColumn>
+
+                <!-- Delete button column: routes the deletion through the shared records service -->
+                <sf:GridTemplateColumn
+                    HorizontalAlignment="Center"
+                    AllowSorting="False"
+                    ColumnSizer="SizeToHeader"
+                    HeaderText="{I18N {x:Static l:LangKeys.DeleteBtnContent}}"
+                    MappingName="Null"
+                    MinimumWidth="100">
+                    <sf:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button
+                                HorizontalAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.DeleteCommand}"
+                                CommandParameter="{Binding}">
+                                <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Delete}" />
                             </Button>
                         </DataTemplate>
                     </sf:GridTemplateColumn.CellTemplate>

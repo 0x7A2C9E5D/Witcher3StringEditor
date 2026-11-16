@@ -24,7 +24,6 @@ using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Services;
 using Witcher3StringEditor.ViewModels;
 using Witcher3StringEditor.Views;
-using MessageBox = iNKORE.UI.WPF.Modern.Controls.MessageBox;
 
 namespace Witcher3StringEditor;
 
@@ -36,7 +35,6 @@ public sealed partial class App : IDisposable
 {
     private bool disposedValue; // Flag to indicate whether the object has been disposed
     private ObserverBase<LogEvent>? logObserver; // Observer for log events
-    private SingleInstanceManager? singleInstanceManager; // Single instance manager
 
     /// <summary>
     ///     Disposes of the resources used by the application
@@ -47,48 +45,19 @@ public sealed partial class App : IDisposable
     }
 
     /// <summary>
-    ///     Handles the startup of the application
-    ///     Checks for existing instances, forwards any file passed on the command line to a
-    ///     running instance, and initializes the application if none is running
+    ///     Handles the startup of the application.
+    ///     Every launch is an independent instance; a file passed on the command line is opened
+    ///     in this instance, while shared records are converged with other instances via the cluster.
     /// </summary>
     /// <param name="e">Startup event arguments</param>
     protected override void OnStartup(StartupEventArgs e)
     {
-        // Initialize dependency injection first so the startup file service can be resolved below
         InitializeServices();
         var startupFileService = Ioc.Default.GetRequiredService<IStartupFileService>();
-        var fileTransferService = Ioc.Default.GetRequiredService<IInterProcessFileTransfer>();
-        var filePath = startupFileService.GetStartupFile(e.Args); // File passed on the command line, if any
-        singleInstanceManager = new SingleInstanceManager(DebugHelper.IsDebug);
-        // Check if another instance is already running
-        if (singleInstanceManager.IsAnotherInstanceRunning())
-        {
-            // A launch carrying a file opens it in the running instance instead of asking the user
-            if (filePath is not null)
-            {
-                fileTransferService.TrySendFileToExistingInstance(filePath); // Forward the file to the running instance
-                singleInstanceManager.ActivateExistingInstance();
-                Shutdown();
-                return;
-            }
-
-            // If another instance is running, ask user if they want to activate it
-            if (MessageBox.Show(Strings.MultipleInstanceMessage, Strings.MultipleInstanceCaption,
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Information) == MessageBoxResult.Yes)
-                singleInstanceManager.ActivateExistingInstance();
-            Shutdown();
-        }
-        else
-        {
-            // If no other instance is running, initialize the application
-            InitializeApplication();
-            // Accept files forwarded by later launches (for example through "Open with")
-            fileTransferService.StartFileReceiver(path =>
-                Dispatcher.Invoke(() => startupFileService.OpenFile(path)));
-            if (filePath is not null)
-                startupFileService.OpenFile(filePath); // Open the file this launch was started with
-        }
+        var filePath = startupFileService.GetStartupFile(e.Args);
+        InitializeApplication();
+        if (filePath is not null)
+            startupFileService.OpenFile(filePath);
     }
 
     /// <summary>
@@ -102,7 +71,23 @@ public sealed partial class App : IDisposable
         InitializeCulture(); // Initialize culture
         RegisterSyncfusionLicense(); // Register Syncfusion license for UI components
         LogStartupInfo(); // Log startup information
+        StartClusterRuntime(); // Join the local cluster for shared record replication
         ShowMainWindow(); // Show the main window
+    }
+
+    /// <summary>
+    ///     Starts the Akka cluster runtime that replicates recent files and backups.
+    /// </summary>
+    private static void StartClusterRuntime()
+    {
+        try
+        {
+            Ioc.Default.GetRequiredService<IClusterRuntime>().Start();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to start the cluster runtime; records will remain local to this instance");
+        }
     }
 
     /// <summary>
@@ -221,7 +206,9 @@ public sealed partial class App : IDisposable
             .AddSingleton<IShellOpenService, ShellOpenService>()
             .AddSingleton<IFileAssociationService, FileAssociationService>()
             .AddSingleton<IStartupFileService, StartupFileService>()
-            .AddSingleton<IInterProcessFileTransfer, InterProcessFileTransferService>()
+            .AddSingleton<InstanceRegistry>()
+            .AddSingleton<ISharedRecordsState, SharedRecordsState>()
+            .AddSingleton<IClusterRuntime, ClusterRuntime>()
             .AddScoped<IPlayGameService, PlayGameService>()
             .AddScoped<ICheckUpdateService, CheckUpdateService>()
             .AddTransient<ICultureMatcher, CultureMatcher>()
@@ -234,8 +221,7 @@ public sealed partial class App : IDisposable
             .AddTransient<IDynamicDictionaryReplacer, AcDynamicDictionaryReplacer>()
             .AddTransient<IDictionaryService, DictionaryService>()
             .AddSingleton<IAppDiagnostics, AppDiagnostics>()
-            .AddSingleton<IRecentFilesService, RecentFilesService>(_ =>
-                new RecentFilesService(Ioc.Default.GetRequiredService<IAppSettings>().RecentItems))
+            .AddSingleton<IRecentFilesService, RecentFilesService>()
             .AddTransient<MainWindowViewModel>()
             .BuildServiceProvider());
     }
@@ -270,10 +256,29 @@ public sealed partial class App : IDisposable
     /// <param name="e">Exit event arguments</param>
     protected override void OnExit(ExitEventArgs e)
     {
+        StopClusterRuntime(); // Flush shared records and leave the cluster before saving
         SaveAppSettings(); // Save application settings
         Log.Information("Application exited"); // Log application exit
         Log.CloseAndFlush(); // Flush logs
         Dispose(); // Dispose of resources
+    }
+
+    /// <summary>
+    ///     Stops the Akka cluster runtime, flushing local record writes first.
+    /// </summary>
+    private static void StopClusterRuntime()
+    {
+        try
+        {
+            var clusterRuntime = Ioc.Default.GetRequiredService<IClusterRuntime>();
+            // Run the shutdown off the UI thread: awaiting on the UI thread would deadlock,
+            // because the continuations of StopAsync need the dispatcher that is blocked here
+            Task.Run(clusterRuntime.StopAsync).Wait(TimeSpan.FromSeconds(20));
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Failed to stop the cluster runtime gracefully");
+        }
     }
 
     /// <summary>

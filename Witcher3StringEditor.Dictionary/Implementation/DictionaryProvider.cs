@@ -68,7 +68,7 @@ public class DictionaryProvider : IDictionaryProvider
     public async Task<Dictionary<string, string>> GetEntries(DictionaryInfo dictionary)
     {
         var lines = await File.ReadAllLinesAsync(dictionary.Path);
-        return ParseEntries(lines).OrderBy(x => x.Key).ToDictionary();
+        return ParseEntries(lines).OrderBy(x => x.Key, StringComparer.InvariantCulture).ToDictionary();
     }
 
     /// <summary>

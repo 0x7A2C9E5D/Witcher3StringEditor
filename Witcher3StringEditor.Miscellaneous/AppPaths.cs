@@ -31,4 +31,9 @@ public static class AppPaths
     ///     The dictionary directory.
     /// </summary>
     public static readonly string DictionaryDirectory = Path.Combine(AppDataDirectory, "Dictionaries");
+
+    /// <summary>
+    ///     Directory holding metadata-only records of running instances for cluster discovery.
+    /// </summary>
+    public static readonly string ClusterRegistryDirectory = Path.Combine(AppDataDirectory, "Cluster");
 }

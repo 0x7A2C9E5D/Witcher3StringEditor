@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Models;
@@ -54,14 +55,31 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
     }
 
     /// <summary>
-    ///     Saves the specified settings to a configuration file
+    ///     Saves the specified settings to a configuration file.
+    ///     The file is replaced atomically so concurrent instances never read a partially written file.
     /// </summary>
     /// <typeparam name="T">The type of settings to save</typeparam>
     /// <param name="settings">The settings to save</param>
     public void Save<T>(T settings)
     {
-        using var stream = File.Create(filePath);
-        JsonSerializer.Serialize(stream, settings, jsonSerializerOptions);
+        var json = JsonSerializer.Serialize(settings, jsonSerializerOptions);
+        var temporary = $"{filePath}.{Environment.ProcessId}.tmp";
+        for (var attempt = 1; attempt <= 3; attempt++)
+            try
+            {
+                File.WriteAllText(temporary, json);
+                File.Move(temporary, filePath, true);
+                return;
+            }
+            catch (IOException) when (attempt < 3)
+            {
+                Thread.Sleep(50 * attempt);
+            }
+            catch (IOException ex)
+            {
+                Log.Warning(ex, "Failed to save the application settings");
+                return;
+            }
     }
 
     /// <summary>

@@ -1,25 +1,23 @@
 ﻿using System.Collections.ObjectModel;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
-using Witcher3StringEditor.Models;
 
 namespace Witcher3StringEditor.Services;
 
 /// <summary>
-///     Provides access to the recent files
+///     Provides access to the recent files, backed by the replicated shared records state.
 /// </summary>
-/// <param name="recentItems"></param>
-internal class RecentFilesService(ObservableCollection<IRecentFileEntry> recentItems) : IRecentFilesService
+/// <param name="sharedRecords">Shared records bridge.</param>
+internal class RecentFilesService(ISharedRecordsState sharedRecords) : IRecentFilesService
 {
     /// <summary>
-    ///     Gets the collection of recent files
+    ///     Gets the collection of recent files.
     /// </summary>
-    public ObservableCollection<IRecentFileEntry> RecentItems { get; } = recentItems;
+    public ObservableCollection<IRecentFileEntry> RecentItems => sharedRecords.RecentItems;
 
     /// <summary>
-    ///     Adds or updates the specified file path in the recent files list
+    ///     Adds or updates the specified file path in the recent files list.
     /// </summary>
-    /// <param name="filePath"></param>
     public void AddOrUpdateRecentFile(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
@@ -28,31 +26,15 @@ internal class RecentFilesService(ObservableCollection<IRecentFileEntry> recentI
             return;
         }
 
-        var existingItem = RecentItems.FirstOrDefault(x =>
-            string.Equals(x.FilePath, filePath, StringComparison.OrdinalIgnoreCase));
-
-        if (existingItem != null)
-        {
-            existingItem.OpenedTime = DateTime.Now;
-            Log.Debug("Updated recent file: {FilePath}", filePath);
-        }
-        else
-        {
-            RecentItems.Add(new RecentItem(filePath, DateTime.Now));
-            Log.Information("Added new recent file: {FilePath}", filePath);
-        }
+        sharedRecords.UpsertRecentFile(filePath, DateTime.Now);
     }
 
     /// <summary>
-    ///     Removes the specified file path from the recent files list
+    ///     Removes the specified file path from the recent files list.
     /// </summary>
-    /// <param name="recentFileEntry"></param>
     public void RemoveRecentFile(IRecentFileEntry recentFileEntry)
     {
-        var removed = RecentItems.Remove(recentFileEntry);
-        if (removed)
-            Log.Information("Removed recent file: {FilePath}", recentFileEntry.FilePath);
-        else
-            Log.Warning("Failed to remove recent file: {FilePath}", recentFileEntry.FilePath);
+        sharedRecords.DeleteRecentFile(recentFileEntry);
+        Log.Information("Removed a recent file entry");
     }
 }

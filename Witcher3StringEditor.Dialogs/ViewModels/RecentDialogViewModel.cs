@@ -51,6 +51,16 @@ public sealed partial class RecentDialogViewModel(IRecentFilesService recentFile
     }
 
     /// <summary>
+    ///     Removes the specified recent item through the shared records service so the
+    ///     deletion is replicated to the other running instances and persisted.
+    /// </summary>
+    [RelayCommand]
+    private void Delete(IRecentFileEntry recentFileEntry)
+    {
+        recentFilesService.RemoveRecentFile(recentFileEntry);
+    }
+
+    /// <summary>
     ///     Handles opening an existing file
     ///     Closes the dialog and sends a message to open the file
     /// </summary>

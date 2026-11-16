@@ -20,8 +20,7 @@ public class ObservableCollectionJsonConverter<T> : JsonConverter<ObservableColl
     public override ObservableCollection<T> Read(ref Utf8JsonReader reader, Type typeToConvert,
         JsonSerializerOptions options)
     {
-        var list = JsonSerializer.Deserialize<List<T>>(ref reader, options);
-        return new ObservableCollection<T>(list!);
+        return [.. JsonSerializer.Deserialize<List<T>>(ref reader, options)!];
     }
 
     /// <summary>
