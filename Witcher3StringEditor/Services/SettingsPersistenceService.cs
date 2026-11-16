@@ -89,7 +89,7 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
     /// <summary>
     ///     Saves the specified settings to a configuration file.
     ///     The file is replaced atomically so concurrent instances never read a partially written file,
-    ///     and the write itself is serialized across processes.
+    ///     and to write itself is serialized across processes.
     /// </summary>
     /// <typeparam name="T">The type of settings to save</typeparam>
     /// <param name="settings">The settings to save</param>
