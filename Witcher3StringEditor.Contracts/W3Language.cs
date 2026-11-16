@@ -9,9 +9,9 @@ namespace Witcher3StringEditor.Contracts;
 ///     obfuscated with, both of which come from the game's own content files
 /// </summary>
 [PublicAPI]
-public sealed class Language
+public sealed class W3Language
 {
-    private Language(string code, string cultureCode, uint key, uint magic)
+    private W3Language(string code, string cultureCode, uint key, uint magic)
     {
         Code = code;
         CultureCode = cultureCode;
@@ -47,7 +47,7 @@ public sealed class Language
     ///     key identifies no language at all and the containers of those languages are stored without
     ///     obfuscation. They are listed as the languages they are
     /// </remarks>
-    public static IReadOnlyList<Language> All { get; } =
+    public static IReadOnlyList<W3Language> All { get; } =
     [
         new("ar", "ar", 0x00000000, 0x00000000),
         new("br", "pt", 0x00000000, 0x00000000),
@@ -72,7 +72,7 @@ public sealed class Language
     /// <summary>
     ///     The language everything that cannot name one falls back to
     /// </summary>
-    public static Language Default => FromCode("en")!;
+    public static W3Language Default => FromCode("en")!;
 
     /// <summary>
     ///     Gets the language that owns the given full key
@@ -83,7 +83,7 @@ public sealed class Language
     ///     Only a key owned by exactly one language identifies that language: every language the game
     ///     added after its release shares key 0, so a zero key names none of them
     /// </remarks>
-    public static Language? FromKey(uint key)
+    public static W3Language? FromKey(uint key)
     {
         // Two are taken so that a key with a rival is recognized as one that names neither.
         var owned = All.Where(language => language.Key == key).Take(2).ToArray();
@@ -95,7 +95,7 @@ public sealed class Language
     /// </summary>
     /// <param name="code">The code of the language, or its culture code</param>
     /// <returns>The language, or null when no language answers to the code</returns>
-    public static Language? FromCode(string? code)
+    public static W3Language? FromCode(string? code)
     {
         return All.FirstOrDefault(language =>
             string.Equals(language.Code, code, StringComparison.OrdinalIgnoreCase) ||
@@ -112,7 +112,7 @@ public sealed class Language
     ///     resolves to them, so a culture is looked up along itself and its parents: a machine installed
     ///     as zh-CN, pl-PL or es-ES names the language of the culture it descends from
     /// </remarks>
-    public static Language? FromCulture(CultureInfo culture)
+    public static W3Language? FromCulture(CultureInfo culture)
     {
         // The invariant culture ends the walk: it has no name and its parent is itself.
         for (var current = culture; !string.IsNullOrEmpty(current.Name); current = current.Parent)

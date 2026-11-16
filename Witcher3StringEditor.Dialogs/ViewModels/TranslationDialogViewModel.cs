@@ -4,11 +4,11 @@ using CommunityToolkit.Mvvm.Input;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
+using GTranslate;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Shared.Extensions;
 using IDictionaryService = Witcher3StringEditor.Dictionary.IDictionaryService;
-using Language = GTranslate.Language;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 

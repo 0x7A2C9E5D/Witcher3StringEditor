@@ -7,34 +7,37 @@ using Witcher3StringEditor.Locales;
 namespace Witcher3StringEditor.Dialogs.Converters;
 
 /// <summary>
-///     A multi-value converter that converts FileFormat enum values to their corresponding localized string
+///     A multi-value converter that converts W3StringFileFormat enum values to their corresponding localized string
 ///     representations
 ///     Used in XAML data binding to display user-friendly file format descriptions
 /// </summary>
 internal class W3FileFormatToLocalizedStringConverter : IMultiValueConverter
 {
     /// <summary>
-    ///     Converts a FileFormat enum value to its corresponding localized string representation
+    ///     Converts a W3StringFileFormat enum value to its corresponding localized string representation
     /// </summary>
-    /// <param name="values">An array of values to convert, where the first element is expected to be a FileFormat enum value</param>
+    /// <param name="values">
+    ///     An array of values to convert, where the first element is expected to be a W3StringFileFormat enum
+    ///     value
+    /// </param>
     /// <param name="targetType">The type of the binding target property (not used in this implementation)</param>
     /// <param name="parameter">An optional parameter to be used in the converter logic (not used in this implementation)</param>
     /// <param name="culture">The culture to use in the converter (not used in this implementation)</param>
     /// <returns>The localized string representation of the file format, or DependencyProperty.UnsetValue if conversion fails</returns>
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values[0] is not FileFormat fileFormat) return DependencyProperty.UnsetValue;
+        if (values[0] is not W3StringFileFormat fileFormat) return DependencyProperty.UnsetValue;
         return fileFormat switch
         {
-            FileFormat.Csv => Strings.FileFormatTextFile,
-            FileFormat.W3Strings => Strings.FileFormatWitcher3StringsFile,
-            FileFormat.Excel => Strings.FileFormatExcelWorkbook,
+            W3StringFileFormat.Csv => Strings.FileFormatTextFile,
+            W3StringFileFormat.W3Strings => Strings.FileFormatWitcher3StringsFile,
+            W3StringFileFormat.Excel => Strings.FileFormatExcelWorkbook,
             _ => DependencyProperty.UnsetValue
         };
     }
 
     /// <summary>
-    ///     Converts a localized string back to a FileFormat enum value (not implemented)
+    ///     Converts a localized string back to a W3StringFileFormat enum value (not implemented)
     /// </summary>
     /// <param name="value">The value to convert back</param>
     /// <param name="targetTypes">The types of the binding target properties</param>

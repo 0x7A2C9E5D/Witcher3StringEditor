@@ -27,20 +27,20 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This constructor is used during JSON deserialization
     /// </summary>
     /// <param name="gameExePath">The path to the game executable</param>
-    /// <param name="preferredFileType">The preferred The Witcher 3 file format</param>
+    /// <param name="preferredW3StringFileType">The preferred The Witcher 3 file format</param>
     /// <param name="preferredLanguage">The preferred language</param>
     /// <param name="backupItems">The collection of backup items</param>
     /// <param name="recentItems">The collection of recent items</param>
     [JsonConstructor]
-    public AppSettings(string gameExePath, FileFormat preferredFileType,
-        Language? preferredLanguage, ObservableCollection<IBackupItem> backupItems,
+    public AppSettings(string gameExePath, W3StringFileFormat preferredW3StringFileType,
+        W3Language? preferredLanguage, ObservableCollection<IBackupItem> backupItems,
         ObservableCollection<IRecentFileEntry> recentItems)
     {
         GameExePath = gameExePath;
         BackupItems = [.. backupItems];
         RecentItems = [.. recentItems];
-        PreferredFileType = preferredFileType;
-        PreferredLanguage = preferredLanguage ?? DefaultPreferredLanguage; // Settings may predate the language
+        PreferredW3StringFileType = preferredW3StringFileType;
+        PreferredW3Language = preferredLanguage ?? DefaultPreferredW3Language; // Settings may predate the language
     }
 
     /// <summary>
@@ -52,8 +52,8 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     not read, and the table decides what counts as a match, so a machine installed in a language no
     ///     container is written for falls back to English
     /// </remarks>
-    private static Language DefaultPreferredLanguage =>
-        Contracts.Language.FromCulture(CultureInfo.InstalledUICulture) ?? Contracts.Language.Default;
+    private static W3Language DefaultPreferredW3Language =>
+        W3Language.FromCulture(CultureInfo.InstalledUICulture) ?? W3Language.Default;
 
     /// <summary>
     ///     Gets or sets the path to the game executable
@@ -80,7 +80,7 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
-    public partial Language PreferredLanguage { get; set; } = DefaultPreferredLanguage;
+    public partial W3Language PreferredW3Language { get; set; } = DefaultPreferredW3Language;
 
     /// <summary>
     ///     Gets or sets the preferred payload encoding written for .w3strings files
@@ -94,7 +94,7 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
     [ObservableProperty]
-    public partial FileFormat PreferredFileType { get; set; }
+    public partial W3StringFileFormat PreferredW3StringFileType { get; set; }
 
     /// <summary>
     ///     Gets or sets the preferred translator service

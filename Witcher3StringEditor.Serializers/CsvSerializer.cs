@@ -15,11 +15,11 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
     /// <summary>
     ///     Determines whether this serializer reads and writes the given file format
     /// </summary>
-    /// <param name="fileFormat">The file format to check</param>
+    /// <param name="w3StringFileFormat">The file format to check</param>
     /// <returns>True when the format is CSV</returns>
-    public bool CanHandle(FileFormat fileFormat)
+    public bool CanHandle(W3StringFileFormat w3StringFileFormat)
     {
-        return fileFormat == FileFormat.Csv;
+        return w3StringFileFormat == W3StringFileFormat.Csv;
     }
 
     /// <summary>
@@ -70,9 +70,9 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
         try
         {
             var languageName =
-                context.TargetLanguage.Code.ToLowerInvariant(); // Lowercase content-file code for the filename
+                context.TargetW3Language.Code.ToLowerInvariant(); // Lowercase content-file code for the filename
             // A magic of zero means the stored text is not obfuscated, so it is cleartext
-            var csvLanguageIdentifier = context.TargetLanguage.Magic == 0
+            var csvLanguageIdentifier = context.TargetW3Language.Magic == 0
                 ? "cleartext" // Special case: unobfuscated languages
                 : languageName; // Default: use language name
             await WriteFileWithBackup(Path.Combine(context.OutputDirectory, $"{languageName}.csv"),
@@ -108,7 +108,7 @@ public class CsvSerializer(IBackupService backupService) : ISerializer
     private static string BuildCsvContent(IReadOnlyCollection<IStringItem> w3StringItems, string lang)
     {
         using var stringBuilder = ZString.CreateStringBuilder(); // Efficient CSV content builder
-        stringBuilder.AppendLine($";meta[language={lang}]"); // Language metadata header
+        stringBuilder.AppendLine($";meta[language={lang}]"); // W3Language metadata header
         stringBuilder.AppendLine("; id      |key(hex)|key(str)| text"); // CSV column headers
         foreach (var w3StringItem in w3StringItems) // Process each string item
             stringBuilder.AppendLine(

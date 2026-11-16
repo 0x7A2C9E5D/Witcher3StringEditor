@@ -8,7 +8,7 @@ namespace Witcher3StringEditor.Miscellaneous;
 ///     JSON converter for The Witcher 3 languages
 ///     Stores a language as its content-file code, for example "cn"
 /// </summary>
-public class LanguageJsonConverter : JsonConverter<Language>
+public class LanguageJsonConverter : JsonConverter<W3Language>
 {
     /// <summary>
     ///     Reads a language from its content-file code, its culture code or its name
@@ -19,14 +19,14 @@ public class LanguageJsonConverter : JsonConverter<Language>
     /// <param name="typeToConvert"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public override Language Read(
+    public override W3Language Read(
         ref Utf8JsonReader reader,
         Type typeToConvert,
         JsonSerializerOptions options)
     {
         return reader.TokenType == JsonTokenType.String
-            ? Language.FromCode(reader.GetString()) ?? Language.Default
-            : Language.Default;
+            ? W3Language.FromCode(reader.GetString()) ?? W3Language.Default
+            : W3Language.Default;
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ public class LanguageJsonConverter : JsonConverter<Language>
     /// <param name="options"></param>
     public override void Write(
         Utf8JsonWriter writer,
-        Language value,
+        W3Language value,
         JsonSerializerOptions options)
     {
         writer.WriteStringValue(value.Code);

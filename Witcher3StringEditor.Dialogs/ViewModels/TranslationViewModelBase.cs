@@ -9,7 +9,6 @@ using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
-using Language = GTranslate.Language;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -225,7 +224,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// <returns>The preferred language</returns>
     private static ILanguage GetPreferredLanguage(IAppSettings appSettings)
     {
-        var cultureCode = appSettings.PreferredLanguage.CultureCode; // Get culture code for preferred language
+        var cultureCode = appSettings.PreferredW3Language.CultureCode; // Get culture code for preferred language
         return cultureCode == "es-MX" ? new Language("es") : new Language(cultureCode); // Return preferred language
     }
 
@@ -266,7 +265,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         AddMatchingDictionaries(matchingDictionaries); // Add matching dictionaries to the collection
 
         Log.Information(
-            "Dictionary availability has been updated. Is supported: {IsSupported}. Found {Count} matching dictionaries for target language: {Language}",
+            "Dictionary availability has been updated. Is supported: {IsSupported}. Found {Count} matching dictionaries for target language: {W3Language}",
             IsDictionarySupported, matchingDictionaries.Length,
             ToLanguage.Name); // Log the updated dictionary availability
     }

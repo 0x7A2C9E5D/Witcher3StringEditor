@@ -16,11 +16,11 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
     /// <summary>
     ///     Determines whether this serializer reads and writes the given file format
     /// </summary>
-    /// <param name="fileFormat">The file format to check</param>
+    /// <param name="w3StringFileFormat">The file format to check</param>
     /// <returns>True when the format is a W3Strings container</returns>
-    public bool CanHandle(FileFormat fileFormat)
+    public bool CanHandle(W3StringFileFormat w3StringFileFormat)
     {
-        return fileFormat == FileFormat.W3Strings;
+        return w3StringFileFormat == W3StringFileFormat.W3Strings;
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
         try
         {
             var saveLang =
-                context.TargetLanguage.Code
+                context.TargetW3Language.Code
                     .ToLowerInvariant(); // Lowercase content-file code of the target language for file naming
             var outputW3StringsPath =
                 Path.Combine(context.OutputDirectory, $"{saveLang}.w3strings"); // Destination of the encoded container
@@ -74,7 +74,7 @@ public class W3StringsSerializer(IBackupService backupService) : ISerializer
             // anomaly it refuses the container for itself, one line per anomaly.
             var container = W3StringsBuilder.Build(
                 w3StringItems,
-                context.TargetLanguage.Key); // The language key is what every id and text is obfuscated by
+                context.TargetW3Language.Key); // The language key is what every id and text is obfuscated by
             if (container is null) return false; // The reasons are in the log, one per anomaly
 
             // Back the destination up before it is opened, because creating it truncates it.

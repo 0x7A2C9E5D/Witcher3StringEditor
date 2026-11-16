@@ -82,8 +82,8 @@ internal class SettingsManagerService : ISettingsManagerService
     private static void LogAdditionalSettings(IAppSettings appSettings)
     {
         Log.Information(
-            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {Language}, Preferred W3Strings encoding: {Encoding}, Translator: {Translator}",
-            appSettings.PreferredFileType, appSettings.PreferredLanguage,
+            "Current settings -> Preferred filetype: {Filetype}, Preferred language: {W3Language}, Preferred W3Strings encoding: {Encoding}, Translator: {Translator}",
+            appSettings.PreferredW3StringFileType, appSettings.PreferredW3Language,
             appSettings.PreferredW3StringsEncoding.WebName,
             appSettings.Translator); // Log the relevant settings in a single entry
     }
@@ -120,7 +120,7 @@ internal class SettingsManagerService : ISettingsManagerService
             case nameof(IAppSettings.Translator): // If Translator changed
                 ApplyTranslatorChange(AppSettings); // Apply translator change
                 break;
-            case nameof(IAppSettings.Language): // If Language changed
+            case nameof(IAppSettings.Language): // If W3Language changed
                 ApplyLanguageChange(AppSettings.Language); // Apply language change
                 break;
             case nameof(IAppSettings.PageSize): // If PageSize changed
@@ -151,7 +151,7 @@ internal class SettingsManagerService : ISettingsManagerService
         try
         {
             I18NExtension.Culture = new CultureInfo(language); // Set the new culture
-            Log.Information("Language changed to {Language}", language); // Log successful language change
+            Log.Information("W3Language changed to {W3Language}", language); // Log successful language change
         }
         catch (Exception ex)
         {

@@ -15,11 +15,11 @@ public class ExcelSerializer(IBackupService backupService) : ISerializer
     /// <summary>
     ///     Determines whether this serializer reads and writes the given file format
     /// </summary>
-    /// <param name="fileFormat">The file format to check</param>
+    /// <param name="w3StringFileFormat">The file format to check</param>
     /// <returns>True when the format is an Excel workbook</returns>
-    public bool CanHandle(FileFormat fileFormat)
+    public bool CanHandle(W3StringFileFormat w3StringFileFormat)
     {
-        return fileFormat == FileFormat.Excel;
+        return w3StringFileFormat == W3StringFileFormat.Excel;
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class ExcelSerializer(IBackupService backupService) : ISerializer
             {
                 Guard.IsGreaterThan(w3StringItems.Count, 0); // Require items to serialize
                 var filePath = Path.Combine(context.OutputDirectory,
-                    $"{context.TargetLanguage.Code.ToLowerInvariant()}.xlsx"); // Build language-specific Excel path
+                    $"{context.TargetW3Language.Code.ToLowerInvariant()}.xlsx"); // Build language-specific Excel path
                 if (File.Exists(filePath))
                     Guard.IsTrue(await backupService.Backup(filePath)); // Backup existing file if exists
                 GenerateExcelFile(filePath, w3StringItems); // Generate Excel file

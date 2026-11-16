@@ -20,14 +20,14 @@ public record SerializationContext
     ///     This determines the format in which The Witcher 3 string items will be serialized (e.g., CSV, Excel, W3Strings)
     ///     This is a required property that must be specified during context creation
     /// </summary>
-    public required FileFormat TargetFileFormat { get; init; }
+    public required W3StringFileFormat TargetW3StringFileFormat { get; init; }
 
     /// <summary>
     ///     Gets the target language for serialization
     ///     This specifies the language that The Witcher 3 string items are in or should be translated to
     ///     This is a required property that must be specified during context creation
     /// </summary>
-    public required Language TargetLanguage { get; init; }
+    public required W3Language TargetW3Language { get; init; }
 
     /// <summary>
     ///     Gets the payload encoding to write for W3Strings files

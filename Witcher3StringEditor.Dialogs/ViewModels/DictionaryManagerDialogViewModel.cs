@@ -133,7 +133,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
 
     /// <summary>
     ///     Updates the DictionaryGroups collection by first removing any existing entry with the same path,
-    ///     then adding the new dictionaryInfo to the group corresponding to its TargetLanguage.
+    ///     then adding the new dictionaryInfo to the group corresponding to its TargetW3Language.
     ///     This ensures that each file path exists only once and in the correct language group.
     /// </summary>
     /// <param name="dictionaryInfo">The dictionary info to add or update.</param>
@@ -167,7 +167,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
     }
 
     /// <summary>
-    ///     Adds the given dictionaryInfo to the group matching its TargetLanguage.
+    ///     Adds the given dictionaryInfo to the group matching its TargetW3Language.
     ///     Creates a new group if no matching group exists.
     /// </summary>
     /// <param name="dictionaryInfo">The dictionary info to add.</param>

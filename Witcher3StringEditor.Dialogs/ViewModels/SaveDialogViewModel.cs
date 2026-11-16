@@ -56,8 +56,8 @@ public partial class SaveDialogViewModel
         this.serializer = serializer;
         this.dialogService = dialogService;
         this.appSettings = appSettings;
-        TargetLanguage = appSettings.PreferredLanguage;
-        TargetFileFormat = appSettings.PreferredFileType;
+        TargetW3Language = appSettings.PreferredW3Language;
+        TargetW3StringFileFormat = appSettings.PreferredW3StringFileType;
         TargetEncoding = appSettings.PreferredW3StringsEncoding;
     }
 
@@ -84,13 +84,13 @@ public partial class SaveDialogViewModel
     ///     Gets or sets the target file format for the save operation
     /// </summary>
     [ObservableProperty]
-    public partial FileFormat TargetFileFormat { get; set; }
+    public partial W3StringFileFormat TargetW3StringFileFormat { get; set; }
 
     /// <summary>
     ///     Gets or sets the target language for the save operation
     /// </summary>
     [ObservableProperty]
-    public partial Language TargetLanguage { get; set; }
+    public partial W3Language TargetW3Language { get; set; }
 
     /// <summary>
     ///     Event that is raised when the dialog requests to be closed
@@ -110,9 +110,9 @@ public partial class SaveDialogViewModel
     [RelayCommand]
     private async Task Save()
     {
-        Log.Information("Saving {Count} item(s) to {Directory} as {FileFormat} ({Language})",
-            w3StringItems.Count, OutputDirectory, TargetFileFormat, TargetLanguage);
-        if (TargetFileFormat == FileFormat.W3Strings)
+        Log.Information("Saving {Count} item(s) to {Directory} as {W3StringFileFormat} ({W3Language})",
+            w3StringItems.Count, OutputDirectory, TargetW3StringFileFormat, TargetW3Language);
+        if (TargetW3StringFileFormat == W3StringFileFormat.W3Strings)
         {
             Log.Information("W3Strings payload encoding: {Encoding}",
                 TargetEncoding.WebName); // Log the chosen encoding
@@ -122,8 +122,8 @@ public partial class SaveDialogViewModel
         var saveResult = await serializer.Serialize(w3StringItems, new SerializationContext // Serialize items
         {
             OutputDirectory = OutputDirectory, // Set output directory
-            TargetFileFormat = TargetFileFormat, // Set the file format
-            TargetLanguage = TargetLanguage, // Set language
+            TargetW3StringFileFormat = TargetW3StringFileFormat, // Set the file format
+            TargetW3Language = TargetW3Language, // Set language
             Encoding = TargetEncoding // Set the payload encoding
         });
         if (saveResult)

@@ -65,8 +65,8 @@ internal class AppDiagnosticsService(
     private void LogLocalizationInfo()
     {
         var supportedCultures = cultureResolver.SupportedCultures;
-        Log.Information("Installed Language Packs: {Languages}",
+        Log.Information("Installed W3Language Packs: {Languages}",
             string.Join(", ", supportedCultures.Select(x => x.Name)));
-        Log.Information("Current Language: {Language}", appSettings.Language);
+        Log.Information("Current W3Language: {W3Language}", appSettings.Language);
     }
 }

@@ -38,13 +38,13 @@
                 MethodName="GetValues"
                 ObjectType="{x:Type sys:Enum}">
                 <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="com:FileFormat" />
+                    <x:Type TypeName="com:W3StringFileFormat" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
             <!-- Data provider for The Witcher 3 languages enumeration -->
             <ObjectDataProvider
                 x:Key="W3Language"
-                ObjectInstance="{x:Static codec:Language.All}" />
+                ObjectInstance="{x:Static codec:W3Language.All}" />
             <!-- Converter for displaying The Witcher 3 language native names -->
             <con:W3LanguageToNativeNameConverter x:Key="W3LanguageToNativeNameConverter" />
             <!-- Converter for displaying The Witcher 3 file type localized strings -->
@@ -93,7 +93,7 @@
                             Grid.Column="1"
                             HorizontalAlignment="Stretch"
                             ItemsSource="{Binding Source={StaticResource FileFormat}}"
-                            SelectedValue="{Binding TargetFileFormat}">
+                            SelectedValue="{Binding TargetW3StringFileFormat}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock>
@@ -125,7 +125,7 @@
                             Grid.Row="0"
                             HorizontalAlignment="Right"
                             ItemsSource="{Binding Source={StaticResource W3Language}}"
-                            SelectedValue="{Binding TargetLanguage}">
+                            SelectedValue="{Binding TargetW3Language}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock
@@ -140,8 +140,8 @@
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
                                         <!-- Show when file format is W3Strings -->
-                                        <DataTrigger Binding="{Binding TargetFileFormat}"
-                                                     Value="{x:Static com:FileFormat.W3Strings}">
+                                        <DataTrigger Binding="{Binding TargetW3StringFileFormat}"
+                                                     Value="{x:Static com:W3StringFileFormat.W3Strings}">
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>

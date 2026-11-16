@@ -12,12 +12,12 @@ public interface IAppSettings
     /// <summary>
     ///     Gets or sets the preferred The Witcher 3 file format for operations
     /// </summary>
-    public FileFormat PreferredFileType { get; set; }
+    public W3StringFileFormat PreferredW3StringFileType { get; set; }
 
     /// <summary>
     ///     Gets or sets the preferred language for the application
     /// </summary>
-    public Language PreferredLanguage { get; set; }
+    public W3Language PreferredW3Language { get; set; }
 
     /// <summary>
     ///     Gets or sets the preferred payload encoding written for <c>.w3strings</c> files

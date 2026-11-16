@@ -12,9 +12,9 @@ public interface ISerializer
     /// <summary>
     ///     Determines whether this serializer reads and writes the given file format
     /// </summary>
-    /// <param name="fileFormat">The file format to check</param>
+    /// <param name="w3StringFileFormat">The file format to check</param>
     /// <returns>True when this serializer handles that format</returns>
-    public bool CanHandle(FileFormat fileFormat);
+    public bool CanHandle(W3StringFileFormat w3StringFileFormat);
 
     /// <summary>
     ///     Deserializes The Witcher 3 string items from a file

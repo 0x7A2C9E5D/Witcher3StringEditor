@@ -33,13 +33,13 @@
                 MethodName="GetValues"
                 ObjectType="{x:Type sys:Enum}">
                 <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="common:FileFormat" />
+                    <x:Type TypeName="common:W3StringFileFormat" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
             <!-- Data provider for The Witcher 3 languages enumeration -->
             <ObjectDataProvider
                 x:Key="W3Language"
-                ObjectInstance="{x:Static codec:Language.All}" />
+                ObjectInstance="{x:Static codec:W3Language.All}" />
             <!-- Static array data provider for page size options -->
             <!-- Provides predefined page size values (20, 30, 50, 100) for data grid pagination -->
             <x:Array x:Key="PageSizes" Type="sys:Int32">
@@ -100,7 +100,7 @@
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.Type}" />
                     </ui:SettingsCard.HeaderIcon>
                     <ComboBox ItemsSource="{Binding Source={StaticResource FileFormat}}"
-                              SelectedItem="{Binding AppSettings.PreferredFileType, Mode=TwoWay}">
+                              SelectedItem="{Binding AppSettings.PreferredW3StringFileType, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>
@@ -145,7 +145,7 @@
                         <ui:FontIcon Icon="{x:Static ui:SegoeFluentIcons.LocaleLanguage}" />
                     </ui:SettingsCard.HeaderIcon>
                     <ComboBox ItemsSource="{Binding Source={StaticResource W3Language}}"
-                              SelectedItem="{Binding AppSettings.PreferredLanguage, Mode=TwoWay}">
+                              SelectedItem="{Binding AppSettings.PreferredW3Language, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={StaticResource W3LanguageToNativeNameConverter}}" />

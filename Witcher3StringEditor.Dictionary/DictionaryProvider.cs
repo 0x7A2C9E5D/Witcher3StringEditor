@@ -134,7 +134,7 @@ public class DictionaryProvider : IDictionaryProvider
     {
         // Only convert Witcher 3 specific codes, otherwise keep original
         return string.IsNullOrWhiteSpace(code)
-            ? throw new ArgumentException(@"Language code cannot be empty", nameof(code))
+            ? throw new ArgumentException(@"W3Language code cannot be empty", nameof(code))
             : W3LangMap.GetValueOrDefault(code, code);
     }
 

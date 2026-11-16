@@ -27,11 +27,11 @@ public class SerializerCoordinator : ISerializerCoordinator
     /// <summary>
     ///     Determines whether one of the serializers reads and writes the given file format
     /// </summary>
-    /// <param name="fileFormat">The file format to check</param>
+    /// <param name="w3StringFileFormat">The file format to check</param>
     /// <returns>True when one of the serializers handles that format</returns>
-    public bool CanHandle(FileFormat fileFormat)
+    public bool CanHandle(W3StringFileFormat w3StringFileFormat)
     {
-        return serializers.Any(serializer => serializer.CanHandle(fileFormat));
+        return serializers.Any(serializer => serializer.CanHandle(w3StringFileFormat));
     }
 
     /// <summary>
@@ -76,23 +76,23 @@ public class SerializerCoordinator : ISerializerCoordinator
         foreach (var item in w3StringItems)
             item.Text = SavedText.NormalizeLineBreaks(item.Text);
 
-        var succeeded = await Resolve(context.TargetFileFormat).Serialize(w3StringItems, context);
+        var succeeded = await Resolve(context.TargetW3StringFileFormat).Serialize(w3StringItems, context);
         if (succeeded)
-            Log.Information("Serialized {Count} item(s) as {FileFormat} to {Directory}", w3StringItems.Count,
-                context.TargetFileFormat, context.OutputDirectory);
+            Log.Information("Serialized {Count} item(s) as {W3StringFileFormat} to {Directory}", w3StringItems.Count,
+                context.TargetW3StringFileFormat, context.OutputDirectory);
         return succeeded;
     }
 
     /// <summary>
     ///     Gets the serializer that handles the given file format
     /// </summary>
-    /// <param name="fileFormat">The file format to handle</param>
+    /// <param name="w3StringFileFormat">The file format to handle</param>
     /// <returns>The serializer able to read and write that format</returns>
     /// <exception cref="NotSupportedException">Thrown when no serializer handles the format</exception>
-    private ISerializer Resolve(FileFormat fileFormat)
+    private ISerializer Resolve(W3StringFileFormat w3StringFileFormat)
     {
-        return serializers.FirstOrDefault(serializer => serializer.CanHandle(fileFormat))
-               ?? throw new NotSupportedException($"File format not supported: {fileFormat}");
+        return serializers.FirstOrDefault(serializer => serializer.CanHandle(w3StringFileFormat))
+               ?? throw new NotSupportedException($"File format not supported: {w3StringFileFormat}");
     }
 
     /// <summary>
@@ -101,13 +101,13 @@ public class SerializerCoordinator : ISerializerCoordinator
     /// <param name="filePath">The path to map</param>
     /// <returns>The file format of the path</returns>
     /// <exception cref="NotSupportedException">Thrown when the extension is not supported</exception>
-    private static FileFormat FormatOf(string filePath)
+    private static W3StringFileFormat FormatOf(string filePath)
     {
         return Path.GetExtension(filePath).ToLowerInvariant() switch
         {
-            ".csv" => FileFormat.Csv,
-            ".xlsx" => FileFormat.Excel,
-            ".w3strings" => FileFormat.W3Strings,
+            ".csv" => W3StringFileFormat.Csv,
+            ".xlsx" => W3StringFileFormat.Excel,
+            ".w3strings" => W3StringFileFormat.W3Strings,
             _ => throw new NotSupportedException($"File format not supported: {filePath}")
         };
     }
