@@ -144,7 +144,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <summary>
     ///     Gets a value indicating whether there are The Witcher 3 string items
     /// </summary>
-    private bool HasW3StringItems => W3StringItems?.Count == 0;
+    private bool HasW3StringItems => W3StringItems?.Count > 0;
 
     /// <summary>
     ///     Gets a value indicating whether the working folder can be opened
@@ -341,7 +341,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <returns>True if the file can be reopened, false otherwise</returns>
     private async Task<bool> HandleReOpenFile()
     {
-        if (W3StringItems?.Count == 0) return true; // Return true if no items currently loaded
+        if (W3StringItems?.Count is not > 0) return true; // Return true if no items currently loaded
         return await dialogService.MessageBoxConfirmAsync(this, Strings.ReOpenFileMessage,
             Strings.ReOpenFileCaption); // Ask whether the currently loaded file may be replaced
     }
@@ -582,7 +582,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     {
         if (PagedSource is not null) // Check if we have search results
             return PagedSource.Count != 0; // Return true if search results exist
-        return W3StringItems?.Count == 0; // Otherwise check if we have any W3String items
+        return W3StringItems?.Count > 0; // Otherwise check if we have any W3String items
     }
 
     /// <summary>
@@ -620,7 +620,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     /// <returns></returns>
     private bool CanMergeData()
     {
-        return W3StringItems?.Count == 0;
+        return W3StringItems?.Count > 0;
     }
 
     /// <summary>

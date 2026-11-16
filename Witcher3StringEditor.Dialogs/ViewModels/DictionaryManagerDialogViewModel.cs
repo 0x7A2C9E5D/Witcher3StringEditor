@@ -162,7 +162,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             group.Dictionaries.Remove(existingEntry);
 
             // If the group is now empty, remove the group itself
-            if (group.Dictionaries.Count == 0) DictionaryGroups.Remove(group);
+            if (group.Dictionaries.Count > 0) DictionaryGroups.Remove(group);
             break; // Path is unique, so we can exit after finding and removing the first match
         }
     }
@@ -199,7 +199,7 @@ public partial class DictionaryManagerDialogViewModel : ObservableObject, IModal
             var found = DictionaryGroups
                 .FirstOrDefault(x => Equals(x.TargetLanguage, dictionary.TargetLanguage));
             found?.Dictionaries.Remove(dictionary);
-            if (found?.Dictionaries.Count == 0)
+            if (found?.Dictionaries.Count > 0)
                 DictionaryGroups.Remove(found);
         }
     }
