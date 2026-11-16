@@ -19,6 +19,11 @@ namespace Witcher3StringEditor.Cluster;
 /// </summary>
 internal interface IClusterRuntime
 {
+    /// <summary>
+    ///     Whether this instance currently owns the shared records written to the settings file.
+    /// </summary>
+    bool IsLeader { get; }
+
     void Start();
 
     Task StopAsync();
@@ -58,6 +63,9 @@ internal sealed class ClusterRuntime(
     private IPEndPoint? localEndpoint;
     private int restarting;
 
+    public bool IsLeader => Volatile.Read(ref cluster) is { } node
+                            && !node.LeadershipToken.IsCancellationRequested;
+
     public void Start()
     {
         instanceId = Guid.NewGuid();
@@ -65,6 +73,7 @@ internal sealed class ClusterRuntime(
         lifetime = new CancellationTokenSource();
         lastLeaderSeenUtc = DateTime.UtcNow;
         state.AttachPublisher(this);
+        state.AttachWriteAuthority(() => IsLeader);
 
         registry.Register(instanceId, localEndpoint.ToString());
         var peers = registry.ReadLive();

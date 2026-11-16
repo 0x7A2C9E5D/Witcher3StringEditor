@@ -17,6 +17,12 @@ internal interface ISharedRecordsService
 
     void AttachPublisher(ISharedRecordPublisher publisher);
 
+    /// <summary>
+    ///     Supplies the probe that tells whether this instance owns the shared record part of the
+    ///     settings file. Only the Raft leader may write the replicated collections to disk.
+    /// </summary>
+    void AttachWriteAuthority(Func<bool> isLeader);
+
     void UpsertRecentFile(string filePath, DateTime openedTime);
 
     void DeleteRecentFile(IRecentFileEntry entry);

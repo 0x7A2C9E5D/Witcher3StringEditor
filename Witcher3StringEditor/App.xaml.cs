@@ -259,8 +259,10 @@ public sealed partial class App : IDisposable
     /// <param name="e">Exit event arguments</param>
     protected override void OnExit(ExitEventArgs e)
     {
+        // Captured before the node stops: only the leader persists the replicated collections.
+        var ownsSharedRecords = Ioc.Default.GetRequiredService<IClusterRuntime>().IsLeader;
         StopClusterRuntime(); // Flush shared records and leave the cluster before saving
-        SaveAppSettings(); // Save application settings
+        SaveAppSettings(ownsSharedRecords); // Save application settings
         Log.Information("Application exited"); // Log application exit
         Log.CloseAndFlush(); // Flush logs
         Dispose(); // Dispose of resources
@@ -287,11 +289,14 @@ public sealed partial class App : IDisposable
     /// <summary>
     ///     Saves application settings to the configuration file
     /// </summary>
-    private static void SaveAppSettings()
+    /// <param name="includeSharedRecords">
+    ///     Whether this instance owns the replicated recent file and backup collections
+    /// </param>
+    private static void SaveAppSettings(bool includeSharedRecords)
     {
         var appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
         var configService = Ioc.Default.GetRequiredService<ISettingsPersistenceService>();
-        configService.Save(appSettings);
+        configService.Save(appSettings, includeSharedRecords);
     }
 
     /// <summary>
