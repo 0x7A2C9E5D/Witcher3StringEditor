@@ -26,7 +26,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     // Dependency services
     private readonly IDialogService dialogService; // Get dialog service
     private readonly IDialogViewModelFactory dialogViewModelFactory; // Get dialog view model factory
-    private readonly W3StringIw3StringSerializerCoordinator iw3StringSerializer; // Get iw3StringSerializer service
+    private readonly IW3StringSerializerCoordinator iw3StringSerializer; // Get iw3StringSerializer service
     private readonly IRecentFilesService recentFilesService; // Get recent files service
     private readonly IServiceProvider serviceProvider; // Get service provider
     private readonly ISettingsManagerService settingsManagerService; // Get settings manager service
@@ -53,7 +53,7 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         ISettingsManagerService settingsManagerService,
         IServiceProvider serviceProvider,
         ITranslatorProvider translatorProvider,
-        W3StringIw3StringSerializerCoordinator iw3StringSerializer)
+        IW3StringSerializerCoordinator iw3StringSerializer)
     {
         this.dialogService = dialogService;
         this.dialogViewModelFactory = dialogViewModelFactory;

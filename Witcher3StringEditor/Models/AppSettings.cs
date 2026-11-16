@@ -28,19 +28,19 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     /// </summary>
     /// <param name="gameExePath">The path to the game executable</param>
     /// <param name="preferredW3StringFileType">The preferred The Witcher 3 file format</param>
-    /// <param name="preferredLanguage">The preferred language</param>
+    /// <param name="preferredW3Language">The preferred language</param>
     /// <param name="backupItems">The collection of backup items</param>
     /// <param name="recentItems">The collection of recent items</param>
     [JsonConstructor]
     public AppSettings(string gameExePath, W3StringFileFormat preferredW3StringFileType,
-        W3Language? preferredLanguage, ObservableCollection<IBackupItem> backupItems,
+        W3Language? preferredW3Language, ObservableCollection<IBackupItem> backupItems,
         ObservableCollection<IRecentFileEntry> recentItems)
     {
         GameExePath = gameExePath;
         BackupItems = [.. backupItems];
         RecentItems = [.. recentItems];
         PreferredW3StringFileType = preferredW3StringFileType;
-        PreferredW3Language = preferredLanguage ?? DefaultPreferredW3Language; // Settings may predate the language
+        PreferredW3Language = preferredW3Language ?? DefaultPreferredW3Language; // Settings may predate the language
     }
 
     /// <summary>
@@ -79,7 +79,11 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     Gets or sets the preferred language for The Witcher 3 string operations
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
+    /// <remarks>
+    ///     Persisted under the name the property had before it was renamed, so existing settings files keep their value
+    /// </remarks>
     [ObservableProperty]
+    [JsonPropertyName("PreferredLanguage")]
     public partial W3Language PreferredW3Language { get; set; } = DefaultPreferredW3Language;
 
     /// <summary>
@@ -93,7 +97,11 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     ///     Gets or sets the preferred The Witcher 3 file format for operations
     ///     This property supports data binding through the ObservableObject base class
     /// </summary>
+    /// <remarks>
+    ///     Persisted under the name the property had before it was renamed, so existing settings files keep their value
+    /// </remarks>
     [ObservableProperty]
+    [JsonPropertyName("PreferredFileType")]
     public partial W3StringFileFormat PreferredW3StringFileType { get; set; }
 
     /// <summary>
