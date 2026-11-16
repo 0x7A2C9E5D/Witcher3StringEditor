@@ -69,16 +69,19 @@ internal sealed class InstanceRegistry : IInstanceRegistry
     public void Register(Guid instanceId, string address)
     {
         Directory.CreateDirectory(AppPaths.ClusterRegistryDirectory);
-        WithMutexLock(() =>
+        var registered = WithMutexLock(() =>
         {
-            var registrations = LoadRegistrations();
+            var registrations = Load();
+            if (registrations is null) return false;
+
             registrations.RemoveAll(x => !IsAlive(x));
             registrations.RemoveAll(x => x.InstanceId == instanceId);
             registrations.Add(new InstanceRegistration(instanceId, address,
                 Environment.ProcessId, DateTime.UtcNow));
-            SaveRegistrations(registrations);
+            return Save(registrations);
         });
-        StartHeartbeat(instanceId);
+
+        if (registered) StartHeartbeat(instanceId);
     }
 
     /// <summary>
@@ -90,9 +93,11 @@ internal sealed class InstanceRegistry : IInstanceRegistry
         IReadOnlyList<InstanceRegistration> live = [];
         WithMutexLock(() =>
         {
-            var registrations = LoadRegistrations();
+            var registrations = Load();
+            if (registrations is null) return false;
+
             live = [.. registrations.Where(IsAlive)];
-            if (live.Count != registrations.Count) SaveRegistrations(live);
+            return live.Count == registrations.Count || Save(live);
         });
         return live;
     }
@@ -106,9 +111,11 @@ internal sealed class InstanceRegistry : IInstanceRegistry
         if (!File.Exists(filePath)) return;
         WithMutexLock(() =>
         {
-            var registrations = LoadRegistrations();
-            if (registrations.RemoveAll(x => x.InstanceId == instanceId) > 0)
-                SaveRegistrations(registrations);
+            var registrations = Load();
+            if (registrations is null) return false;
+
+            return registrations.RemoveAll(x => x.InstanceId == instanceId) == 0
+                   || Save(registrations);
         });
     }
 
@@ -132,15 +139,21 @@ internal sealed class InstanceRegistry : IInstanceRegistry
         if (!File.Exists(filePath)) return;
         WithMutexLock(() =>
         {
-            var registrations = LoadRegistrations();
+            var registrations = Load();
+            if (registrations is null) return false;
+
             var index = registrations.FindIndex(x => x.InstanceId == instanceId);
-            if (index < 0) return;
+            if (index < 0) return true;
+
             registrations[index] = registrations[index] with { UpdatedAtUtc = DateTime.UtcNow };
-            SaveRegistrations(registrations);
+            return Save(registrations);
         });
     }
 
-    private void WithMutexLock(Action action)
+    /// <summary>
+    ///     Runs a registry mutation while holding the cross-process lock, and reports whether it ran.
+    /// </summary>
+    private bool WithMutexLock(Func<bool> operation)
     {
         using var mutex = new Mutex(false, mutexName);
         var acquired = false;
@@ -155,7 +168,7 @@ internal sealed class InstanceRegistry : IInstanceRegistry
                 acquired = true;
             }
 
-            if (acquired) action();
+            return acquired && operation();
         }
         finally
         {
@@ -163,7 +176,10 @@ internal sealed class InstanceRegistry : IInstanceRegistry
         }
     }
 
-    private List<InstanceRegistration> LoadRegistrations()
+    /// <summary>
+    ///     Reads the registry, or returns null when it exists but cannot be read.
+    /// </summary>
+    private List<InstanceRegistration>? Load()
     {
         try
         {
@@ -174,21 +190,26 @@ internal sealed class InstanceRegistry : IInstanceRegistry
         catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
         {
             Log.Warning(ex, "Failed to read the cluster instance registry");
-            return [];
+            return null;
         }
     }
 
-    private void SaveRegistrations(IReadOnlyCollection<InstanceRegistration> registrations)
+    /// <summary>
+    ///     Writes the registry, or returns false when it could not be persisted.
+    /// </summary>
+    private bool Save(IReadOnlyCollection<InstanceRegistration> registrations)
     {
         try
         {
             var temporary = filePath + ".tmp";
             File.WriteAllText(temporary, JsonSerializer.Serialize(registrations));
             File.Move(temporary, filePath, true);
+            return true;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             Log.Warning(ex, "Failed to write the cluster instance registry");
+            return false;
         }
     }
 
