@@ -4,7 +4,7 @@ using GTranslate;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;

@@ -3,7 +3,7 @@ using System.Text;
 using System.Windows;
 using Serilog;
 using Witcher3StringEditor.Cluster;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Models;
 
 namespace Witcher3StringEditor.Services;

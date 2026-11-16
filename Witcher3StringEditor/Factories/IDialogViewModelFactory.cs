@@ -1,5 +1,5 @@
 using GTranslate.Translators;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dictionary;
 

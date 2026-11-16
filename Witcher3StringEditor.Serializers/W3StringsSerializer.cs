@@ -1,7 +1,6 @@
 using System.Text;
 using Serilog;
 using Witcher3StringEditor.Contracts;
-using Witcher3StringEditor.Contracts.Abstractions;
 using Witcher3StringEditor.Serializers.Abstractions;
 using Witcher3StringEditor.Serializers.W3Strings;
 

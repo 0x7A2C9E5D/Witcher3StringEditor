@@ -1,5 +1,4 @@
 using Witcher3StringEditor.Contracts;
-using Witcher3StringEditor.Contracts.Abstractions;
 
 namespace Witcher3StringEditor.Serializers.Abstractions;
 

@@ -6,9 +6,10 @@ using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Syncfusion.Data.Extensions;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
+using Language = GTranslate.Language;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -222,7 +223,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     /// </summary>
     /// <param name="appSettings">Application settings service</param>
     /// <returns>The preferred language</returns>
-    private static Language GetPreferredLanguage(IAppSettings appSettings)
+    private static ILanguage GetPreferredLanguage(IAppSettings appSettings)
     {
         var cultureCode = appSettings.PreferredLanguage.CultureCode; // Get culture code for preferred language
         return cultureCode == "es-MX" ? new Language("es") : new Language(cultureCode); // Return preferred language

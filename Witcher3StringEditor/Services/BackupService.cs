@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using CommunityToolkit.Diagnostics;
 using Serilog;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Miscellaneous;
 using Witcher3StringEditor.Models;
 

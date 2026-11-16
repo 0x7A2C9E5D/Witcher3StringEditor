@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Serilog;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Miscellaneous;
 

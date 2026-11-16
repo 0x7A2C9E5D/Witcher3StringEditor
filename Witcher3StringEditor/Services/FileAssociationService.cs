@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 using Serilog;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 
 namespace Witcher3StringEditor.Services;
 

@@ -12,7 +12,7 @@ using Serilog;
 using Serilog.Events;
 using Syncfusion.Licensing;
 using Witcher3StringEditor.Cluster;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dialogs.Views;
 using Witcher3StringEditor.Dictionary;

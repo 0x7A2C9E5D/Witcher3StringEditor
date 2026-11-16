@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace Witcher3StringEditor.Contracts.Abstractions;
+namespace Witcher3StringEditor.Contracts;
 
 /// <summary>
 ///     Defines a contract for application settings management

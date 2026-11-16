@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Serilog.Events;
 
-namespace Witcher3StringEditor.Contracts.Abstractions;
+namespace Witcher3StringEditor.Contracts;
 
 /// <summary>
 ///     Defines a contract for logging access service operations

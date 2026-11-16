@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace Witcher3StringEditor.Contracts.Abstractions;
+namespace Witcher3StringEditor.Contracts;
 
 /// <summary>
 ///     Defines a contract for backup item information

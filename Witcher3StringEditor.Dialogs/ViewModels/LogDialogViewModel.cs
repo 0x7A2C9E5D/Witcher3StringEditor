@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Serilog.Events;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dialogs.Models;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Miscellaneous;

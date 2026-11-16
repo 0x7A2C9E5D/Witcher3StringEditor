@@ -1,7 +1,7 @@
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Microsoft.Extensions.DependencyInjection;
-using Witcher3StringEditor.Contracts.Abstractions;
+using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dialogs.ViewModels;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
