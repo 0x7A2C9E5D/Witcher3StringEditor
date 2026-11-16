@@ -13,7 +13,10 @@ namespace Witcher3StringEditor.Services;
 ///     immediately and are handed to the publisher; replicated snapshots are materialized
 ///     idempotently on the UI thread.
 /// </summary>
-internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPersistenceService settingsPersistence)
+internal sealed class SharedRecordsService(
+    IAppSettings appSettings,
+    ISettingsPersistenceService settingsPersistence,
+    ClusterLeadership leadership)
     : ISharedRecordsService
 {
     private static readonly TimeSpan SaveDebounce = TimeSpan.FromSeconds(2);
@@ -23,7 +26,6 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
     private string? lastSavedSignature;
     private int pendingWrites;
     private ISharedRecordPublisher? recordPublisher;
-    private Func<bool>? writeAuthority;
     private CancellationTokenSource? saveDebounceSource;
 
     public ObservableCollection<IRecentFileEntry> RecentItems => appSettings.RecentItems;
@@ -33,24 +35,6 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
     public void AttachPublisher(ISharedRecordPublisher publisher)
     {
         Volatile.Write(ref recordPublisher, publisher);
-    }
-
-    public void AttachWriteAuthority(Func<bool> isLeader)
-    {
-        Volatile.Write(ref writeAuthority, isLeader);
-    }
-
-    /// <summary>
-    ///     Whether this instance owns the replicated collections in the settings file. Without a
-    ///     running cluster the instance is on its own, so it keeps writing the records locally.
-    /// </summary>
-    private bool HasWriteAuthority
-    {
-        get
-        {
-            var probe = Volatile.Read(ref writeAuthority);
-            return probe is null || probe();
-        }
     }
 
     public SharedRecordsSnapshot CreateCurrentSnapshot()
@@ -288,15 +272,14 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
 
     private void SaveSettings()
     {
+        if (!leadership.IsLeader) return; // A follower never writes the shared settings file
         try
         {
             RunOnUiThread(() =>
             {
                 var signature = CreateSignature();
                 if (string.Equals(signature, lastSavedSignature, StringComparison.Ordinal)) return;
-                // Only the leader owns the replicated collections; a follower saves just its own
-                // settings and leaves the records that are already on disk untouched.
-                settingsPersistence.Save(appSettings, HasWriteAuthority);
+                settingsPersistence.Save(appSettings);
                 lastSavedSignature = signature;
             });
         }

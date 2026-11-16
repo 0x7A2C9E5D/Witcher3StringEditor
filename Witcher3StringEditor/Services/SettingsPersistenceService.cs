@@ -1,6 +1,5 @@
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Serilog;
 using Witcher3StringEditor.Contracts.Abstractions;
@@ -18,15 +17,12 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
     private const int SaveAttempts = 3;
 
     /// <summary>
-    ///     Serializes every instance that saves the settings file, including the instance that
-    ///     merges its own fields with the records owned by the leader.
+    ///     Serializes every instance that saves the settings file, so a leader handover can never
+    ///     interleave two writes on the same file.
     /// </summary>
     private static readonly string mutexName = DebugHelper.IsDebug
         ? "Witcher3StringEditor_SettingsFile_Debug"
         : "Witcher3StringEditor_SettingsFile";
-
-    private static readonly string[] sharedRecordProperties =
-        [nameof(AppSettings.RecentItems), nameof(AppSettings.BackupItems)];
 
     private readonly string filePath;
 
@@ -71,15 +67,11 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
     /// <summary>
     ///     Saves the specified settings to a configuration file.
     ///     The file is replaced atomically so concurrent instances never read a partially written file,
-    ///     and to write itself is serialized across processes.
+    ///     and the write itself is serialized across processes.
     /// </summary>
     /// <typeparam name="T">The type of settings to save</typeparam>
     /// <param name="settings">The settings to save</param>
-    /// <param name="includeSharedRecords">
-    ///     When false, the replicated recent file and backup collections are taken from the file
-    ///     on disk instead of the given instance, because only the Raft leader owns them
-    /// </param>
-    public void Save<T>(T settings, bool includeSharedRecords = true)
+    public void Save<T>(T settings)
     {
         var json = JsonSerializer.Serialize(settings, jsonSerializerOptions);
         using var mutex = new Mutex(false, mutexName);
@@ -101,37 +93,11 @@ internal class SettingsPersistenceService : ISettingsPersistenceService
                 return;
             }
 
-            WriteAtomically(includeSharedRecords ? json : PreserveSharedRecords(json));
+            WriteAtomically(json);
         }
         finally
         {
             if (acquired) mutex.ReleaseMutex();
-        }
-    }
-
-    /// <summary>
-    ///     Replaces the shared record arrays of the serialized settings with the ones already on
-    ///     disk. A follower keeps the local settings it owns without overwriting the leader's records.
-    /// </summary>
-    private string PreserveSharedRecords(string json)
-    {
-        if (!File.Exists(filePath)) return json;
-        try
-        {
-            if (JsonNode.Parse(File.ReadAllText(filePath)) is not JsonObject onDisk
-                || JsonNode.Parse(json) is not JsonObject own)
-                return json;
-
-            foreach (var property in sharedRecordProperties)
-                if (onDisk.TryGetPropertyValue(property, out var node) && node is not null)
-                    own[property] = node.DeepClone();
-
-            return own.ToJsonString(jsonSerializerOptions);
-        }
-        catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
-        {
-            Log.Warning(ex, "Failed to preserve the shared records while saving the application settings");
-            return json;
         }
     }
 

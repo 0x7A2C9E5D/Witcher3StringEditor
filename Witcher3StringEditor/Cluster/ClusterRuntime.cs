@@ -19,11 +19,6 @@ namespace Witcher3StringEditor.Cluster;
 /// </summary>
 internal interface IClusterRuntime
 {
-    /// <summary>
-    ///     Whether this instance currently owns the shared records written to the settings file.
-    /// </summary>
-    bool IsLeader { get; }
-
     void Start();
 
     Task StopAsync();
@@ -44,7 +39,8 @@ internal interface ISharedRecordPublisher
 /// </summary>
 internal sealed class ClusterRuntime(
     ISharedRecordsService state,
-    InstanceRegistry registry) : IClusterRuntime, ISharedRecordPublisher, IDisposable
+    InstanceRegistry registry,
+    ClusterLeadership leadership) : IClusterRuntime, ISharedRecordPublisher, IDisposable
 {
     private const string PipePrefix = "Witcher3StringEditor.SharedRecords";
     private static readonly TimeSpan MaintenanceInterval = TimeSpan.FromSeconds(3);
@@ -61,7 +57,7 @@ internal sealed class ClusterRuntime(
     private IPEndPoint? localEndpoint;
     private int restarting;
 
-    public bool IsLeader => Volatile.Read(ref cluster) is { LeadershipToken.IsCancellationRequested: false };
+    private bool IsLeader => Volatile.Read(ref cluster) is { LeadershipToken.IsCancellationRequested: false };
 
     public void Start()
     {
@@ -70,7 +66,7 @@ internal sealed class ClusterRuntime(
         lifetime = new CancellationTokenSource();
         lastLeaderSeenUtc = DateTime.UtcNow;
         state.AttachPublisher(this);
-        state.AttachWriteAuthority(() => IsLeader);
+        leadership.Attach(() => IsLeader);
 
         registry.Register(instanceId, localEndpoint.ToString());
         var peers = registry.ReadLive();

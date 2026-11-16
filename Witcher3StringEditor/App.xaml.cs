@@ -210,6 +210,7 @@ public sealed partial class App : IDisposable
             .AddSingleton<IFileAssociationService, FileAssociationService>()
             .AddSingleton<IStartupFileService, StartupFileService>()
             .AddSingleton<InstanceRegistry>()
+            .AddSingleton<ClusterLeadership>()
             .AddSingleton<ISharedRecordsService, SharedRecordsService>()
             .AddSingleton<IClusterRuntime, ClusterRuntime>()
             .AddScoped<IPlayGameService, PlayGameService>()
@@ -259,10 +260,10 @@ public sealed partial class App : IDisposable
     /// <param name="e">Exit event arguments</param>
     protected override void OnExit(ExitEventArgs e)
     {
-        // Captured before the node stops: only the leader persists the replicated collections.
-        var ownsSharedRecords = Ioc.Default.GetRequiredService<IClusterRuntime>().IsLeader;
-        StopClusterRuntime(); // Flush shared records and leave the cluster before saving
-        SaveAppSettings(ownsSharedRecords); // Save application settings
+        // Save before the node stops: the persistence service writes the file only on the leader,
+        // and the node is no longer a leader once it has been stopped.
+        SaveAppSettings(); // Save application settings
+        StopClusterRuntime(); // Flush shared records and leave the cluster
         Log.Information("Application exited"); // Log application exit
         Log.CloseAndFlush(); // Flush logs
         Dispose(); // Dispose of resources
@@ -287,16 +288,15 @@ public sealed partial class App : IDisposable
     }
 
     /// <summary>
-    ///     Saves application settings to the configuration file
+    ///     Saves application settings to the configuration file. Only the leader writes the file,
+    ///     because every instance shares it.
     /// </summary>
-    /// <param name="includeSharedRecords">
-    ///     Whether this instance owns the replicated recent file and backup collections
-    /// </param>
-    private static void SaveAppSettings(bool includeSharedRecords)
+    private static void SaveAppSettings()
     {
+        if (!Ioc.Default.GetRequiredService<ClusterLeadership>().IsLeader) return;
         var appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
         var configService = Ioc.Default.GetRequiredService<ISettingsPersistenceService>();
-        configService.Save(appSettings, includeSharedRecords);
+        configService.Save(appSettings);
     }
 
     /// <summary>
