@@ -110,35 +110,19 @@ internal sealed class ClusterMembership(
                 endpointOwners[registration.Address] = registration.InstanceId;
     }
 
+    /// <summary>
+    ///     Reconciles the Raft membership with the live peers: adds the missing ones, removes the stale ones.
+    /// </summary>
     private async Task SynchronizeMembershipAsync(
         RaftCluster node, IReadOnlyList<InstanceRegistration> livePeers, CancellationToken token)
     {
-        var ownId = getInstanceId();
-        var liveAddresses = livePeers
-            .Where(x => x.InstanceId != ownId)
-            .Select(x => x.Address)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var memberAddresses = node.Members
-            .Where(x => x.IsRemote)
-            .Select(x => x.EndPoint.ToString() ?? string.Empty)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var liveAddresses = GetLiveAddresses(livePeers);
+        var remoteMembers = GetRemoteMembers(node);
 
         try
         {
-            foreach (var address in liveAddresses.Where(x => !memberAddresses.Contains(x)))
-            {
-                if (!IPEndPoint.TryParse(address, out var endpoint)) continue;
-                Log.Information("Adding Raft member {Address}", address);
-                await node.AddMemberAsync(endpoint, token).ConfigureAwait(false);
-            }
-
-            foreach (var endpoint in node.Members
-                         .Where(x => x.IsRemote && !liveAddresses.Contains(x.EndPoint.ToString() ?? string.Empty))
-                         .Select(x => x.EndPoint))
-            {
-                Log.Information("Removing stale Raft member {@Address}", endpoint);
-                await node.RemoveMemberAsync(endpoint, token).ConfigureAwait(false);
-            }
+            await AddMissingMembersAsync(node, liveAddresses, remoteMembers, token).ConfigureAwait(false);
+            await RemoveStaleMembersAsync(node, liveAddresses, remoteMembers, token).ConfigureAwait(false);
         }
         catch (NotLeaderException)
         {
@@ -147,6 +131,59 @@ internal sealed class ClusterMembership(
         catch (OperationCanceledException)
         {
             // The application is shutting down.
+        }
+    }
+
+    /// <summary>
+    ///     Gets the addresses of the live peers, excluding the current instance.
+    /// </summary>
+    private HashSet<string> GetLiveAddresses(IReadOnlyList<InstanceRegistration> livePeers)
+    {
+        var ownId = getInstanceId();
+        return livePeers
+            .Where(x => x.InstanceId != ownId)
+            .Select(x => x.Address)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    ///     Gets the cluster members hosted by other instances.
+    /// </summary>
+    private static IReadOnlyList<IClusterMember> GetRemoteMembers(RaftCluster node)
+    {
+        return [.. node.Members.Where(x => x.IsRemote)];
+    }
+
+    /// <summary>
+    ///     Adds every live peer that is not a cluster member yet.
+    /// </summary>
+    private static async Task AddMissingMembersAsync(RaftCluster node, IReadOnlySet<string> liveAddresses,
+        IReadOnlyList<IClusterMember> remoteMembers, CancellationToken token)
+    {
+        var memberAddresses = remoteMembers
+            .Select(x => x.EndPoint.ToString() ?? string.Empty)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var address in liveAddresses.Where(x => !memberAddresses.Contains(x)))
+        {
+            if (!IPEndPoint.TryParse(address, out var endpoint)) continue;
+            Log.Information("Adding Raft member {Address}", address);
+            await node.AddMemberAsync(endpoint, token).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    ///     Removes the cluster members whose instance is no longer live.
+    /// </summary>
+    private static async Task RemoveStaleMembersAsync(RaftCluster node, IReadOnlySet<string> liveAddresses,
+        IReadOnlyList<IClusterMember> remoteMembers, CancellationToken token)
+    {
+        foreach (var endpoint in remoteMembers
+                     .Where(x => !liveAddresses.Contains(x.EndPoint.ToString() ?? string.Empty))
+                     .Select(x => x.EndPoint))
+        {
+            Log.Information("Removing stale Raft member {@Address}", endpoint);
+            await node.RemoveMemberAsync(endpoint, token).ConfigureAwait(false);
         }
     }
 
