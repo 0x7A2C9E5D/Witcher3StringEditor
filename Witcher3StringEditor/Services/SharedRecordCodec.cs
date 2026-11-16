@@ -11,7 +11,6 @@ internal sealed record RecentFilePayload(
     string FilePath,
     DateTime OpenedTime,
     bool IsMarked,
-    Guid Origin,
     bool IsDeleted = false);
 
 /// <summary>
@@ -20,10 +19,9 @@ internal sealed record RecentFilePayload(
 internal sealed record BackupPayload(
     string FileName,
     string Hash,
-    string OrginPath,
+    string OriginPath,
     string BackupPath,
     DateTime BackupTime,
-    Guid Origin,
     bool IsDeleted = false);
 
 /// <summary>
@@ -55,13 +53,13 @@ internal static class SharedRecordCodec
     public static string EncodeRecent(IRecentFileEntry entry, Guid origin)
     {
         return JsonSerializer.Serialize(new RecentFilePayload(
-            entry.FilePath, entry.OpenedTime, entry.IsMarked, origin));
+            entry.FilePath, entry.OpenedTime, entry.IsMarked));
     }
 
     public static string EncodeBackup(IBackupItem item, Guid origin)
     {
         return JsonSerializer.Serialize(new BackupPayload(
-            item.FileName, item.Hash, item.OrginPath, item.BackupPath, item.BackupTime, origin));
+            item.FileName, item.Hash, item.OrginPath, item.BackupPath, item.BackupTime));
     }
 
     /// <summary>
@@ -71,7 +69,7 @@ internal static class SharedRecordCodec
     public static string EncodeDeletedRecent(string filePath, Guid origin)
     {
         return JsonSerializer.Serialize(new RecentFilePayload(
-            filePath, DateTime.UtcNow, false, origin, true));
+            filePath, DateTime.UtcNow, false, true));
     }
 
     /// <summary>
@@ -80,7 +78,7 @@ internal static class SharedRecordCodec
     public static string EncodeDeletedBackup(IBackupItem item, Guid origin)
     {
         return JsonSerializer.Serialize(new BackupPayload(
-            item.FileName, item.Hash, item.OrginPath, item.BackupPath, DateTime.UtcNow, origin, true));
+            item.FileName, item.Hash, item.OrginPath, item.BackupPath, DateTime.UtcNow, true));
     }
 
     public static RecentFilePayload? DecodeRecent(string value)
