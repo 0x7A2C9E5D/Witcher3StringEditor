@@ -16,7 +16,7 @@ internal interface ISharedRecordsService
 
     SharedRecordsSnapshot CreateCurrentSnapshot();
 
-    void AttachCoordinator(IActorRef coordinator);
+    void AttachCoordinator(IActorRef newCoordinator);
 
     void UpsertRecentFile(string filePath, DateTime openedTime);
 

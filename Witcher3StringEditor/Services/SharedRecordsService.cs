@@ -30,9 +30,9 @@ internal sealed class SharedRecordsService(IAppSettings appSettings, ISettingsPe
 
     public ObservableCollection<IBackupItem> BackupItems => appSettings.BackupItems;
 
-    public void AttachCoordinator(IActorRef coordinator)
+    public void AttachCoordinator(IActorRef newCoordinator)
     {
-        Volatile.Write(ref this.coordinator, coordinator);
+        Volatile.Write(ref coordinator, newCoordinator);
     }
 
     public SharedRecordsSnapshot CreateCurrentSnapshot()
