@@ -43,12 +43,20 @@ public class CultureResolver : ICultureResolver
         matcher = cultureMatcher; // Inject the ICultureMatcher instance 
         // Initialize the list of supported cultures with English as the default culture
         var supportedCultures = new List<CultureInfo> { new("en") };
+        // The satellite assembly that must be present in a culture directory for it to be usable
+        var resourcesAssemblyName =
+            $"{Assembly.GetExecutingAssembly().GetName().Name}.resources.dll";
         // Scan directories in the application's location to find additional supported cultures
         // Each directory name is treated as a culture name (e.g., "zh-CN", "ru-RU", etc.)
         foreach (var directory in Directory.GetDirectories(
                      Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!))
             try
             {
+                // Skip directories that do not contain the culture-specific resource assembly,
+                // otherwise the culture would be reported as supported while its resources are missing
+                if (!File.Exists(Path.Combine(directory, resourcesAssemblyName)))
+                    continue;
+
                 // Create a DirectoryInfo object to get the directory name
                 var directoryInfo = new DirectoryInfo(directory);
 
