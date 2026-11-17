@@ -2,6 +2,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts;
@@ -68,7 +69,8 @@ public sealed partial class RecentDialogViewModel(IRecentFilesService recentFile
     private void HandleExistingFile(IRecentFileEntry recentFileEntry)
     {
         RequestClose?.Invoke(this, EventArgs.Empty);
-        _ = WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<string, bool>(recentFileEntry.FilePath),
+        // The dialog only asks for the file to be opened; whether it loads is the main window's concern
+        WeakReferenceMessenger.Default.Send(new ValueChangedMessage<string>(recentFileEntry.FilePath),
             MessageTokens.RecentFileOpened);
     }
 

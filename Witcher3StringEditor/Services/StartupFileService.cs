@@ -1,5 +1,6 @@
 using System.IO;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Messaging;
 
@@ -33,7 +34,8 @@ internal sealed class StartupFileService : IStartupFileService
     /// <param name="filePath">The file path to open.</param>
     public void OpenFile(string filePath)
     {
-        WeakReferenceMessenger.Default.Send(new AsyncRequestMessage<string, bool>(filePath),
+        // Opening a file is a notification: the main window owns the load and reports its own failures
+        WeakReferenceMessenger.Default.Send(new ValueChangedMessage<string>(filePath),
             MessageTokens.RecentFileOpened);
     }
 }

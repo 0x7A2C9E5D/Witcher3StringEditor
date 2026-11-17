@@ -26,11 +26,11 @@ internal partial class MainWindowViewModel
     /// </summary>
     private void RegisterFileMessageHandlers()
     {
-        WeakReferenceMessenger.Default.Register<MainWindowViewModel, AsyncRequestMessage<string, bool>, string>(
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, ValueChangedMessage<string>, string>(
             // ReSharper disable once AsyncVoidMethod
             this,
             MessageTokens.RecentFileOpened,
-            async void (_, m) => { await LoadFileAsync(m.Request); }); // Open the requested file
+            async void (_, m) => { await LoadFileAsync(m.Value); }); // Open the requested file
     }
 
     /// <summary>
