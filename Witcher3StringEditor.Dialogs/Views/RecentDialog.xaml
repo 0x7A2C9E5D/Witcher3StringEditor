@@ -40,12 +40,6 @@
                     <Setter TargetName="iconElement" Property="ui:FontIcon.Glyph"
                             Value="&#xE735;" />
                 </Trigger>
-                <!-- When checkbox is indeterminate, show unpinned icon -->
-                <Trigger Property="IsChecked" Value="{x:Null}">
-                    <!-- ReSharper disable once Xaml.DependencyPropertyResolveError -->
-                    <Setter TargetName="iconElement" Property="ui:FontIcon.Glyph"
-                            Value="&#xE734;" />
-                </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
     </Window.Resources>
