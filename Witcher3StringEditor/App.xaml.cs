@@ -189,8 +189,9 @@ public sealed partial class App : IDisposable
         // Get log access service from the IoC container
         var logAccessService = Ioc.Default.GetRequiredService<ILogAccessService>();
 
-        // Create observer to forward log events through the messaging system
-        logObserver = new AnonymousObserver<LogEvent>(logAccessService.Logs.Add);
+        // Create observer to forward log events to the log access service, which serializes them
+        // itself: the observer is invoked on whichever thread writes the log event
+        logObserver = new AnonymousObserver<LogEvent>(logAccessService.Add);
 
         // Configure Serilog with multiple outputs: file, debug, and observer
         Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(AppPaths.LogDirectory, "log.txt"),

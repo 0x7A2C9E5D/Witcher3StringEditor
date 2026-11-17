@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
-using System.Windows.Data;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
@@ -17,7 +15,7 @@ namespace Witcher3StringEditor.Dialogs.ViewModels;
 
 /// <summary>
 ///     ViewModel for the log dialog window
-///     Manages the display of log events in the UI and synchronizes with the source log collection
+///     Manages the display of log events in the UI and subscribes to the log access service for new events
 ///     Implements IModalDialogViewModel to support dialog result handling
 /// </summary>
 public sealed partial class LogDialogViewModel
@@ -34,19 +32,14 @@ public sealed partial class LogDialogViewModel
     private readonly IDialogService dialogService;
 
     /// <summary>
-    ///     The lock object used to synchronize access to the log events collection
+    ///     The log access service feeding new log events to this view model
     /// </summary>
-    private readonly object logEventsLock = new();
+    private readonly ILogAccessService logAccessService;
 
     /// <summary>
     ///     The shell open service used to open the log folder and external pages
     /// </summary>
     private readonly IShellOpenService shellOpenService;
-
-    /// <summary>
-    ///     The source collection of log events to display
-    /// </summary>
-    private readonly ObservableCollection<LogEvent> sourceLogEvents;
 
     /// <summary>
     ///     Initializes a new instance of the LogDialogViewModel class
@@ -58,16 +51,14 @@ public sealed partial class LogDialogViewModel
     public LogDialogViewModel(ILogAccessService logAccessService, IAppSettings appSettings,
         IShellOpenService shellOpenService, IDialogService dialogService)
     {
+        this.logAccessService = logAccessService;
         this.appSettings = appSettings;
         this.shellOpenService = shellOpenService;
         this.dialogService = dialogService;
-        sourceLogEvents = logAccessService.Logs; // Initialize the source collection
-        BindingOperations.EnableCollectionSynchronization(LogEvents, logEventsLock);
-        // Subscribe to UI collection changes to sync deletions back to source collection
-        LogEvents.CollectionChanged += OnLogEventsCollectionChanged;
-        // Subscribe to source collection changes to sync new items to UI collection
-        sourceLogEvents.CollectionChanged += OnSourceLogsCollectionChanged;
-        InitializeExistingLogs(); // Initialize existing logs
+        // Take the history and register for new events in one step: an event is either in the returned
+        // history or delivered to OnLogAdded afterward, so the view never shows one twice nor misses one
+        foreach (var logEvent in logAccessService.Subscribe(OnLogAdded))
+            LogEvents.Add(new LogEventItemModel(logEvent));
     }
 
     /// <summary>
@@ -82,61 +73,14 @@ public sealed partial class LogDialogViewModel
     public bool? DialogResult => true;
 
     /// <summary>
-    ///     Initializes the log events collection with existing log events
+    ///     Handles a log event delivered by the log access service
+    ///     Appends it to the UI collection on the UI thread, because the service raises the event on the thread
+    ///     that wrote the log and the collection is bound to the grid
     /// </summary>
-    private void InitializeExistingLogs()
+    /// <param name="logEvent">The log event to display</param>
+    private void OnLogAdded(LogEvent logEvent)
     {
-        lock (logEventsLock)
-        {
-            var models = sourceLogEvents
-                .Select(x => new LogEventItemModel(x)).ToList();
-            foreach (var model in models)
-                LogEvents.Add(model);
-        }
-    }
-
-    /// <summary>
-    ///     Handles changes to the source log events collection
-    ///     Adds new log events to the UI collection when items are added to the source collection
-    /// </summary>
-    /// <param name="sender">The source collection</param>
-    /// <param name="e">The collection change event arguments</param>
-    // ReSharper disable once AsyncVoidEventHandlerMethod
-    private void OnSourceLogsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        // Only handle Add actions with valid items
-        if (e is not { Action: NotifyCollectionChangedAction.Add, NewItems: not null }) return;
-        // Add each new item to the UI collection on the UI thread
-        foreach (LogEvent item in e.NewItems)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                lock (logEventsLock)
-                {
-                    LogEvents.Add(new LogEventItemModel(item));
-                }
-            });
-    }
-
-    /// <summary>
-    ///     Handles changes to the UI log events collection
-    ///     Removes log events from the source collection when items are removed from the UI collection
-    /// </summary>
-    /// <param name="sender">The UI collection</param>
-    /// <param name="e">The collection change event arguments</param>
-    // ReSharper disable once AsyncVoidEventHandlerMethod
-    private void OnLogEventsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        // Only handle Remove actions with valid items
-        if (e is not { Action: NotifyCollectionChangedAction.Remove, OldItems: not null }) return;
-        // Remove each deleted item from the source collection on the UI thread
-        foreach (LogEventItemModel item in e.OldItems)
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                lock (logEventsLock)
-                {
-                    sourceLogEvents.Remove(item.EventEntry);
-                }
-            });
+        Application.Current.Dispatcher.BeginInvoke(() => LogEvents.Add(new LogEventItemModel(logEvent)));
     }
 
     /// <summary>
@@ -198,16 +142,14 @@ public sealed partial class LogDialogViewModel
 
     /// <summary>
     ///     Releases the resources used by the LogDialogViewModel
-    ///     Unsubscribes from collection change events to prevent memory leaks
+    ///     Unsubscribes from the log access service to prevent memory leaks
     /// </summary>
     /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources</param>
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing); // Call the base class's Dispose method
         if (!disposing) return; // Only unsubscribe from events when disposing managed resources
-        // Unsubscribe from UI collection changes to prevent memory leaks when dialog is closed
-        LogEvents.CollectionChanged -= OnLogEventsCollectionChanged;
-        // Unsubscribe from source collection changes to prevent memory leaks when dialog is closed
-        sourceLogEvents.CollectionChanged -= OnSourceLogsCollectionChanged;
+        // Unsubscribe from new log events to prevent memory leaks when dialog is closed
+        logAccessService.Unsubscribe(OnLogAdded);
     }
 }
