@@ -40,6 +40,7 @@ public sealed partial class App : IDisposable
     private bool disposedValue; // Flag to indicate whether the object has been disposed
     private bool initialized; // Flag to indicate whether the startup got as far as holding resources to release
     private ObserverBase<LogEvent>? logObserver; // Observer for log events
+    private bool startupFailureReported; // Flag to indicate that a startup failure was already shown to the user
 
     /// <summary>
     ///     Disposes of the resources used by the application
@@ -91,6 +92,7 @@ public sealed partial class App : IDisposable
         Justification = "The format template is localized; caching would pin it to one language.")]
     private void ReportStartupFailure(Exception exception)
     {
+        startupFailureReported = true;
         Log.Error(exception, "Application failed to start");
         // The message box is the only window on this path: with the default OnLastWindowClose, closing
         // it would start a shutdown with exit code 0, and the Shutdown(1) below would then hit the
@@ -231,9 +233,16 @@ public sealed partial class App : IDisposable
     private void SetupExceptionHandling()
     {
         // Handle unhandled exceptions on the UI thread
-        DispatcherUnhandledException += static (_, e) =>
+        DispatcherUnhandledException += (_, e) =>
         {
             e.Handled = true;
+            if (MainWindow is null)
+            {
+                if (!startupFailureReported)
+                    ReportStartupFailure(e.Exception);
+                return;
+            }
+
             var exception = e.Exception;
             Log.Error(exception, "Unhandled exception: {ExceptionMessage}", exception.Message);
         };
