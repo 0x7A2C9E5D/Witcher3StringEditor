@@ -29,16 +29,16 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     /// <param name="gameExePath">The path to the game executable</param>
     /// <param name="preferredW3StringFileType">The preferred The Witcher 3 file format</param>
     /// <param name="preferredW3Language">The preferred language</param>
-    /// <param name="backupItems">The collection of backup items</param>
-    /// <param name="recentItems">The collection of recent items</param>
+    /// <param name="backupItems">The collection of backup items, may be null when the settings file lacks it</param>
+    /// <param name="recentItems">The collection of recent items, may be null when the settings file lacks it</param>
     [JsonConstructor]
     public AppSettings(string gameExePath, W3StringFileFormat preferredW3StringFileType,
-        W3Language? preferredW3Language, ObservableCollection<IBackupItem> backupItems,
-        ObservableCollection<IRecentFileEntry> recentItems)
+        W3Language? preferredW3Language, ObservableCollection<IBackupItem>? backupItems,
+        ObservableCollection<IRecentFileEntry>? recentItems)
     {
         GameExePath = gameExePath;
-        BackupItems = [.. backupItems];
-        RecentItems = [.. recentItems];
+        BackupItems = backupItems is null ? [] : [.. backupItems];
+        RecentItems = recentItems is null ? [] : [.. recentItems];
         PreferredW3StringFileType = preferredW3StringFileType;
         PreferredW3Language = preferredW3Language ?? DefaultPreferredW3Language; // Settings may predate the language
     }
