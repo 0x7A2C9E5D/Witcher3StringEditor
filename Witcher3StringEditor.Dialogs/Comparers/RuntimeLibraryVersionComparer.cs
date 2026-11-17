@@ -19,30 +19,38 @@ public class RuntimeLibraryVersionComparer : IComparer<object>, ISortDirection
     /// </returns>
     public int Compare(object? x, object? y)
     {
+        // Null entries, which the grid can hand over while its items are replaced, sort first and follow
+        // the sort direction like any other comparison
+        if (ReferenceEquals(x, y)) return 0;
+        if (x is null) return Apply(-1);
+        if (y is null) return Apply(1);
+
         // Extract version strings from RuntimeLibrary objects
-        var versionStringX = ((RuntimeLibrary)x!).Version;
-        var versionStringY = ((RuntimeLibrary)y!).Version;
+        var versionStringX = ((RuntimeLibrary)x).Version;
+        var versionStringY = ((RuntimeLibrary)y).Version;
 
-        try
-        {
-            // Parse version strings into Version objects
-            var versionX = new Version(versionStringX);
-            var versionY = new Version(versionStringY);
+        // Version parsing rejects NuGet style versions such as "2.0.0-preview.3", so those pairs fall back
+        // to a string comparison; the direction is applied once, so the fallback follows it too
+        var comparisonResult = Version.TryParse(versionStringX, out var versionX) &&
+                               Version.TryParse(versionStringY, out var versionY)
+            ? versionX.CompareTo(versionY)
+            : string.Compare(versionStringX, versionStringY, StringComparison.Ordinal);
 
-            var comparisonResult = versionX.CompareTo(versionY); // Compare versions
-            return SortDirection == ListSortDirection.Descending
-                ? -comparisonResult
-                : comparisonResult; // Return comparison result
-        }
-        catch (Exception)
-        {
-            return string.Compare(versionStringX, versionStringY,
-                StringComparison.Ordinal); // Compare version strings if parsing fails
-        }
+        return Apply(comparisonResult);
     }
 
     /// <summary>
     ///     Gets or sets the sort direction for the comparison
     /// </summary>
     public ListSortDirection SortDirection { get; set; }
+
+    /// <summary>
+    ///     Applies the sort direction to a comparison result
+    /// </summary>
+    /// <param name="result">The ascending comparison result</param>
+    /// <returns>The comparison result in the configured direction</returns>
+    private int Apply(int result)
+    {
+        return SortDirection == ListSortDirection.Descending ? -result : result;
+    }
 }
