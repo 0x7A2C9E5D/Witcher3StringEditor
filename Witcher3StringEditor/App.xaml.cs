@@ -154,12 +154,33 @@ public sealed partial class App : IDisposable
     private static void InitializeCulture()
     {
         var appSettings = Ioc.Default.GetRequiredService<IAppSettings>();
-        var cultureInfo = appSettings.Language == string.Empty
-            ? Ioc.Default.GetRequiredService<ICultureResolver>().ResolveSupportedCulture()
-            : new CultureInfo(appSettings.Language);
-        if (appSettings.Language == string.Empty)
+        // The stored language can be one this build cannot use: a settings file edited by hand, or one
+        // written by a build that shipped a language this build dropped. Creating such a culture throws
+        // before any window exists, so an unusable name falls back to the system language instead, and the
+        // fallback is written back so the bad value does not outlive this run.
+        var cultureInfo = TryResolveCulture(appSettings.Language) ??
+                          Ioc.Default.GetRequiredService<ICultureResolver>().ResolveSupportedCulture();
+        if (appSettings.Language != cultureInfo.Name)
             appSettings.Language = cultureInfo.Name;
         I18NExtension.Culture = cultureInfo;
+    }
+
+    /// <summary>
+    ///     Resolves a culture from its stored name, treating anything unusable as absent
+    /// </summary>
+    /// <param name="name">The stored culture name, which may be empty, null or unknown</param>
+    /// <returns>The culture, or null when the name cannot be resolved</returns>
+    private static CultureInfo? TryResolveCulture(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        try
+        {
+            return CultureInfo.GetCultureInfo(name);
+        }
+        catch (CultureNotFoundException)
+        {
+            return null;
+        }
     }
 
     /// <summary>
