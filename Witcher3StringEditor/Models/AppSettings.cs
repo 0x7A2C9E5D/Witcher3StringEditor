@@ -44,16 +44,19 @@ internal partial class AppSettings : ObservableObject, IAppSettings
     }
 
     /// <summary>
-    ///     The language the settings start from when they carry none: the one the machine was installed in,
-    ///     and English when the language table holds no language for it
+    ///     The language the settings start from when they carry none: the user's display language, then the
+    ///     one the machine was installed in, and English when the language table holds no language for either
     /// </summary>
     /// <remarks>
-    ///     Following the machine keeps a first run from offering to translate into a language its user may
-    ///     not read, and the table decides what counts as a match, so a machine installed in a language no
-    ///     container is written for falls back to English
+    ///     Following the display language keeps a first run from offering to translate into a language its
+    ///     user may not read, and it differs from the installation language on a machine whose display
+    ///     language was changed after install. The table decides what counts as a match, so a machine in a
+    ///     language no container is written for falls back to English
     /// </remarks>
     private static W3Language DefaultPreferredW3Language =>
-        W3Language.FromCulture(CultureInfo.InstalledUICulture) ?? W3Language.Default;
+        W3Language.FromCulture(CultureInfo.CurrentUICulture)
+        ?? W3Language.FromCulture(CultureInfo.InstalledUICulture)
+        ?? W3Language.Default;
 
     /// <summary>
     ///     Gets or sets the path to the game executable

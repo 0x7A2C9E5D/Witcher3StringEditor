@@ -73,17 +73,30 @@ public class CultureResolver : ICultureResolver
     public IReadOnlyList<CultureInfo> SupportedCultures { get; }
 
     /// <summary>
-    ///     Resolves the most appropriate supported culture for the current system
-    ///     Tries to match the installed UI culture, and falls back through parent cultures
+    ///     Resolves the most appropriate supported culture for the current user
+    ///     Tries to match the user's display culture first, then the culture the operating system was
+    ///     installed in, and falls back through parent cultures
     ///     If no match is found, defaults to English ("en")
     /// </summary>
     /// <returns>The best matching supported culture, or English as fallback</returns>
     public CultureInfo ResolveSupportedCulture()
     {
-        // Get the installed UI culture of the system as the starting point
-        var cultureInfo = CultureInfo.InstalledUICulture;
-        // Check if the exact culture is supported, if so return it immediately
+        // The display culture is what the user reads, and it can differ from the installation culture
+        // (an English install with a Chinese display language), so it decides first; the installation
+        // culture is the fallback for a machine where the user set nothing of their own
+        return Resolve(CultureInfo.CurrentUICulture)
+               ?? Resolve(CultureInfo.InstalledUICulture)
+               ?? CultureInfo.GetCultureInfo("en");
+    }
+
+    /// <summary>
+    ///     Finds the supported culture matching a culture, if any
+    /// </summary>
+    /// <param name="cultureInfo">The culture to match</param>
+    /// <returns>The best matching supported culture, or null when none matches</returns>
+    private CultureInfo? Resolve(CultureInfo cultureInfo)
+    {
         var matches = matcher.Matches(cultureInfo, SupportedCultures).ToList();
-        return matches.Count != 0 ? matches[0] : CultureInfo.GetCultureInfo("en");
+        return matches.Count != 0 ? matches[0] : null;
     }
 }
