@@ -37,14 +37,14 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Serilog" Version="4.4.0"/>
-        <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0"/>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="11.0.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
         <PackageReference Include="Serilog.Sinks.Observable" Version="3.0.0"/>
         <PackageReference Include="SonarAnalyzer.CSharp" Version="10.36.0.15337">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="35.1.46"/>
+        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="35.2.12" />
         <PackageReference Include="System.Reactive" Version="7.0.0"/>
     </ItemGroup>
 
