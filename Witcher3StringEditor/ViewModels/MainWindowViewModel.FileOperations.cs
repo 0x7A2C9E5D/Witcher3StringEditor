@@ -36,10 +36,13 @@ internal partial class MainWindowViewModel
         try
         {
             if (!await HandleReOpenFile()) return; // Ask before the loaded items are replaced
+            documentStateMachine.BeginLoad(); // Enter the loading state before the file is read
             W3StringItems = (await iw3StringSerializer.Deserialize(fileName)) // Deserialize file contents
                 .Select(x => new W3StringItem(x)) // Wrap every entry in the view model item
                 .OrderBy(x => x.StrId, StringComparer.InvariantCulture) // Keep the file order stable
                 .ToObservableCollection(); // Materialize once for the data grid
+            documentStateMachine.LoadSucceeded(W3StringItems.Count,
+                modifiedItems.Count > 0); // Publish the loaded document and its change state
             OutputFolder = Path.GetDirectoryName(fileName)!; // Set output folder based on file location
             recentFilesService.AddOrUpdateRecentFile(fileName); // Update recent items list
             SearchText = string.Empty; // Clear search text
@@ -47,6 +50,9 @@ internal partial class MainWindowViewModel
         }
         catch (Exception ex)
         {
+            // Only a failure while reading rolls the state back: the later steps already run on the new document
+            if (documentStateMachine.Current.Phase == DocumentPhase.Loading)
+                documentStateMachine.LoadFailed();
             Log.Error(ex, "Failed to open file: {FileName}", fileName); // Log any errors during file opening
             await dialogService.MessageBoxNotifyAsync(this, Strings.OpenFileFailedMessage,
                 Strings.OpenFileFailedCaption, MessageBoxIcon.Warning); // Tell the user the file could not be opened

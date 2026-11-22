@@ -16,7 +16,6 @@ internal partial class MainWindowViewModel
     ///     Gets or sets the source collection for the DataGrid
     /// </summary>
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     [SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance",
         Justification = "The interface type is intentional: the fallback shares the live W3StringItems instance.")]
     // Resharper disable once MemberCanBeMadeStatic.Local

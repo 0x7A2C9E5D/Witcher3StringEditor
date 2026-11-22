@@ -97,9 +97,7 @@ internal partial class MainWindowViewModel
     /// <returns>True if translate dialog can be shown, false otherwise</returns>
     private bool CanShowTranslateDialog()
     {
-        if (PagedSource is not null) // Check if we have search results
-            return PagedSource.Count != 0; // Return true if search results exist
-        return W3StringItems?.Count > 0; // Otherwise check if we have any W3String items
+        return documentStateMachine.Current.CanTranslate; // Delegate to the document state
     }
 
     /// <summary>

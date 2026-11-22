@@ -17,9 +17,10 @@ namespace Witcher3StringEditor.ViewModels;
 ///     Handles file operations, UI commands, and coordination between services and dialogs
 /// </summary>
 /// <remarks>
-///     Split by responsibility into sibling partial files: file commands (FileOperations), the file dialog and the
-///     readable formats (FileDialog), editing and merging (Editing), paging and search (Paging), dialogs (Dialogs),
-///     shell commands (Shell), drag and drop (DragDrop), messenger wiring (Messages) and window events (Window)
+///     Split by responsibility into sibling partial files: document state and command availability (State), file
+///     commands (FileOperations), the file dialog and the readable formats (FileDialog), editing and merging
+///     (Editing), paging and search (Paging), dialogs (Dialogs), shell commands (Shell), drag and drop (DragDrop),
+///     messenger wiring (Messages) and window events (Window)
 /// </remarks>
 internal partial class MainWindowViewModel : ObservableObject, IDropTarget
 {
@@ -68,19 +69,15 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
         PageSize = AppSettings.PageSize; // Set page size
         IsSupportDictionary =
             AppSettings.Translator == "MicrosoftTranslator"; // Set dictionary support based on translator
+        InitializeDocumentState(); // Wire the document state machine before any message can open a file
         RegisterMessengerHandlers(); // Register all message handlers
     }
 
     /// <summary>
     ///     Gets or sets the collection of The Witcher 3 string items
-    ///     Notifies multiple commands when this property changes
+    ///     Command availability is refreshed by the document state partial file
     /// </summary>
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(EditCommand))]
-    [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
-    [NotifyCanExecuteChangedFor(nameof(MergeDataCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ShowSaveDialogCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ShowTranslateDialogCommand))]
     public partial ObservableCollection<W3StringItem>? W3StringItems { get; set; }
 
     /// <summary>
@@ -114,9 +111,4 @@ internal partial class MainWindowViewModel : ObservableObject, IDropTarget
     ///     Gets or sets the application settings
     /// </summary>
     private IAppSettings AppSettings => settingsManagerService.AppSettings;
-
-    /// <summary>
-    ///     Gets a value indicating whether there are The Witcher 3 string items
-    /// </summary>
-    private bool HasW3StringItems => W3StringItems?.Count > 0;
 }

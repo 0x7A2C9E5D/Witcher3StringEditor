@@ -261,7 +261,7 @@
                 <Style TargetType="TextBlock">
                     <Setter Property="Visibility" Value="Hidden" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding W3StringItems.Count, FallbackValue=0}" Value="0">
+                        <DataTrigger Binding="{Binding HasW3StringItems}" Value="False">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
                     </Style.Triggers>

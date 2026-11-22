@@ -33,7 +33,7 @@ internal partial class MainWindowViewModel
     [RelayCommand]
     private async Task WindowClosing(CancelEventArgs e)
     {
-        if (W3StringItems?.Any(x => x.IsModified) == true && // Check if there are any W3String items
+        if (!documentStateMachine.Current.CanCloseSilently && // Check whether the document holds unsaved changes
             !await dialogService.MessageBoxConfirmAsync(this, Strings.AppExitMessage,
                 Strings.AppExitCaption)) // Ask the user before discarding the changes
             e.Cancel = true; // Cancel window closing if requested

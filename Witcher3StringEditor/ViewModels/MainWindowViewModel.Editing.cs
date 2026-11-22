@@ -130,18 +130,9 @@ internal partial class MainWindowViewModel
     }
 
     /// <summary>
-    ///     Determines whether merge data can be executed
-    /// </summary>
-    /// <returns></returns>
-    private bool CanMergeData()
-    {
-        return W3StringItems?.Count > 0;
-    }
-
-    /// <summary>
     ///     Merges data from a file
     /// </summary>
-    [RelayCommand(CanExecute = nameof(CanMergeData))]
+    [RelayCommand(CanExecute = nameof(HasW3StringItems))]
     private async Task MergeData()
     {
         try
