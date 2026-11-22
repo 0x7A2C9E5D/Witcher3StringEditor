@@ -1,10 +1,13 @@
 using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Locales;
+using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Serializers;
 using Witcher3StringEditor.Shared.Extensions;
 
@@ -127,9 +130,15 @@ public partial class SaveDialogViewModel
                 Encoding = TargetEncoding // Set the payload encoding
             });
         if (saveResult)
+        {
             Log.Information("Save completed successfully");
+            // Tell the main window that the items on disk now match the in-memory document
+            WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(true), MessageTokens.DocumentSaved);
+        }
         else
+        {
             Log.Warning("Save failed, see the iw3StringSerializer error log above for details");
+        }
         await dialogService.MessageBoxNotifyAsync(this, saveResult ? Strings.SaveSuccess : Strings.SaveFailure,
             Strings.SaveResult, saveResult ? MessageBoxIcon.Information : MessageBoxIcon.Error); // Report the result
         DialogResult = true; // Set dialog result

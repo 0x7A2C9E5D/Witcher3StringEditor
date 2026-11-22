@@ -37,6 +37,11 @@ public static class MessageTokens
     public const string DataGridPagedSourceChanged = "DataGridPagedSourceChanged";
 
     /// <summary>
+    ///     Token for messages indicating that the open document was saved successfully
+    /// </summary>
+    public const string DocumentSaved = "DocumentSaved";
+
+    /// <summary>
     ///     Token for messages indicating that a request for data grid paged source has been made
     /// </summary>
     public const string RequestDataGridPagedSource = "RequestDataGridPagedSource";

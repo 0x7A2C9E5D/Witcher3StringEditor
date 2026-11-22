@@ -16,6 +16,7 @@ internal partial class MainWindowViewModel
     private void RegisterMessengerHandlers()
     {
         RegisterFileMessageHandlers(); // Register file message handlers
+        RegisterDocumentMessageHandlers(); // Register document message handlers
         RegisterSettingsMessageHandlers(); // Register settings message handlers
         RegisterSearchMessageHandlers(); // Register search message handlers
         RegisterDictionarySupportMessageHandler(); // Register dictionary support message handler
@@ -31,6 +32,17 @@ internal partial class MainWindowViewModel
             this,
             MessageTokens.RecentFileOpened,
             async void (_, m) => { await LoadFileAsync(m.Value); }); // Open the requested file
+    }
+
+    /// <summary>
+    ///     Registers message handlers for document-related messages
+    /// </summary>
+    private void RegisterDocumentMessageHandlers()
+    {
+        WeakReferenceMessenger.Default.Register<MainWindowViewModel, ValueChangedMessage<bool>, string>(
+            this,
+            MessageTokens.DocumentSaved,
+            (_, _) => MarkDocumentSaved()); // Clear the unsaved state after a successful save
     }
 
     /// <summary>

@@ -125,6 +125,18 @@ internal partial class MainWindowViewModel
     }
 
     /// <summary>
+    ///     Marks every loaded item as saved, so the window can close without an unsaved-changes prompt
+    /// </summary>
+    private void MarkDocumentSaved()
+    {
+        if (W3StringItems is not null)
+            foreach (var item in W3StringItems)
+                item.OldText = string.Empty; // Drop the per-item undo baseline now that it is on disk
+        modifiedItems.Clear();
+        documentStateMachine.SetUnsavedChanges(false);
+    }
+
+    /// <summary>
     ///     Publishes the visible row count whenever the data grid source changes
     /// </summary>
     // ReSharper disable once UnusedParameterInPartialMethod
