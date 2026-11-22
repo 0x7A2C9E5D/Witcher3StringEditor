@@ -1,12 +1,11 @@
 <Solution>
-    <Project Path="Witcher3StringEditor.Contracts/Witcher3StringEditor.Contracts.csproj"/>
-    <Project Path="Witcher3StringEditor.Dialogs/Witcher3StringEditor.Dialogs.csproj"/>
-    <Project Path="Witcher3StringEditor.Dictionary/Witcher3StringEditor.Dictionary.csproj"/>
-    <Project Path="Witcher3StringEditor.Locales/Witcher3StringEditor.Locales.csproj"/>
-    <Project Path="Witcher3StringEditor.Messaging/Witcher3StringEditor.Messaging.csproj"/>
-    <Project Path="Witcher3StringEditor.Miscellaneous/Witcher3StringEditor.Miscellaneous.csproj"/>
-    <Project Path="Witcher3StringEditor.NexusIntegration/Witcher3StringEditor.NexusIntegration.csproj"/>
-    <Project Path="Witcher3StringEditor.Serializers/Witcher3StringEditor.Serializers.csproj"/>
-    <Project Path="Witcher3StringEditor.Shared/Witcher3StringEditor.Shared.csproj"/>
-    <Project Path="Witcher3StringEditor/Witcher3StringEditor.csproj"/>
+    <Project Path="Witcher3StringEditor.Contracts/Witcher3StringEditor.Contracts.csproj" />
+    <Project Path="Witcher3StringEditor.Dialogs/Witcher3StringEditor.Dialogs.csproj" />
+    <Project Path="Witcher3StringEditor.Dictionary/Witcher3StringEditor.Dictionary.csproj" />
+    <Project Path="Witcher3StringEditor.Locales/Witcher3StringEditor.Locales.csproj" />
+    <Project Path="Witcher3StringEditor.Miscellaneous/Witcher3StringEditor.Miscellaneous.csproj" />
+    <Project Path="Witcher3StringEditor.NexusIntegration/Witcher3StringEditor.NexusIntegration.csproj" />
+    <Project Path="Witcher3StringEditor.Serializers/Witcher3StringEditor.Serializers.csproj" />
+    <Project Path="Witcher3StringEditor.Shared/Witcher3StringEditor.Shared.csproj" />
+    <Project Path="Witcher3StringEditor/Witcher3StringEditor.csproj" />
 </Solution>

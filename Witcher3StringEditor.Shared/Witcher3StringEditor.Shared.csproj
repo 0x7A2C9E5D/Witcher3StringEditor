@@ -26,7 +26,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Witcher3StringEditor.Contracts\Witcher3StringEditor.Contracts.csproj"/>
-        <ProjectReference Include="..\Witcher3StringEditor.Messaging\Witcher3StringEditor.Messaging.csproj"/>
     </ItemGroup>
 
 </Project>
