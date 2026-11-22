@@ -7,9 +7,9 @@ using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Serializers;
 using Witcher3StringEditor.Shared.Extensions;
+using Witcher3StringEditor.Shared.Messaging;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 
@@ -139,6 +139,7 @@ public partial class SaveDialogViewModel
         {
             Log.Warning("Save failed, see the iw3StringSerializer error log above for details");
         }
+
         await dialogService.MessageBoxNotifyAsync(this, saveResult ? Strings.SaveSuccess : Strings.SaveFailure,
             Strings.SaveResult, saveResult ? MessageBoxIcon.Information : MessageBoxIcon.Error); // Report the result
         DialogResult = true; // Set dialog result

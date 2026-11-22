@@ -7,8 +7,8 @@ using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Locales;
-using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Shared.Extensions;
+using Witcher3StringEditor.Shared.Messaging;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 

@@ -2,7 +2,7 @@ using System.IO;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Witcher3StringEditor.Contracts;
-using Witcher3StringEditor.Messaging;
+using Witcher3StringEditor.Shared.Messaging;
 
 namespace Witcher3StringEditor.Services;
 

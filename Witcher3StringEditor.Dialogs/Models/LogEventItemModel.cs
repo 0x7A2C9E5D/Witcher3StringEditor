@@ -12,11 +12,6 @@ namespace Witcher3StringEditor.Dialogs.Models;
 public record LogEventItemModel(LogEvent LogEvent)
 {
     /// <summary>
-    ///     Gets the original Serilog LogEvent
-    /// </summary>
-    public LogEvent EventEntry => LogEvent;
-
-    /// <summary>
     ///     Gets the timestamp when the log event occurred
     /// </summary>
     [UsedImplicitly]

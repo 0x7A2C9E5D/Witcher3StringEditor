@@ -2,8 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
+using Witcher3StringEditor.Shared.Messaging;
 
 namespace Witcher3StringEditor.ViewModels;
 

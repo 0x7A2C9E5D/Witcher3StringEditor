@@ -6,9 +6,9 @@ using iNKORE.UI.WPF.Modern.Controls;
 using Serilog;
 using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
-using Witcher3StringEditor.Messaging;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Shared.Behaviors;
+using Witcher3StringEditor.Shared.Messaging;
 
 namespace Witcher3StringEditor.Views;
 
