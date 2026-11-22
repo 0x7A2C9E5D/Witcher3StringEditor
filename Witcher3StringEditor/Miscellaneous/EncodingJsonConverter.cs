@@ -8,7 +8,7 @@ namespace Witcher3StringEditor.Miscellaneous;
 ///     JSON converter for text encodings
 ///     Stores an encoding as its web name, for example "utf-8"
 /// </summary>
-public class EncodingJsonConverter : JsonConverter<Encoding>
+internal class EncodingJsonConverter : JsonConverter<Encoding>
 {
     /// <summary>
     ///     Reads a text encoding from its web name

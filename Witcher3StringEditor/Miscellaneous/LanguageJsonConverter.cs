@@ -8,7 +8,7 @@ namespace Witcher3StringEditor.Miscellaneous;
 ///     JSON converter for The Witcher 3 languages
 ///     Stores a language as its content-file code, for example "cn"
 /// </summary>
-public class LanguageJsonConverter : JsonConverter<W3Language>
+internal class LanguageJsonConverter : JsonConverter<W3Language>
 {
     /// <summary>
     ///     Reads a language from its content-file code, its culture code or its name

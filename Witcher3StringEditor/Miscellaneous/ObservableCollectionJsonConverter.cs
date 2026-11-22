@@ -8,7 +8,7 @@ namespace Witcher3StringEditor.Miscellaneous;
 ///     JSON converter for ObservableCollection
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class ObservableCollectionJsonConverter<T> : JsonConverter<ObservableCollection<T>>
+internal class ObservableCollectionJsonConverter<T> : JsonConverter<ObservableCollection<T>>
 {
     /// <summary>
     ///     Reads an ObservableCollection from JSON

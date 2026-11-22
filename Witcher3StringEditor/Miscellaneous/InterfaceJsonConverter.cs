@@ -8,7 +8,7 @@ namespace Witcher3StringEditor.Miscellaneous;
 /// </summary>
 /// <typeparam name="TInterface"></typeparam>
 /// <typeparam name="TImpl"></typeparam>
-public class InterfaceJsonConverter<TInterface, TImpl> : JsonConverter<TInterface>
+internal class InterfaceJsonConverter<TInterface, TImpl> : JsonConverter<TInterface>
     where TImpl : TInterface
 {
     /// <summary>
