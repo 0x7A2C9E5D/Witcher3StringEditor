@@ -31,7 +31,7 @@ internal enum TranslationActivityState
     CompletedWithFailures,
 
     /// <summary>
-    ///     The user cancelled the translation, or the running call observed the cancellation.
+    ///     The user canceled the translation, or the running call observed the cancellation.
     /// </summary>
     Cancelled,
 
@@ -106,7 +106,7 @@ internal sealed class TranslationActivityStateMachine
     }
 
     /// <summary>
-    ///     Marks a running translation as cancelled.
+    ///     Marks a running translation as canceled.
     /// </summary>
     public void Cancel()
     {
