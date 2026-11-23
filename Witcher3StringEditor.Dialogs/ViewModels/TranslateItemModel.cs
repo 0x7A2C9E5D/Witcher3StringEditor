@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Witcher3StringEditor.Dialogs.States;
 
-namespace Witcher3StringEditor.Dialogs.Models;
+namespace Witcher3StringEditor.Dialogs.ViewModels;
 
 /// <summary>
 ///     A model class representing an item to be translated
@@ -74,7 +74,7 @@ public partial class TranslateItemModel : ObservableObject
     }
 
     /// <summary>
-    ///     Marks the item as cancelled
+    ///     Marks the item as canceled
     /// </summary>
     internal void MarkCancelled()
     {
