@@ -1,66 +1,6 @@
 namespace Witcher3StringEditor.Dialogs.States;
 
 /// <summary>
-///     The execution state shared by single-item and batch translation.
-/// </summary>
-internal enum TranslationActivityState
-{
-    /// <summary>
-    ///     No translation is running; the user can start one.
-    /// </summary>
-    Idle,
-
-    /// <summary>
-    ///     A translation call is running.
-    /// </summary>
-    Translating,
-
-    /// <summary>
-    ///     Cancellation was requested and the running call has not finished yet.
-    /// </summary>
-    Cancelling,
-
-    /// <summary>
-    ///     The translation finished and every item succeeded.
-    /// </summary>
-    Completed,
-
-    /// <summary>
-    ///     The batch translation finished but at least one item failed.
-    /// </summary>
-    CompletedWithFailures,
-
-    /// <summary>
-    ///     The user canceled the translation, or the running call observed the cancellation.
-    /// </summary>
-    Cancelled,
-
-    /// <summary>
-    ///     An unexpected error terminated the translation.
-    /// </summary>
-    Failed
-}
-
-/// <summary>
-///     Helpers for <see cref="TranslationActivityState" />.
-/// </summary>
-internal static class TranslationActivityStateExtensions
-{
-    /// <summary>
-    ///     Determines whether the state represents a running translation that still blocks editing.
-    /// </summary>
-    /// <param name="state">The state to inspect</param>
-    /// <returns>
-    ///     True for <see cref="TranslationActivityState.Translating" /> and
-    ///     <see cref="TranslationActivityState.Cancelling" />
-    /// </returns>
-    public static bool IsBusy(this TranslationActivityState state)
-    {
-        return state is TranslationActivityState.Translating or TranslationActivityState.Cancelling;
-    }
-}
-
-/// <summary>
 ///     Tracks the translation activity state and reports every actual transition.
 /// </summary>
 internal sealed class TranslationActivityStateMachine

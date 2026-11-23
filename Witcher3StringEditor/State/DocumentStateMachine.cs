@@ -1,61 +1,6 @@
 namespace Witcher3StringEditor.State;
 
 /// <summary>
-///     The mutually exclusive phase of the document shown in the main window.
-/// </summary>
-internal enum DocumentPhase
-{
-    /// <summary>
-    ///     No file has been opened yet.
-    /// </summary>
-    Unloaded,
-
-    /// <summary>
-    ///     A file is being read.
-    /// </summary>
-    Loading,
-
-    /// <summary>
-    ///     A file is open and holds at least one item.
-    /// </summary>
-    Loaded,
-
-    /// <summary>
-    ///     A file is open but holds no item.
-    /// </summary>
-    Empty
-}
-
-/// <summary>
-///     The complete document session state: the mutually exclusive phase together with the facets that can
-///     co-exist with it (unsaved changes and an active search filter).
-/// </summary>
-internal readonly record struct DocumentState(
-    DocumentPhase Phase,
-    bool HasUnsavedChanges,
-    bool IsFiltering,
-    int ItemCount,
-    int VisibleItemCount)
-{
-    /// <summary>
-    ///     Gets a value indicating whether the document can be edited, merged or saved.
-    /// </summary>
-    public bool CanModify => Phase == DocumentPhase.Loaded;
-
-    /// <summary>
-    ///     Gets a value indicating whether the translation dialog can be shown.
-    ///     An active search that yields no row disables it; otherwise the loaded document decides.
-    /// </summary>
-    public bool CanTranslate =>
-        Phase == DocumentPhase.Loaded && (!IsFiltering || VisibleItemCount > 0);
-
-    /// <summary>
-    ///     Gets a value indicating whether the window can close without asking the user first.
-    /// </summary>
-    public bool CanCloseSilently => !HasUnsavedChanges;
-}
-
-/// <summary>
 ///     Tracks the document session state and raises <see cref="StateChanged" /> only when the state
 ///     actually changed.
 /// </summary>
