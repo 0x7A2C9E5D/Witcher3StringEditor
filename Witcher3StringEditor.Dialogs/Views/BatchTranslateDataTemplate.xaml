@@ -53,6 +53,7 @@
                 <!-- Start index input control -->
                 <ui:NumberBox
                     x:Name="StartIndexInput"
+                    HorizontalAlignment="Stretch"
                     ui:ControlHelper.Header="{I18N {x:Static l:LangKeys.StartIndex}}"
                     Maximum="{Binding MaxValue, Mode=OneTime}"
                     Minimum="1"
@@ -62,6 +63,7 @@
                 <!-- End index input control -->
                 <ui:NumberBox
                     x:Name="EndIndexInput"
+                    HorizontalAlignment="Stretch"
                     ui:ControlHelper.Header="{I18N {x:Static l:LangKeys.EndIndex}}"
                     Maximum="{Binding MaxValue, Mode=OneTime}"
                     Minimum="{Binding EndIndexMin}"
