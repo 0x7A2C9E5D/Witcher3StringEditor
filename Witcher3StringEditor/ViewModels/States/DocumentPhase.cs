@@ -1,4 +1,4 @@
-namespace Witcher3StringEditor.State;
+namespace Witcher3StringEditor.ViewModels.States;
 
 /// <summary>
 ///     The mutually exclusive phase of the document shown in the main window.

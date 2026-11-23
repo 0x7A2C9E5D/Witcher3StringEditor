@@ -1,4 +1,4 @@
-namespace Witcher3StringEditor.State;
+namespace Witcher3StringEditor.ViewModels.States;
 
 /// <summary>
 ///     The complete document session state: the mutually exclusive phase together with the facets that can

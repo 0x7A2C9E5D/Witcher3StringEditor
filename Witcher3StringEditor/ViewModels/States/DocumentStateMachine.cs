@@ -1,4 +1,4 @@
-namespace Witcher3StringEditor.State;
+namespace Witcher3StringEditor.ViewModels.States;
 
 /// <summary>
 ///     Tracks the document session state and raises <see cref="StateChanged" /> only when the state

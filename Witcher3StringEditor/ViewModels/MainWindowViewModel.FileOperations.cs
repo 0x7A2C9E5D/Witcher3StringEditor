@@ -6,7 +6,7 @@ using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Models;
 using Witcher3StringEditor.Shared.Extensions;
-using Witcher3StringEditor.State;
+using Witcher3StringEditor.ViewModels.States;
 
 namespace Witcher3StringEditor.ViewModels;
 
