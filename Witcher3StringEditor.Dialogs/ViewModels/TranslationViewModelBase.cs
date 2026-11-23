@@ -7,7 +7,7 @@ using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Contracts;
-using Witcher3StringEditor.Dialogs.States;
+using Witcher3StringEditor.Dialogs.ViewModels.States;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
 

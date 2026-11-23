@@ -1,4 +1,4 @@
-namespace Witcher3StringEditor.Dialogs.States;
+namespace Witcher3StringEditor.Dialogs.ViewModels.States;
 
 /// <summary>
 ///     Helpers for <see cref="TranslationActivityState" />.

@@ -1,4 +1,4 @@
-namespace Witcher3StringEditor.Dialogs.States;
+namespace Witcher3StringEditor.Dialogs.ViewModels.States;
 
 /// <summary>
 ///     The translation state of one item shown in the single-item translation view.

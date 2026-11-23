@@ -1,11 +1,11 @@
-﻿﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GTranslate;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts;
-using Witcher3StringEditor.Dialogs.States;
+using Witcher3StringEditor.Dialogs.ViewModels.States;
 using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;

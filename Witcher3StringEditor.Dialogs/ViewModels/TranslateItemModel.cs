@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using Witcher3StringEditor.Dialogs.States;
+using Witcher3StringEditor.Dialogs.ViewModels.States;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
 

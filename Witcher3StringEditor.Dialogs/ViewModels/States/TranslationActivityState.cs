@@ -1,4 +1,4 @@
-namespace Witcher3StringEditor.Dialogs.States;
+namespace Witcher3StringEditor.Dialogs.ViewModels.States;
 
 /// <summary>
 ///     The execution state shared by single-item and batch translation.
