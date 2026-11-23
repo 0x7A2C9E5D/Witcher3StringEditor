@@ -7,6 +7,7 @@ using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Syncfusion.Data.Extensions;
 using Witcher3StringEditor.Contracts;
+using Witcher3StringEditor.Dialogs.States;
 using Witcher3StringEditor.Dictionary;
 using Witcher3StringEditor.Locales;
 
@@ -40,6 +41,11 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     private protected readonly IReadOnlyList<ITrackableW3StringItem> W3StringItems;
 
     /// <summary>
+    ///     The translation activity state machine shared by single-item and batch translation
+    /// </summary>
+    private readonly TranslationActivityStateMachine activityStateMachine = new();
+
+    /// <summary>
     ///     The cancellation token source for managing translation operation cancellation
     /// </summary>
     private protected CancellationTokenSource? CancellationTokenSource;
@@ -66,6 +72,7 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
         ToLanguage =
             GetPreferredLanguage(
                 appSettings); // Get the preferred target language from application settings and set the ToLanguage property
+        activityStateMachine.StateChanged += OnActivityStateChanged; // Forward state changes to the derived view models
     }
 
     /// <summary>
@@ -112,18 +119,9 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     public ObservableCollection<DictionaryInfo> Dictionaries { get; } = [];
 
     /// <summary>
-    ///     Gets or sets a value indicating whether a translation operation is currently in progress
-    ///     Refreshes dependent command states whenever the value changes
+    ///     Gets a value indicating whether a translation operation is currently in progress
     /// </summary>
-    public bool IsBusy
-    {
-        get;
-        set
-        {
-            if (SetProperty(ref field, value))
-                OnIsBusyChanged();
-        }
-    }
+    public bool IsBusy => activityStateMachine.Current.IsBusy();
 
 
     /// <summary>
@@ -139,6 +137,55 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
                 await CancellationTokenSource.CancelAsync();
             CancellationTokenSource.Dispose();
         }
+    }
+
+    /// <summary>
+    ///     Starts a translation unless one is already running
+    /// </summary>
+    protected void BeginTranslation()
+    {
+        activityStateMachine.Begin();
+    }
+
+    /// <summary>
+    ///     Completes a running translation
+    /// </summary>
+    /// <param name="hasFailures">True when at least one item failed</param>
+    protected void CompleteTranslation(bool hasFailures)
+    {
+        activityStateMachine.Complete(hasFailures);
+    }
+
+    /// <summary>
+    ///     Moves a running translation into the cancelling state
+    /// </summary>
+    protected void RequestTranslationCancellation()
+    {
+        activityStateMachine.RequestCancel();
+    }
+
+    /// <summary>
+    ///     Marks a running translation as canceled
+    /// </summary>
+    protected void CancelTranslation()
+    {
+        activityStateMachine.Cancel();
+    }
+
+    /// <summary>
+    ///     Marks a running translation as failed
+    /// </summary>
+    protected void FailTranslation()
+    {
+        activityStateMachine.Fail();
+    }
+
+    /// <summary>
+    ///     Returns the activity to idle, for example after navigating to another item
+    /// </summary>
+    protected void ResetTranslationActivity()
+    {
+        activityStateMachine.Reset();
     }
 
     /// <summary>
@@ -196,10 +243,23 @@ public abstract partial class TranslationViewModelBase : ObservableObject, IAsyn
     }
 
     /// <summary>
-    ///     Called when the IsBusy property changes to refresh the states of commands that depend on it
+    ///     Called after the translation activity state changed
     /// </summary>
-    protected virtual void OnIsBusyChanged()
+    /// <param name="previous">The previous activity state</param>
+    /// <param name="current">The current activity state</param>
+    private protected virtual void OnTranslationStateChanged(TranslationActivityState previous,
+        TranslationActivityState current)
     {
+    }
+
+    /// <summary>
+    ///     Forwards a state machine transition to the derived view model
+    /// </summary>
+    private void OnActivityStateChanged(TranslationActivityState previous, TranslationActivityState current)
+    {
+        if (previous.IsBusy() != current.IsBusy())
+            OnPropertyChanged(nameof(IsBusy)); // Keep the IsBusy binding in the translation template in sync
+        OnTranslationStateChanged(previous, current);
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GTranslate;
@@ -187,8 +187,7 @@ public partial class TranslationDialogViewModel : ObservableObject, IModalDialog
     private async Task SaveUnsavedChangesIfNeeded(SingleItemTranslationViewModel? translateViewModel)
     {
         if (translateViewModel?.CurrentTranslateItemModel is
-                { IsSaved: false } item // Check if there are unsaved changes
-            && !string.IsNullOrWhiteSpace(item.TranslatedText) // And translated text exists
+                { HasUnsavedTranslation: true } item // Check if there are unsaved changes
             && await dialogService.MessageBoxConfirmAsync(this, Strings.TranslatedTextNoSavedMessage,
                 Strings.TranslatedTextNoSavedCaption, MessageBoxIcon.Warning)) // Confirm with user
         {

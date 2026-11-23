@@ -10,6 +10,7 @@ using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts;
 using Witcher3StringEditor.Dialogs.Models;
+using Witcher3StringEditor.Dialogs.States;
 using Witcher3StringEditor.Locales;
 using Witcher3StringEditor.Shared.Extensions;
 using Witcher3StringEditor.Shared.Messaging;
@@ -76,15 +77,17 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     private bool CanNext => CurrentItemIndex < W3StringItems.Count - 1 && !IsBusy;
 
     /// <summary>
-    ///     Called when the IsBusy property changes
-    ///     Refreshes the states of the commands that depend on the busy flag and notifies other components
+    ///     Called when the translation activity state changes
+    ///     Refreshes the commands that depend on the busy state and notifies other components
     /// </summary>
-    protected override void OnIsBusyChanged()
+    private protected override void OnTranslationStateChanged(TranslationActivityState previous,
+        TranslationActivityState current)
     {
         PreviousCommand.NotifyCanExecuteChanged(); // Refresh command states
         NextCommand.NotifyCanExecuteChanged();
         SaveCommand.NotifyCanExecuteChanged();
-        _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(IsBusy),
+        if (previous.IsBusy() == current.IsBusy()) return; // Notify only when the busy boundary changes
+        _ = WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(current.IsBusy()),
             MessageTokens.TranslatorIsBusy); // Notify other components of the busy state change
     }
 
@@ -96,10 +99,11 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     partial void OnCurrentItemIndexChanged(int value)
     {
         CurrentTranslateItemModel = CreateTranslateItemModel(value);
+        ResetTranslationActivity(); // A new item starts from the idle activity state
     }
 
     /// <summary>
-    ///     Builds the translate item model of the item at the given index
+    ///     Builds the translation item model of the item at the given index
     /// </summary>
     /// <param name="index">The index of the item in the collection</param>
     /// <returns>The model holding the item's original text</returns>
@@ -116,12 +120,14 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     [RelayCommand]
     private async Task Translate()
     {
+        if (IsBusy) return; // Ignore a second request while a translation is already running
         try
         {
             if (string.IsNullOrWhiteSpace(CurrentTranslateItemModel
                     ?.TranslatedText)) // Check if translation text is empty
             {
-                IsBusy = true; // Set busy state
+                BeginTranslation(); // Enter the translating activity state
+                CurrentTranslateItemModel?.BeginTranslation(); // Enter the item's translating state
                 Guard.IsNotNullOrWhiteSpace(CurrentTranslateItemModel?.Text);
                 CancellationTokenSource?.Dispose(); // Dispose of the cancellation token source
                 CancellationTokenSource = new CancellationTokenSource(); // Create a new cancellation token source
@@ -133,7 +139,14 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
                 {
                     Guard.IsNotNullOrWhiteSpace(translation); // Check if translation result is not empty
                     CurrentTranslateItemModel.TranslatedText = translation; // Set the translation text
+                    CurrentTranslateItemModel.MarkTranslated(); // Mark the item as translated
+                    CompleteTranslation(false); // Complete the activity
                     Log.Debug("Translation completed for item {ItemId}", CurrentTranslateItemModel.Id);
+                }
+                else
+                {
+                    CurrentTranslateItemModel.MarkCancelled(); // Mark the item as canceled
+                    CancelTranslation(); // Complete the activity as canceled
                 }
             }
             else
@@ -145,6 +158,8 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
         }
         catch (Exception ex)
         {
+            CurrentTranslateItemModel?.MarkFailed(); // Mark the item as failed
+            FailTranslation(); // Complete the activity as failed
             const string errorMessage = "The translator: {0} returned an error. Exception: {1}";
             await DialogService.MessageBoxNotifyAsync(this,
                 string.Format(CultureInfo.InvariantCulture, errorMessage, Translator.Name, ex.Message),
@@ -152,10 +167,6 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
             Log.Error(ex,
                 "The translator {TranslatorName} returned an error while translating item {ItemId}",
                 Translator.Name, CurrentTranslateItemModel?.Id); // Log error with the failing item context
-        }
-        finally
-        {
-            IsBusy = false;
         }
     }
 
@@ -205,8 +216,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
     {
         try
         {
-            if (CurrentTranslateItemModel is { IsSaved: false } // Check if current translation is unsaved
-                && !string.IsNullOrWhiteSpace(CurrentTranslateItemModel.TranslatedText) // And has text content
+            if (CurrentTranslateItemModel is { HasUnsavedTranslation: true } // Check if current translation is unsaved
                 && await DialogService.MessageBoxConfirmAsync(this, // Ask user to confirm save
                     Strings.TranslatedTextNoSavedMessage,
                     Strings.TranslatedTextNoSavedCaption, MessageBoxIcon.Warning))
@@ -232,7 +242,7 @@ public sealed partial class SingleItemTranslationViewModel : TranslationViewMode
         var found = W3StringItems // Find the original item by ID
             .First(x => x.TrackingId == CurrentTranslateItemModel?.Id);
         found.Text = CurrentTranslateItemModel.TranslatedText; // Update with translated text
-        CurrentTranslateItemModel.IsSaved = true; // Mark as saved
+        CurrentTranslateItemModel.MarkSaved(); // Mark as saved
     }
 
     /// <summary>

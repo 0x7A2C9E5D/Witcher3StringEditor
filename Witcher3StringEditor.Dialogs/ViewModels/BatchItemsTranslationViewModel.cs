@@ -1,10 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GTranslate;
 using GTranslate.Translators;
 using HanumanInstitute.MvvmDialogs;
 using Serilog;
 using Witcher3StringEditor.Contracts;
+using Witcher3StringEditor.Dialogs.States;
 using Witcher3StringEditor.Dictionary;
 
 namespace Witcher3StringEditor.Dialogs.ViewModels;
@@ -92,12 +93,14 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     private bool CanStart => !IsBusy;
 
     /// <summary>
-    ///     Called when the IsBusy property changes
-    ///     Refreshes the state of the Cancel command, which depends on the busy flag
+    ///     Called when the translation activity state changes
+    ///     Refreshes the Start and Cancel commands that depend on the busy state
     /// </summary>
-    protected override void OnIsBusyChanged()
+    private protected override void OnTranslationStateChanged(TranslationActivityState previous,
+        TranslationActivityState current)
     {
-        CancelCommand.NotifyCanExecuteChanged(); // Refresh the cancel command state
+        StartCommand.NotifyCanExecuteChanged();
+        CancelCommand.NotifyCanExecuteChanged();
     }
 
     /// <summary>
@@ -138,13 +141,25 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task Start()
     {
+        if (IsBusy) return; // Guard against a second start while a batch is running
+        BeginTranslation(); // Enter the translating activity state
         try
         {
             await ExecuteBatchTranslation(); // Execute the batch translation process
+            if (CancellationTokenSource?.IsCancellationRequested == true && PendingCount > 0)
+                CancelTranslation(); // The user canceled before every item was processed
+            else
+                CompleteTranslation(FailureCount > 0); // Finish with or without failures
         }
-        finally
+        catch (OperationCanceledException ex)
         {
-            IsBusy = false; // Clear the busy flag
+            Log.Warning(ex, "Batch translation was cancelled by the user");
+            CancelTranslation();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Batch translation failed");
+            FailTranslation();
         }
     }
 
@@ -154,7 +169,6 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     /// </summary>
     private async Task ExecuteBatchTranslation()
     {
-        IsBusy = true; // Set the busy flag to prevent concurrent operations
         ResetTranslationCounts(); // Reset counters for success, failure, and pending items
         CancellationTokenSource?.Dispose(); // Dispose of any existing cancellation token source
         CancellationTokenSource = new CancellationTokenSource(); // Create a new cancellation token source
@@ -318,6 +332,7 @@ public sealed partial class BatchItemsTranslationViewModel : TranslationViewMode
     [RelayCommand(CanExecute = nameof(CanCancel))]
     private async Task Cancel()
     {
+        RequestTranslationCancellation(); // Enter the cancelling state
         if (CancellationTokenSource is not null) // Check if cancellation token source exists
             await CancellationTokenSource.CancelAsync(); // Cancel the operation
     }
